@@ -1,0 +1,19 @@
+{
+    "active": "Aktivieren Sie die Telegrammwarnung",
+    "addresses": "Adresse für Monitoring",
+    "charge": "Datenpunkt von einem Ladegerät",
+    "charger": "Ladegerät",
+    "delete": "löschen",
+    "enabled": "Aktiviert",
+    "interval": "Abfrageintervall [Sek.]",
+    "ip": "IP Adresse",
+    "motionId": "Datenpunkt von einem Bewegungssensor",
+    "motionsensor": "Bewegungssensor Aktivieren",
+    "name": "Tablet Name",
+    "optional": "Optional",
+    "polling interval": "Abrufintervall",
+    "port": "port",
+    "psw": "Password",
+    "settings": "Adapter-Einstellungen",
+    "telegramUser": "Telegrammbenutzer"
+}

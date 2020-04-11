@@ -1,0 +1,46 @@
+
+/* You can delete those if you want. I just found them very helpful */
+* {
+	box-sizing: border-box
+}
+
+.m {
+	/* Don't cut off dropdowns! */
+	overflow: initial;
+}
+
+/* Add your styles here */
+
+.table_header {
+	background-color: orange;
+	color: White;
+}
+
+.ip {
+	width: 150px;
+	text-align: right;
+}
+
+
+.m .select-wrapper + label {
+	top: 100%;
+}
+
+
+.sub-title {
+	margin-top: -2.5rem !important;
+	padding: 0.5rem;
+	background: #2196f3;
+	color: white;
+	border-radius: 10px;
+	margin-bottom: 7px;
+}
+
+
+.checkbox {
+	margin: 5em;
+	padding-top: 1rem !important;
+	padding-right: 0 !important;
+	padding-left: 35px !important;
+	padding-bottom: 1.2em !important;
+}

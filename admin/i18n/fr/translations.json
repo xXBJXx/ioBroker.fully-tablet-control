@@ -1,0 +1,19 @@
+{
+    "active": "Activer l'avertissement de télégramme",
+    "addresses": "Adresses de surveillance",
+    "charge": "Point de données d'un chargeur",
+    "charger": "Chargeur",
+    "delete": "Effacer",
+    "enabled": "Activée",
+    "interval": "Intervalle d'interrogation [sec]",
+    "ip": "Adresse IP",
+    "motionId": "Point de données d'un capteur de mouvement",
+    "motionsensor": "Capteur de mouvement",
+    "name": "Nom de la tablette",
+    "optional": "Optionnel",
+    "polling interval": "Intervalle d'interrogation",
+    "port": "Port",
+    "psw": "Mot de passe",
+    "settings": "Paramètres de l'adaptateur",
+    "telegramUser": "Utilisateur de télégramme"
+}

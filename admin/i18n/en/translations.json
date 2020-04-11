@@ -1,0 +1,19 @@
+{
+    "active": "Activate Telegram Warning",
+    "addresses": "Addresses to monitoring",
+    "charge": "Data point from a charger",
+    "charger": "Charger",
+    "delete": "Delete",
+    "enabled": "Enabled",
+    "interval": "Polling interval[sec]",
+    "ip": "IP Address",
+    "motionId": "Data point from a motionsensor",
+    "motionsensor": "Motionsensor",
+    "name": "Tablet name",
+    "optional": "Optional",
+    "polling interval": "Polling interval",
+    "port": "port",
+    "psw": "Password",
+    "settings": "Adapter settings",
+    "telegramUser": "Telegram user"
+}

@@ -1,0 +1,19 @@
+{
+    "active": "Aktywuj ostrzeżenie telegramu",
+    "addresses": "Adresy do monitorowania",
+    "charge": "Punkt danych z ładowarki",
+    "charger": "Ładowarka",
+    "delete": "Kasować",
+    "enabled": "Włączone",
+    "interval": "Interwał odpytywania [s]",
+    "ip": "Adres IP",
+    "motionId": "Punkt danych z czujnika ruchu",
+    "motionsensor": "Czujnik ruchu",
+    "name": "Nazwa tabletu",
+    "optional": "Opcjonalny",
+    "polling interval": "Interwał odpytywania",
+    "port": "Port",
+    "psw": "Hasło",
+    "settings": "Ustawienia adaptera",
+    "telegramUser": "Użytkownik telegramu"
+}

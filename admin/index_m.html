@@ -1,0 +1,222 @@
+
+<link rel="stylesheet" type="text/css" href="../../css/adapter.css" />
+<link rel="stylesheet" type="text/css" href="../../lib/css/materialize.css">
+
+<script type="text/javascript" src="../../lib/js/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="../../socket.io/socket.io.js"></script>
+
+<script type="text/javascript" src="../../js/translate.js"></script>
+<script type="text/javascript" src="../../lib/js/materialize.js"></script>
+<script type="text/javascript" src="../../js/adapter-settings.js"></script>
+<script type="text/javascript" src="words.js"></script>
+ <!-- Load our own files -->
+
+    <link rel="stylesheet" type="text/css" href="style.css" />
+
+
+<!-- you have to define 2 functions in the global scope: -->
+<script type="text/javascript">
+
+    var user = [];
+    var devices = [];
+    // the function loadSettings has to exist ...
+    function load(settings, onChange) {
+        if (!settings) return;
+        for (var key in settings) {
+            if (!settings.hasOwnProperty(key)) continue;
+            var $value = $('#' + key + '.value');
+            if ($value.attr('type') === 'checkbox') {
+                $value.prop('checked', settings[key]).on('change', function () {
+                    if ($('#auth').prop('checked')) {
+                        $('#secure').prop('checked', true);
+                    }
+                    onChange();
+                    showHideSettings();
+                });
+            } else {
+                $value.val(settings[key]).on('change', function () {
+                    onChange();
+                }).keyup(function () {
+                    onChange();
+                });
+            }
+        }
+        user = settings.user || [];
+        devices = settings.devices || [];
+        onChange(false);
+
+        values2table('devices', devices, onChange);
+        values2table('user', user, onChange);
+
+    }
+    // ... and the function save has to exist.
+    // you have to make sure the callback is called with the settings object as first param!
+    function save(callback) {
+        var obj = {};
+        $('.value').each(function () {
+            var $this = $(this);
+            if ($this.attr('type') === 'checkbox') {
+                obj[$this.attr('id')] = $this.prop('checked');
+            } else {
+                obj[$this.attr('id')] = $this.val();
+            }
+        });
+
+        obj.devices = table2values('devices');
+        obj.user = table2values('user');
+        callback(obj);
+    }
+</script>
+<html>
+<body>
+    <!-- you have to put your config page in a div with id adapter-container -->
+    <div class="m adapter-container">
+
+        <div class="row">
+
+            <div class="col s12">
+
+                <ul class="tabs">
+                    <li class="tab col s2"><a href="#tab-main" class="translate active">Main settings</a></li>
+                    <li class="tab col s2"><a href="#tab-devices" class="translate active">addresses</a></li>
+                </ul>
+
+            </div>
+
+            <div id="tab-main" class="col s12 page">
+
+                <div class="row">
+
+                    <div class="col s12 m4 l2">
+                        <img src="tablet-control.png" width="150" height="150">
+                        <img class="logo">
+                    </div>
+
+                </div>
+
+                <div class="section">
+
+                    <div class="row">
+
+                        <div class="col s12">
+                            <h6 class="translate sub-title">polling interval</h6>
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col s6">
+
+                            <div class="input-field col s11 m4">
+                                <input type="number" class="value" id="interval" style="width:65%" max="3600" min="0" value="30" />
+                                <label for="interval" class="translate">interval</label>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="section">
+
+                        <div class="row">
+
+                            <div class="col s12">
+                                <h6 class="translate sub-title">optional</h6>
+                            </div>
+
+                        </div>
+
+                        <div class="section">
+
+                            <div class="row">
+
+                                <div class="input-field col s4 m2  checkbox">
+                                    <input type="checkbox" class="value" id="active" />
+                                    <label for="active" class="translate">active</label>
+                                </div>
+
+                                <div class="input-field col s4 m2 checkbox">
+                                    <input type="checkbox" autofocus="autofocus" class="value" id="motionsensor" />
+                                    <label for="motionsensor" class="translate">motionsensor</label>
+                                </div>
+
+                            </div>
+
+                            <div class="col s12" id="user">
+                                <div class="row">
+                                    &nbsp;
+                                    <a class="btn-floating waves-effect waves-light blue table-button-add">
+                                        <i class="material-icons">add</i>
+                                    </a>
+                                </div>
+
+                                <div class="table-values-div">
+                                    <table class="table-values" style="width: 370px;">
+                                        <thead>
+                                            <tr>
+                                                <th class="translate" id="telegram"
+                                                    style="width: 216px; text-align: center;" data-name="name">telegramUser</th>
+                                                <th class="translate" style="width: 136px; text-align: center;"
+                                                    data-buttons="delete up down">delete</th>
+                                            </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+            <div id="tab-devices" class="col s12 page">
+
+                <div class="row"></div>
+
+                <div class="col s12" id="devices">
+
+                    <div class="row">
+                        &nbsp;
+                        <a class="btn-floating waves-effect waves-light blue table-button-add">
+                            <i class="material-icons">add</i>
+                        </a>
+                    </div>
+
+                    <div class="table-values-div">
+
+                        <table class="table-values">
+
+                            <thead>
+
+                                <tr>
+                                    <th class="translate" id="name" style="width: 10%" data-name="name">name</th>
+                                    <th class="translate" id="ip" style="width: 10%" data-name="ip">ip</th>
+                                    <th class="translate" id="port" style="width: 5%" data-name="port">port</th>
+                                    <th class="translate" id="psw" style="width: 10%" data-name="psw" data-type="password">psw</th>
+                                    <th class="translate" id="mt" style="width: 20%" data-name="mt">motionId</th>
+                                    <th class="translate" id="charge" style="width: 20%" data-name="charge">charge</th>
+                                    <th class="translate" style="width: 7%" data-buttons="delete up down">delete</th>
+                                </tr>
+
+                            </thead>
+
+                        </table>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+</body>
+
+</html>
