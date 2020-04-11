@@ -8,6 +8,10 @@
 // you need to create an adapter
 const utils = require('@iobroker/adapter-core'); // Get common adapter utils
 const request = require('request');
+const { default: axios } = require('axios'); // Lib to handle http requests
+const stateAttr = require('./lib/stateAttr.js'); // Load attribute library
+const bonjour = require('bonjour')(); // load Bonjour library
+
 // Load your modules here, e.g.:
 // const fs = require("fs");
 
@@ -52,6 +56,8 @@ class TabletControl extends utils.Adapter {
 		const psw = [];
 		const mt = [];
 		const charge = [];
+		
+
 
 		if (!devicesTemp || devicesTemp !== []) {
 			for (const i in devicesTemp) {
@@ -63,7 +69,7 @@ class TabletControl extends utils.Adapter {
 				charge.push(devicesTemp[i].charge);
 			}
 
-		},
+		}
 
 		this.log.warn('name: ' + name);
 		this.log.warn('ip: ' + ip);
@@ -76,9 +82,11 @@ class TabletControl extends utils.Adapter {
 		this.log.warn('config active: ' + this.config.active);
 		this.log.warn('config motionsensor: ' + this.config.motionsensor);
 
+
+		//function updateDevice(ip, port, psw) {
 		var statusURL = 'http://' + ip[0] + ':' + port[0] + '/?cmd=deviceInfo&type=json&password=' + psw[0];
 
-		this.log.info(JSON.stringify(statusURL));
+			this.log.info(JSON.stringify(statusURL));
 
 		var thisOptions = {
 			uri: statusURL,
@@ -86,13 +94,14 @@ class TabletControl extends utils.Adapter {
 			timeout: 2000,
 			followRedirect: false,
 			maxRedirects: 0
-		};
-
+		}
+		let fullyInfoObject = null;
 		request(thisOptions, function (error, response, body) {
 			if (!error && response.statusCode == 200) {
-				let fullyInfoObject = JSON.parse(body);
+				//fullyInfoObject = JSON.parse(body);
+				fullyInfoObject = body;
 
-				this.log.info('fullyInfoObject: ' + fullyInfoObject);
+				// console.log('fullyInfoObject: ' + fullyInfoObject);
 
 				//for (let lpEntry in fullyInfoObject) {
 				//	let lpType = typeof fullyInfoObject[lpEntry]; // get Type of variable as String, like string/number/boolean
@@ -105,13 +114,17 @@ class TabletControl extends utils.Adapter {
 				//	}
 				// }
 				//vari = adapter.namespace + '.' + id + '.isFullyAlive';
-				this.setState('info.connection', true, true);
-			} else {
-				vari = adapter.namespace + '.' + id + '.isFullyAlive';
-				adapter.setState(vari, false, true);
+				//adapter.setState('info.connection', true, true);
 			}
-		});
-
+		 }); //else {
+			// 	vari = adapter.namespace + '.' + id + '.isFullyAlive';
+			// 	adapter.setState(vari, false, true);
+			// 	adapter.setState('info.connection', false, true);
+			// }
+		//});
+		this.log.warn('fullyInfoObject: ' + fullyInfoObject);
+		//}
+		this.setState('info.connection', true, true);
 		// Reset the connection indicator during startup
 		// this.setState('info.connection', true, true);
 
@@ -165,6 +178,9 @@ class TabletControl extends utils.Adapter {
 	 * @param {() => void} callback
 	 */
 	onUnload(callback) {
+
+	
+
 		try {
 			this.log.info('cleaned everything up...');
 			callback();
