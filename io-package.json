@@ -1,100 +1,108 @@
 {
 	"common": {
-		"name": "tablet-control",
-		"version": "0.0.1",
-		"news": {
-			"0.0.1": {
-				"en": "initial release",
-				"de": "Erstveröffentlichung",
-				"ru": "Начальная версия",
-				"pt": "lançamento inicial",
-				"nl": "Eerste uitgave",
-				"fr": "Première version",
-				"it": "Versione iniziale",
-				"es": "Versión inicial",
-				"pl": "Pierwsze wydanie",
-				"zh-cn": "首次出版"
-			}
-		},
-		"title": "Tablet Control",
-		"titleLang": {
-			"en": "Tablet Control",
-			"de": "Tablet-Steuerung",
-			"ru": "Планшетный контроль",
-			"pt": "Controle de Tablet",
-			"nl": "Tabletbediening",
-			"fr": "Contrôle de la tablette",
-			"it": "Controllo tablet",
-			"es": "Control de tableta",
-			"pl": "Kontrola tabletu",
-			"zh-cn": "平板电脑控制"
-		},
-		"desc": {
-			"en": "tablet-control",
-			"de": "Tablettenkontrolle",
-			"ru": "планшет-контроль",
-			"pt": "controle de tablet",
-			"nl": "tablet-bediening",
-			"fr": "contrôle de la tablette",
-			"it": "tavoletta-control",
-			"es": "control de tableta",
-			"pl": "sterowanie tabletem",
-			"zh-cn": "平板电脑控制"
-		},
-		"authors": [
-			"xXBJXX <alienware.games@gmail.com>"
-		],
-		"keywords": [
-			"ioBroker",
-			"Tablet",
-			"Fully Kiosk Browser"
-		],
-		"license": "MIT",
-		"platform": "Javascript/Node.js",
-		"main": "main.js",
-		"icon": "tablet-control.png",
-		"enabled": true,
-		"extIcon": "https://raw.githubusercontent.com/xXBJXX/ioBroker.tablet-control/master/admin/tablet-control.png",
-		"readme": "https://github.com/xXBJXX/ioBroker.tablet-control/blob/master/README.md",
-		"loglevel": "info",
-		"mode": "daemon",
-		"type": "general",
-		"compact": true,
-		"connectionType": "local",
-		"dataSource": "poll",
-		"materialize": true,
-		"dependencies": [
-			{
-				"js-controller": ">=1.4.2"
-			}
-		]
+	  "name": "tablet-control",
+	  "version": "0.0.1",
+	  "news": {
+		"0.0.1": {
+		  "en": "initial release",
+		  "de": "Erstveröffentlichung",
+		  "ru": "Начальная версия",
+		  "pt": "lançamento inicial",
+		  "nl": "Eerste uitgave",
+		  "fr": "Première version",
+		  "it": "Versione iniziale",
+		  "es": "Versión inicial",
+		  "pl": "Pierwsze wydanie",
+		  "zh-cn": "首次出版"
+		}
+	  },
+	  "title": "Tablet Control",
+	  "titleLang": {
+		"en": "Tablet Control",
+		"de": "Tablet-Steuerung",
+		"ru": "Планшетный контроль",
+		"pt": "Controle de Tablet",
+		"nl": "Tabletbediening",
+		"fr": "Contrôle de la tablette",
+		"it": "Controllo tablet",
+		"es": "Control de tableta",
+		"pl": "Kontrola tabletu",
+		"zh-cn": "平板电脑控制"
+	  },
+	  "desc": {
+		"en": "tablet-control",
+		"de": "Tablettenkontrolle",
+		"ru": "планшет-контроль",
+		"pt": "controle de tablet",
+		"nl": "tablet-bediening",
+		"fr": "contrôle de la tablette",
+		"it": "tavoletta-control",
+		"es": "control de tableta",
+		"pl": "sterowanie tabletem",
+		"zh-cn": "平板电脑控制"
+	  },
+	  "authors": [
+		"xXBJXX <alienware.games@gmail.com>"
+	  ],
+	  "keywords": [
+		"ioBroker",
+		"Tablet",
+		"Fully Kiosk Browser"
+	  ],
+	  "license": "MIT",
+	  "platform": "Javascript/Node.js",
+	  "main": "main.js",
+	  "icon": "tablet-control.png",
+	  "enabled": true,
+	  "extIcon": "https://raw.githubusercontent.com/xXBJXX/ioBroker.tablet-control/master/admin/tablet-control.png",
+	  "readme": "https://github.com/xXBJXX/ioBroker.tablet-control/blob/master/README.md",
+	  "loglevel": "info",
+	  "mode": "daemon",
+	  "type": "general",
+	  "compact": true,
+	  "connectionType": "local",
+	  "dataSource": "poll",
+	  "materialize": true,
+	  "dependencies": [
+		{
+		  "js-controller": ">=1.4.2"
+		}
+	  ],
+	  "installedFrom": "https://github.com/xXBJXx/ioBroker.tablet-control/tarball/a1b8832b33c2acf9f745babf77f16d37f1873e57"
 	},
 	"native": {
-		"option1": true,
-		"option2": "42"
+	  "motionsensor": false,
+	  "active": false,
+	  "interval": 30,
+	  "user": [
+		  ""
+	  ],
+	  "devices": [
+		  ""
+	  ]
 	},
 	"objects": [],
 	"instanceObjects": [
-		{
-			"_id": "info",
-			"type": "channel",
-			"common": {
-				"name": "Information"
-			},
-			"native": {}
+	  {
+		"_id": "info",
+		"type": "channel",
+		"common": {
+		  "name": "Information"
 		},
-		{
-			"_id": "info.connection",
-			"type": "state",
-			"common": {
-				"role": "indicator.connected",
-				"name": "Device or service connected",
-				"type": "boolean",
-				"read": true,
-				"write": false,
-				"def": false
-			},
-			"native": {}
-		}
+		"native": {}
+	  },
+	  {
+		"_id": "info.connection",
+		"type": "state",
+		"common": {
+		  "role": "indicator.connected",
+		  "name": "Device or service connected",
+		  "type": "boolean",
+		  "read": true,
+		  "write": false,
+		  "def": false
+		},
+		"native": {}
+	  }
 	]
-}
+  }

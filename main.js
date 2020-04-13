@@ -6,11 +6,9 @@
 
 // The adapter-core module gives you access to the core ioBroker functions
 // you need to create an adapter
-const utils = require('@iobroker/adapter-core'); // Get common adapter utils
+const utils = require('@iobroker/adapter-core');
 const request = require('request');
-const { default: axios } = require('axios'); // Lib to handle http requests
-const stateAttr = require('./lib/stateAttr.js'); // Load attribute library
-const bonjour = require('bonjour')(); // load Bonjour library
+
 
 // Load your modules here, e.g.:
 // const fs = require("fs");
@@ -37,152 +35,116 @@ class TabletControl extends utils.Adapter {
 	 */
 	async onReady() {
 		// Initialize your adapter here
-
-		const telegram = this.config.user;
-		const telegramUser = [];
-		if (!telegram || telegram !== []) {
-			for (const i in telegram) {
-				console.log(telegram[i]);
-				telegramUser.push(telegram[i].name);
-			}
-
-		}
-
-		const devicesTemp = this.config.devices;
-
-		const name = [];
-		const ip = [];
-		const port = [];
-		const psw = [];
-		const mt = [];
-		const charge = [];
-		
-
-
-		if (!devicesTemp || devicesTemp !== []) {
-			for (const i in devicesTemp) {
-				name.push(devicesTemp[i].name);
-				ip.push(devicesTemp[i].ip);
-				port.push(devicesTemp[i].port);
-				psw.push(devicesTemp[i].psw);
-				mt.push(devicesTemp[i].mt);
-				charge.push(devicesTemp[i].charge);
-			}
-
-		}
-
-		this.log.warn('name: ' + name);
-		this.log.warn('ip: ' + ip);
-		this.log.warn('port: ' + port);
-		this.log.warn('psw: ' + psw);
-		this.log.warn('mt: ' + mt);
-		this.log.warn('charge: ' + charge);
-		this.log.warn('telegram: ' + telegram);
-		this.log.warn('config interval: ' + this.config.interval);
-		this.log.warn('config active: ' + this.config.active);
-		this.log.warn('config motionsensor: ' + this.config.motionsensor);
-
-
-		//function updateDevice(ip, port, psw) {
-		var statusURL = 'http://' + ip[0] + ':' + port[0] + '/?cmd=deviceInfo&type=json&password=' + psw[0];
-
-			this.log.info(JSON.stringify(statusURL));
-
-		var thisOptions = {
-			uri: statusURL,
-			method: "GET",
-			timeout: 2000,
-			followRedirect: false,
-			maxRedirects: 0
-		}
-		let fullyInfoObject = null;
-		request(thisOptions, function (error, response, body) {
-			if (!error && response.statusCode == 200) {
-				//fullyInfoObject = JSON.parse(body);
-				fullyInfoObject = body;
-
-				// console.log('fullyInfoObject: ' + fullyInfoObject);
-
-				//for (let lpEntry in fullyInfoObject) {
-				//	let lpType = typeof fullyInfoObject[lpEntry]; // get Type of variable as String, like string/number/boolean
-
-				//	vari = adapter.namespace + '.' + id + '.' + infoStr + '.' + lpEntry;
-				//	if (fullyInfoObject[lpEntry] !== undefined
-				//		&& fullyInfoObject[lpEntry] !== null) {
-				//		adapter.setState(vari, fullyInfoObject[lpEntry], true);
-				//		adapter.log.debug(vari + ' ' + fullyInfoObject[lpEntry]);
-				//	}
-				// }
-				//vari = adapter.namespace + '.' + id + '.isFullyAlive';
-				//adapter.setState('info.connection', true, true);
-			}
-		 }); //else {
-			// 	vari = adapter.namespace + '.' + id + '.isFullyAlive';
-			// 	adapter.setState(vari, false, true);
-			// 	adapter.setState('info.connection', false, true);
-			// }
-		//});
-		this.log.warn('fullyInfoObject: ' + fullyInfoObject);
-		//}
-		this.setState('info.connection', true, true);
 		// Reset the connection indicator during startup
-		// this.setState('info.connection', true, true);
+		this.setState('info.connection', false, true);
+
+		await this.basicStates();
+
+
+	};
 
 		// The adapters config (in the instance object everything under the attribute "native") is accessible via
 		// this.config:
+		//this.log.info('config option1: ' + this.config.option1);
+		//this.log.info('config option2: ' + this.config.option2);
 
 		/*
 		For every state in the system there has to be also an object of type state
 		Here a simple template for a boolean variable named "testVariable"
 		Because every adapter instance uses its own unique namespace variable names can't collide with other adapters variables
 		*/
-		//await this.setObjectAsync('testVariable', {
-		//	type: 'state',
-		//	common: {
-		//		name: 'testVariable',
-		//		type: 'boolean',
-		//		role: 'indicator',
-		//		read: true,
-		//		write: true,
-		//	},
-		//	native: {},
-		//});
 
-		//// in this template all states changes inside the adapters namespace are subscribed
-		//this.subscribeStates('*');
+		async telegramUserStates() {
+			this.log.debug('telegramUserStates Status');
 
-		///*
-		//setState examples
-		//you will notice that each setState will cause the stateChange event to fire (because of above subscribeStates cmd)
-		//*/
-		//// the variable testVariable is set to true as command (ack=false)
-		//await this.setStateAsync('testVariable', true);
+			const telegram = this.config.user;
+			const telegramUser = {};
+			if (!telegram || telegram !== []) {
+				for (const i in telegram) {
+					Console.log('loop Telegram name: ' + telegram[i].name)
+					this.log.debug('loop Telegram name: ' + telegram[i].name);
+					telegramUser[i].push(telegram[i].name);
+				}
+			};
 
-		//// same thing, but the value is flagged "ack"
-		//// ack should be always set to true if the value is received from or acknowledged from the target system
-		//await this.setStateAsync('testVariable', { val: true, ack: true });
 
-		//// same thing, but the state is deleted after 30s (getState will return null afterwards)
-		//await this.setStateAsync('testVariable', { val: true, ack: true, expire: 30 });
+		}
 
-		//// examples for the checkPassword/checkGroup functions
-		//let result = await this.checkPasswordAsync('admin', 'iobroker');
-		//this.log.info('check user admin pw iobroker: ' + result);
 
-		//result = await this.checkGroupAsync('admin', 'admin');
-		//this.log.info('check group user admin group admin: ' + result);
-	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		// async basicStates() {
+
+
+
+
+
+		// }
+
+
+	// async statesCreate() {
+	// 	await this.setObjectAsync('testVariable', {
+	// 		type: 'state',
+	// 		common: {
+	// 			name: 'testVariable',
+	// 			type: 'boolean',
+	// 			role: 'indicator',
+	// 			read: true,
+	// 			write: true,
+	// 		},
+	// 		native: {},
+	// 	});
+
+	// 	// in this template all states changes inside the adapters namespace are subscribed
+	// 	this.subscribeStates('*');
+
+	// 	/*
+	// 	setState examples
+	// 	you will notice that each setState will cause the stateChange event to fire (because of above subscribeStates cmd)
+	// 	*/
+	// 	// the variable testVariable is set to true as command (ack=false)
+	// 	await this.setStateAsync('testVariable', true);
+
+	// 	// same thing, but the value is flagged "ack"
+	// 	// ack should be always set to true if the value is received from or acknowledged from the target system
+	// 	await this.setStateAsync('testVariable', { val: true, ack: true });
+
+	// 	// same thing, but the state is deleted after 30s (getState will return null afterwards)
+	// 	await this.setStateAsync('testVariable', { val: true, ack: true, expire: 30 });
+
+	// 	// examples for the checkPassword/checkGroup functions
+	// 	let result = await this.checkPasswordAsync('admin', 'iobroker');
+	// 	this.log.info('check user admin pw iobroker: ' + result);
+
+	// 	result = await this.checkGroupAsync('admin', 'admin');
+	// 	this.log.info('check group user admin group admin: ' + result);
+	// }
 
 	/**
 	 * Is called when adapter shuts down - callback has to be called under any circumstances!
 	 * @param {() => void} callback
 	 */
 	onUnload(callback) {
-
-	
-
 		try {
 			this.log.info('cleaned everything up...');
+			this.setState('info.connection', false, true);
 			callback();
 		} catch (e) {
 			callback();
