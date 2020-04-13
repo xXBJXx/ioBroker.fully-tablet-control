@@ -178,7 +178,7 @@
             })
 
             $('#fill-devices-table').on('click', () => {
-               let data = ['','','2323','',false];
+               let data = ['','','2323','','',false];
                 fillTable('#devices-table', data, true);
                 
             })
@@ -246,7 +246,7 @@
 
 
             <!-- Tab with id "tab-main" -->
-            <div id="tab-main" class="col s8 ">
+            <div id="tab-main" class="col s12 ">
                     <div class="row">
                         <div class="col s12 m4 l2">
                             <img src="tablet-control.png" width="80" height="80">
@@ -255,14 +255,11 @@
                     </div>
                     <!-- polling interval section -->
                     <div class="section">
-
                         <div class="row">
-
                             <div class="col s12">
                                 <h6 class="translate sub-title">polling interval</h6>
                             </div>
                         </div>
-
                         <div class="col s6 input-field">
                             <input type="number" id="interval" max="3600" min="0" value="30" class="value; center-align" style="width:22%">
                             <label for="interval" class="translate">interval</label>
@@ -290,7 +287,7 @@
                                             <th class="translate" style="width:5%" data-type="number" data-write="true">port</th>
                                             <th class="translate" data-type="password" data-write="true">password</th>
                                             <th class="translate" data-type="select" data-write="true" data-target='room'>room</th>
-                                            <th class="translate" style="width:5%" data-type="checkbox" data-write="true">active</th>
+                                            <th class="translate" style="width:5%" data-type="checkbox" data-write="true">enabled</th>
                                         </tr>
                                     </thead>
                                     <tbody id="devices" class="table-values">
@@ -309,7 +306,7 @@
                             <!-- telegram active checkbox -->
                             <div class="col s6 input-field checkbox">
                                 <input type="checkbox" class="value"  id="telegramAktive" />
-                                <label for="telegramAktive" class="translate">telegram-aktive</label>
+                                <label for="telegramAktive" class="translate">telegram-enabled</label>
                             </div>
                         </div>
                             <!-- telegram active checkbox -->
@@ -346,7 +343,7 @@
 
                         <div class="col s6 input-field">
                             <input type="checkbox" class="value" id="activeMotion"/>
-                            <label for="activeMotion" class="translate">active</label>
+                            <label for="activeMotion" class="translate">enabled</label>
                         </div>
                     </div>
                         <div class="row">
@@ -360,9 +357,9 @@
                                     <thead>
                                         <tr>
                                             <!-- Define table head for columns. data-type and data-write is optional, for more information refer to function fillTable -->
-                                            <th class="translate" data-type="text" data-write="true">motionid</th>
+                                            <th class="translate" data-type="text" data-write="true">motionID</th>
                                             <th class="translate" data-type="select" data-write="true" data-target='room'>room</th>
-                                            <th class="translate" data-type="checkbox" data-write="true">active</th>
+                                            <th class="translate" data-type="checkbox" data-write="true">enabled</th>
                                         </tr>
                                     </thead>
                                     <tbody id="motion" class="table-values">
@@ -399,7 +396,7 @@
                                         <tr>
                                             <!-- Define table head for columns. data-type and data-write is optional, 
                                                 for more information refer to function fillTable -->
-                                            <th class="translate" data-type="text" data-write="true">chargerid</th>
+                                            <th class="translate" data-type="text" data-write="true">chargerID</th>
                                             <th class="translate" data-type="text" data-write="true" data-target='room'>room</th>
                                         </tr>
                                     </thead>
