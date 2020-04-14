@@ -9,10 +9,8 @@
 const utils = require('@iobroker/adapter-core');
 const request = require('request');
 
-
 // Load your modules here, e.g.:
 // const fs = require("fs");
-
 class TabletControl extends utils.Adapter {
 
 	/**
@@ -36,68 +34,85 @@ class TabletControl extends utils.Adapter {
 	async onReady() {
 		// Initialize your adapter here
 		// Reset the connection indicator during startup
-		this.setState('info.connection', false, true);
+		this.setState('info.connection', true, true);
 
-		await this.basicStates();
+		await this.telegramUserStates();
+		await this.getAllRooms();
+		//await this.tests();
+		
+		
+	}
 
+	// The adapters config (in the instance object everything under the attribute "native") is accessible via
+	// this.config:
+	//this.log.info('config option1: ' + this.config.option1);
+	//this.log.info('config option2: ' + this.config.option2);
 
-	};
+	/*
+	For every state in the system there has to be also an object of type state
+	Here a simple template for a boolean variable named "testVariable"
+	Because every adapter instance uses its own unique namespace variable names can't collide with other adapters variables
+	*/
+	// async tests() {
 
-		// The adapters config (in the instance object everything under the attribute "native") is accessible via
-		// this.config:
-		//this.log.info('config option1: ' + this.config.option1);
-		//this.log.info('config option2: ' + this.config.option2);
+	// 	const raum = await this.getAllRooms();
 
-		/*
-		For every state in the system there has to be also an object of type state
-		Here a simple template for a boolean variable named "testVariable"
-		Because every adapter instance uses its own unique namespace variable names can't collide with other adapters variables
-		*/
+	// 	//this.log.info('2 ' + raum);
+		
+	// 	for (const o in raum) {
 
-		async telegramUserStates() {
-			this.log.debug('telegramUserStates Status');
-
-			const telegram = this.config.user;
-			const telegramUser = {};
-			if (!telegram || telegram !== []) {
-				for (const i in telegram) {
-					Console.log('loop Telegram name: ' + telegram[i].name)
-					this.log.debug('loop Telegram name: ' + telegram[i].name);
-					telegramUser[i].push(telegram[i].name);
-				}
-			};
-
-
-		}
+	// 		//this.log.info('3 ' + raum);
+	// 	}
 
 
+	// }
 
+		
 
+	async telegramUserStates() {
 
+		const config1 = JSON.stringify(this.config);
+		this.log.info('telegramUser' + config1);
+		const telegram = this.config.telegram_table;
+		this.log.info('telegramUser' + telegram);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-		// async basicStates() {
-
-
-
-
-
+		// //const telegramUser = {};
+		// if (!telegram || telegram !== []) {
+		// 	for (const i in telegram) {
+		// 		Console.log('loop Telegram name: ' + telegram[i]);
+		// 		this.log.debug('loop Telegram name: ' + telegram[i]);
+		// 		//telegramUser[i].push(telegram[i].name);
+		// 	}
 		// }
+	
+	}
+	
+	async getAllRooms() {
 
+
+		// const allRooms = {};
+		// const rooms = await this.getEnumAsync('rooms');
+		// if (!rooms) {
+			
+		// 	this.log.info(`Cannot get room data`);
+		// } else {
+		// 	//this.log.info('romms ' + rooms);
+		// 	const raeume = rooms.result;
+		// 	let arrayIndex = 0;
+		// 	for (const room in raeume) {
+		// 		//this.log.info('loop raeme ' + room );
+		// 		//this.log.info('loop raeme ' + raeume[room].common.name);
+		// 		allRooms[arrayIndex] = raeume[room].common.name;
+		// 		arrayIndex = arrayIndex + 1;
+				
+		// 		this.log.info('romms1 ' + JSON.stringify(raeume[room].common.name));
+		// 		this.log.info('romms2 ' + JSON.stringify(allRooms));
+		// 	}
+			
+		// }
+	
+		// return allRooms;
+	}
 
 	// async statesCreate() {
 	// 	await this.setObjectAsync('testVariable', {
@@ -186,23 +201,56 @@ class TabletControl extends utils.Adapter {
 	//  * Using this method requires "common.message" property to be set to true in io-package.json
 	//  * @param {ioBroker.Message} obj
 	//  */
-	onMessage(obj) {
+
+	onMessage(obj,allRooms) {
+		this.log.info('send command');
 		if (typeof obj === 'object' && obj.message) {
 			if (obj.command === 'send') {
 				// e.g. send email or pushover or whatever
 				this.log.info('send command');
-
+				const raum = allRooms;
 				// Send response in callback if required
 				if (obj.callback) this.sendTo(obj.from, obj.command, 'Message received', obj.callback);
 
-				switch(obj.command){
-					case 'test':
-						this.sendTo(obj.from, obj.command, 'Message received', obj.callback);
+				switch (obj.command) {
+					case 'enums':
+						if (obj.callback) {
+							this.log.info('Request enums');
+							
+							this.sendTo(obj.from, obj.command, raum, obj.callback);
+								
+						}
+						break;
+					default:
+						this.log.warn('Unknown command: ' + obj.command);
 						break;
 				}
 			}
 		}
 	}
+
+	// onMessage(obj) {
+	// 	if (obj) {
+	// 		switch (obj.command) {
+
+	// 			case 'enums':
+	// 				if (obj.callback) {
+	// 					this.log.info('Request enums');
+	// 					//alexaSH2 && alexaSH2.updateDevices(() => {
+
+	// 					this.sendTo(obj.from, obj.command, alexaSH2.getEnums(), obj.callback);
+	// 					//this.setState('smart.updates', false, true);
+	// 					this.log.warn('Enums: ' + alexaSH2);
+	// 					//});
+	// 				}
+	// 				break;
+
+	// 			default:
+	// 				this.log.warn('Unknown command: ' + obj.command);
+	// 				break;
+	// 		}
+	// 	}
+	// }
 
 }
 

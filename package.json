@@ -3,10 +3,10 @@
   "version": "0.0.1",
   "description": "tablet-control",
   "author": {
-    "name": "xXBJXX",
+    "name": "xXBJXx",
     "email": "alienware.games@gmail.com"
   },
-  "homepage": "https://github.com/xXBJXX/ioBroker.tablet-control",
+  "homepage": "https://github.com/xXBJXx/ioBroker.tablet-control",
   "license": "MIT",
   "keywords": [
     "ioBroker",
@@ -15,7 +15,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/xXBJXX/ioBroker.tablet-control"
+    "url": "https://github.com/xXBJXx/ioBroker.tablet-control"
   },
   "dependencies": {
     "@iobroker/adapter-core": "^2.2.1",
@@ -51,7 +51,7 @@
     "lint": "eslint"
   },
   "bugs": {
-    "url": "https://github.com/xXBJXX/ioBroker.tablet-control/issues"
+    "url": "https://github.com/xXBJXx/ioBroker.tablet-control/issues"
   },
   "readmeFilename": "README.md"
 }

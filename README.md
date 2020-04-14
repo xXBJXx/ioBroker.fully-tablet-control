@@ -5,12 +5,12 @@
 [![Downloads](https://img.shields.io/npm/dm/iobroker.tablet-control.svg)](https://www.npmjs.com/package/iobroker.tablet-control)
 ![Number of Installations (latest)](http://iobroker.live/badges/tablet-control-installed.svg)
 ![Number of Installations (stable)](http://iobroker.live/badges/tablet-control-stable.svg)
-[![Dependency Status](https://img.shields.io/david/xXBJXX/iobroker.tablet-control.svg)](https://david-dm.org/xXBJXX/iobroker.tablet-control)
-[![Known Vulnerabilities](https://snyk.io/test/github/xXBJXX/ioBroker.tablet-control/badge.svg)](https://snyk.io/test/github/xXBJXX/ioBroker.tablet-control)
+[![Dependency Status](https://img.shields.io/david/xXBJXx/iobroker.tablet-control.svg)](https://david-dm.org/xXBJXx/iobroker.tablet-control)
+[![Known Vulnerabilities](https://snyk.io/test/github/xXBJXx/ioBroker.tablet-control/badge.svg)](https://snyk.io/test/github/xXBJXx/ioBroker.tablet-control)
 
 [![NPM](https://nodei.co/npm/iobroker.tablet-control.png?downloads=true)](https://nodei.co/npm/iobroker.tablet-control/)
 
-**Tests:**: [![Travis-CI](http://img.shields.io/travis/xXBJXX/ioBroker.tablet-control/master.svg)](https://travis-ci.org/xXBJXX/ioBroker.tablet-control)
+**Tests:**: [![Travis-CI](http://img.shields.io/travis/xXBJXx/ioBroker.tablet-control/master.svg)](https://travis-ci.org/xXBJXx/ioBroker.tablet-control)
 
 ## tablet-control adapter for ioBroker
 
@@ -31,7 +31,7 @@ You are almost done, only a few steps left:
 	```
 1. Link your local repository with the one on GitHub:  
 	```bash
-	git remote add origin https://github.com/xXBJXX/ioBroker.tablet-control
+	git remote add origin https://github.com/xXBJXx/ioBroker.tablet-control
 	```
 
 1. Push all files to the GitHub repo:  
@@ -88,12 +88,12 @@ For later updates, the above procedure is not necessary. Just do the following:
 ## Changelog
 
 ### 0.0.1
-* (xXBJXX) initial release
+* (xXBJXx) initial release
 
 ## License
 MIT License
 
-Copyright (c) 2020 xXBJXX <alienware.games@gmail.com>
+Copyright (c) 2020 xXBJXx <alienware.games@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

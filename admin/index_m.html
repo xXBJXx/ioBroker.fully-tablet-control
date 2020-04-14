@@ -20,197 +20,206 @@
     <!-- you have to define 2 functions in the global scope: -->
     <script type="text/javascript">
 
-        /**
-         * Fill table with data from array
-         * @param {string} id - The id of the table as string, e.g. #table-id
-         * @param {array} data - The data for the row, in the order of the columns
-         * @param {boolean} delBtn - If true a delete button is added. This button will only delete the displayed row data, you have to add additional functions by yourself.
-         */
-        function fillTable(id, data, delBtn) {
-            let tableRow;
-            let _onChange = null;
+        // /**
+        //  * Fill table with data from array
+        //  * @param {string} id - The id of the table as string, e.g. #table-id
+        //  * @param {array} data - The data for the row, in the order of the columns
+        //  * @param {boolean} delBtn - If true a delete button is added. This button will only delete the displayed row data, you have to add additional functions by yourself.
+        //  */
+        // function fillTable(id, data, delBtn) {
+        //     let tableRow;
 
-            for (let d in data) {
-                console.log('furchlauf ' + d);
-                const index = d;
-                let col = $(id + ' > table > thead > tr').children().eq(index);
-                let write = $(col).attr('data-write');  //Look at the table head for column if it should be a input field
-                let type = $(col).attr('data-type');    //Look for the type of data, only relevant if data-write is true
+        //     for (let d in data) {
+        //         const index = d;
+        //         let col = $(id + ' > table > thead > tr').children().eq(index);
+        //         let write = $(col).attr('data-write');  //Look at the table head for column if it should be a input field
+        //         let type = $(col).attr('data-type');    //Look for the type of data, only relevant if data-write is true
 
-                switch (type) {
-                    case 'number':
-                        if (write === 'true') {
-                            tableRow += `<td><input type="number" class="validate; center-align" value="${data[d]}"></td>`;
-                        } else {
-                            tableRow += `<td>${data[d]}</td>`
-                        }
-                        break;
-                    case 'text':
-                        if (write === 'true') {
-                            tableRow += `<td><input type="text" class="validate; center-align" value="${data[d]}"></td>`;
-                        } else {
-                            tableRow += `<td>${data[d]}</td>`
-                        }
-                        break;
-                    case 'password':
-                        if (write === 'true') {
-                            tableRow += `<td><input type="password" class="validate; center-align" value="${data[d]}"></td>`;
-                        } else {
-                            tableRow += `<td>${data[d]}</td>`
-                        }
-                        break;
-                    case 'checkbox':
-                        if (write === 'true') {
-                            tableRow += `<td><label><input type="checkbox" class="validate" value="${data[d]}"><span></span></label></td>`;
-                        } else {
-                            tableRow += `<td>${data[d]}</td>`
-                        }
-                        break;
-                    case 'select':
-                        if (write === 'true') {
-                            tableRow += `<td><div class="input-field col s12"><select class="table-select"> <option value="" disabled selected>Choose your option</option></select></div></td>`;
-                        } else {
-                            tableRow += `<td>${data[d]}</td>`
-                        }
-                        break;
-                        
-                }
-            }
-            
-            console.log(tableRow);
-            if (delBtn === true) {
-                $('.delete-table-row').unbind('click');     //unbind event listener for buttons with class delete-table-row to prevent multiple function calls
-                tableRow += `<td><a class="delete-table-row btn-floating btn-small waves-effect waves-light red"><i class="material-icons">delete</i></a></td>`;
-            }
+        //         switch (type) {
+        //             case 'number':
+        //                 if (write === 'true') {
+        //                     tableRow += `<td><input type="number" class="validate" value="${data[d]}"></td>`;
+        //                 } else {
+        //                     tableRow += `<td>${data[d]}</td>`
+        //                 }
+        //                 break;
+        //             case 'text':
+        //                 if (write === 'true') {
+        //                     tableRow += `<td><input type="text" class="validate" value="${data[d]}"></td>`;
+        //                 } else {
+        //                     tableRow += `<td>${data[d]}</td>`
+        //                 }
+        //                 break;
+        //             case 'password':
+        //                 if (write === 'true') {
+        //                     tableRow += `<td><input type="password" class="validate" value="${data[d]}"></td>`;
+        //                 } else {
+        //                     tableRow += `<td>${data[d]}</td>`
+        //                 }
+        //                 break;
+        //             case 'ip':
+        //                 if (write === 'true') {
+        //                     tableRow += `<td><input type="ip" class="validate" value="${data[d]}"></td>`;
+        //                 } else {
+        //                     tableRow += `<td>${data[d]}</td>`
+        //                 }
+        //                 break;
+        //             case 'checkbox':
+        //                 if (write === 'true') {
+        //                     tableRow += `<td><input type="checkbox" class="validate" value="${data[d]}"></td>`;
+        //                 } else {
+        //                     tableRow += `<td>${data[d]}</td>`
+        //                 }
+        //                 case 'select':
+        //                 if (write === 'true') {
+        //                     tableRow += `<td><input type="select" class="validate" value="${data[d]}"></td>`;
+        //                 } else {
+        //                     tableRow += `<td>${data[d]}</td>`
+        //                 }
 
-            tableRow = `<tr> ${tableRow} </tr>`;
-            $(id + ' > table > tbody').append(tableRow);
+        //         }
+        //     }
 
-            //fillSelect('.table-select', ['1', '2']);
+        //     if (delBtn === true) {
+        //         $('.delete-table-row').unbind('click');     //unbind event listener for buttons with class delete-table-row to prevent multiple function calls
+        //         tableRow += `<td><a class="delete-table-row btn-floating btn-small waves-effect waves-light red"><i class="material-icons">delete</i></a></td>`;
+        //     }
 
-            $('.delete-table-row').on('click', (event) => {
-                //console.log('delete');
-                $(event.currentTarget).parentsUntil('tr').parent().remove();
+        //     tableRow = `<tr> ${tableRow} </tr>`;
+        //     $(id + ' > table > tbody').append(tableRow);
 
-                //additional functions that will be called when delete button was clicked
-            })
+        //     $('.delete-table-row').on('click', (event) => {
+        //         console.log('delete');
+        //         $(event.currentTarget).parentsUntil('tr').parent().remove();
 
-            M.updateTextFields();
-        }
+        //         //additional functions that will be called when delete button was clicked
+        //     })
+
+        //     M.updateTextFields();
+        // }
+
+        // /**
+        //  * This will be called by the admin adapter when the settings page loads
+        //  * @param {object} settings - represents the adapter config object
+        //  * @param {object} onChange - callback
+        //  */
+        // function load(settings, onChange) {
+        //     if (!settings) return;
+
+        //     //  example: select elements with id=key and class=value
+        //     $('.value').each(function () {
+        //         var $key = $(this);
+        //         var id = $key.attr('id');
+        //         // check which type of html element
+        //         if ($key.attr('type') === 'checkbox') {
+        //             $key.prop('checked', settings[id])  // read setting value from adapter config object and set checkbox in config page
+        //                 .on('change', () => onChange()) // set listener to checkbox and call onChange if the value has changed
+        //                 ;
+        //         } else {
+        //             $key.val(settings[id])
+        //                 .on('change', () => onChange())
+        //                 .on('keyup', () => onChange())
+        //                 ;
+        //         }
+        //     });
+
+        //     onChange(false);
+
+        //     //fill dynamic table
+        //     $('#fill-motion-table').on('click', () => {
+        //        let data = ['',''];
+        //         fillTable('#motion-table', data, true);
+
+        //     })
+        //     $('#fill-telegram-table').on('click', () => {
+        //        let data = [''];
+        //         fillTable('#telegram-table', data, true);
+
+        //     })
+        //     $('#fill-devices-table').on('click', () => {
+        //        let data = ['','','2323',''];
+        //         fillTable('#devices-table', data, true);
+
+        //     })
+        //     $('#fill-charger-table').on('click', () => {
+        //        let data = ['',''];
+        //         fillTable('#charger-table', data, true);
+
+        //     })
+        //     // reinitialize all the Materialize labels on the page if you are dynamically adding inputs:
+        //     if (M) M.updateTextFields();
+
+        //     //initialize dropdowns
+        //     $('.dropdown-trigger').dropdown();
+        // }
 
 
-            /**
-     * If class as identifier is, you have to reinitialise all select elements.
-     * @param {string }selector - id or class name, id: #myID, class: .myClass
-     * @param {array} data - as array where the data has to be sorted in which order you like to display them
-     */
-            function fillSelect(selector, data) {
-                $(selector).unbind('change');
-              
-                let selectInstance = M.FormSelect.getInstance($(selector));
-                if (selectInstance) {
-                    selectInstance.destroy();
-                }
-                
+        // /**
+        //  * This will be called by the admin adapter when the user presses the Save or Save and Close button
+        //  * @param {object} callback - JSON object which holds keys and their values that will be written to adapter config object
+        //  */
+        // function save(callback) {
 
-                $(selector).empty();
-                $(selector).append('<option vlaue="" selected>Choose</option>');
+        //     // example: select elements with class=value and build settings object
+        //     var obj = {};
+        //     $('.value').each(function () {
+        //         var $this = $(this);
+        //         if ($this.attr('type') === 'checkbox') {
+        //             obj[$this.attr('id')] = $this.prop('checked');
+        //         } else {
+        //             obj[$this.attr('id')] = $this.val();
+        //         }
+        //     });
+        //     callback(obj);
+        // }
 
-                for (let d in data) {
-                    $(selector).append('<option vlaue="' + data[d] + '">' + data[d] + '</option>');
-                }
-
-                instances = M.FormSelect.init($(selector));
-
-                $(selector).on('change', (event) => {
-                    _onChange();
-                })
-            }
-
-            function testSendTo() {
-                sendTo(null, 'autodetect', {eins: 'test', zwei: 'test'}, (result) => {
-                        //console.log(result)
-                } 
-            );
-            }
-        /**
-         * This will be called by the admin adapter when the settings page loads
-         * @param {object} settings - represents the adapter config object
-         * @param {object} onChange - callback
-         */
+        var screen = [];
+        var devices = [];
+        var telegram = [];
+        var motion = [];
+        var charger = [];
+        //the function loadSettings has to exist ...
         function load(settings, onChange) {
-
-            testSendTo();
-
-            _onChange = onChange;
             if (!settings) return;
-
-            //  example: select elements with id=key and class=value
-            $('.value').each(function () {
-                var $key = $(this);
-                var id = $key.attr('id');
-                // check which type of html element
-                if ($key.attr('type') === 'checkbox') {
-                    $key.prop('checked', settings[id])  // read setting value from adapter config object and set checkbox in config page
-                        .on('change', () => onChange()) // set listener to checkbox and call onChange if the value has changed
-                        ;
+            for (var key in settings) {
+                if (!settings.hasOwnProperty(key)) continue;
+                var $value = $('#' + key + '.value');
+                if ($value.attr('type') === 'checkbox') {
+                    $value.prop('checked', settings[key]).on('change', function () {
+                        if ($('#auth').prop('checked')) {
+                            $('#secure').prop('checked', true);
+                        }
+                        onChange();
+                        showHideSettings();
+                    });
                 } else {
-                    $key.val(settings[id])
-                        .on('change', () => onChange())
-                        .on('keyup', () => onChange())
-                        ;
+                    $value.val(settings[key]).on('change', function () {
+                        onChange();
+                    }).keyup(function () {
+                        onChange();
+                    });
                 }
-            });
+            }
+
+            screen = settings.screen || [];
+            devices = settings.devices || [];
+            telegram = settings.telegram || [];
+            motion = settings.motion || [];
+            charger = settings.charger || [];
 
             onChange(false);
 
-            //fill dynamic table
-            $('#fill-motion-table').on('click', () => {
-               let data = ['','',false];
-                fillTable('#motion-table', data, true);
-                
-            })
-
-            $('#fill-telegram-table').on('click', () => {
-               let data = [''];
-                fillTable('#telegram-table', data, true);
-                
-            })
-
-            $('#fill-devices-table').on('click', () => {
-               let data = ['','','2323','','',false];
-                fillTable('#devices-table', data, true);
-                
-            })
-
-            $('#fill-charger-table').on('click', () => {
-               let data = ['',''];
-                fillTable('#charger-table', data, true);
-                
-            })
-
-
-            // reinitialize all the Materialize labels on the page if you are dynamically adding inputs:
-            if (M) M.updateTextFields();
-
-            //initialize dropdowns
-            $('.dropdown-trigger').dropdown();
-
-            $('select').on('change', (event) => {
-                    _onChange();
-                })
-  
+            values2table('screen', screen, onChange);
+            values2table('devices', devices, onChange);
+            values2table('telegram', telegram, onChange);
+            values2table('motion', motion, onChange);
+            values2table('charger', charger, onChange);
         }
 
- 
 
-        /**
-         * This will be called by the admin adapter when the user presses the Save or Save and Close button
-         * @param {object} callback - JSON object which holds keys and their values that will be written to adapter config object
-         */
+        // ... and the function save has to exist.
+        // you have to make sure the callback is called with the settings object as first param!
         function save(callback) {
-
-            // example: select elements with class=value and build settings object
             var obj = {};
             $('.value').each(function () {
                 var $this = $(this);
@@ -220,8 +229,14 @@
                     obj[$this.attr('id')] = $this.val();
                 }
             });
+            obj.screen = table2values('screen');
+            obj.devices = table2values('devices');
+            obj.telegram = table2values('telegram');
+            obj.motion = table2values('motion');
+            obj.charger = table2values('charger');
             callback(obj);
         }
+    //    screen
     </script>
 
 </head>
@@ -235,184 +250,218 @@
             <div class="col s12">
                 <ul class="tabs">
                     <!-- Single tab entry -->
-                    <li class="tab col s1.1"><a href="#tab-main"  class="translate active">Main settings</a></li>
+                    <li class="tab col s1.1"><a href="#tab-main" class="translate active">Main settings</a></li>
                     <li class="tab col s1.1"><a href="#tab-devices" class="translate">fully browser</a></li>
+                    <li class="tab col s1.1"><a href="#tab-charger" class="translate">charger</a></li>
                     <li class="tab col s1.1"><a href="#tab-telegram" class="translate">telegram</a></li>
                     <li class="tab col s1.1"><a href="#tab-motion" class="translate">motion detector</a></li>
-                    <li class="tab col s1.1"><a href="#tab-charger" class="translate">charger</a></li>
+                    <li class="tab col s1.1"><a href="#tab-screen" class="translate">screen</a></li>
                 </ul>
             </div>
-            <!-- Tabs: Menu -->
+            <!-- end Tabs: Menu -->
 
 
             <!-- Tab with id "tab-main" -->
             <div id="tab-main" class="col s12 ">
+                <div class="row">
+                    <div class="col s12 m4 l2">
+                        <img src="tablet-control.png"><img class="logo">
+                    </div>
+                </div>
+                <!-- polling interval section -->
+                <div class="section">
+
                     <div class="row">
-                        <div class="col s12 m4 l2">
-                            <img src="tablet-control.png" width="80" height="80">
-                            <img class="logo">
+
+                        <div class="col s12">
+                            <h6 class="translate sub-title">polling interval</h6>
                         </div>
                     </div>
-                    <!-- polling interval section -->
-                    <div class="section">
-                        <div class="row">
-                            <div class="col s12">
-                                <h6 class="translate sub-title">polling interval</h6>
-                            </div>
-                        </div>
-                        <div class="col s6 input-field">
-                            <input type="number" id="interval" max="3600" min="0" value="30" class="value; center-align" style="width:22%">
-                            <label for="interval" class="translate">interval</label>
-                        </div>
+
+                    <div class="col s6 input-field">
+                        <input type="number" class="value" id="interval" 
+                            style="width:20%; text-align: center" max="3600" min="0"
+                            value="30" />
+                        <label for="interval" class="translate">interval</label>
                     </div>
                 </div>
-                    <!-- polling interval section -->
+            </div>
+            <!-- end polling interval section -->
 
 
-                    <!-- Tab with id "tab-devices" -->
-                    <div id="tab-devices" class="col s12 page">
-                        <div class="row"></div>
+            <!-- Tab with id "tab-devices" -->
+            <div id="tab-devices" class="col s12 " style="top: 20px">
+                <div class="row"></div>
+                    <div class="col s12" id="devices">
                         <div class="row">
-                            <!-- fully browser login table -->
-                            <div class="col">
-                                <a id="fill-devices-table" class="waves-effect waves-light btn">add Device</a>
+                            <a class="waves-effect waves-light btn table-button-add">add Device</a>
+                        </div>
+                        <!-- fully browser login table -->
+                        <div class="table-values-div">
+                            <table class="table-values">
+                                <thead>
+                                    <tr>
+                                        <th class="translate" style="width: auto; text-align: center;" data-style="text-align: center" data-name="name">name</th>
+                                        <th class="translate" value="2323" style="width: auto; text-align: center;" data-style="text-align: center" data-name="ip">ip</th>
+                                        <th class="translate" data-type="number" data-default="2323" data-style="text-align: center" style="width: 5%; text-align: center;" data-name="port">port</th>
+                                        <th class="translate" style="width: auto; text-align: center;" data-style="text-align: center" data-name="password"data-type="password">password</th>
+                                        <th class="translate" style="width: 15%; text-align: center;" data-type="select" data-name="room">room</th>
+                                        <th class="translate" style="width: 1%; text-align: center;" data-type="checkbox" data-name="enabled">enabled</th> 
+                                        <th class="translate" style="width: 8%; text-align: center;" data-buttons="delete up down">delete</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                        <!-- end fully browser table -->
+                    </div>
+            </div>
+            <!-- Tab with id "tab-devices" -->
+
+                <!-- Tab with id "tab-charger" -->
+                <div id="tab-charger" class="col s12">
+                    <div class="row"></div>
+                    <div class="row">
+                        <div class="col s12" id="charger">
+                            <div class="row center">
+                                <!-- charger table -->
+                                <a class="waves-effect waves-light btn table-button-add">add Device</a>
                             </div>
-                            <div id="devices-table">
-                                <table class="centered">
+                            <div class="table-values-div">
+                                <table class="table-values">
                                     <thead>
                                         <tr>
-                                            <!-- Define table head for columns. data-type and data-write is optional, for more information refer to function fillTable -->
-                                            <th class="translate" data-type="text" data-write="true">name</th>
-                                            <th class="translate" data-type="text" data-write="true">ip</th>
-                                            <th class="translate" style="width:5%" data-type="number" data-write="true">port</th>
-                                            <th class="translate" data-type="password" data-write="true">password</th>
-                                            <th class="translate" data-type="select" data-write="true" data-target='room'>room</th>
-                                            <th class="translate" style="width:5%" data-type="checkbox" data-write="true">enabled</th>
+                                            <th class="translate" data-style="text-align: center" style="width: 50px; text-align: center;" data-name="chargerid">chargerID</th>
+                                                <th class="translate"  style="width: 15%; text-align: center;" data-type="select"
+                                                data-name="room">room</th>
+                                            <th class="translate" style="width: 15%; text-align: center;" data-type="select" data-name="power_mode" data-options="false/Continuous current;true/Charge cycle">power_mode</th>
+                                            <th class="translate" style="width: 8%; text-align: center;"
+                                                data-buttons="delete up down">delete</th>
+                                               
                                         </tr>
                                     </thead>
-                                    <tbody id="devices" class="table-values">
-                                    </tbody>
                                 </table>
                             </div>
-                            <!-- fully browser table -->
                         </div>
                     </div>
-                    <!-- Tab with id "tab-devices" -->
+                    <!-- end charger table -->
+                </div>
+                 <!-- end Tab with id "tab-charger" -->
 
-                    <!-- Tab with id "tab-telegram"-->
-                    <div id="tab-telegram" class="col s12">
-                        <div class="row">
+            <!-- Tab with id "tab-telegram"-->
+            <div id="tab-telegram" class="col s12">
+                <div class="row">
 
-                            <!-- telegram active checkbox -->
-                            <div class="col s6 input-field checkbox">
-                                <input type="checkbox" class="value"  id="telegramAktive" />
-                                <label for="telegramAktive" class="translate">telegram-enabled</label>
-                            </div>
-                        </div>
-                            <!-- telegram active checkbox -->
-                    
-                            <!-- telegram table -->
-                            <div class="row">
-                                <div class="col">
-                                    <a id="fill-telegram-table" class="waves-effect waves-light btn">add User</a>
-                                </div>
-                                <div id="telegram-table">
-                                    <table class="centered">
-                                        <thead>
-                                            <tr>
-                                                <!-- Define table head for columns. data-type and data-write is optional,
-                                                 for more information refer to function fillTable -->
-                                                <th class="translate" data-type="text" data-write="true">telegramUser</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="telegram" class="table-values">
-                                        </tbody>
-                                    </table>
-                                </div>
-                    
-                            </div>
-                            <!-- telegram table -->
-                        
+
+                    <!-- select telegram active -->
+                    <div class="input-field col s3">
+                        <select class="value" autofocus="autofocus" data-default="false" value="false" id="telegram_enabled">
+                            <option class="translate" value="false" selected>Warning activated</option>
+                            <option class="translate" value="true" selected>Warning deactivated</option>
+                        </select>
                     </div>
-                    <!-- Tab with id "tab-telegram"-->
-
-                    <!-- Tab with id "tab-motion" -->
-                    <div id="tab-motion" class="col s12">
-                        <div class="row">
-                            
-
-                        <div class="col s6 input-field">
-                            <input type="checkbox" class="value" id="activeMotion"/>
-                            <label for="activeMotion" class="translate">enabled</label>
-                        </div>
-                    </div>
-                        <div class="row">
-                            
-                             <!-- motion table -->
-                            <div class="col">
-                                <a id="fill-motion-table" class="waves-effect waves-light btn">add Device</a>
-                            </div>
-                            <div id="motion-table">
-                                <table class="centered">
-                                    <thead>
-                                        <tr>
-                                            <!-- Define table head for columns. data-type and data-write is optional, for more information refer to function fillTable -->
-                                            <th class="translate" data-type="text" data-write="true">motionID</th>
-                                            <th class="translate" data-type="select" data-write="true" data-target='room'>room</th>
-                                            <th class="translate" data-type="checkbox" data-write="true">enabled</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="motion" class="table-values">
-                                    </tbody>
-                                </table>
-                            </div>
-                            <!-- dynamic table -->
-                        </div>
-                    </div>
-                    <!-- Tab with id "tab-devices" -->
-
-                    <!-- Tab with id "tab-charger" -->
-                    <div id="tab-charger" class="col s12">
-                        <div class="row">
-                          <!-- select  -->   
-                        <div class="input-field col s3">
-                            <select required="required" value= "false" id="power_mode">
-                                <option class="translate" value="true" selected>Charge cycle</option>
-                                <option class="translate" value="false" selected>Continuous current</option>
-                            </select>
-                            <label for="power_mode" class="translate">power_mode</label>
-                        </div>
+                    <!-- end select telegram active -->
             
-
-
-                        <div class="row">
-                             <!-- motion table -->
-                            <div class="col">
-                                <a id="fill-charger-table" class="waves-effect waves-light btn">add Device</a>
-                            </div>
-                            <div id="charger-table">
-                                <table class="centered">
-                                    <thead>
-                                        <tr>
-                                            <!-- Define table head for columns. data-type and data-write is optional, 
-                                                for more information refer to function fillTable -->
-                                            <th class="translate" data-type="text" data-write="true">chargerID</th>
-                                            <th class="translate" data-type="text" data-write="true" data-target='room'>room</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="motion" class="table-values">
-                                    </tbody>
-                                </table>
-                            </div>
-                            <!-- dynamic table -->
+                    <!-- telegram table -->
+                    <div class="col s12" id="telegram" style="bottom: 52.7px">
+                        <div class="row center" style="margin-right: 93px;">
+                            <a class="waves-effect waves-light btn table-button-add">add Device</a>
                         </div>
+                        <!-- motion table -->
+                        <div class="table-values-div">
+                            <table class="table-values">
+                                <thead>
+                                    <tr>
+                                        <th class="translate" data-style="text-align: center" style="width: auto; text-align: center;" 
+                                            data-name="telegramUser">telegramUser</th>
+                                        <th class="translate" style="width: 8%; text-align: center;" 
+                                            data-buttons="delete up down">delete</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                        <!-- end motion table -->
+                    </div>
+            
+            
+                </div>
+            </div>
+                <!-- end telegram table -->
+            
+            
+                <!-- Tab with id "tab-motion" -->
+                <div id="tab-motion" class="col s12">
+                    <div class="row"></div>
+                    <div class="col s12" id="motion">
+            
+                        <div class="row center">
+                            <a class="waves-effect waves-light btn table-button-add">add Device</a>
+                        </div>
+                        <!-- motion table -->
+                        <div class="table-values-div">
+                            <table class="table-values">
+                                <thead>
+                                    <tr>
+                                        <th class="translate" data-style="text-align: center" style="width: auto; text-align: center;" 
+                                            data-name="motionid">motionID</th>
+                                            <th class="translate"  style="width: 15%; text-align: center;" data-type="select"
+                                            data-name="room">room</th>
+                                        <th class="translate " style="width: 1%; text-align: center;" data-type="checkbox"
+                                            data-name="enabled">enabled</th>
+                                        <th class="translate" style="width: 8%; text-align: center;" 
+                                            data-buttons="delete up down">delete</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                        <!-- end motion table -->
                     </div>
                 </div>
-                    <!-- Tab with id "tab-devices" -->
-     
-    </div>
-    </div>
- 
-</body>
+                <!-- end Tab with id "tab-devices" -->
+       
+            <!-- Tab with id "tab-telegram"-->
+            <div id="tab-screen" class="col s12">
+                <div class="row">
+                    <!-- select telegram active -->
+                    <div class="input-field col s3">
+                        <select class="value" autofocus="autofocus" data-default="false" value="false" id="screensaver">
+                            <option class="translate" value="true" selected>Screensaver on</option>
+                            <option class="translate" value="false" selected>Screensaver off</option>
+                        </select>
+                      
+                    </div>
+                    <!-- end select telegram active -->
+            
+                    <!-- telegram table -->
+                    <div class="col s12" id="screen" style="bottom: 52.7px">
+                        <div class="row center" style="margin-right: 93px;">
+                            <a class="waves-effect waves-light btn table-button-add">add Device</a>
+                        </div>
+                        <!-- motion table -->
+                        <div class="table-values-div">
+                            <table class="table-values">
+                                <thead>
+                                    <tr>
+                                        <th class="translate" data-style="text-align: center" style="width: auto; text-align: center;" 
+                                            data-name="telegram_user">telegramUser</th>
+                                        <th class="translate" style="width: 8%; text-align: center;" 
+                                            data-buttons="delete up down">delete</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                        <!-- end motion table -->
+                    </div>
+            
+            
+                </div>
+            </div>
+                <!-- end telegram table -->
 
+        </div> 
+       
+            
+    </div>
+            
+</body>
+            
 </html>

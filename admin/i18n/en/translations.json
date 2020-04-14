@@ -3,8 +3,8 @@
     "Continuous current": "Continuous current",
     "Warning activated": "Telegram Warning activated",
     "Warning deactivated": "Telegram Warning deactivated",
-    "add Device": "add Device",
-    "add User": "Add User",
+    "addDevice": "add Device",
+    "addUser": "Add User",
     "charger": "Charger",
     "chargerID": "Data point from a charger",
     "delete": "Delete",
@@ -17,10 +17,13 @@
     "name": "Tablet name",
     "password": "Password",
     "polling interval": "Polling interval",
-    "port": "port",
-    "power_mode": "power mode",
+    "port": "Port",
+    "power_mode": "Charging mode",
     "room": "Room",
     "telegram": "Optional Telegram",
     "telegram-enabled": "Activate Telegram Warning",
-    "telegramUser": "Telegram user"
+    "telegramUser": "Telegram user",
+    "screen":"Screensaver",
+    "Screensaver off":"Screensaver off",
+    "Screensaver on":"Screensaver on"
 }

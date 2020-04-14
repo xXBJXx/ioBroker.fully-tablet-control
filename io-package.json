@@ -42,7 +42,7 @@
             "zh-cn": "平板电脑控制"
         },
         "authors": [
-            "xXBJXX <alienware.games@gmail.com>"
+            "xXBJXx <alienware.games@gmail.com>"
         ],
         "keywords": [
             "ioBroker",
@@ -54,8 +54,8 @@
         "main": "main.js",
         "icon": "tablet-control.png",
         "enabled": true,
-        "extIcon": "https://raw.githubusercontent.com/xXBJXX/ioBroker.tablet-control/master/admin/tablet-control.png",
-        "readme": "https://github.com/xXBJXX/ioBroker.tablet-control/blob/master/README.md",
+        "extIcon": "https://raw.githubusercontent.com/xXBJXx/ioBroker.tablet-control/master/admin/tablet-control.png",
+        "readme": "https://github.com/xXBJXx/ioBroker.tablet-control/blob/master/README.md",
         "loglevel": "info",
         "mode": "daemon",
         "type": "general",
@@ -72,10 +72,10 @@
         "installedFrom": "https://github.com/xXBJXx/ioBroker.tablet-control/tarball/a1b8832b33c2acf9f745babf77f16d37f1873e57"
     },
     "native": {
-        "motionsensor": false,
+       
         "active": false,
         "interval": 30,
-        "user": [
+        "telegram_table": [
             ""
         ],
         "devices": [
