@@ -72,15 +72,15 @@
         "installedFrom": "https://github.com/xXBJXx/ioBroker.tablet-control/tarball/a1b8832b33c2acf9f745babf77f16d37f1873e57"
     },
     "native": {
-       
-        "active": false,
-        "interval": 30,
-        "telegram_table": [
-            ""
-        ],
-        "devices": [
-            ""
-        ]
+        "interval": "30",
+        "devices": [],
+        "charger": [],
+        "brightness": [],
+        "screensaver": "false",
+        "screen": [],
+        "telegram_enabled": false,
+        "telegram": [],
+        "motion": []
     },
     "objects": [],
     "instanceObjects": [
