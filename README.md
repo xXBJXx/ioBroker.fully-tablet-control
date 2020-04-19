@@ -17,11 +17,11 @@
 
 ### Control your tablet with the Fully Kiosk Browser
 
-# `!!! ACHTUNG !!!`
+# !!! ACHTUNG !!!
 
-# `Noch im aufbau nicht installieren`
+# Noch im aufbau nicht installieren
 
-# `Do not install under construction`
+# Do not install under construction
 
 ## To-Do
 
