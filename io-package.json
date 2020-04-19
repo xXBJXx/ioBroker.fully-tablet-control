@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "tablet-control",
-        "version": "0.0.1",
+        "version": "0.0.3",
         "news": {
             "0.0.1": {
                 "en": "initial release",
@@ -78,9 +78,10 @@
         "brightness": [],
         "screensaver": "false",
         "screen": [],
-        "telegram_enabled": false,
+        "telegram_enabled": "false",
         "telegram": [],
-        "motion": []
+        "motion": [],
+        "screen_on": "true"
     },
     "objects": [],
     "instanceObjects": [

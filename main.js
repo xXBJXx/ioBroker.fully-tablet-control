@@ -21,6 +21,8 @@ const isScreenOn = [];
 const bright = [];
 const currentFragment = [];
 let requestTimeout = null;
+let telegramSend = false;
+const User = [];
 
 // Load your modules here, e.g.:
 // const fs = require("fs");
@@ -37,7 +39,7 @@ class TabletControl extends utils.Adapter {
 		this.on('ready', this.onReady.bind(this));
 		this.on('objectChange', this.onObjectChange.bind(this));
 		this.on('stateChange', this.onStateChange.bind(this));
-		//this.on('message', this.onMessage.bind(this));
+		this.on('message', this.onMessage.bind(this));
 		this.on('unload', this.onUnload.bind(this));
 	}
 
@@ -48,15 +50,20 @@ class TabletControl extends utils.Adapter {
 		// Initialize your adapter here
 		// Reset the connection indicator during startup
 		this.setState('info.connection', false, true);
-
-		await this.charger();
-
+	
 		await this.create_state();
 		await this.httpLink();
 		await this.stateRequest();
 
+		const telegramUser = this.config.telegram;
+		if (!telegramUser || telegramUser !== []) {
+			for (const u in telegramUser) {
 
-
+				User[u] = telegramUser[u].telegramUser;
+				this.log.debug('read telegram user: ' +  JSON.stringify(User));
+			}
+			
+		}
 	}
 
 	async httpLink() {
@@ -79,13 +86,13 @@ class TabletControl extends utils.Adapter {
 			}
 
 		}
-		// this.log.debug('Screen: ' + JSON.stringify(Screen));
+		this.log.debug('Screen: ' + JSON.stringify(Screen));
 		this.log.debug('deviceInfo: ' + JSON.stringify(deviceInfo));
-		// this.log.debug('screenBrightness: ' + JSON.stringify(screenBrightness));
+		this.log.debug('screenBrightness: ' + JSON.stringify(screenBrightness));
 	}
 
 	async stateRequest() {
-
+		
 		try {
 			const deviceModel = [];
 			const lastAppStart = [];
@@ -101,7 +108,7 @@ class TabletControl extends utils.Adapter {
 			const visBattery = [];
 
 			requestTimeout = setTimeout(async () => {
-				const requestUrl = await deviceInfo;
+				const requestUrl = deviceInfo;
 				
 				if (!requestUrl || requestUrl !== []) {
 					let objects = [];
@@ -117,72 +124,76 @@ class TabletControl extends utils.Adapter {
 							this.log.debug('[result] ' + JSON.stringify(objects));
 
 							ipadresse[i] = objects.ip4;
-							await this.setForeignStateAsync(`tablet-control.0.device.${stateID}.device_ip`, { val: ipadresse[i], ack: true });
+							await this.setStateChangedAsync(`device.${stateID}.device_ip`, { val: ipadresse[i], ack: true });
 							this.log.debug('IP: ' + ipadresse);
 
 							plugged[i] = objects.plugged;
-							await this.setForeignStateAsync(`tablet-control.0.device.${stateID}.Plugged`, { val: plugged[i], ack: true });
+							await this.setStateChangedAsync(`device.${stateID}.Plugged`, { val: plugged[i], ack: true });
 							this.log.debug('plugged ' + plugged);
 
 							bat[i] = objects.batteryLevel;
-							await this.setForeignStateAsync(`tablet-control.0.device.${stateID}.battery`, { val: bat[i], ack: true });
+							await this.setStateChangedAsync(`device.${stateID}.battery`, { val: bat[i], ack: true });
 							this.log.debug('bat ' + bat);
 
 							isScreenOn[i] = objects.isScreenOn;
-							await this.setForeignStateAsync(`tablet-control.0.device.${stateID}.ScreenOn`, { val: isScreenOn[i], ack: true });
+							await this.setStateChangedAsync(`device.${stateID}.ScreenOn`, { val: isScreenOn[i], ack: true });
 							this.log.debug('isScreenOn ' + isScreenOn);
 
+							if (!isScreenOn[i]) {
+								this.screenOn();
+							}
+
 							bright[i] = objects.screenBrightness;
-							await this.setForeignStateAsync(`tablet-control.0.device.${stateID}.brightness`, { val: bright[i], ack: true });
+							await this.setStateChangedAsync(`device.${stateID}.brightness`, { val: bright[i], ack: true });
 							this.log.debug('bright ' + bright);
 
 							currentFragment[i] = objects.currentFragment;
-							await this.setForeignStateAsync(`tablet-control.0.device.${stateID}.active_display`, { val: currentFragment[i], ack: true });
+							await this.setStateChangedAsync(`device.${stateID}.active_display`, { val: currentFragment[i], ack: true });
 							this.log.debug('currentFragment ' + currentFragment);
 
 							deviceModel[i] = objects.deviceModel;
-							await this.setForeignStateAsync(`tablet-control.0.device.${stateID}.deviceModel`, { val: deviceModel[i], ack: true });
+							await this.setStateChangedAsync(`device.${stateID}.deviceModel`, { val: deviceModel[i], ack: true });
 							this.log.debug('deviceModel ' + deviceModel);
 
 							lastAppStart[i] = objects.lastAppStart;
-							await this.setForeignStateAsync(`tablet-control.0.device.${stateID}.LastAppStart`, { val: lastAppStart[i], ack: true });
+							await this.setStateChangedAsync(`device.${stateID}.LastAppStart`, { val: lastAppStart[i], ack: true });
 							this.log.debug('lastAppStart ' + lastAppStart);
 
 							appTotalMemory[i] = objects.appTotalMemory;
-							await this.setForeignStateAsync(`tablet-control.0.device.${stateID}.memory_info.appTotalMemory`, { val: await this.bytesToSize(await appTotalMemory[i]), ack: true });
+							await this.setStateChangedAsync(`device.${stateID}.memory_info.appTotalMemory`, { val: await this.bytesToSize(await appTotalMemory[i]), ack: true });
 							this.log.debug('appTotalMemory ' + appTotalMemory);
 
 							appUsedMemory[i] = objects.appUsedMemory;
-							await this.setForeignStateAsync(`tablet-control.0.device.${stateID}.memory_info.appUsedMemory`, { val: await this.bytesToSize(await appUsedMemory[i]), ack: true });
+							await this.setStateChangedAsync(`device.${stateID}.memory_info.appUsedMemory`, { val: await this.bytesToSize(await appUsedMemory[i]), ack: true });
 							this.log.debug('appUsedMemory ' + appUsedMemory);
 
 							appFreeMemory[i] = objects.appFreeMemory;
-							await this.setForeignStateAsync(`tablet-control.0.device.${stateID}.memory_info.appFreeMemory`, { val: await this.bytesToSize(await appFreeMemory[i]), ack: true });
+							await this.setStateChangedAsync(`device.${stateID}.memory_info.appFreeMemory`, { val: await this.bytesToSize(await appFreeMemory[i]), ack: true });
 							this.log.debug('appFreeMemory ' + appFreeMemory);
 
 							ramTotalMemory[i] = objects.ramTotalMemory;
-							await this.setForeignStateAsync(`tablet-control.0.device.${stateID}.memory_info.ramTotalMemory`, { val: await this.bytesToSize(await ramTotalMemory[i]), ack: true });
+							await this.setStateChangedAsync(`device.${stateID}.memory_info.ramTotalMemory`, { val: await this.bytesToSize(await ramTotalMemory[i]), ack: true });
 							this.log.debug('ramTotalMemory ' + ramTotalMemory);
 
 							ramUsedMemory[i] = objects.ramUsedMemory;
-							await this.setForeignStateAsync(`tablet-control.0.device.${stateID}.memory_info.ramUsedMemory`, { val: await this.bytesToSize(await ramUsedMemory[i]), ack: true });
+							await this.setStateChangedAsync(`device.${stateID}.memory_info.ramUsedMemory`, { val: await this.bytesToSize(await ramUsedMemory[i]), ack: true });
 							this.log.debug('ramUsedMemory ' + ramUsedMemory);
 
 							ramFreeMemory[i] = objects.ramFreeMemory;
-							await this.setForeignStateAsync(`tablet-control.0.device.${stateID}.memory_info.ramFreeMemory`, { val: await this.bytesToSize(await ramFreeMemory[i]), ack: true });
+							await this.setStateChangedAsync(`device.${stateID}.memory_info.ramFreeMemory`, { val: await this.bytesToSize(await ramFreeMemory[i]), ack: true });
 							this.log.debug('ramFreeMemory ' + ramFreeMemory);
 
 							ssid[i] = objects.ssid.replace(/"/gi, '');
 							this.log.debug('ssid: ' + ssid);
 
 							if (ssid[i].replace(/_/gi, ' ') == '<unknown ssid>') {
-								await this.setForeignStateAsync(`tablet-control.0.device.${stateID}.ssid`, { val: 'is not supported', ack: true });
+								await this.setStateChangedAsync(`device.${stateID}.ssid`, { val: 'is not supported', ack: true });
 							}
 							else if (ssid[i].replace(/_/gi, ' ') == '') {
-								await this.setForeignStateAsync(`tablet-control.0.device.${stateID}.ssid`, { val: 'is not supported', ack: true });
+								await this.setStateChangedAsync(`device.${stateID}.ssid`, { val: 'is not supported', ack: true });
 							}
 							else {
-								await this.setForeignStateAsync(`tablet-control.0.device.${stateID}.ssid`, { val: ssid[i].replace(/_/gi, ' '), ack: true });
+								await this.setStateChangedAsync(`device.${stateID}.ssid`, { val: ssid[i].replace(/_/gi, ' '), ack: true });
 							}
 
 							
@@ -198,76 +209,147 @@ class TabletControl extends utils.Adapter {
 							if (bat[i] <= 10) 	visBattery[i] = 1; 	// 10 %
 							if (bat[i] <= 0) 	visBattery[i] = 0; 	// empty
 							if (plugged[i]) 	visBattery[i] = 11; // Charger on
-					
+							
 
 							this.log.debug(`${stateID} visBattery ` + bat[i] + ' ' + visBattery[i]);
-							await this.setForeignStateAsync(`tablet-control.0.device.${await stateID}.state_of_charge_vis`, { val: await visBattery[i], ack: true });
+							await this.setStateChangedAsync(`device.${await stateID}.state_of_charge_vis`, { val: await visBattery[i], ack: true });
 
 
 							// last Info Update
-							await this.setForeignStateAsync(`tablet-control.0.device.${stateID}.lastInfoUpdate`, { val: Date.now(), ack: true });
+							await this.setStateChangedAsync(`device.${stateID}.lastInfoUpdate`, { val: Date.now(), ack: true });
 
 
 
 
 						}).on('error', (e) => {
 							this.log.error('request device Info error: ' + e);
-							this.setState('info.connection', false, true);
+							this.setStateChangedAsync('info.connection', false, true);
 
 						});
 					}
 				}
+				
 				this.charger();
 				this.stateRequest();
 			}, parseInt(this.config.interval) * 1000);
 		} catch (error) {
-			// this.log.error('stateRequest', error);
+			this.log.error(`[stateRequest] : ${error.message}, stack: ${error.stack}`);
 		}
 	}
 
 
 	async charger() {
+		try{
+			const loadStop = [];
+			const chargerid = [];
+			const loadStart = [];
+			const power_mode = [];
+			const chargeDevice = [];
+			const chargeDeviceValue = [];
+			
+			
+			const charger = this.config.charger;
+			const telegram_enabled =  JSON.parse(this.config.telegram_enabled);
+	
+			if (!charger || charger !== []) {
+				for (const i in charger) {
 
-		const chargerid = [];
-		const chargeDevice = [];
-		const power_mode = [];
-		const loadStart = [];
-		const loadStop = [];
-		const chargeDeviceValue = [];
+					chargerid[i] = charger[i].chargerid;
+					power_mode[i] = JSON.parse(charger[i].power_mode);
+					loadStart[i] = JSON.parse(charger[i].loadStart);
+					loadStop[i] = JSON.parse(charger[i].loadStop);
+					
 
-		const charger = this.config.charger;
-		if (!charger || charger !== []) {
-			for (const i in charger) {
-				chargerid[i] = charger[i].chargerid;
-				power_mode[i] = JSON.parse(charger[i].power_mode);
-				loadStart[i] = JSON.parse(charger[i].loadStart);
-				loadStop[i] = JSON.parse(charger[i].loadStop);
-
-				chargeDevice[i] = await this.getForeignStateAsync(chargerid[i]);
-				 chargeDeviceValue[i] = chargeDevice[i].val;
-				this.subscribeStates(chargerid[i]);
-				this.log.debug(`chargerid: ` + JSON.stringify(chargerid[i]) + ` val: ` + chargeDeviceValue[i]);
+					chargeDevice[i] = await this.getForeignStateAsync(chargerid[i]);
+				 	chargeDeviceValue[i] = chargeDevice[i].val;
+					
+					this.log.debug(`chargerid: ` + JSON.stringify(chargerid[i]) + ` val: ` + chargeDeviceValue[i]);
 				
-				if (await power_mode[i] == true) {
+					if (await power_mode[i] == true) {
 
-					// if (bat[i] <= loadStart[i] && !chargeDeviceValue[i]) await this.setForeignStateAsync(await chargerid[i], true, false);
-					if (bat[i] <= 85 && !chargeDeviceValue[i]) await this.setForeignStateAsync(await chargerid[i], true, false);
+						if (bat[i] <= loadStart[i] && !chargeDeviceValue[i]) await this.setForeignStateAsync(await chargerid[i], true, false);
 
-					if (bat[i] <= loadStart[i] && !chargeDeviceValue[i]) this.log.info(`${await tabletName[i]} Loading started`);
+						if (bat[i] <= loadStart[i] && !chargeDeviceValue[i]) this.log.info(`${await tabletName[i]} Loading started`);
 
-					if (bat[i] >= loadStop[i] && chargeDeviceValue[i]) await this.setForeignStateAsync(await chargerid[i], false, false);
+						if (bat[i] >= loadStop[i] && chargeDeviceValue[i]) await this.setForeignStateAsync(await chargerid[i], false, false);
 
-					if (bat[i] >= loadStop[i] && chargeDeviceValue[i]) this.log.info(`${await tabletName[i]} Charging cycle ended`);
+						if (bat[i] >= loadStop[i] && chargeDeviceValue[i]) this.log.info(`${await tabletName[i]} Charging cycle ended`);
 
-				} else {
+					} else {
 
-					if (!chargeDeviceValue[i]) 	this.setForeignStateAsync(chargerid[i], true, false);
-					if (!chargeDeviceValue[i]) 	this.log.info(`${await tabletName[i]} Continuous current`);
+						if (!chargeDeviceValue[i]) 	this.setForeignStateAsync(chargerid[i], true, false);
+						if (!chargeDeviceValue[i]) 	this.log.info(`${await tabletName[i]} Continuous current`);
+					}
+
+					
+					if (telegram_enabled === true) {
+						
+						if (bat[i] <= 18 && !telegramSend  && !chargeDeviceValue[i]) {
+							telegramSend = true;
+							this.onMessage(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${await tabletName[i]} Tablet charging function has detected a malfunction, the tablet is not charging, please check it !!!`, User);
+							this.log.warn(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + `  ${await tabletName[i]} Tablet charging function has detected a malfunction, the tablet is not charging, please check it !!!` );
+							this.setForeignStateAsync(await chargerid[i], true, false);
+
+						} else if (bat[i] > 18 && telegramSend  && chargeDeviceValue[i])  {
+							telegramSend = false;
+							this.onMessage(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${await tabletName[i]} Tablet is charging the problem has been fixed.`, User);
+							this.log.warn(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${await tabletName[i]} Tablet is charging the problem has been fixed.` );
+						}
+						
+					} else {
+
+						if (bat[i] <= 18 && !chargeDeviceValue[i]) {
+							telegramSend = true;
+							this.log.warn(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${await tabletName[i]} Tablet charging function has detected a malfunction, the tablet is not charging, please check it !!!` );
+							this.setForeignStateAsync(await chargerid[i], true, false);
+
+						} else if (bat[i] > 18 && chargeDeviceValue[i])  {
+							telegramSend = false;
+							this.log.warn(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${await tabletName[i]} Tablet is charging the problem has been fixed.` );
+						}
+
+					}
+
+
+				}
+
+
+			}
+		} catch (error) {
+			this.log.error(`[charger] : ${error.message}, stack: ${error.stack}`);
+		}
+	}
+
+
+	async screenOn() {
+		try {
+			const screen_on = JSON.parse(this.config.screen_on);
+
+			if (screen_on) {
+
+				for (const s in isScreenOn) {
+
+					if (isScreenOn[s] == false) {
+
+						this.log.warn(`[ATTENTION] Screen from ${await tabletName[s]} has been switched off Screen is being switched on again`);
+
+						this.sendCommand(Screen[s], `${await tabletName[s]} screenON()`);
+					}
 				}
 			}
-
-
+		} catch (error) {
+			this.log.error(`[screenOn] : ${error.message}, stack: ${error.stack}`);
 		}
+	}
+
+
+	async sendCommand(link, log) {
+		require('request')(link, async (error) => {
+
+			this.log.debug('request carried out for: ' + link);
+			if (error) this.log.error('### Error request from ' + log + ': ' + error);
+	
+		});
 	}
 
 	async convert_percent(str) {
@@ -308,7 +390,7 @@ class TabletControl extends utils.Adapter {
 		try {
 
 			this.log.debug(`create_state start`);
-
+			// const tablet = this.config.screen;
 			const tablet = this.config.devices;
 			if (!tablet || tablet !== []) {
 				for (const i in tablet) {
@@ -571,11 +653,12 @@ class TabletControl extends utils.Adapter {
 			this.setState('info.connection', true, true);
 
 		} catch (error) {
-			this.log.error(`[basicStatesCreate] : ${error.message}, stack: ${error.stack}`);
+			this.log.error(`[create_state] : ${error.message}, stack: ${error.stack}`);
 
 		}
 
 	}
+
 
 	// async statesCreate() {
 	// 	await this.setObjectAsync('testVariable', {
@@ -670,20 +753,31 @@ class TabletControl extends utils.Adapter {
 	//  * @param {ioBroker.Message} obj
 	//  */
 
-	// onMessage(obj) {
-	// 	this.log.info('send command');
-	// 	if (typeof obj === 'object' && obj.message) {
-	// 		if (obj.command === 'send') {
-	// 			// e.g. send email or pushover or whatever
-	// 			this.log.info('send command');
+	onMessage(msg,user) {
+		// e.g. send email or pushover or whatever
+		this.log.debug('send command');
 
-	// 			// Send response in callback if required
-	// 			if (obj.callback) this.sendTo(obj.from, obj.command, 'Message received', obj.callback);
-
-	// 		}
-	// 	}
-	// }
+		this.sendTo('telegram.0', 'send', {
+			text: msg,
+			user: user
+		});
+	}
 }
+
+// 	onMessage(obj,msg,telegramUser) {
+// 		this.log.info('send command');
+// 		if (typeof obj === 'object' && obj.message) {
+// 			if (obj.command === 'send') {
+// 				// e.g. send email or pushover or whatever
+// 				this.log.info('send command');
+
+// 				// Send response in callback if required
+// 				// if (obj.callback) this.sendTo(obj.from, obj.command, 'Message received', obj.callback);
+// 		
+// 			}
+// 		}
+// 	}
+// }
 
 // @ts-ignore parent is a valid property on module
 if (module.parent) {

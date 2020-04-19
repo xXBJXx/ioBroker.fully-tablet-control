@@ -8,18 +8,21 @@
             "type": "node",
             "request": "launch",
             "name": "Launch Program",
-            "program": "${workspaceRoot}\\main.js",
-           //"cwg": "${workspaceRoot}"
-         },
-         {
+            "program": "${workspaceRoot}/main.js",
+           "cwd": "${workspaceRoot}"
+        },
+        {
             "type": "node",
-            "request": "launch",
-            "name": "Launch Program",
-            "address": "localhost",
-            "port": 9229
+            "request": "attach",
+            "name": "ioBroker Adapter", // Name, der im VSCode Auswahlmenü neben dem grünen Play angezeigt wird
+            "address": "127.0.0.1", // Adresse, an dem der node.js Prozess läuft (bei Remote Debug, der Remote-Rechner)
+            "port": 9229 // Port, auf dem der node.js Debugger lauscht, der mit node --debug-brk ... gestartet wird
         }
     ]
 }
+/*
+node --inspect-brk=0.0.0.0:9229 node_modules/iobroker.tablet-control/index_m.html --force --logs
+node --inspect-brk=127.0.0.1:9229 node_modules/iobroker.tablet-control/main.js --force --logs
 
-
-// node --inspect-brk=9229 node_modules/iobroker.tablet-control/main.js --force --logs
+--inspect=0.0.0.0:9229
+*/

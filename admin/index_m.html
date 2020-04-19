@@ -150,7 +150,7 @@
                                         <th class="translate" style="width: auto; text-align: center;" data-style="text-align: center" data-name="ip">ip</th>
                                         <th class="translate" data-type="number" data-default="2323" data-style="text-align: center" style="width: 5%; text-align: center;" data-name="port">port</th>
                                         <th class="translate" style="width: auto; text-align: center;" data-style="text-align: center" data-name="password" data-type="password">password</th>
-                                        <th class="translate" style="width: 15%; text-align: center;" data-type="select" data-name="room">room</th>
+                                        <!-- <th class="translate" style="width: 15%; text-align: center;" data-type="select" data-name="room">room</th> -->
                                         <th class="translate" style="width: 8%; text-align: center;" data-buttons="delete up down">delete</th>
                                     </tr>
                                 </thead>
@@ -182,7 +182,7 @@
                                                 data-options="20/20%;25/25%;30/30%;35/35%;40/40%;45/45%;50/50%">load start</th>
                                             <th class="translate" data-default="85" style="width: 10%; text-align: center;" data-type="select" data-name="loadStop" 
                                                 data-options="55/55%;60/60%;65/65%;70/70%;75/75%;80/80%;85/85%;90/90%;95/95%;100/100%">load stop</th>
-                                            <th class="translate" style="width: 10%; text-align: center;" data-type="select" data-name="room">room</th>
+                                            <!-- <th class="translate" style="width: 10%; text-align: center;" data-type="select" data-name="room">room</th> -->
                                             <th class="translate" style="width: 8%; text-align: center;"
                                                 data-buttons="delete up down">delete</th>
                                         </tr>
@@ -200,6 +200,14 @@
                     <div class="row"></div>
                      <!-- brightness table -->
                     <div class="row">
+                    <!-- select screen active -->
+                    <div class="input-field col s3 select" style="width: 300px; text-align: center;">
+                        <select class="value" autofocus="autofocus" value="true" id="screen_on">
+                            <option class="translate" value="true" selected>Screen on</option>
+                            <option class="translate" value="false" selected>Screen auto</option>
+                        </select>
+                    </div>
+                    <!-- end select screen active -->
                         <div class="col s12" id="brightness">
                             <div class="row center">
                                 <a class="waves-effect waves-light btn table-button-add translate">add Device</a>
@@ -283,9 +291,9 @@
                 <div class="row">
                     <!-- select telegram active -->
                     <div class="input-field col s3 select" style="width: 300px; text-align: center;">
-                        <select class="value" autofocus="autofocus" data-default="false" value="false" id="telegram_enabled">
-                            <option class="translate" value="false" selected>Warning activated</option>
-                            <option class="translate" value="true" selected>Warning deactivated</option>
+                        <select class="value" autofocus="autofocus" value="false" id="telegram_enabled">
+                            <option class="translate" value="true" selected>Warning activated</option>
+                            <option class="translate" value="false" selected>Warning deactivated</option>
                         </select>
                     </div>
                     <!-- end select telegram active -->
@@ -328,7 +336,7 @@
                                     <tr>
                                         <th data-name="_index" style="width: 1.1%" class="translate">Nr.</th>
                                         <th class="translate" data-style="text-align: center" style="width: auto; text-align: center;" data-name="motionid">motionID</th>
-                                        <th class="translate"  style="width: 15%; text-align: center;" data-type="select" data-name="room">room</th>
+                                        <!-- <th class="translate"  style="width: 15%; text-align: center;" data-type="select" data-name="room">room</th> -->
                                         <th class="translate " style="width: 1%; text-align: center;" data-default="true" data-type="checkbox" data-name="enabled">enabled</th>
                                         <th class="translate" style="width: 8%; text-align: center;" data-buttons="delete up down">delete</th>
                                     </tr>
