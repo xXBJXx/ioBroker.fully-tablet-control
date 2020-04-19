@@ -1,3 +1,4 @@
+/* eslint-disable no-mixed-spaces-and-tabs */
 'use strict';
 
 /*
@@ -7,7 +8,19 @@
 // The adapter-core module gives you access to the core ioBroker functions
 // you need to create an adapter
 const utils = require('@iobroker/adapter-core');
-const request = require('request');
+// const request = require('request');
+const tabletName = [];
+const ip = [];
+const port = [];
+const password = [];
+const Screen = [];
+const deviceInfo = [];
+const screenBrightness = [];
+const bat = [];
+const isScreenOn = [];
+const bright = [];
+const currentFragment = [];
+let requestTimeout = null;
 
 // Load your modules here, e.g.:
 // const fs = require("fs");
@@ -24,7 +37,7 @@ class TabletControl extends utils.Adapter {
 		this.on('ready', this.onReady.bind(this));
 		this.on('objectChange', this.onObjectChange.bind(this));
 		this.on('stateChange', this.onStateChange.bind(this));
-		this.on('message', this.onMessage.bind(this));
+		//this.on('message', this.onMessage.bind(this));
 		this.on('unload', this.onUnload.bind(this));
 	}
 
@@ -34,98 +47,535 @@ class TabletControl extends utils.Adapter {
 	async onReady() {
 		// Initialize your adapter here
 		// Reset the connection indicator during startup
-		this.setState('info.connection', true, true);
+		this.setState('info.connection', false, true);
 
-		await this.test();
-		// await this.getAllRooms();
-		//await this.tests();
-		
-		
+		await this.charger();
+
+		await this.create_state();
+		await this.httpLink();
+		await this.stateRequest();
+
+
+
 	}
 
-	// The adapters config (in the instance object everything under the attribute "native") is accessible via
-	// this.config:
-	//this.log.info('config option1: ' + this.config.option1);
-	//this.log.info('config option2: ' + this.config.option2);
+	async httpLink() {
+		// this.log.debug('build http Link');
 
-	/*
-	For every state in the system there has to be also an object of type state
-	Here a simple template for a boolean variable named "testVariable"
-	Because every adapter instance uses its own unique namespace variable names can't collide with other adapters variables
-	*/
-	// async tests() {
+		const login = this.config.devices;
+		if (!login || login !== []) {
+			for (const i in login) {
 
-	// 	const raum = await this.getAllRooms();
+				ip[i] = login[i].ip;
+				port[i] = login[i].port;
+				password[i] = login[i].password;
 
-	// 	//this.log.info('2 ' + raum);
-		
-	// 	for (const o in raum) {
+				Screen[i] = 'http://' + ip[i] + ':' + port[i] + '/?cmd=screenOn&password=' + password[i];
 
-	// 		//this.log.info('3 ' + raum);
-	// 	}
+				deviceInfo[i] = 'http://' + ip[i] + ':' + port[i] + '/?cmd=deviceInfo&type=json&password=' + password[i];
+
+				screenBrightness[i] = 'http://' + ip[i] + ':' + port[i] + '/?cmd=setStringSetting&key=screenBrightness&value=0&password=' + password[i];
+
+			}
+
+		}
+		// this.log.debug('Screen: ' + JSON.stringify(Screen));
+		this.log.debug('deviceInfo: ' + JSON.stringify(deviceInfo));
+		// this.log.debug('screenBrightness: ' + JSON.stringify(screenBrightness));
+	}
+
+	async stateRequest() {
+
+		try {
+			const deviceModel = [];
+			const lastAppStart = [];
+			const ipadresse = [];
+			const ssid = [];
+			const plugged = [];
+			const appTotalMemory = [];
+			const appUsedMemory = [];
+			const appFreeMemory = [];
+			const ramTotalMemory = [];
+			const ramUsedMemory = [];
+			const ramFreeMemory = [];
+			const visBattery = [];
+
+			requestTimeout = setTimeout(async () => {
+				const requestUrl = await deviceInfo;
+				
+				if (!requestUrl || requestUrl !== []) {
+					let objects = [];
 
 
-	// }
+					for (const i in requestUrl) {
+						const stateID = await this.replace(tabletName[i]);
 
-		
-	
-	async test() {
-		const rooms = [];
+						require('request')(requestUrl[i], async (error, response, result) => {
+
+							// this.log.debug('Update ' + result);
+							objects = JSON.parse(result);
+							this.log.debug('[result] ' + JSON.stringify(objects));
+
+							ipadresse[i] = objects.ip4;
+							await this.setForeignStateAsync(`tablet-control.0.device.${stateID}.device_ip`, { val: ipadresse[i], ack: true });
+							this.log.debug('IP: ' + ipadresse);
+
+							plugged[i] = objects.plugged;
+							await this.setForeignStateAsync(`tablet-control.0.device.${stateID}.Plugged`, { val: plugged[i], ack: true });
+							this.log.debug('plugged ' + plugged);
+
+							bat[i] = objects.batteryLevel;
+							await this.setForeignStateAsync(`tablet-control.0.device.${stateID}.battery`, { val: bat[i], ack: true });
+							this.log.debug('bat ' + bat);
+
+							isScreenOn[i] = objects.isScreenOn;
+							await this.setForeignStateAsync(`tablet-control.0.device.${stateID}.ScreenOn`, { val: isScreenOn[i], ack: true });
+							this.log.debug('isScreenOn ' + isScreenOn);
+
+							bright[i] = objects.screenBrightness;
+							await this.setForeignStateAsync(`tablet-control.0.device.${stateID}.brightness`, { val: bright[i], ack: true });
+							this.log.debug('bright ' + bright);
+
+							currentFragment[i] = objects.currentFragment;
+							await this.setForeignStateAsync(`tablet-control.0.device.${stateID}.active_display`, { val: currentFragment[i], ack: true });
+							this.log.debug('currentFragment ' + currentFragment);
+
+							deviceModel[i] = objects.deviceModel;
+							await this.setForeignStateAsync(`tablet-control.0.device.${stateID}.deviceModel`, { val: deviceModel[i], ack: true });
+							this.log.debug('deviceModel ' + deviceModel);
+
+							lastAppStart[i] = objects.lastAppStart;
+							await this.setForeignStateAsync(`tablet-control.0.device.${stateID}.LastAppStart`, { val: lastAppStart[i], ack: true });
+							this.log.debug('lastAppStart ' + lastAppStart);
+
+							appTotalMemory[i] = objects.appTotalMemory;
+							await this.setForeignStateAsync(`tablet-control.0.device.${stateID}.memory_info.appTotalMemory`, { val: await this.bytesToSize(await appTotalMemory[i]), ack: true });
+							this.log.debug('appTotalMemory ' + appTotalMemory);
+
+							appUsedMemory[i] = objects.appUsedMemory;
+							await this.setForeignStateAsync(`tablet-control.0.device.${stateID}.memory_info.appUsedMemory`, { val: await this.bytesToSize(await appUsedMemory[i]), ack: true });
+							this.log.debug('appUsedMemory ' + appUsedMemory);
+
+							appFreeMemory[i] = objects.appFreeMemory;
+							await this.setForeignStateAsync(`tablet-control.0.device.${stateID}.memory_info.appFreeMemory`, { val: await this.bytesToSize(await appFreeMemory[i]), ack: true });
+							this.log.debug('appFreeMemory ' + appFreeMemory);
+
+							ramTotalMemory[i] = objects.ramTotalMemory;
+							await this.setForeignStateAsync(`tablet-control.0.device.${stateID}.memory_info.ramTotalMemory`, { val: await this.bytesToSize(await ramTotalMemory[i]), ack: true });
+							this.log.debug('ramTotalMemory ' + ramTotalMemory);
+
+							ramUsedMemory[i] = objects.ramUsedMemory;
+							await this.setForeignStateAsync(`tablet-control.0.device.${stateID}.memory_info.ramUsedMemory`, { val: await this.bytesToSize(await ramUsedMemory[i]), ack: true });
+							this.log.debug('ramUsedMemory ' + ramUsedMemory);
+
+							ramFreeMemory[i] = objects.ramFreeMemory;
+							await this.setForeignStateAsync(`tablet-control.0.device.${stateID}.memory_info.ramFreeMemory`, { val: await this.bytesToSize(await ramFreeMemory[i]), ack: true });
+							this.log.debug('ramFreeMemory ' + ramFreeMemory);
+
+							ssid[i] = objects.ssid.replace(/"/gi, '');
+							this.log.debug('ssid: ' + ssid);
+
+							if (ssid[i].replace(/_/gi, ' ') == '<unknown ssid>') {
+								await this.setForeignStateAsync(`tablet-control.0.device.${stateID}.ssid`, { val: 'is not supported', ack: true });
+							}
+							else if (ssid[i].replace(/_/gi, ' ') == '') {
+								await this.setForeignStateAsync(`tablet-control.0.device.${stateID}.ssid`, { val: 'is not supported', ack: true });
+							}
+							else {
+								await this.setForeignStateAsync(`tablet-control.0.device.${stateID}.ssid`, { val: ssid[i].replace(/_/gi, ' '), ack: true });
+							}
+
+							
+							if (bat[i] <= 100) 	visBattery[i] = 10; // 100 %
+							if (bat[i] <= 90) 	visBattery[i] = 9; 	// 90 %
+							if (bat[i] <= 80) 	visBattery[i] = 8; 	// 80 %
+							if (bat[i] <= 70) 	visBattery[i] = 7; 	// 70 %
+							if (bat[i] <= 60) 	visBattery[i] = 6; 	// 60 %
+							if (bat[i] <= 50) 	visBattery[i] = 5; 	// 50 %
+							if (bat[i] <= 40) 	visBattery[i] = 4; 	// 40 %
+							if (bat[i] <= 30)	visBattery[i] = 3; 	// 30 %
+							if (bat[i] <= 20) 	visBattery[i] = 2; 	// 20 %
+							if (bat[i] <= 10) 	visBattery[i] = 1; 	// 10 %
+							if (bat[i] <= 0) 	visBattery[i] = 0; 	// empty
+							if (plugged[i]) 	visBattery[i] = 11; // Charger on
+					
+
+							this.log.debug(`${stateID} visBattery ` + bat[i] + ' ' + visBattery[i]);
+							await this.setForeignStateAsync(`tablet-control.0.device.${await stateID}.state_of_charge_vis`, { val: await visBattery[i], ack: true });
+
+
+							// last Info Update
+							await this.setForeignStateAsync(`tablet-control.0.device.${stateID}.lastInfoUpdate`, { val: Date.now(), ack: true });
+
+
+
+
+						}).on('error', (e) => {
+							this.log.error('request device Info error: ' + e);
+							this.setState('info.connection', false, true);
+
+						});
+					}
+				}
+				this.charger();
+				this.stateRequest();
+			}, parseInt(this.config.interval) * 1000);
+		} catch (error) {
+			// this.log.error('stateRequest', error);
+		}
+	}
+
+
+	async charger() {
+
 		const chargerid = [];
+		const chargeDevice = [];
 		const power_mode = [];
 		const loadStart = [];
 		const loadStop = [];
+		const chargeDeviceValue = [];
 
-
-		const brightness = this.config.brightness;
 		const charger = this.config.charger;
-		this.log.info('JSON.stringify(charger): ' + JSON.stringify(charger));
-		this.log.info('JSON.stringify(charger): ' + JSON.stringify(brightness));
-		if (!charger || charger !== []){
+		if (!charger || charger !== []) {
 			for (const i in charger) {
-				console.log(charger[i]);
-				
 				chargerid[i] = charger[i].chargerid;
-				power_mode[i] = charger[i].power_mode;
-				loadStart[i] = charger[i].loadStart;
-				loadStop[i] = charger[i].loadStop;
-				rooms[i] = charger[i].room.replace(/enum.rooms./gi, '');
+				power_mode[i] = JSON.parse(charger[i].power_mode);
+				loadStart[i] = JSON.parse(charger[i].loadStart);
+				loadStop[i] = JSON.parse(charger[i].loadStop);
+
+				chargeDevice[i] = await this.getForeignStateAsync(chargerid[i]);
+				 chargeDeviceValue[i] = chargeDevice[i].val;
+				this.subscribeStates(chargerid[i]);
+				this.log.debug(`chargerid: ` + JSON.stringify(chargerid[i]) + ` val: ` + chargeDeviceValue[i]);
+				
+				if (await power_mode[i] == true) {
+
+					// if (bat[i] <= loadStart[i] && !chargeDeviceValue[i]) await this.setForeignStateAsync(await chargerid[i], true, false);
+					if (bat[i] <= 85 && !chargeDeviceValue[i]) await this.setForeignStateAsync(await chargerid[i], true, false);
+
+					if (bat[i] <= loadStart[i] && !chargeDeviceValue[i]) this.log.info(`${await tabletName[i]} Loading started`);
+
+					if (bat[i] >= loadStop[i] && chargeDeviceValue[i]) await this.setForeignStateAsync(await chargerid[i], false, false);
+
+					if (bat[i] >= loadStop[i] && chargeDeviceValue[i]) this.log.info(`${await tabletName[i]} Charging cycle ended`);
+
+				} else {
+
+					if (!chargeDeviceValue[i]) 	this.setForeignStateAsync(chargerid[i], true, false);
+					if (!chargeDeviceValue[i]) 	this.log.info(`${await tabletName[i]} Continuous current`);
+				}
 			}
-			this.log.info(JSON.stringify('rooms ' + rooms));
-			this.log.info(JSON.stringify('chargerid ' + chargerid));
-			this.log.info(JSON.stringify('powerMode ' + power_mode));
-			this.log.info(JSON.stringify('loadStart ' + loadStart));
-			this.log.info(JSON.stringify('loadStop ' + loadStop));
+
+
 		}
-		
 	}
 
-	// async getAllRooms() {
+	async convert_percent(str) {
+		if (Number.isNaN(str)) {
+			return 0;
+		}
+		return str / 100 * 255;
+	}
+
+	async bytesToSize(bytes) {
+		const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+		if (bytes == 0) return '0 Byte';
+		// @ts-ignore
+		const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+		// @ts-ignore
+		return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
+	}
 
 
-	// const allRooms = {};
-	// const rooms = await this.getEnumAsync('rooms');
-	// if (!rooms) {
+	async replace(str) {
+		if (str) {
+			str = str.replace(/ü/g, 'ue');
+			str = str.replace(/Ü/g, 'Ue');
+			str = str.replace(/ö/g, 'oe');
+			str = str.replace(/Ö/g, 'Oe');
+			str = str.replace(/Ä/g, 'Ae');
+			str = str.replace(/ä/g, 'ae');
+			str = str.replace(/\.*\./gi, '_');
+			str = str.replace(/ /gi, '_');
+			str = str.toLowerCase();
+			return str;
+		}
+	}
 
-	// 	this.log.info(`Cannot get room data`);
-	// } else {
-	// 	//this.log.info('romms ' + rooms);
-	// 	const raeume = rooms.result;
-	// 	let arrayIndex = 0;
-	// 	for (const room in raeume) {
-	// 		//this.log.info('loop raeme ' + room );
-	// 		//this.log.info('loop raeme ' + raeume[room].common.name);
-	// 		allRooms[arrayIndex] = raeume[room].common.name;
-	// 		arrayIndex = arrayIndex + 1;
 
-	// 		this.log.info('romms1 ' + JSON.stringify(raeume[room].common.name));
-	// 		this.log.info('romms2 ' + JSON.stringify(allRooms));
-	// 	}
+	async create_state() {
 
-	// }
+		try {
 
-	// return allRooms;
-	// }
+			this.log.debug(`create_state start`);
+
+			const tablet = this.config.devices;
+			if (!tablet || tablet !== []) {
+				for (const i in tablet) {
+
+					tabletName[i] = tablet[i].name;
+				}
+
+			}
+
+			this.log.debug('tabletName: ' + JSON.stringify(tabletName));
+
+
+			for (const name in tabletName) {
+				//this.log.info(name);
+				const stateID = await this.replace(tabletName[name]);
+				const stateName = await tabletName[name];
+
+				await this.extendObjectAsync(`device.${stateID}.device_ip`, {
+					type: 'state',
+					common: {
+						name: `${stateName} device ip`,
+						type: 'string',
+						def: '',
+						role: 'info.ip',
+						write: false
+					},
+					native: {},
+				});
+
+				await this.extendObjectAsync(`device.${stateID}.deviceModel`, {
+					type: 'state',
+					common: {
+						name: `${stateName} device Model`,
+						type: 'string',
+						role: 'info.name',
+						def: '',
+						write: false
+					},
+					native: {},
+				});
+
+				await this.extendObjectAsync(`device.${stateID}.ssid`, {
+					type: 'state',
+					common: {
+						name: `${stateName} Wlan ssid`,
+						type: 'string',
+						def: '',
+						role: 'info',
+						write: false
+					},
+					native: {},
+				});
+
+				await this.extendObjectAsync(`device.${stateID}.Plugged`, {
+					type: 'state',
+					common: {
+						name: `${stateName} power plugged`,
+						type: 'boolean',
+						role: 'switch',
+						def: false,
+						write: false
+					},
+					native: {},
+				});
+
+				await this.extendObjectAsync(`device.${stateID}.battery`, {
+					type: 'state',
+					common: {
+						name: `${stateName} battery in percent`,
+						type: 'number',
+						role: 'battery.percent',
+						max: 100,
+						min: 0,
+						def: 0,
+						unit: '%',
+						write: false
+					},
+					native: {},
+				});
+
+				await this.extendObjectAsync(`device.${stateID}.ScreenOn`, {
+					type: 'state',
+					common: {
+						name: `${stateName} is screen on`,
+						type: 'boolean',
+						role: 'switch',
+						write: false
+					},
+					native: {},
+				});
+
+				await this.extendObjectAsync(`device.${stateID}.brightness`, {
+					type: 'state',
+					common: {
+						name: `${stateName} brightness`,
+						type: 'number',
+						role: 'level.dimmer',
+						max: 255,
+						min: 0,
+						def: 0,
+						write: false
+					},
+					native: {},
+				});
+
+				await this.extendObjectAsync(`device.${stateID}.active_display`, {
+					type: 'state',
+					common: {
+						name: `${stateName} active display`,
+						type: 'string',
+						role: 'info',
+						def: '',
+						write: false
+					},
+					native: {},
+				});
+
+				await this.extendObjectAsync(`device.${stateID}.lastInfoUpdate`, {
+					type: 'state',
+					common: {
+						name: `${stateName} Date/Time of last information update from Fully Browser`,
+						type: 'number',
+						role: 'value.time',
+						write: false
+					},
+					native: {},
+				});
+
+				await this.extendObjectAsync(`device.${stateID}.LastAppStart`, {
+					type: 'state',
+					common: {
+						name: `${stateName} Last App Start`,
+						type: 'string',
+						role: 'info',
+						def: '',
+						write: false
+					},
+					native: {},
+				});
+
+				await this.extendObjectAsync(`device.${stateID}.manualBrightness`, {
+					type: 'state',
+					common: {
+						name: `${stateName} manual Brightness in percent`,
+						type: 'number',
+						role: 'level.dimmer',
+						unit: '%',
+						max: 100,
+						min: 0,
+						def: 0,
+						write: true
+					},
+					native: {},
+				});
+
+				await this.extendObjectAsync(`device.${stateID}.state_of_charge_vis`, {
+					type: 'state',
+					common: {
+						name: `${stateName} State of charge for the Vis`,
+						type: 'number',
+						role: 'value.battery',
+						max: 100,
+						min: 0,
+						def: 0,
+						write: false,
+						states: {
+							0: 'leer',
+							1: '10 %',
+							2: '20 %',
+							3: '30 %',
+							4: '40 %',
+							5: '50 %',
+							6: '60 %',
+							7: '70 %',
+							8: '80 %',
+							9: '90 %',
+							10: '100 %',
+							11: 'Lade'
+						}
+					},
+					native: {},
+				});
+
+				await this.extendObjectAsync(`device.${stateID}.memory_info.appTotalMemory`, {
+					type: 'state',
+					common: {
+						name: `${stateName} app Total Memory`,
+						type: 'string',
+						role: 'info',
+						def: '',
+						write: false
+					},
+					native: {},
+				});
+
+				await this.extendObjectAsync(`device.${stateID}.memory_info.appUsedMemory`, {
+					type: 'state',
+					common: {
+						name: `${stateName} app Used Memory`,
+						type: 'string',
+						role: 'info',
+						def: '',
+						write: false
+					},
+					native: {},
+				});
+
+				await this.extendObjectAsync(`device.${stateID}.memory_info.appFreeMemory`, {
+					type: 'state',
+					common: {
+						name: `${stateName} app Free Memory`,
+						type: 'string',
+						role: 'info',
+						def: '',
+						write: false
+					},
+					native: {},
+				});
+
+				await this.extendObjectAsync(`device.${stateID}.memory_info.ramTotalMemory`, {
+					type: 'state',
+					common: {
+						name: `${stateName} ram Total Memory`,
+						type: 'string',
+						role: 'info',
+						def: '',
+						write: false
+					},
+					native: {},
+				});
+
+				await this.extendObjectAsync(`device.${stateID}.memory_info.ramUsedMemory`, {
+					type: 'state',
+					common: {
+						name: `${stateName} ram Used Memory`,
+						type: 'string',
+						role: 'info',
+						def: '',
+						write: false
+					},
+					native: {},
+				});
+
+				await this.extendObjectAsync(`device.${stateID}.memory_info.ramFreeMemory`, {
+					type: 'state',
+					common: {
+						name: `${stateName} ram Free Memory`,
+						type: 'string',
+						role: 'info',
+						def: '',
+						write: false
+					},
+					native: {},
+				});
+
+				this.subscribeStates(`tablet-control.0.device.${stateID}.manualBrightness`);
+
+			}
+
+			this.setState('info.connection', true, true);
+
+		} catch (error) {
+			this.log.error(`[basicStatesCreate] : ${error.message}, stack: ${error.stack}`);
+
+		}
+
+	}
 
 	// async statesCreate() {
 	// 	await this.setObjectAsync('testVariable', {
@@ -141,7 +591,7 @@ class TabletControl extends utils.Adapter {
 	// 	});
 
 	// 	// in this template all states changes inside the adapters namespace are subscribed
-	// 	this.subscribeStates('*');
+	// this.subscribeStates('*');
 
 	// 	/*
 	// 	setState examples
@@ -171,8 +621,12 @@ class TabletControl extends utils.Adapter {
 	 */
 	onUnload(callback) {
 		try {
-			this.log.info('cleaned everything up...');
+
+			if (requestTimeout) clearTimeout(requestTimeout);
+
+			this.log.info('Adapter stopped...');
 			this.setState('info.connection', false, true);
+
 			callback();
 		} catch (e) {
 			callback();
@@ -187,10 +641,10 @@ class TabletControl extends utils.Adapter {
 	onObjectChange(id, obj) {
 		if (obj) {
 			// The object was changed
-			this.log.info(`object ${id} changed: ${JSON.stringify(obj)}`);
+			this.log.debug(`object ${id} changed: ${JSON.stringify(obj)}`);
 		} else {
 			// The object was deleted
-			this.log.info(`object ${id} deleted`);
+			this.log.debug(`object ${id} deleted`);
 		}
 	}
 
@@ -202,10 +656,11 @@ class TabletControl extends utils.Adapter {
 	onStateChange(id, state) {
 		if (state) {
 			// The state was changed
-			this.log.info(`state ${id} changed: ${state.val} (ack = ${state.ack})`);
+			this.log.debug(`state ${id} changed: ${state.val} (ack = ${state.ack})`);
+
 		} else {
 			// The state was deleted
-			this.log.info(`state ${id} deleted`);
+			this.log.debug(`state ${id} deleted`);
 		}
 	}
 
@@ -215,56 +670,19 @@ class TabletControl extends utils.Adapter {
 	//  * @param {ioBroker.Message} obj
 	//  */
 
-	onMessage(obj,allRooms) {
-		this.log.info('send command');
-		if (typeof obj === 'object' && obj.message) {
-			if (obj.command === 'send') {
-				// e.g. send email or pushover or whatever
-				this.log.info('send command');
-				const raum = allRooms;
-				// Send response in callback if required
-				if (obj.callback) this.sendTo(obj.from, obj.command, 'Message received', obj.callback);
-
-				switch (obj.command) {
-					case 'enums':
-						if (obj.callback) {
-							this.log.info('Request enums');
-							
-							this.sendTo(obj.from, obj.command, raum, obj.callback);
-								
-						}
-						break;
-					default:
-						this.log.warn('Unknown command: ' + obj.command);
-						break;
-				}
-			}
-		}
-	}
-
 	// onMessage(obj) {
-	// 	if (obj) {
-	// 		switch (obj.command) {
+	// 	this.log.info('send command');
+	// 	if (typeof obj === 'object' && obj.message) {
+	// 		if (obj.command === 'send') {
+	// 			// e.g. send email or pushover or whatever
+	// 			this.log.info('send command');
 
-	// 			case 'enums':
-	// 				if (obj.callback) {
-	// 					this.log.info('Request enums');
-	// 					//alexaSH2 && alexaSH2.updateDevices(() => {
+	// 			// Send response in callback if required
+	// 			if (obj.callback) this.sendTo(obj.from, obj.command, 'Message received', obj.callback);
 
-	// 					this.sendTo(obj.from, obj.command, alexaSH2.getEnums(), obj.callback);
-	// 					//this.setState('smart.updates', false, true);
-	// 					this.log.warn('Enums: ' + alexaSH2);
-	// 					//});
-	// 				}
-	// 				break;
-
-	// 			default:
-	// 				this.log.warn('Unknown command: ' + obj.command);
-	// 				break;
 	// 		}
 	// 	}
 	// }
-
 }
 
 // @ts-ignore parent is a valid property on module
