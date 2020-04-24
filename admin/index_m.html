@@ -99,17 +99,16 @@
     <!-- you have to put your config page in a div with id adapter-container -->
     <div class="m adapter-container">
         <div class="row">
-
             <!-- Tabs: Menu -->
             <div class="col s12">
                 <ul class="tabs">
                     <!-- Single tab entry -->
-                    <li class="tab col s1.1"><a href="#tab-devices" class="translate">fully browser</a></li>
-                    <li class="tab col s1.1"><a href="#tab-charger" class="translate">charger</a></li>
-                    <li class="tab col s1.1"><a href="#tab-brightness" class="translate">brightness</a></li>
-                    <li class="tab col s1.1"><a href="#tab-screen" class="translate">screen</a></li>
-                    <li class="tab col s1.1"><a href="#tab-telegram" class="translate">telegram</a></li>
-                    <li class="tab col s1.1"><a href="#tab-motion" class="translate">motion detector</a></li>
+                    <li class="tab col s1.7"><a href="#tab-devices" class="translate">fully browser</a></li>
+                    <li class="tab col s1.8"><a href="#tab-charger" class="translate">charger</a></li>
+                    <li class="tab col s1.8"><a href="#tab-brightness" class="translate">brightness</a></li>
+                    <li class="tab col s1.8"><a href="#tab-screen" class="translate">screen</a></li>
+                    <li class="tab col s1.8"><a href="#tab-telegram" class="translate">telegram</a></li>
+                    <li class="tab col s1.7"><a href="#tab-motion" class="translate">motion detector</a></li>
                     
                 </ul>
             </div>
@@ -201,14 +200,48 @@
                      <!-- brightness table -->
                     <div class="row">
                     <!-- select screen active -->
-                    <div class="input-field col s3 select" style="width: 300px; text-align: center;">
+                    <div class="input-field col s3" style="width: 330px; text-align: center;">
                         <select class="value" autofocus="autofocus" value="true" id="screen_on">
                             <option class="translate" value="true" selected>Screen on</option>
-                            <option class="translate" value="false" selected>Screen auto</option>
+                            <option class="translate" value="false" >Screen auto</option>
                         </select>
                     </div>
                     <!-- end select screen active -->
-                        <div class="col s12" id="brightness">
+                    <div class="row"></div>
+                    <!-- check interval -->
+                    <div class="col s3 input-field" style="width: 335px">
+                        <input type="number" class="value" id="checkInterval" style="width:310px; text-align: center" max="120" min="0"
+                            value="5" />
+                        <label style="color: #000000; font-size: large;" for="interval" class="translate">Check interval for the brightness in minutes</label>
+                    </div>
+                    <!-- end check interval -->
+                    <!-- select screen active -->
+                    <div class="input-field col s3 select" style="width: 150px; text-align: center;">
+                        <select class="value" autofocus="autofocus" id="dayTime">
+                            <option class="translate" value="4" >4Clock</option>
+                            <option class="translate" value="5" >5Clock</option>
+                            <option class="translate" value="6" >6Clock</option>
+                            <option class="translate" value="7" selected>7Clock</option>
+                            <option class="translate" value="8" >8Clock</option>
+                            <option class="translate" value="9" >9Clock</option>
+                        </select>
+                        <label style="color: #000000; font-size: medium;" for="interval" class="translate">dayTime</label>
+                    </div>
+                    <!-- end select screen active -->
+                    <!-- select screen active -->
+                    <div class="input-field col s3 select" style="width: 150px; text-align: center;">
+                        <select class="value" autofocus="autofocus" id="nightTime">
+                            <option class="translate" value="18" >18Clock</option>
+                            <option class="translate" value="19" >19Clock</option>
+                            <option class="translate" value="20" >20Clock</option>
+                            <option class="translate" value="21" >21Clock</option>
+                            <option class="translate" value="22" selected>22Clock</option>
+                            <option class="translate" value="23" >23Clock</option>
+                        </select>
+                        <label style="color: #000000; font-size: medium;" for="interval" class="translate">nightTime</label>
+                    </div>
+                    <!-- end select screen active -->
+                    <div class="col s12" id="brightness">
                             <div class="row center">
                                 <a class="waves-effect waves-light btn table-button-add translate">add Device</a>
                             </div>
@@ -221,8 +254,11 @@
                                                     data-options="0/0%;1/1%;2/2%;3/3%;4/4%;5/5%;6/6%;7/7%;8/8%;9/9%;10/10%;11/11%;12/12%;13/13%;14/14%;15/15%;16/16%;17/17%;18/18%;19/19%;20/20%;
                                                     ;21/21%;22/22%;23/23%;24/24%;25/25%;26/26%;27/27%;28/28%;29/29%;30/30%;31/31%;32/32%;33/33%;34/34%;35/35%;36/36%;37/37%;38/38%;39/39%;40/40%;
                                                     ;41/41%;42/42%;43/43%;44/44%;45/45%;46/46%;47/47%;48/48%;49/49%;50/50%;51/51%;52/52%;53/53%;54/54%;55/55%;56/56%;57/57%;58/58%;59/59%;60/60%;
-                                                    ;1/61%;62/62%;63/63%;64/64%;65/65%;66/66%;67/67%;68/68%;69/69%;70/70%;71/71%;72/72%;73/73%;74/74%;75/75%;76/76%;77/77%;78/78%;79/79%;80/80%;
+                                                    ;61/61%;62/62%;63/63%;64/64%;65/65%;66/66%;67/67%;68/68%;69/69%;70/70%;71/71%;72/72%;73/73%;74/74%;75/75%;76/76%;77/77%;78/78%;79/79%;80/80%;
                                                     ;81/81%;82/82%;83/83%;84/84%;85/85%;86/86%;87/87%;88/88%;89/89%;90/90%;91/91%;92/92%;93/93%;94/94%;95/95%;96/96%;97/97%;98/98%;100/100%">Daytime brightness</th>
+
+                                                    <!-- <th data-name="dayTime" class="translate" style="width: 6%; text-align: center;" data-default="6" data-type="select" data-style="text-align: center" 
+                                                    data-options="4/4 Clock;5/5 Clock;6/6 Clock;7/7 Clock;8/8 Clock;9/9 Clock">dayTime</th> -->
 
                                                 <th data-name="nightBrightness" class="translate" style="width: 6%; text-align: center;" data-default="0" data-type="select" data-style="text-align: center"  
                                                     data-options="0/0%;1/1%;2/2%;3/3%;4/4%;5/5%;6/6%;7/7%;8/8%;9/9%;10/10%;11/11%;12/12%;13/13%;14/14%;15/15%;16/16%;17/17%;18/18%;19/19%;20/20%;
@@ -230,6 +266,9 @@
                                                     ;41/41%;42/42%;43/43%;44/44%;45/45%;46/46%;47/47%;48/48%;49/49%;50/50%;51/51%;52/52%;53/53%;54/54%;55/55%;56/56%;57/57%;58/58%;59/59%;60/60%;
                                                     ;61/61%;62/62%;63/63%;64/64%;65/65%;66/66%;67/67%;68/68%;69/69%;70/70%;71/71%;72/72%;73/73%;74/74%;75/75%;76/76%;77/77%;78/78%;79/79%;80/80%;
                                                     ;81/81%;82/82%;83/83%;84/84%;85/85%;86/86%;87/87%;88/88%;89/89%;90/90%;91/91%;92/92%;93/93%;94/94%;95/95%;96/96%;97/97%;98/98%;100/100%">Night brightness</th>
+                                                    
+                                                    <!-- <th data-name="nightTime" class="translate" style="width: 6%; text-align: center;" data-default="22" data-type="select" data-style="text-align: center" 
+                                                    data-options="18/18 Clock;19/19 Clock;20/20 Clock;21/21 Clock;22/22 Clock;23/23 Clock">nightTime</th> -->
 
                                                 <th data-name="loadingLowering" class="translate" style="width: 6%; text-align: center;" data-default="10" data-type="select" data-style="text-align: center"  
                                                     data-options="0/0%;1/1%;2/2%;3/3%;4/4%;5/5%;6/6%;7/7%;8/8%;9/9%;10/10%;11/11%;12/12%;13/13%;14/14%;15/15%;16/16%;17/17%;18/18%;19/19%;20/20%;
@@ -254,7 +293,7 @@
                     <!-- select screen active -->
                     <div class="input-field col s3 select" style="width: 300px; text-align: center;">
                         <select class="value" autofocus="autofocus" data-default="false" value="false" id="screensaver">
-                            <option class="translate" value="true" selected>Screensaver on</option>
+                            <option class="translate" value="true">Screensaver on</option>
                             <option class="translate" value="false" selected>Screensaver off</option>
                         </select>
                     </div>
@@ -292,7 +331,7 @@
                     <!-- select telegram active -->
                     <div class="input-field col s3 select" style="width: 300px; text-align: center;">
                         <select class="value" autofocus="autofocus" value="false" id="telegram_enabled">
-                            <option class="translate" value="true" selected>Warning activated</option>
+                            <option class="translate" value="true">Warning activated</option>
                             <option class="translate" value="false" selected>Warning deactivated</option>
                         </select>
                     </div>

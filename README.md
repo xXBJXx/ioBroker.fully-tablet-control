@@ -33,6 +33,11 @@ _____________________________________
 
 ## Changelog
 
+### 0.0.4
+
+* (xXBJXx) request optimized for multiple devices
+* (xXBJXx) brightness control implemented
+
 ### 0.0.3
 
 * (xXBJXx) Charging function optimized
@@ -41,7 +46,6 @@ _____________________________________
 
 ### 0.0.2
 
-* (xXBJXx) added charging function
 * (xXBJXx) added charging function
 
 ### 0.0.1

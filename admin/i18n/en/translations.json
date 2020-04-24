@@ -36,5 +36,22 @@
     "screen": "screensaver",
     "telegram": "Optional Telegram",
     "telegram-enabled": "Activate Telegram Warning",
-    "telegramUser": "Telegram user"
+    "telegramUser": "Telegram user",
+    "Check interval for the brightness in minutes": "Check interval for the brightness in minutes",
+    "dayTime": "Day Time",
+    "4Clock": "4 Clock",
+    "5Clock": "5 Clock",
+    "6Clock": "6 Clock",
+    "7Clock": "7 Clock",
+    "8Clock": "8 Clock",
+    "9Clock": "9 Clock",
+    "18Clock": "18 Clock",
+    "19Clock": "19 Clock",
+    "20Clock": "20 Clock",
+    "21Clock": "21 Clock",
+    "22Clock": "22 Clock",
+    "23Clock": "23 Clock",
+    "Screen on": "Screen permanently on",
+    "Screen auto": "Turn off screen automatically",
+    "nightTime": "Night Time"
 }
