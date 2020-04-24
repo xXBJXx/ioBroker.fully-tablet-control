@@ -29,6 +29,8 @@
 
 * [ ] Bewegungsmelder
 
+* [x] brightness control
+
 _____________________________________
 
 ## Changelog
