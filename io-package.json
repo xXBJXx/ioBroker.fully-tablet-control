@@ -1,8 +1,68 @@
 {
     "common": {
         "name": "tablet-control",
-        "version": "0.0.4",
+        "version": "0.0.6",
         "news": {
+            "0.0.6": {
+                "en": "Screensaver selection implemented,\n Motion detector added",
+                "de": "Bildschirmschoner-Auswahl,\n Motion detector Hinzugefügt",
+                "ru": "Выбор заставки выполнены,\n Детектор движения добавлен",
+                "pt": "Protetor de tela de seleção implementado,\n Detector de movimento adicionados",
+                "nl": "Screensaver selectie uitgevoerd,\n Bewegingsmelder toegevoegd",
+                "fr": "Économiseur d'écran de sélection mis en œuvre,\n Détecteur de mouvement ajoutée",
+                "it": "Screensaver di selezione attuate,\n Rilevatore di movimento aggiunto",
+                "es": "Salvapantallas de selección implementado,\n Detector de movimiento añadido",
+                "pl": "Wybór wygaszacza ekranu spełnione,\n Czujnik ruchu dodany",
+                "zh-cn": "屏幕保护程序的选择实施，\n 加入运动检测器"
+            },
+            "0.0.5": {
+                "en": "manual brightness control implemented,\n Screensavers added",
+                "de": "manuelle Helligkeitsregelung implementiert,\n Bildschirmschoner Hinzugefügt",
+                "ru": "ручное управление яркостью реализовано,\n Скринсейверы добавлен",
+                "pt": "manual de controle de brilho implementado,\n Protetores de tela adicionados",
+                "nl": "handmatige instelling van de helderheid toegepast,\n Screensavers toegevoegd",
+                "fr": "manuel de la luminosité de contrôle mis en œuvre,\n Économiseurs d'écran ajoutés",
+                "it": "controllo manuale della luminosità implementato,\n Screensaver aggiunto",
+                "es": "control de brillo manual implementado,\n Protectores de pantalla añadido",
+                "pl": "ręczne sterowanie jasnością realizowane,\n Wygaszacze ekranu dodano",
+                "zh-cn": "手册的亮度控制实现的，\n 屏幕保护程序加入"
+            },
+            "0.0.4": {
+                "en": "request optimized for multiple devices,\nbrightness control implemented,",
+                "de": "Anfrage für mehrere Geräte optimiert,\nHelligkeitsregelung implementiert,",
+                "ru": "запрос оптимизирован для различных устройств,\nрегулировка яркости реализована,",
+                "pt": "solicitação otimizada para vários dispositivos,\ncontrole de brilho implementado,",
+                "nl": "verzoek geoptimaliseerd voor meerdere apparaten,\nhelderheid controle uitgevoerd,",
+                "fr": "demande optimisé pour plusieurs appareils,\nréglage de la luminosité mis en œuvre,",
+                "it": "richiesta ottimizzato per dispositivi multipli,\ncontrollo della luminosità implementato,",
+                "es": "solicitud optimizado para múltiples dispositivos,\ncontrol de brillo implementado,",
+                "pl": "wniosek zoptymalizowane dla różnych urządzeń,\nregulacja jasności zrealizowany,",
+                "zh-cn": "的请求，优化用于多个装置，\n亮度控制实现的，"
+            },
+            "0.0.3": {
+                "en": "Charging function optimized,\nAdded selection for continuous operation screen,\nTelegram warning added",
+                "de": "Ladefunktion optimiert,\nAuswahl für Dauerbetriebsbildschirm hinzugefügt,\nTelegramm Warnung Hinzugefügt",
+                "ru": "функция зарядки оптимизирован,\nдобавлен экран выбора для непрерывной работы,\nпредупреждение телеграмму добавлено",
+                "pt": "função de Carregamento otimizado,\nAdicionado ecrã de selecção para a operação contínua\nTelegrama de aviso adicionado",
+                "nl": "Opladen functie geoptimaliseerd,\nToegevoegd selectie scherm voor continue werking,\nTelegram waarschuwing toegevoegd",
+                "fr": "la fonction de Chargement optimisé,\nAjout de la sélection de l'écran pour un fonctionnement en continu,\nTélégramme avertissement ajouté",
+                "it": "funzione di Carica della batteria ottimizzata,\nAggiunta la schermata di selezione per il funzionamento continuo\nTelegramma di avviso aggiunto",
+                "es": "la función de Carga optimizada,\nAñadido pantalla de selección para la operación continua,\nTelegrama de aviso añadido",
+                "pl": "funkcja ładowania zoptymalizowany,\ndodano ekran wyboru do ciągłej pracy,\nostrzeżenie telegram dodano",
+                "zh-cn": "充功能最优化，\n加入的选择视为连续操作，\n电报警告加入"
+            },
+            "0.0.2": {
+                "en": "added charging function",
+                "de": "Hinzugefügt Ladefunktion",
+                "ru": "добавлена функция зарядки ",
+                "pt": "adicionado função de carregamento",
+                "nl": "toegevoegd laadfunctie",
+                "fr": " a ajouté la fonction de chargement",
+                "it": "aggiunta la funzione di ricarica",
+                "es": "se añadió la función de carga",
+                "pl": "dodano funkcję ładowania ",
+                "zh-cn": "加充功能"
+            },
             "0.0.1": {
                 "en": "initial release",
                 "de": "Erstveröffentlichung",
@@ -30,22 +90,23 @@
             "zh-cn": "平板电脑控制"
         },
         "desc": {
-            "en": "tablet-control",
-            "de": "Tablettenkontrolle",
-            "ru": "планшет-контроль",
-            "pt": "controle de tablet",
-            "nl": "tablet-bediening",
-            "fr": "contrôle de la tablette",
-            "it": "tavoletta-control",
-            "es": "control de tableta",
-            "pl": "sterowanie tabletem",
-            "zh-cn": "平板电脑控制"
+            "en": "Tablet control with the FullyBrowser (charge control, screen saver, brightness control)",
+            "de": "Tablet-Steuerung, mit der FullyBrowser (Ladekontrolle, Bildschirmschoner, Helligkeit)",
+            "ru": "Управление планшетом с FullyBrowser (контроль заряда, заставки, регулировка яркости)",
+            "pt": "Tablet com o FullyBrowser (carga de controle, proteção de tela, o controle de brilho)",
+            "nl": "Een Tablet bedienen met de FullyBrowser (charge control, screensaver helderheid)",
+            "fr": "Tablette de contrôle avec le FullyBrowser (contrôle de charge, économiseur d'écran, réglage de la luminosité)",
+            "it": "Di controllo della tavoletta con la FullyBrowser (controllo di carica, screen saver, controllo di luminosità)",
+            "es": "De control de la tableta con la FullyBrowser (control de la carga, protector de pantalla, la de brillo de control)",
+            "pl": "Sterowanie tabletem z FullyBrowser (kontrola naładowania, wygaszacze ekranu, regulacja jasności)",
+            "zh-cn": "平板电脑控制的FullyBrowser(负责控制、屏幕保护程序、控制亮度)"
         },
         "authors": [
             "xXBJXx <alienware.games@gmail.com>"
         ],
         "keywords": [
             "ioBroker",
+            "Tablet-Control",
             "Tablet",
             "Fully Kiosk Browser"
         ],
@@ -76,11 +137,12 @@
         "devices": [],
         "charger": [],
         "brightness": [],
-        "screensaver": "false",
-        "screen": [],
+        "screenSaverON": "false",
+        "screenSaver": [],
         "telegram_enabled": "false",
         "telegram": [],
         "motion": [],
+        "motionSensor_enabled": "false",
         "screen_on": "true",
         "checkInterval": 5,
         "dayTime": 7,

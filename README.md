@@ -23,17 +23,19 @@
 
 # Do not install under construction
 
-## To-Do
-
-* [ ] Screensaver mit YouTube link eingabe einbauen
-
-* [ ] Bewegungsmelder
-
-* [x] brightness control
-
-_____________________________________
+_________________________________
 
 ## Changelog
+
+### 0.0.6
+
+* (xXBJXx) Screensaver selection implemented
+* (xXBJXx) Motion detector added
+
+### 0.0.5
+
+* (xXBJXx) manual brightness control implemented
+* (xXBJXx) Screensavers added
 
 ### 0.0.4
 
