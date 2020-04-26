@@ -246,7 +246,10 @@ class TabletControl extends utils.Adapter {
 					currentFragment[i] = objects.currentFragment;
 					this.setState(`device.${stateID}.active_display`, { val: await currentFragment[i], ack: true });
 					this.log.debug('currentFragment ' + currentFragment);
-
+					if (currentFragment[i] == 'main') {
+						this.screenSaver();
+					}
+					
 					const deviceModel = objects.deviceModel;
 					this.setState(`device.${stateID}.deviceModel`, { val: await deviceModel, ack: true });
 					this.log.debug('deviceModel ' + deviceModel);
