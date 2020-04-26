@@ -66,7 +66,7 @@ class TabletControl extends utils.Adapter {
 		await this.create_state();
 		await this.stateRequest();
 		await this.brightnessCron();
-		await this.screenSaver();
+		await this.motionSensor();
 	}
 
 	async initialization() {
@@ -247,7 +247,7 @@ class TabletControl extends utils.Adapter {
 					this.setState(`device.${stateID}.active_display`, { val: await currentFragment[i], ack: true });
 					this.log.debug('currentFragment ' + currentFragment);
 					if (currentFragment[i] == 'main') {
-						this.screenSaver();
+						this.motionSensor();
 					}
 					
 					const deviceModel = objects.deviceModel;
@@ -511,16 +511,17 @@ class TabletControl extends utils.Adapter {
 			if (motionSensor_enabled && motion.length !== 0) {
 				if (!motion || motion !== []) {
 					for (const sensor in motion) {
-						// console.log(`motion Sensor val: ${motion[sensor].enabled}`);
+						console.log(`motion Sensor val: ${motion[sensor].enabled}`);
 						if (motion[sensor].enabled && motionID[sensor] !== '') {
-							// console.log(`motion Sensor ID: ${motionID[sensor]}`);
+							console.log(`motion Sensor ID: ${motionID[sensor]}`);
 							const motionObj = await this.getForeignStateAsync(motionID[sensor]);
 							if (motionID.length < 2){
 								for (const one in tabletName) {
 									if (motionObj && (motionObj.val || !motionObj.val)) {
 										motionVal[one] = motionObj.val;
-										// console.log(`motionVal val: ${motionVal}`);
+										console.log(`motionVal val: ${motionVal}`);
 										this.log.debug(`motionVal val: ${motionVal}`);
+
 									}
 									else {
 										motionVal[one] = false;
@@ -530,7 +531,7 @@ class TabletControl extends utils.Adapter {
 							else {
 								if (motionObj && (motionObj.val || !motionObj.val)) {
 									motionVal[sensor] = motionObj.val;
-									// console.log(`motionVal val: ${motionVal}`);
+									console.log(`motionVal val: ${motionVal}`);
 									this.log.debug(`motionVal val: ${motionVal}`);
 								}
 								else {
@@ -540,7 +541,7 @@ class TabletControl extends utils.Adapter {
 							
 						} else {
 							this.log.warn(`no motion Sensor ID entered`);
-							// console.log(`no motion Sensor ID entered`);
+							console.log(`no motion Sensor ID entered`);
 						}
 					}
 					this.screenSaver();
@@ -548,7 +549,7 @@ class TabletControl extends utils.Adapter {
 			}
 			else {
 				this.log.debug(`Deactivate motion sensors `);
-				// console.log(`Deactivate motion sensors `);
+				console.log(`Deactivate motion sensors `);
 			}
 		} catch (error) {
 			this.log.error(`[motionSensor] : ${error.message}, stack: ${error.stack}`);
@@ -557,9 +558,10 @@ class TabletControl extends utils.Adapter {
 
 	async screenSaver() {
 		try {
+			
 			const motionSensor_enabled = JSON.parse(this.config.motionSensor_enabled);
 			const screenSaverOn = JSON.parse(this.config.screenSaverON);
-			// console.log(`screenSaverOn val: ${screenSaverOn}`);
+			console.log(`screenSaverOn val: ${screenSaverOn}`);
 			if (screenSaverOn) {
 
 				if (!tabletName || tabletName !== []) {
@@ -567,41 +569,48 @@ class TabletControl extends utils.Adapter {
 
 						if (motionSensor_enabled) {
 							this.log.debug(`Motion Sensor is On`);
-
+							console.log(`Motion Sensor is On: ${motionSensor_enabled}`);
 							if (!motionVal[on]) {
 								const ScreensaverOnURL = 'http://' + ip[on] + ':' + port[on] + '/?cmd=startScreensaver&password=' + password[on];
-
+								console.log(`motionVal == false: ${motionVal[on]}`);
 								if (currentFragment[on] == 'main') {
 									this.log.debug(`${await tabletName[on]} Screensaver starts in ${await screenSaverTimer[on]} ms`);
-
+									console.log(`currentFragment == main: ${currentFragment[on]}`);
 									motionTimeout = setTimeout(async () => {
 										this.sendCommand(ScreensaverOnURL, `[screenSaver On] ${await tabletName[on]}`);
-										this.log.debug(`${await tabletName[on]} sendCommand: screenSaver On ${ScreensaverOnURL}`);
-									}, await screenSaverTimer[on]);
-
+										this.log.info(`${await tabletName[on]} sendCommand: screenSaver On ${ScreensaverOnURL}`);
+										console.log(`sendCommand: screenSaver On ${ScreensaverOnURL}`);
+									}, screenSaverTimer[on]);
+									console.log(`screenSaverTimer[on] ${await screenSaverTimer[on]}`);
 								} else if (currentFragment[on] == 'screensaver') {
 									this.log.debug(`${await tabletName[on]} Screensaver already on`);
+									console.log(`currentFragment[on] == 'screensaver': ${currentFragment[on]}`);
 								}
 							} else {
+								console.log(`motionVal == true: ${motionVal[on]}`);
 								const ScreensaverOffURL = 'http://' + ip[on] + ':' + port[on] + '/?cmd=stopScreensaver&password=' + password[on];
 								this.log.debug(`${await tabletName[on]} Movement was detected. Screen saver is switched off`);
 								if (currentFragment[on] == 'main') {
+									console.log(`currentFragment[on] == 'main': ${currentFragment[on]}`);
 									this.log.debug('no screensaver switched on');
 								} else if (currentFragment[on] == 'screensaver') {
+									console.log(`currentFragment[on] == 'screensaver': ${currentFragment[on]}`);
 									this.sendCommand(ScreensaverOffURL, `[screenSaver Off] ${await tabletName[on]}`);
-									this.log.debug(`${await tabletName[on]} sendCommand: screenSaver Off ${ScreensaverOffURL} `);
+									this.log.info(`${await tabletName[on]} sendCommand: screenSaver Off ${ScreensaverOffURL} `);
 								}
 							}
 						} else {
 							const ScreensaverOn = 'http://' + ip[on] + ':' + port[on] + '/?cmd=startScreensaver&password=' + password[on];
+							console.log(`motionSensor_enabled Off: ${motionSensor_enabled}`);
 							if (currentFragment[on] == 'main') {
 								this.log.debug(`${await tabletName[on]} Screensaver starts in ${await screenSaverTimer[on]} ms`);
-
+								console.log(`currentFragment[on] == 'main': ${motionSensor_enabled}`);
 								motionTimeout = setTimeout(async () => {
+									console.log(`[screenSaver On] ${await tabletName[on]}`);
 									this.sendCommand(ScreensaverOn, `[screenSaver On] ${await tabletName[on]}`);
 									this.log.debug(`${await tabletName[on]} sendCommand: screenSaver On ${ScreensaverOn}`);
-								}, await screenSaverTimer[on]);
-
+								}, screenSaverTimer[on]);
+								console.log(`screenSaverTimer[on] ${await screenSaverTimer[on]}`);
 							}
 
 						}
