@@ -19,9 +19,9 @@
   },
   "dependencies": {
     "@iobroker/adapter-core": "^2.3.1",
+    "@sentry/node": "^5.15.5",
     "cron": "^1.8.2",
     "gulp-cli": "^2.2.0",
-    "queue": "*",
     "request": "^2.88.2"
   },
   "devDependencies": {

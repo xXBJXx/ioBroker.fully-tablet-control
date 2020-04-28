@@ -125,6 +125,11 @@
         "dataSource": "poll",
         "materialize": true,
         "messagebox": true,
+        "plugins": {
+            "sentry": {
+                "dsn": "https://8520b03c99c4437da90e414ab4bd1959@o384969.ingest.sentry.io/5217020"
+            }
+        },
         "dependencies": [
             {
                 "js-controller": ">=1.4.2"

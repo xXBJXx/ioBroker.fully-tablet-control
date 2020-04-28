@@ -10,6 +10,8 @@
 const utils = require('@iobroker/adapter-core');
 const { default: axios } = require('axios');
 const schedule = require('cron').CronJob; // Cron Scheduler
+
+// let SentryIntegrations;
 const manualBrightnessID = [];
 const brightnessControlModeID = [];
 const tabletName = [];
@@ -19,7 +21,7 @@ const password = [];
 const Screen = [];
 const deviceInfo = [];
 let requestTimeout = null;
-let motionTimeout = null;
+const motionTimeout = [];
 const User = [];
 const telegramStatus = [];
 const isScreenOn = [];
@@ -36,10 +38,10 @@ const screenSaverTimer = [];
 class TabletControl extends utils.Adapter {
 
 	/**
-	 * @param {Partial<ioBroker.AdapterOptions>} [options={}]
+	 * @param {Partial<utils.AdapterOptions>} [options={}]
 	 */
 	constructor(options) {
-		// @ts-ignore
+
 		super({
 			...options,
 			name: 'tablet-control',
@@ -58,8 +60,6 @@ class TabletControl extends utils.Adapter {
 		// Initialize your adapter here
 		// Reset the connection indicator during startup
 		this.setState('info.connection', false, true);
-
-
 
 		await this.httpLink();
 		await this.initialization();
@@ -128,7 +128,7 @@ class TabletControl extends utils.Adapter {
 							const wallpaperURL = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverWallpaperURL&value=${'fully://color black'}&password=${password[s]}`;
 							this.sendCommand(wallpaperURL, `screenSaver no Url  ${await tabletName}`);
 
-						} 
+						}
 						else {
 							const screenUrl = [
 								{
@@ -148,7 +148,7 @@ class TabletControl extends utils.Adapter {
 							this.log.debug(`set Screensaver for ${tabletName} to YouTube Url: ${playlistUrl} entered`);
 							this.sendCommand(playlistUrl, `screenSaverSelect ${await tabletName}`);
 						}
-						
+
 					} else if (!screensaverMode) {
 						if (screenSaverUrl == '') {
 							const playlistUrl = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverPlaylist&value=&password=${password[s]}`;
@@ -158,7 +158,7 @@ class TabletControl extends utils.Adapter {
 							this.sendCommand(wallpaperURL, `screenSaver no Url  ${await tabletName}`);
 							this.log.debug(`set Screensaver for ${tabletName} to default picture: ${wallpaperURL} entered:`);
 							// console.log(`set Screensaver for ${tabletName} to default picture: ${wallpaperURL} entered`);
-						} 
+						}
 						else {
 							const playlistUrl = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverPlaylist&value=&password=${password[s]}`;
 							this.sendCommand(playlistUrl, `playlist Url  ${await tabletName}`);
@@ -209,8 +209,10 @@ class TabletControl extends utils.Adapter {
 					try {
 						// Try to reach API and receive data
 						apiResult = await axios.get(requestUrl[i]);
+						this.setState(`device.${stateID}.isFullyAlive`, { val: true, ack: true });
 					} catch (error) {
 						this.log.warn(`[Request] ${tabletName[i]} Unable to contact: ${error} | ${error}`);
+						this.setState(`device.${stateID}.isFullyAlive`, { val: false, ack: true });
 						continue;
 					}
 
@@ -249,7 +251,7 @@ class TabletControl extends utils.Adapter {
 					if (currentFragment[i] == 'main') {
 						this.motionSensor();
 					}
-					
+
 					const deviceModel = objects.deviceModel;
 					this.setState(`device.${stateID}.deviceModel`, { val: await deviceModel, ack: true });
 					this.log.debug('deviceModel ' + deviceModel);
@@ -331,7 +333,7 @@ class TabletControl extends utils.Adapter {
 
 						await this.setForeignStateAsync(await chargerid, true, false);
 						this.log.info(`${await tabletName[i]} Loading started`);
-
+						this.manualStates();
 					} else if (await bat[i] >= loadStop && chargeDeviceValue[i]) {
 
 						await this.setForeignStateAsync(await chargerid, false, false);
@@ -341,7 +343,7 @@ class TabletControl extends utils.Adapter {
 				} else {
 
 					if (!chargeDeviceValue[i]) this.setForeignStateAsync(chargerid[i], true, false);
-					if (!chargeDeviceValue[i]) this.log.info(`${await tabletName[i]} Continuous current`);
+					if (!chargeDeviceValue[i]) this.log.debug(`${await tabletName[i]} Continuous current`);
 				}
 
 
@@ -352,11 +354,13 @@ class TabletControl extends utils.Adapter {
 						this.onMessage(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${await tabletName[i]} Tablet charging function has detected a malfunction, the tablet is not charging, please check it !!!`, User);
 						this.log.warn(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + `  ${await tabletName[i]} Tablet charging function has detected a malfunction, the tablet is not charging, please check it !!!`);
 						this.setForeignStateAsync(await chargerid[i], true, false);
+						this.setState(`device.${await tabletName[i]}.charging_warning`, { val: true, ack: true });
 
 					} else if (await bat[i] > 18 && chargeDeviceValue[i] && telegramStatus[i]) {
 						telegramStatus[i] = false;
 						this.onMessage(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${await tabletName[i]} Tablet is charging the problem has been fixed.`, User);
 						this.log.warn(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${await tabletName[i]} Tablet is charging the problem has been fixed.`);
+						this.setState(`device.${await tabletName[i]}.active_display`, { val: false, ack: true });
 					}
 
 				} else {
@@ -364,9 +368,11 @@ class TabletControl extends utils.Adapter {
 					if (await bat[i] <= 18 && !chargeDeviceValue[i] || bat[i] <= 18 && chargeDeviceValue[i]) {
 						this.log.warn(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${await tabletName[i]} Tablet charging function has detected a malfunction, the tablet is not charging, please check it !!!`);
 						this.setForeignStateAsync(await chargerid[i], true, false);
+						this.setState(`device.${await tabletName[i]}.charging_warning`, { val: true, ack: true });
 
 					} else if (await bat[i] > 18 && chargeDeviceValue[i]) {
 						this.log.warn(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${await tabletName[i]} Tablet is charging the problem has been fixed.`);
+						this.setState(`device.${await tabletName[i]}.active_display`, { val: false, ack: true });
 					}
 
 				}
@@ -405,14 +411,18 @@ class TabletControl extends utils.Adapter {
 		if (!brightnessN || brightnessN !== []) {
 			for (const b in brightnessN) {
 				const brightnessNight = Math.round(await this.convert_percent(brightnessN[b].nightBrightness));
-				const nightBrightnessURL = 'http://' + ip[b] + ':' + port[b] + '/?cmd=setStringSetting&key=screenBrightness&value=' + brightnessNight + '&password=' + password[b];
+				// const nightBrightnessURL = 'http://' + ip[b] + ':' + port[b] + '/?cmd=setStringSetting&key=screenBrightness&value=' + brightnessNight + '&password=' + password[b];
+				const nightBrightnessURL = `http://${ip[b]}:${port[b]}/?cmd=setStringSetting&key=screenBrightness&value=${brightnessNight}&password=${password[b]}`;
+				const ScreensaverOnBri = `http://${ip[b]}:${port[b]}/?cmd=setStringSetting&key=screensaverBrightness&value=${brightnessNight}&password=${password[b]}`;
 				if (await brightness[b] == 0) {
 
 					this.log.debug(`The brightness from ${await tabletName[b]} is ${await brightness[b]}  change is not necessary`);
 				}
 				else {
 					this.sendCommand(nightBrightnessURL, `nightBri ${await tabletName[b]}`);
+					this.sendCommand(ScreensaverOnBri, `ScreensaverOnBri ${await tabletName[b]}`);
 					this.log.debug(`${await tabletName[b]} sendCommand: ${nightBrightnessURL}`);
+					this.log.debug(`${await tabletName[b]} sendCommand: ${ScreensaverOnBri}`);
 				}
 			}
 		}
@@ -457,14 +467,17 @@ class TabletControl extends utils.Adapter {
 		try {
 			const brightnessD = this.config.brightness;
 			if (!brightnessD || brightnessD !== []) {
-				let daytimeBrightnessURL = null;
+
 				for (const d in brightnessD) {
+					let daytimeBrightnessURL = null;
+					let ScreensaverOnBri = null;
 					let newBrightnessDay = 0;
 					if (chargeDeviceValue[d]) {
 
-						let brightnessDayPuffer = 0;
+						let brightnessDayPuffer;
 						if (await manualBrightnessMode[d]) {
 							brightnessDayPuffer = Math.round(await this.convert_percent(await manualBrightness[d] - brightnessD[d].loadingLowering));
+
 						}
 						else {
 							brightnessDayPuffer = Math.round(await this.convert_percent(brightnessD[d].dayBrightness - brightnessD[d].loadingLowering));
@@ -487,10 +500,13 @@ class TabletControl extends utils.Adapter {
 							this.log.debug(`${await tabletName[d]} brightness set on: ` + newBrightnessDay + `[` + brightnessD[d].dayBrightness + `%]`);
 						}
 					}
-					daytimeBrightnessURL = 'http://' + ip[d] + ':' + port[d] + '/?cmd=setStringSetting&key=screenBrightness&value=' + newBrightnessDay + '&password=' + password[d];
-					if (brightness[d] != newBrightnessDay) {
+					daytimeBrightnessURL = `http://${ip[d]}:${port[d]}/?cmd=setStringSetting&key=screenBrightness&value=${newBrightnessDay}&password=${password[d]}`;
+					ScreensaverOnBri = `http://${ip[d]}:${port[d]}/?cmd=setStringSetting&key=screensaverBrightness&value=${newBrightnessDay}&password=${password[d]}`;
+					if (await brightness[d] != newBrightnessDay) {
 						await this.sendCommand(daytimeBrightnessURL, `dayBri`);
+						await this.sendCommand(ScreensaverOnBri, `[ScreensaverOnBri] ${await tabletName[d]}`);
 						this.log.debug(`${await tabletName[d]} sendCommand: ${daytimeBrightnessURL}`);
+						this.log.debug(`${await tabletName[d]} sendCommand: ${ScreensaverOnBri}`);
 					}
 				}
 
@@ -500,7 +516,7 @@ class TabletControl extends utils.Adapter {
 		}
 	}
 
-	
+
 	async motionSensor() {
 		try {
 			const motion = this.config.motion;
@@ -515,7 +531,7 @@ class TabletControl extends utils.Adapter {
 						if (motion[sensor].enabled && motionID[sensor] !== '') {
 							console.log(`motion Sensor ID: ${motionID[sensor]}`);
 							const motionObj = await this.getForeignStateAsync(motionID[sensor]);
-							if (motionID.length < 2){
+							if (motionID.length < 2) {
 								for (const one in tabletName) {
 									if (motionObj && (motionObj.val || !motionObj.val)) {
 										motionVal[one] = motionObj.val;
@@ -527,7 +543,7 @@ class TabletControl extends utils.Adapter {
 										motionVal[one] = false;
 									}
 								}
-							} 
+							}
 							else {
 								if (motionObj && (motionObj.val || !motionObj.val)) {
 									motionVal[sensor] = motionObj.val;
@@ -538,7 +554,7 @@ class TabletControl extends utils.Adapter {
 									motionVal[sensor] = false;
 								}
 							}
-							
+
 						} else {
 							this.log.warn(`no motion Sensor ID entered`);
 							console.log(`no motion Sensor ID entered`);
@@ -558,7 +574,7 @@ class TabletControl extends utils.Adapter {
 
 	async screenSaver() {
 		try {
-			
+
 			const motionSensor_enabled = JSON.parse(this.config.motionSensor_enabled);
 			const screenSaverOn = JSON.parse(this.config.screenSaverON);
 			console.log(`screenSaverOn val: ${screenSaverOn}`);
@@ -566,20 +582,24 @@ class TabletControl extends utils.Adapter {
 
 				if (!tabletName || tabletName !== []) {
 					for (const on in tabletName) {
-
+						if (motionTimeout[on]) clearTimeout(motionTimeout[on]);
 						if (motionSensor_enabled) {
 							this.log.debug(`Motion Sensor is On`);
 							console.log(`Motion Sensor is On: ${motionSensor_enabled}`);
 							if (!motionVal[on]) {
-								const ScreensaverOnURL = 'http://' + ip[on] + ':' + port[on] + '/?cmd=startScreensaver&password=' + password[on];
+
 								console.log(`motionVal == false: ${motionVal[on]}`);
 								if (currentFragment[on] == 'main') {
+									const ScreensaverOnURL = 'http://' + ip[on] + ':' + port[on] + '/?cmd=startScreensaver&password=' + password[on];
+									
 									this.log.debug(`${await tabletName[on]} Screensaver starts in ${await screenSaverTimer[on]} ms`);
 									console.log(`currentFragment == main: ${currentFragment[on]}`);
-									motionTimeout = setTimeout(async () => {
-										this.sendCommand(ScreensaverOnURL, `[screenSaver On] ${await tabletName[on]}`);
+									motionTimeout[on] = setTimeout(async () => {
+										
+										await this.sendCommand(ScreensaverOnURL, `[screenSaver On] ${await tabletName[on]}`);
 										this.log.info(`${await tabletName[on]} sendCommand: screenSaver On ${ScreensaverOnURL}`);
 										console.log(`sendCommand: screenSaver On ${ScreensaverOnURL}`);
+										this.stateRequest();
 									}, screenSaverTimer[on]);
 									console.log(`screenSaverTimer[on] ${await screenSaverTimer[on]}`);
 								} else if (currentFragment[on] == 'screensaver') {
@@ -588,12 +608,14 @@ class TabletControl extends utils.Adapter {
 								}
 							} else {
 								console.log(`motionVal == true: ${motionVal[on]}`);
-								const ScreensaverOffURL = 'http://' + ip[on] + ':' + port[on] + '/?cmd=stopScreensaver&password=' + password[on];
 								this.log.debug(`${await tabletName[on]} Movement was detected. Screen saver is switched off`);
+								const ScreensaverOffURL = 'http://' + ip[on] + ':' + port[on] + '/?cmd=stopScreensaver&password=' + password[on];
 								if (currentFragment[on] == 'main') {
 									console.log(`currentFragment[on] == 'main': ${currentFragment[on]}`);
+									this.sendCommand(ScreensaverOffURL, `[screenSaver Off] ${await tabletName[on]}`);
 									this.log.debug('no screensaver switched on');
 								} else if (currentFragment[on] == 'screensaver') {
+									// const ScreensaverOffURL = 'http://' + ip[on] + ':' + port[on] + '/?cmd=stopScreensaver&password=' + password[on];
 									console.log(`currentFragment[on] == 'screensaver': ${currentFragment[on]}`);
 									this.sendCommand(ScreensaverOffURL, `[screenSaver Off] ${await tabletName[on]}`);
 									this.log.info(`${await tabletName[on]} sendCommand: screenSaver Off ${ScreensaverOffURL} `);
@@ -605,7 +627,7 @@ class TabletControl extends utils.Adapter {
 							if (currentFragment[on] == 'main') {
 								this.log.debug(`${await tabletName[on]} Screensaver starts in ${await screenSaverTimer[on]} ms`);
 								console.log(`currentFragment[on] == 'main': ${motionSensor_enabled}`);
-								motionTimeout = setTimeout(async () => {
+								motionTimeout[on] = setTimeout(async () => {
 									console.log(`[screenSaver On] ${await tabletName[on]}`);
 									this.sendCommand(ScreensaverOn, `[screenSaver On] ${await tabletName[on]}`);
 									this.log.debug(`${await tabletName[on]} sendCommand: screenSaver On ${ScreensaverOn}`);
@@ -644,7 +666,7 @@ class TabletControl extends utils.Adapter {
 
 	async sendCommand(link, log) {
 		try {
-			axios.get(link);
+			await axios.get(link);
 		} catch (error) {
 			this.log.warn(`[${log}] Unable to contact: ${error} | ${error}`);
 		}
@@ -894,6 +916,32 @@ class TabletControl extends utils.Adapter {
 					native: {},
 				});
 
+				await this.extendObjectAsync(`device.${stateID}.charging_warning`, {
+					type: 'state',
+					common: {
+						name: `${stateName} charging warning`,
+						type: 'boolean',
+						role: 'info',
+						def: false,
+						read: true,
+						write: false
+						
+					},
+					native: {},
+				});
+				await this.extendObjectAsync(`device.${stateID}.isFullyAlive`, {
+					type: 'state',
+					common: {
+						name: `${stateName} Is Fully Browser Alive?`,
+						type: 'boolean',
+						role: 'info',
+						def: false,
+						read: true,
+						write: false
+						
+					},
+					native: {},
+				});
 
 				this.subscribeStates(`device.${stateID}.manualBrightness`);
 				this.subscribeStates(`device.${stateID}.brightness_control_mode`);
@@ -917,10 +965,10 @@ class TabletControl extends utils.Adapter {
 	 */
 	onUnload(callback) {
 		try {
-
 			if (requestTimeout) clearTimeout(requestTimeout);
-			if (motionTimeout) clearTimeout(motionTimeout);
-
+			for (const Unl in tabletName) {
+				if (motionTimeout[Unl]) clearTimeout(motionTimeout[Unl]);
+			}
 			this.log.info('Adapter Tablet Constrol stopped...');
 			this.setState('info.connection', false, true);
 
@@ -1002,7 +1050,7 @@ class TabletControl extends utils.Adapter {
 if (module.parent) {
 	// Export the constructor in compact mode
 	/**
-	 * @param {Partial<ioBroker.AdapterOptions>} [options={}]
+	 * @param {Partial<utils.AdapterOptions>} [options={}]
 	 */
 	module.exports = (options) => new TabletControl(options);
 } else {
