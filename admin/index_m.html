@@ -126,14 +126,22 @@
             <!-- end logo -->
 
             <!-- polling interval -->
-                <div class="col s6 input-field">
+                <div class="col s1.1 input-field">
                     <input type="number" class="value" id="interval" 
-                        style="width:15%; text-align: center" max="3600" min="0"
+                        style="width:150px; text-align: center" max="3600" min="0"
                         value="30" />
                     <label for="interval" class="translate">interval</label>
                 </div>
-                <div class="row"></div>
-            <!-- end polling interval -->
+                <!-- end polling interval -->
+                
+                <!-- back to Fully Browser -->
+                <div class="col s3 input-field">
+                    <input type="number" class="value" id="fireTablet" max="120" min="1" value="3" style="width:150px; text-align: center; ">
+                    <label class="translate" style="text-align: center">back to Fully Browser in (min)</label>
+                    <div class="row"></div>
+                    <span class="translate fire-tablet" style="text-align: right; font-size: 1.2em">Only relevant for Amazon Fire Tablet with Alexa use</span>
+                </div>
+                <!-- end back to Fully Browser -->
 
             <!-- fully browser login table -->
                     <div class="col s12" id="devices" style="bottom: 30px;">

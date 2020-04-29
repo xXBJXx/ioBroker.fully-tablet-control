@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "tablet-control",
-        "version": "0.0.6",
+        "version": "0.0.7",
         "news": {
+            "0.0.7": {
+                "en": "implemented back to Fully Browser,\n bug fixes",
+                "de": "zurück zu Fully Browser implementiert,\n Fehlerbehebung",
+                "ru": "реализован обратно в полностью браузер,\n исправление ошибок",
+                "pt": "implementado de volta ao navegador totalmente,\n correções de bugs",
+                "nl": "geïmplementeerd terug naar volledig browser,\n bugfixes",
+                "fr": "implémenté de nouveau au navigateur entièrement,\n corrections de bugs",
+                "it": "implementato di nuovo in Browser completo,\n correzioni di bug",
+                "es": "implementado de nuevo en el navegador completo,\nc orrección de errores",
+                "pl": "zaimplementowane z powrotem do w pełni przeglądarki,\n poprawki błędów",
+                "zh-cn": "实施回完全浏览器,\n bug修复"
+              },
             "0.0.6": {
                 "en": "Screensaver selection implemented,\n Motion detector added",
                 "de": "Bildschirmschoner-Auswahl,\n Motion detector Hinzugefügt",
@@ -151,7 +163,8 @@
         "screen_on": "true",
         "checkInterval": 5,
         "dayTime": 7,
-        "nightTime": 22
+        "nightTime": 22,
+        "fireTablet": 3
     },
     "objects": [],
     "instanceObjects": [

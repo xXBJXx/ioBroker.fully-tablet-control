@@ -34,6 +34,11 @@ const manualBrightnessMode = [];
 const motionID = [];
 const motionVal = [];
 const screenSaverTimer = [];
+const foregroundAppTimer = [];
+const foreground = [];
+const foregroundStart = [];
+
+
 
 class TabletControl extends utils.Adapter {
 
@@ -92,6 +97,15 @@ class TabletControl extends utils.Adapter {
 			}
 		}
 
+		//telegramSendStatus set default state false for all devices
+		const tempStart = this.config.devices;
+		if (!tempStart || tempStart !== []) {
+			for (const f in tempStart) {
+				foregroundStart[f] = false;
+				this.log.debug('foregroundStart: ' + JSON.stringify(foregroundStart));
+			}
+		}
+
 		//read motion ID from Admin and subscribe
 		const motion = this.config.motion;
 		for (const sensor in motion) {
@@ -105,7 +119,7 @@ class TabletControl extends utils.Adapter {
 		}
 
 		// read screenSaverTimer and screenSaverSelect
-		const screenSaverON = this.config.screenSaverON;
+		const screenSaverON = JSON.parse(this.config.screenSaverON);
 		const screenSaverObj = this.config.screenSaver;
 		const tablets = this.config.devices;
 		if (screenSaverON) {
@@ -261,6 +275,21 @@ class TabletControl extends utils.Adapter {
 					const ssid = objects.ssid.replace(/"/gi, '');
 					this.log.debug('ssid: ' + ssid);
 
+					foreground[i] = objects.foregroundApp;
+					this.log.debug('foregroundApp ' + foreground);
+					if (await foreground[i] !== 'de.ozerov.fully' && await foregroundStart[i] == false) {
+						foregroundStart[i] = true;
+						this.foregroundApp();
+						console.log(`${await tabletName[i]} foregroundStart true: ${await foregroundStart[i]}`);
+						this.log.debug(`${await tabletName[i]} foregroundStart true: ${await foreground[i]}`);
+					}
+					else {
+						foregroundStart[i] = false;
+						console.log(`${await tabletName[i]} foreground is Fully: ${await foreground[i]}`);
+						this.log.debug(`${await tabletName[i]} foreground is Fully: ${await foreground[i]}`);
+					}
+
+
 					if (ssid.replace(/_/gi, ' ') == '<unknown ssid>') {
 						this.setState(`device.${stateID}.ssid`, { val: 'is not supported', ack: true });
 					}
@@ -291,6 +320,8 @@ class TabletControl extends utils.Adapter {
 					this.setState(`device.${await stateID}.lastInfoUpdate`, { val: Date.now(), ack: true });
 					this.log.debug('lastInfoUpdate: ' + Date.now());
 
+
+
 				}
 			}
 
@@ -302,6 +333,25 @@ class TabletControl extends utils.Adapter {
 			}, this.config.interval * 1000);
 		} catch (error) {
 			this.log.error(`[stateRequest] : ${error.message}, stack: ${error.stack}`);
+		}
+	}
+
+	async foregroundApp() {
+		try {
+			for (const app in foreground) {
+				if (foregroundAppTimer[app]) clearTimeout(foregroundAppTimer[app]);
+				console.log(`${await tabletName[app]} foreground: ${await foreground[app]}`);
+				this.log.debug(`${await tabletName[app]} foreground: ${await foreground[app]}`);
+
+				const foregroundAppUrl = `http://${await ip[app]}:${await port[app]}/?cmd=toForeground&password=${await password[app]}`;
+				console.log(`${await tabletName[app]} foreground: ${foregroundAppUrl}`);
+				foregroundAppTimer[app] = setTimeout(async () => {
+					this.sendCommand(foregroundAppUrl, `foregroundApp ${await tabletName[app]}`);
+				}, this.config.fireTablet * 60000);
+
+			}
+		} catch (error) {
+			this.log.error(`[foregroundApp] : ${error.message}, stack: ${error.stack}`);
 		}
 	}
 
@@ -475,13 +525,11 @@ class TabletControl extends utils.Adapter {
 						let brightnessDayPuffer;
 						if (await manualBrightnessMode[d]) {
 							brightnessDayPuffer = Math.round(await this.convert_percent(await manualBrightness[d] - brightnessD[d].loadingLowering));
-
 						}
 						else {
 							brightnessDayPuffer = Math.round(await this.convert_percent(brightnessD[d].dayBrightness - brightnessD[d].loadingLowering));
 						}
 						if (brightnessDayPuffer <= 0) {
-
 							newBrightnessDay = 0;
 							this.log.debug(`brightness from ${await tabletName[d]} is less than 0 brightness is set to`);
 						} else {
@@ -535,7 +583,6 @@ class TabletControl extends utils.Adapter {
 										motionVal[one] = motionObj.val;
 										console.log(`motionVal val: ${motionVal}`);
 										this.log.debug(`motionVal val: ${motionVal}`);
-
 									}
 									else {
 										motionVal[one] = false;
@@ -552,7 +599,6 @@ class TabletControl extends utils.Adapter {
 									motionVal[sensor] = false;
 								}
 							}
-
 						} else {
 							this.log.warn(`no motion Sensor ID entered`);
 							console.log(`no motion Sensor ID entered`);
@@ -576,7 +622,6 @@ class TabletControl extends utils.Adapter {
 			const screenSaverOn = JSON.parse(this.config.screenSaverON);
 			console.log(`screenSaverOn val: ${screenSaverOn}`);
 			if (screenSaverOn) {
-
 				if (!tabletName || tabletName !== []) {
 					for (const on in tabletName) {
 						if (motionTimeout[on]) clearTimeout(motionTimeout[on]);
@@ -588,7 +633,7 @@ class TabletControl extends utils.Adapter {
 								console.log(`motionVal == false: ${motionVal[on]}`);
 								if (currentFragment[on] == 'main') {
 									const ScreensaverOnURL = 'http://' + ip[on] + ':' + port[on] + '/?cmd=startScreensaver&password=' + password[on];
-									
+
 									this.log.debug(`${await tabletName[on]} Screensaver starts in ${await screenSaverTimer[on]} ms`);
 									console.log(`currentFragment == main: ${currentFragment[on]}`);
 
@@ -624,13 +669,13 @@ class TabletControl extends utils.Adapter {
 							if (currentFragment[on] == 'main') {
 								this.log.debug(`${await tabletName[on]} Screensaver starts in ${await screenSaverTimer[on]} ms`);
 								console.log(`currentFragment[on] == 'main': ${motionSensor_enabled}`);
-								
+
 								motionTimeout[on] = setTimeout(async () => {
 									console.log(`[screenSaver On] ${await tabletName[on]}`);
 									this.sendCommand(ScreensaverOn, `[screenSaver On] ${await tabletName[on]}`);
 									this.log.debug(`${await tabletName[on]} sendCommand: screenSaver On ${ScreensaverOn}`);
 								}, screenSaverTimer[on]);
-								
+
 								console.log(`screenSaverTimer[on] ${await screenSaverTimer[on]}`);
 							}
 
@@ -659,7 +704,6 @@ class TabletControl extends utils.Adapter {
 				}
 			}
 		}
-
 	}
 
 
@@ -924,7 +968,7 @@ class TabletControl extends utils.Adapter {
 						def: false,
 						read: true,
 						write: false
-						
+
 					},
 					native: {},
 				});
@@ -937,7 +981,7 @@ class TabletControl extends utils.Adapter {
 						def: false,
 						read: true,
 						write: false
-						
+
 					},
 					native: {},
 				});
@@ -967,6 +1011,7 @@ class TabletControl extends utils.Adapter {
 			if (requestTimeout) clearTimeout(requestTimeout);
 			for (const Unl in tabletName) {
 				if (motionTimeout[Unl]) clearTimeout(motionTimeout[Unl]);
+				if (foregroundAppTimer[Unl]) clearTimeout(foregroundAppTimer[Unl]);
 			}
 			this.log.info('Adapter Tablet Constrol stopped...');
 			this.setState('info.connection', false, true);

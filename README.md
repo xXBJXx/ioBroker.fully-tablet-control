@@ -27,6 +27,11 @@ _________________________________
 
 ## Changelog
 
+### 0.0.7
+
+* (xXBJXx) implemented back to Fully Browser
+* (xXBJXx) bug fixes
+
 ### 0.0.6
 
 * (xXBJXx) Screensaver selection implemented

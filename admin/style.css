@@ -80,3 +80,7 @@ max-width: 10%;
 	/* -ms-text-align-last: center;
 	-moz-text-align-last: center; */
  }
+ .fire-tablet {
+	margin: 1em 0;
+	padding-top: 20px;
+}
