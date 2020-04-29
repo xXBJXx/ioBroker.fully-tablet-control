@@ -29,7 +29,7 @@ _________________________________
 
 ### 0.0.7
 
-* (xXBJXx) implemented back to Fully Browser
+* (xXBJXx) back to Fully Browser implemented 
 * (xXBJXx) bug fixes
 
 ### 0.0.6
