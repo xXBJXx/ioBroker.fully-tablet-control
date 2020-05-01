@@ -15,13 +15,11 @@
 
 ## tablet-control adapter for ioBroker
 
-### Control your tablet with the Fully Kiosk Browser
+### Steuern Sie Ihr Tablet mit dem Fully Kiosk Browser
 
-# !!! ACHTUNG !!!
+# !!! ACHTUNG Beta Release!!!
 
-# Noch im aufbau nicht installieren
-
-# Do not install under construction
+# Noch in der Beta Beschreibung wird noch folgen
 
 _________________________________
 
