@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "tablet-control",
-        "version": "0.0.7",
+        "version": "0.0.8",
         "news": {
+            "0.0.8": {
+                "en": "device activate added",
+                "de": "Geräteaktivierung hinzugefügt",
+                "ru": "добавлена активация устройства",
+                "pt": "dispositivo ativado adicionado",
+                "nl": "apparaat activeren toegevoegd",
+                "fr": "activation de l'appareil ajoutée",
+                "it": "dispositivo attivato aggiunto",
+                "es": "dispositivo activado agregado",
+                "pl": "Dodano aktywację urządzenia",
+                "zh-cn": "设备激活已添加"
+              },
             "0.0.7": {
                 "en": "implemented back to Fully Browser,\n bug fixes",
                 "de": "zurück zu Fully Browser implementiert,\n Fehlerbehebung",
@@ -14,7 +26,7 @@
                 "es": "implementado de nuevo en el navegador completo,\nc orrección de errores",
                 "pl": "zaimplementowane z powrotem do w pełni przeglądarki,\n poprawki błędów",
                 "zh-cn": "实施回完全浏览器,\n bug修复"
-              },
+            },
             "0.0.6": {
                 "en": "Screensaver selection implemented,\n Motion detector added",
                 "de": "Bildschirmschoner-Auswahl,\n Motion detector Hinzugefügt",

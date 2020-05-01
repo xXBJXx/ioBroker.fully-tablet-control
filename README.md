@@ -27,9 +27,14 @@ _________________________________
 
 ## Changelog
 
+### 0.0.8
+
+* (xXBJXx) device activate added
+* (xXBJXx) bug fixes
+
 ### 0.0.7
 
-* (xXBJXx) back to Fully Browser implemented 
+* (xXBJXx) back to Fully Browser implemented
 * (xXBJXx) bug fixes
 
 ### 0.0.6
