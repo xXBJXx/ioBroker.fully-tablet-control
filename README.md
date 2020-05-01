@@ -27,6 +27,10 @@ _________________________________
 
 ## Changelog
 
+### 0.1.0
+
+* (xXBJXx) Beta Release
+
 ### 0.0.8
 
 * (xXBJXx) device activate added

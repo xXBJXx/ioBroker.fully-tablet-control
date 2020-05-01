@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "tablet-control",
-        "version": "0.0.8",
+        "version": "0.1.0",
         "news": {
+            "0.1.0": {
+                "en": "Beta Release",
+                "de": "Beta-Version",
+                "ru": "Бета-версия",
+                "pt": "Versão Beta",
+                "nl": "Bètaversie",
+                "fr": "Version bêta",
+                "it": "Rilascio beta",
+                "es": "Lanzamiento Beta",
+                "pl": "Wersja beta",
+                "zh-cn": "测试版"
+              },
             "0.0.8": {
                 "en": "device activate added",
                 "de": "Geräteaktivierung hinzugefügt",
