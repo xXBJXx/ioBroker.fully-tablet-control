@@ -27,14 +27,27 @@
 }
 
 
-.sub-title {
+/* .sub-title {
 	margin-top: -2.5rem !important;
 	padding: 0.5rem;
 	background: #2196f3;
 	color: white;
 	border-radius: 10px;
 	margin-bottom: 7px;
+} */
+
+
+
+.sub-title-brightness{
+    padding: 0.5rem;
+    background: #2196f3;
+    color: white;
+    border-radius: 10px;
+    margin-bottom: 7px;
+    text-align: center;
+    font-size: x-large;
 }
+
 
 .sub-title-left {
     margin-top: -2.5rem !important;

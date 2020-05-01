@@ -38,7 +38,7 @@ const foregroundAppTimer = [];
 const foreground = [];
 const foregroundStart = [];
 const deviceEnabled = [];
-
+let ScreensaverReturn = null;
 
 class TabletControl extends utils.Adapter {
 
@@ -66,11 +66,10 @@ class TabletControl extends utils.Adapter {
 		// Reset the connection indicator during startup
 		this.setState('info.connection', false, true);
 
-		
 		await this.initialization();
 		await this.create_state();
 		await this.stateRequest();
-		if (!JSON.parse(this.config.motionSensor_enabled)){
+		if (!JSON.parse(this.config.motionSensor_enabled)) {
 			await this.screenSaver();
 		}
 		await this.brightnessCron();
@@ -78,142 +77,143 @@ class TabletControl extends utils.Adapter {
 	}
 
 	async initialization() {
-		//read devices and created httpLink 
-		const login = this.config.devices;
-		if (!login || login !== []) {
-			for (const i in login) {
+		try {
+			//read devices and created httpLink 
+			const login = this.config.devices;
+			if (!login || login !== []) {
+				for (const i in login) {
 
-				ip[i] = login[i].ip;
-				port[i] = login[i].port;
-				password[i] = login[i].password;
-				deviceEnabled[i] = login[i].enabled;
+					ip[i] = login[i].ip;
+					port[i] = login[i].port;
+					password[i] = login[i].password;
+					deviceEnabled[i] = login[i].enabled;
 
-				Screen[i] = `http://${ip[i]}:${port[i]}/?cmd=screenOn&password=${password[i]}`;
+					Screen[i] = `http://${ip[i]}:${port[i]}/?cmd=screenOn&password=${password[i]}`;
 
-				deviceInfo[i] =  `http://${ip[i]}:${port[i]}/?cmd=deviceInfo&type=json&password=${password[i]}`;
-			}
-
-		}
-		this.log.debug(`Screen: ${JSON.stringify(Screen)}`);
-		this.log.debug(`deviceInfo: ${JSON.stringify(deviceInfo)}`);
-
-		//read Testegram user 
-		const telegramOn = this.config.telegram_enabled;
-		const telegramUser = this.config.telegram;
-		if (telegramOn) {
-			if (!telegramUser || telegramUser !== []) {
-				for (const u in telegramUser) {
-					User[u] = telegramUser[u].telegramUser;
-					this.log.debug(`read telegram user: ${JSON.stringify(User)}`);
+					deviceInfo[i] = `http://${ip[i]}:${port[i]}/?cmd=deviceInfo&type=json&password=${password[i]}`;
 				}
-			}
-		}
 
-		//telegramSendStatus set default state false for all devices
-		const temp = this.config.devices;
-		if (!temp || temp !== []) {
-			for (const t in temp) {
-				if (deviceEnabled[t]) {
-					telegramStatus[t] = false;
-					this.log.debug(`telegramSendStatus: ${JSON.stringify(telegramStatus)}`);
-				}
 			}
-		}
+			this.log.debug(`Screen: ${JSON.stringify(Screen)}`);
+			this.log.debug(`deviceInfo: ${JSON.stringify(deviceInfo)}`);
 
-		//telegramSendStatus set default state false for all devices
-		const tempStart = this.config.devices;
-		if (!tempStart || tempStart !== []) {
-			for (const f in tempStart) {
-				if (deviceEnabled[f]) {
-					foregroundStart[f] = false;
-					this.log.debug(`foregroundStart: ${JSON.stringify(foregroundStart)}`);
-				}
-			}
-		}
-
-		//read motion ID from Admin and subscribe
-		const motion = this.config.motion;
-		for (const sensor in motion) {
-			if (motion[sensor].enabled && motion[sensor].motionid !== '') {
-				motionID[sensor] = await motion[sensor].motionid;
-				this.subscribeForeignStates(motionID[sensor]);
-			} else {
-				this.log.warn(`no motion Sensor ID entered`);
-				// console.log(`no motion Sensor ID entered`);
-			}
-		}
-
-		// read screenSaverTimer and screenSaverSelect
-		const screenSaverON = JSON.parse(this.config.screenSaverON);
-		const screenSaverObj = this.config.screenSaver;
-		const tablets = this.config.devices;
-		if (screenSaverON) {
-			if (!screenSaverObj || screenSaverObj !== []) {
-				for (const s in tablets) {
-					if (deviceEnabled[s]) {
-						const tabletName = tablets[s].name;
-						screenSaverTimer[s] = JSON.parse(screenSaverObj[s].minute) * 60000;
+			//read Testegram user 
+			const telegramOn = this.config.telegram_enabled;
+			const telegramUser = this.config.telegram;
+			if (telegramOn) {
+				if (!telegramUser || telegramUser !== []) {
+					for (const u in telegramUser) {
+						User[u] = telegramUser[u].telegramUser;
 						this.log.debug(`read telegram user: ${JSON.stringify(User)}`);
-						const screenSaverUrl = screenSaverObj[s].url;
-						const screensaverMode = JSON.parse(screenSaverObj[s].screensaverMode);
-						// console.log(`screenSaverUrl ${screenSaverUrl}`);
-						this.log.debug(`read screenSaverUrl: ${screenSaverUrl}`);
+					}
+				}
+			}
 
-						if (screensaverMode) {
+			//telegramSendStatus set default state false for all devices
+			const temp = this.config.devices;
+			if (!temp || temp !== []) {
+				for (const t in temp) {
+					if (deviceEnabled[t]) {
+						telegramStatus[t] = false;
+						this.log.debug(`telegramSendStatus: ${JSON.stringify(telegramStatus)}`);
+					}
+				}
+			}
 
-							if (screenSaverUrl == '') {
-								const playlistUrl = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverPlaylist&value=&password=${password[s]}`;
-								this.sendCommand(playlistUrl, `playlist Url  ${await tabletName}`);
-								this.log.warn(`No screensaver URL was entered for ${tabletName}, a standard picture is set`);
-								const wallpaperURL = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverWallpaperURL&value=${'fully://color black'}&password=${password[s]}`;
-								this.sendCommand(wallpaperURL, `screenSaver no Url  ${await tabletName}`);
+			//telegramSendStatus set default state false for all devices
+			const tempStart = this.config.devices;
+			if (!tempStart || tempStart !== []) {
+				for (const f in tempStart) {
+					if (deviceEnabled[f]) {
+						foregroundStart[f] = false;
+						this.log.debug(`foregroundStart: ${JSON.stringify(foregroundStart)}`);
+					}
+				}
+			}
 
+			//read motion ID from Admin and subscribe
+			const motion = this.config.motion;
+			for (const sensor in motion) {
+				if (motion[sensor].enabled && motion[sensor].motionid !== '') {
+					motionID[sensor] = await motion[sensor].motionid;
+					this.subscribeForeignStates(motionID[sensor]);
+				} else {
+					this.log.warn(`no motion Sensor ID entered`);
+					// console.log(`no motion Sensor ID entered`);
+				}
+			}
+
+			// read screenSaverTimer and screenSaverSelect
+			const screenSaverON = JSON.parse(this.config.screenSaverON);
+			const screenSaverObj = this.config.screenSaver;
+			const tablets = this.config.devices;
+			if (screenSaverON) {
+				if (!screenSaverObj || screenSaverObj !== []) {
+					for (const s in tablets) {
+						if (deviceEnabled[s]) {
+							const tabletName = tablets[s].name;
+							screenSaverTimer[s] = JSON.parse(screenSaverObj[s].minute) * 60000;
+							this.log.debug(`read telegram user: ${JSON.stringify(User)}`);
+							const screenSaverUrl = screenSaverObj[s].url;
+							const screensaverMode = JSON.parse(screenSaverObj[s].screensaverMode);
+							// console.log(`screenSaverUrl ${screenSaverUrl}`);
+							this.log.debug(`read screenSaverUrl: ${screenSaverUrl}`);
+
+							if (screensaverMode) {
+
+								if (screenSaverUrl == '') {
+									const playlistUrl = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverPlaylist&value=&password=${password[s]}`;
+									this.sendCommand(playlistUrl, `playlist Url  ${await tabletName}`);
+									this.log.warn(`No screensaver URL was entered for ${tabletName}, a standard picture is set`);
+									const wallpaperURL = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverWallpaperURL&value=${'fully://color black'}&password=${password[s]}`;
+									this.sendCommand(wallpaperURL, `screenSaver no Url  ${await tabletName}`);
+
+								}
+								else {
+									const screenUrl = [
+										{
+											'type': 4,
+											'url': screenSaverUrl,
+											'loopItem': true,
+											'loopFile': false,
+											'fileOrder': 0,
+											'nextItemOnTouch': false,
+											'nextFileOnTouch': false,
+											'nextItemTimer': 0,
+											'nextFileTimer': 0
+										}
+									];
+									const playlistUrl = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverPlaylist&value=${JSON.stringify(screenUrl)}&password=${password[s]}`;
+									// console.log('fully Url ' + playlistUrl);
+									this.log.debug(`set Screensaver for ${tabletName} to YouTube Url: ${playlistUrl} entered`);
+									this.sendCommand(playlistUrl, `screenSaverSelect ${await tabletName}`);
+								}
+
+							} else if (!screensaverMode) {
+								if (screenSaverUrl == '') {
+									const playlistUrl = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverPlaylist&value=&password=${password[s]}`;
+									this.sendCommand(playlistUrl, `playlist Url  ${await tabletName}`);
+									this.log.warn(`No screensaver URL was entered for ${tabletName}, a standard picture is set`);
+									const wallpaperURL = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverWallpaperURL&value=${'fully://color black'}&password=${password[s]}`;
+									this.sendCommand(wallpaperURL, `screenSaver no Url  ${await tabletName}`);
+									this.log.debug(`set Screensaver for ${tabletName} to default picture: ${wallpaperURL} entered:`);
+									// console.log(`set Screensaver for ${tabletName} to default picture: ${wallpaperURL} entered`);
+								}
+								else {
+									const playlistUrl = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverPlaylist&value=&password=${password[s]}`;
+									this.sendCommand(playlistUrl, `playlist Url  ${await tabletName}`);
+									const wallpaperURL = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverWallpaperURL&value=${screenSaverUrl}&password=${password[s]}`;
+									this.sendCommand(wallpaperURL, `screenSaver no Url  ${await tabletName}`);
+									this.log.debug(`set Screensaver for ${tabletName} to Wallpaper URL: ${wallpaperURL} entered:`);
+								}
 							}
-							else {
-								const screenUrl = [
-									{
-										'type': 4,
-										'url': screenSaverUrl,
-										'loopItem': true,
-										'loopFile': false,
-										'fileOrder': 0,
-										'nextItemOnTouch': false,
-										'nextFileOnTouch': false,
-										'nextItemTimer': 0,
-										'nextFileTimer': 0
-									}
-								];
-								const playlistUrl = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverPlaylist&value=${JSON.stringify(screenUrl)}&password=${password[s]}`;
-								// console.log('fully Url ' + playlistUrl);
-								this.log.debug(`set Screensaver for ${tabletName} to YouTube Url: ${playlistUrl} entered`);
-								this.sendCommand(playlistUrl, `screenSaverSelect ${await tabletName}`);
-							}
-
-						} else if (!screensaverMode) {
-							if (screenSaverUrl == '') {
-								const playlistUrl = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverPlaylist&value=&password=${password[s]}`;
-								this.sendCommand(playlistUrl, `playlist Url  ${await tabletName}`);
-								this.log.warn(`No screensaver URL was entered for ${tabletName}, a standard picture is set`);
-								const wallpaperURL = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverWallpaperURL&value=${'fully://color black'}&password=${password[s]}`;
-								this.sendCommand(wallpaperURL, `screenSaver no Url  ${await tabletName}`);
-								this.log.debug(`set Screensaver for ${tabletName} to default picture: ${wallpaperURL} entered:`);
-								// console.log(`set Screensaver for ${tabletName} to default picture: ${wallpaperURL} entered`);
-							}
-							else {
-								const playlistUrl = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverPlaylist&value=&password=${password[s]}`;
-								this.sendCommand(playlistUrl, `playlist Url  ${await tabletName}`);
-								const wallpaperURL = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverWallpaperURL&value=${screenSaverUrl}&password=${password[s]}`;
-								this.sendCommand(wallpaperURL, `screenSaver no Url  ${await tabletName}`);
-								this.log.debug(`set Screensaver for ${tabletName} to Wallpaper URL: ${wallpaperURL} entered:`);
-							}
-
 						}
 					}
 				}
 			}
+		} catch (error) {
+			this.log.error(`[initialization] : ${error.message}, stack: ${error.stack}`);
 		}
-
-		
 	}
 
 	async stateRequest() {
@@ -560,7 +560,7 @@ class TabletControl extends utils.Adapter {
 							let ScreensaverOnBri = null;
 							let newBrightnessDay = 0;
 							if (chargeDeviceValue[d]) {
-	
+
 								let brightnessDayPuffer;
 								if (await manualBrightnessMode[d]) {
 									brightnessDayPuffer = Math.round(await this.convert_percent(await manualBrightness[d] - brightnessD[d].loadingLowering));
@@ -721,10 +721,14 @@ class TabletControl extends utils.Adapter {
 									console.log(`currentFragment[on] == 'main': ${motionSensor_enabled}`);
 
 									ScreensaverTimer[on] = setTimeout(async () => {
+										if (ScreensaverReturn) clearTimeout(ScreensaverReturn);
 										console.log(`[screenSaver On] ${await tabletName[on]}`);
 										this.sendCommand(ScreensaverOn, `[screenSaver On] ${await tabletName[on]}`);
 										this.log.debug(`${await tabletName[on]} sendCommand: screenSaver On ${ScreensaverOn}`);
-										this.screenSaver();
+										ScreensaverReturn = setTimeout(async () => {
+											this.screenSaver();
+											console.log(`[screenSaver restart]`);
+										}, 500);
 									}, screenSaverTimer[on]);
 
 									console.log(`screenSaverTimer[on] ${await screenSaverTimer[on]}`);
@@ -1066,9 +1070,11 @@ class TabletControl extends utils.Adapter {
 	onUnload(callback) {
 		try {
 			if (requestTimeout) clearTimeout(requestTimeout);
+			if (ScreensaverReturn) clearTimeout(ScreensaverReturn);
 			for (const Unl in tabletName) {
 				if (ScreensaverTimer[Unl]) clearTimeout(ScreensaverTimer[Unl]);
 				if (foregroundAppTimer[Unl]) clearTimeout(foregroundAppTimer[Unl]);
+				
 			}
 			this.log.info('Adapter Tablet Constrol stopped...');
 			this.setState('info.connection', false, true);
