@@ -710,7 +710,7 @@ class TabletControl extends utils.Adapter {
 									} else if (currentFragment[on] == 'screensaver') {
 										console.log(`currentFragment[on] == 'screensaver': ${currentFragment[on]}`);
 										this.sendCommand(ScreensaverOffURL, `[screenSaver Off] ${await tabletName[on]}`);
-										this.log.info(`${await tabletName[on]} sendCommand: screenSaver Off ${ScreensaverOffURL} `);
+										this.log.debug(`${await tabletName[on]} sendCommand: screenSaver Off ${ScreensaverOffURL} `);
 									}
 								}
 							} else {

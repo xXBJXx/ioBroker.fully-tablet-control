@@ -126,6 +126,10 @@ _______________________________
 
 ## Changelog
 
+### 0.1.3
+
+* (xXBJXx) Configuration page changed
+
 ### 0.1.2
 
 * (xXBJXx) log level adjusted
