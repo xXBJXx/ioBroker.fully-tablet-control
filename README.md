@@ -10,7 +10,6 @@
 
 [![NPM](https://nodei.co/npm/iobroker.tablet-control.png?downloads=true)](https://nodei.co/npm/iobroker.tablet-control/)
 
-**Tests:**: [![Travis-CI](http://img.shields.io/travis/xXBJXx/ioBroker.tablet-control/master.svg)](https://travis-ci.org/xXBJXx/ioBroker.tablet-control)
 
 # Tablet Control Adapter für ioBroker
 
