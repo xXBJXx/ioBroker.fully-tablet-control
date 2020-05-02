@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "tablet-control",
-        "version": "0.1.1",
+        "version": "0.1.2",
         "news": {
+            "0.1.2": {
+                "en": "log level adjusted",
+                "de": "Log Level angepasst",
+                "ru": "уровень лога отрегулирован",
+                "pt": "nível de log ajustado",
+                "nl": "log niveau aangepast",
+                "fr": "niveau du journal ajusté",
+                "it": "livello del registro regolato",
+                "es": "nivel de registro ajustado",
+                "pl": "poziom logu dostosowany",
+                "zh-cn": "日志级别调整"
+              },
             "0.1.1": {
                 "en": "edit README",
                 "de": "README bearbeiten",

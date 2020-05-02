@@ -126,6 +126,10 @@ _______________________________
 
 ## Changelog
 
+### 0.1.2
+
+* (xXBJXx) log level adjusted
+
 ### 0.1.1
 
 * (xXBJXx) README.md edit
