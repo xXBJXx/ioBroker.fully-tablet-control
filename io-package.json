@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "tablet-control",
-        "version": "0.1.0",
+        "version": "0.1.1",
         "news": {
+            "0.1.1": {
+                "en": "edit README",
+                "de": "README bearbeiten",
+                "ru": "редактировать README",
+                "pt": "editar README",
+                "nl": "wijzig LEESMIJ",
+                "fr": "modifier le LISEZMOI",
+                "it": "modifica README",
+                "es": "editar README",
+                "pl": "edytuj README",
+                "zh-cn": "编辑自述文件"
+              },
             "0.1.0": {
                 "en": "Beta Release",
                 "de": "Beta-Version",
