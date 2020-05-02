@@ -74,6 +74,7 @@ class TabletControl extends utils.Adapter {
 		}
 		await this.brightnessCron();
 		await this.motionSensor();
+
 	}
 
 	async initialization() {
@@ -89,7 +90,6 @@ class TabletControl extends utils.Adapter {
 					deviceEnabled[i] = login[i].enabled;
 
 					Screen[i] = `http://${ip[i]}:${port[i]}/?cmd=screenOn&password=${password[i]}`;
-
 					deviceInfo[i] = `http://${ip[i]}:${port[i]}/?cmd=deviceInfo&type=json&password=${password[i]}`;
 				}
 
@@ -139,7 +139,7 @@ class TabletControl extends utils.Adapter {
 					this.subscribeForeignStates(motionID[sensor]);
 				} else {
 					this.log.warn(`no motion Sensor ID entered`);
-					// console.log(`no motion Sensor ID entered`);
+					console.log(`no motion Sensor ID entered`);
 				}
 			}
 
@@ -156,7 +156,7 @@ class TabletControl extends utils.Adapter {
 							this.log.debug(`read telegram user: ${JSON.stringify(User)}`);
 							const screenSaverUrl = screenSaverObj[s].url;
 							const screensaverMode = JSON.parse(screenSaverObj[s].screensaverMode);
-							// console.log(`screenSaverUrl ${screenSaverUrl}`);
+							console.log(`screenSaverUrl ${screenSaverUrl}`);
 							this.log.debug(`read screenSaverUrl: ${screenSaverUrl}`);
 
 							if (screensaverMode) {
@@ -184,7 +184,7 @@ class TabletControl extends utils.Adapter {
 										}
 									];
 									const playlistUrl = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverPlaylist&value=${JSON.stringify(screenUrl)}&password=${password[s]}`;
-									// console.log('fully Url ' + playlistUrl);
+									console.log('fully Url ' + playlistUrl);
 									this.log.debug(`set Screensaver for ${tabletName} to YouTube Url: ${playlistUrl} entered`);
 									this.sendCommand(playlistUrl, `screenSaverSelect ${await tabletName}`);
 								}
@@ -197,7 +197,7 @@ class TabletControl extends utils.Adapter {
 									const wallpaperURL = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverWallpaperURL&value=${'fully://color black'}&password=${password[s]}`;
 									this.sendCommand(wallpaperURL, `screenSaver no Url  ${await tabletName}`);
 									this.log.debug(`set Screensaver for ${tabletName} to default picture: ${wallpaperURL} entered:`);
-									// console.log(`set Screensaver for ${tabletName} to default picture: ${wallpaperURL} entered`);
+									console.log(`set Screensaver for ${tabletName} to default picture: ${wallpaperURL} entered`);
 								}
 								else {
 									const playlistUrl = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverPlaylist&value=&password=${password[s]}`;
