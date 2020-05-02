@@ -20,7 +20,7 @@
 
 ## Browser Admin Login
 
-![login](media/browser-admin-login.png)
+![login](admin/media/browser-admin-login.png)
 
 ### Hier werden die Tablets eingetragen und der Abfrageintervall festgelegt
 
@@ -42,7 +42,7 @@
 
 ## Ladegerät
 
-![charger](media/charger.png)
+![charger](admin/media/charger.png)
 
 Hier muss die ID von dem Ladegerät eingetragen werden damit das Tablet geladen werden kann.
 
@@ -55,7 +55,7 @@ Hier muss die ID von dem Ladegerät eingetragen werden damit das Tablet geladen 
 4. **(nur für Ladezyklus relevant)** Ladestopp bis zu den diesen Wert wird das Tablet aufgeladen.
 
 ## Helligkeit
-![brightness](media/brightness.png)
+![brightness](admin/media/brightness.png)
 
 Hier wird die Helligkeit von dem Tablet eingestellt.
 
@@ -70,7 +70,7 @@ Hier wird die Helligkeit von dem Tablet eingestellt.
 7. Hier wird die Absenkung der Helligkeit eingestellt wen das Tablet am Laden ist damit es schneller aufgeladen wird.
 
 ## Bildschirmschoner
-![Screensaver](media/Screensaver.png)
+![Screensaver](admin/media/Screensaver.png)
 
 Hier wird der Bildschirmschoner eingestellt.
 
@@ -85,7 +85,7 @@ Hier wird der Bildschirmschoner eingestellt.
 5. Timer wann der Bildschirmschoner starten soll
 
 ## (Optional) Telegramm
-![telegram](media/telegram.png)
+![telegram](admin/media/telegram.png)
 
 Hier werden die Telegramm User eingestellt, die die Warnung erhalten sollen, die gesendet wird, wen ein Tablet nicht geladen wird und unter 18% fällt.
 
@@ -94,7 +94,7 @@ Hier werden die Telegramm User eingestellt, die die Warnung erhalten sollen, die
 2. Telegrammbenutzer Hier werden die User Namen vom Telegramm eingetragen.
 
 ## (Optional) Bewegungsmelder
-![motion](media/motion.png)
+![motion](admin/media/motion.png)
 
 Hier kann man externe Bewegungsmelder eintragen, die den Bildschirmschoner abschalten sollen.
 
