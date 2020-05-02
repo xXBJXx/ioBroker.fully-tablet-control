@@ -7,19 +7,102 @@
 ![Number of Installations (latest)](http://iobroker.live/badges/tablet-control-installed.svg)
 ![Number of Installations (stable)](http://iobroker.live/badges/tablet-control-stable.svg)
 [![Dependency Status](https://img.shields.io/david/xXBJXx/iobroker.tablet-control.svg)](https://david-dm.org/xXBJXx/iobroker.tablet-control)
-[![Known Vulnerabilities](https://snyk.io/test/github/xXBJXx/ioBroker.tablet-control/badge.svg)](https://snyk.io/test/github/xXBJXx/ioBroker.tablet-control)
 
 [![NPM](https://nodei.co/npm/iobroker.tablet-control.png?downloads=true)](https://nodei.co/npm/iobroker.tablet-control/)
 
 **Tests:**: [![Travis-CI](http://img.shields.io/travis/xXBJXx/ioBroker.tablet-control/master.svg)](https://travis-ci.org/xXBJXx/ioBroker.tablet-control)
 
-## tablet-control adapter for ioBroker
+# Tablet Control Adapter für ioBroker
 
-### Steuern Sie Ihr Tablet mit dem Fully Kiosk Browser
+## Steuern Sie Ihr Tablet mit dem Fully Kiosk Browser **(Plus License erforderlich)**
 
-# !!! ACHTUNG Beta Release!!!
+# !!! ACHTUNG Beta Release !!!
 
-# Noch in der Beta Beschreibung wird noch folgen
+## Browser Admin Login
+
+![login](media/browser-admin-login.png)
+
+### Hier werden die Tablets eingetragen und der Abfrageintervall festgelegt
+
+1. Abfrageintervall standardmäßig auf 30 sec eingestellt.
+
+2. Timer in Minuten, um den Fully Browser wieder in den Vordergrund zu holen (empfohlen für Amazon Fire Tablet mit Alexa da der Fully Browser in den Hintergrund gesetzt wird, wenn Alexa auf dem Tablet getriggert wird Z.B. "Alexa wie ist das Wetter heute").
+
+3. Tablet Name wird verwendet, um die verschiedenen Tablets in separaten Ordner zu erstellen, wenn kein Name angegeben wird wir die Ip Adresse als Name versendet.
+
+4. Ip Adresse von deinem Tablet.
+
+5. Hier kann man den Port eintragen falls man ihn geändert hat.
+
+6. Password von Fully Remote Admin **(Plus License erforderlich)**.
+
+7. Hier könne einzelne Tablets ausgeschaltet werden so das diese nicht mehr abgefragt werden.
+
+## Für Jedes Tablet, das auf der ersten Seite angelegt wurde, muss auf den nächsten Seiten ein Eintrag in der Tabelle angelegt werden!
+
+## Ladegerät
+
+![charger](media/charger.png)
+
+Hier muss die ID von dem Ladegerät eingetragen werden damit das Tablet geladen werden kann.
+
+1. Datenpunkt ID von dem Ladegerät.
+
+2. Lademodus auswählbar sind **Dauerstrom** oder **Ladezyklus** bei Dauerstrom wird das Tablet dauerhaft am Strom gehalten und bei Ladezyklus wird das Tablet z.B. bei 20% anfangen zu laden und bei 85% das Laden abschalten.
+
+3. **(nur für Ladezyklus relevant)** Ladestart ab dieser grenze startet das Tablet das laden.
+
+4. **(nur für Ladezyklus relevant)** Ladestopp bis zu den diesen Wert wird das Tablet aufgeladen.
+
+## Helligkeit
+![brightness](media/brightness.png)
+
+Hier wird die Helligkeit von dem Tablet eingestellt.
+
+1. hier kann man entscheiden ob der Bildschirm dauerhaft an bleiben soll, selbst wenn man auf den ausschalt Knopf drückt wird der Bildschirm wieder eingeschaltet.
+
+2. Intervall für die Prüfung der Helligkeit in Minuten
+
+3. Uhrzeit wann das Tablet auf die unter Nr.: **5** eingestellte Tageshelligkeit eingestellt werden soll.
+
+4. Uhrzeit wann das Tablet auf die unter Nr.: **6** eingestellte Nachthelligkeit eingestellt werden soll.
+
+7. Hier wird die Absenkung der Helligkeit eingestellt wen das Tablet am Laden ist damit es schneller aufgeladen wird.
+
+## Bildschirmschoner
+![Screensaver](media/Screensaver.png)
+
+Hier wird der Bildschirmschoner eingestellt.
+
+1. Bildschirmschoner einschalten oder Ausschalten auswählen damit den Tablets der Bildschirmschoner eingeschaltet wird.
+
+2. Beschreibung des Bildschirmschoners dient nur zur Info was für ein Bildschirmschoner eingestellt ist.
+
+3. YouTube URL oder Wallpaper URL Hier kann eine YouTube Video URL eingetragen werden z.B. ein Aquarium bei Wallpaper URL kann ein Bild als Bildschirmschoner eingestellt werden.
+
+4. Hier muss man auswählen was für eine URL man verwendet.
+
+5. Timer wann der Bildschirmschoner starten soll
+
+## (Optional) Telegramm
+![telegram](media/telegram.png)
+
+Hier werden die Telegramm User eingestellt, die die Warnung erhalten sollen, die gesendet wird, wen ein Tablet nicht geladen wird und unter 18% fällt.
+
+1. Telegrammwarnungen aktivieren oder deaktivieren wen die Warnung deaktivieren ist werden trotzdem die Warnung im Iobroker log ausgegeben.
+
+2. Telegrammbenutzer Hier werden die User Namen vom Telegramm eingetragen.
+
+## (Optional) Bewegungsmelder
+![motion](media/motion.png)
+
+Hier kann man externe Bewegungsmelder eintragen, die den Bildschirmschoner abschalten sollen.
+
+1. Bewegungsmelder Aktiviren oder deaktivieren, wenn ausgeschaltet wird der Bildschirmschoner nach der eingestellten Zeit gestartet und bleibt aktiv bis er durch Berührung ausgeschaltet wird  
+
+2. Bewegungsmelder ID hier kommt die Bewegungsmelder ID, wenn nur eine ID eingetragen wird werden alle Tablets von diesem Bewegungsmelder geschaltet.
+
+3. wenn mehrere Bewegungsmelder eingetragen wurden kann man über diese Schaltfläche die einzeln abschalten
 
 _________________________________
 
