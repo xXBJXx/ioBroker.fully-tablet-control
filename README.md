@@ -128,7 +128,7 @@ _______________________________
 
 ### 0.1.1
 
-* (xXBJXx) edit README.md
+* (xXBJXx) README.md edit
 
 ### 0.1.0
 
