@@ -690,7 +690,7 @@ class TabletControl extends utils.Adapter {
 
 										ScreensaverTimer[on] = setTimeout(async () => {
 											await this.sendCommand(ScreensaverOnURL, `[screenSaver On] ${await tabletName[on]}`);
-											this.log.info(`${await tabletName[on]} sendCommand: screenSaver On ${ScreensaverOnURL}`);
+											this.log.debug(`${await tabletName[on]} sendCommand: screenSaver On ${ScreensaverOnURL}`);
 											console.log(`sendCommand: screenSaver On ${ScreensaverOnURL}`);
 											this.stateRequest();
 										}, screenSaverTimer[on]);
