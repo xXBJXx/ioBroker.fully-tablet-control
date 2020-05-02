@@ -55,6 +55,7 @@ Hier muss die ID von dem Ladegerät eingetragen werden damit das Tablet geladen 
 4. **(nur für Ladezyklus relevant)** Ladestopp bis zu den diesen Wert wird das Tablet aufgeladen.
 
 ## Helligkeit
+
 ![brightness](admin/media/brightness.png)
 
 Hier wird die Helligkeit von dem Tablet eingestellt.
@@ -70,6 +71,7 @@ Hier wird die Helligkeit von dem Tablet eingestellt.
 7. Hier wird die Absenkung der Helligkeit eingestellt wen das Tablet am Laden ist damit es schneller aufgeladen wird.
 
 ## Bildschirmschoner
+
 ![Screensaver](admin/media/Screensaver.png)
 
 Hier wird der Bildschirmschoner eingestellt.
@@ -85,6 +87,7 @@ Hier wird der Bildschirmschoner eingestellt.
 5. Timer wann der Bildschirmschoner starten soll
 
 ## (Optional) Telegramm
+
 ![telegram](admin/media/telegram.png)
 
 Hier werden die Telegramm User eingestellt, die die Warnung erhalten sollen, die gesendet wird, wen ein Tablet nicht geladen wird und unter 18% fällt.
@@ -94,6 +97,7 @@ Hier werden die Telegramm User eingestellt, die die Warnung erhalten sollen, die
 2. Telegrammbenutzer Hier werden die User Namen vom Telegramm eingetragen.
 
 ## (Optional) Bewegungsmelder
+
 ![motion](admin/media/motion.png)
 
 Hier kann man externe Bewegungsmelder eintragen, die den Bildschirmschoner abschalten sollen.
@@ -102,9 +106,23 @@ Hier kann man externe Bewegungsmelder eintragen, die den Bildschirmschoner absch
 
 2. Bewegungsmelder ID hier kommt die Bewegungsmelder ID, wenn nur eine ID eingetragen wird werden alle Tablets von diesem Bewegungsmelder geschaltet.
 
-3. wenn mehrere Bewegungsmelder eingetragen wurden kann man über diese Schaltfläche die einzeln abschalten
+3. wenn mehrere Bewegungsmelder eingetragen wurden kann man über diese Schaltfläche die einzeln abschalten.
 
-_________________________________
+## Objects
+
+![objects](admin/media/objects.png)
+
+* bei den erstellten Datenpunkten kann man die Helligkeit manuell einstellen dazu muss man zuerst bei punkt **1** von Admin auch User wechseln dann kann man bei punkt **3** die Helligkeit manuell verändern dies ist nur für die Tages Helligkeit nicht für die Nacht.
+
+* unter Punkt **2** wird bei einer Warnung, wenn das Tablet nicht auflädt ein **true** wert gesetzt.
+
+* bei punkt **4** wird der aktuelle Batterie stand für eine vis anzeige geschrieben z.B. **[ basic-Image 8 Widget]**
+
+![battery](admin/media/battery.png)
+
+![battery-settings](admin/media/battery-settings.png)
+
+_______________________________
 
 ## Changelog
 
