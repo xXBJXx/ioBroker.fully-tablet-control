@@ -1,20 +1,32 @@
 {
   "common": {
     "name": "tablet-control",
-    "version": "0.1.3",
+    "version": "0.1.4",
     "news": {
-        "0.1.3": {
-            "en": "Configuration page changed",
-            "de": "Konfigurationsseite geändert",
-            "ru": "Страница конфигурации изменена",
-            "pt": "Página de configuração alterada",
-            "nl": "Configuratiepagina gewijzigd",
-            "fr": "La page de configuration a été modifiée",
-            "it": "Pagina di configurazione modificata",
-            "es": "Página de configuración modificada",
-            "pl": "Strona konfiguracji zmieniona",
-            "zh-cn": "配置页面已更改"
-          },
+      "0.1.4": {
+        "en": "manuell StateChange optimized",
+        "de": "manuell StateChange optimiert",
+        "ru": "Manuell StateChange оптимизирован",
+        "pt": "StateChange otimizado",
+        "nl": "manuell StateChange geoptimaliseerd",
+        "fr": "manuell StateChange optimisé",
+        "it": "manuell StateChange ottimizzato",
+        "es": "Manuell StateChange optimizado",
+        "pl": "manuell StateChange zoptymalizowany",
+        "zh-cn": "manuell StateChange优化"
+      },
+      "0.1.3": {
+        "en": "Configuration page changed",
+        "de": "Konfigurationsseite geändert",
+        "ru": "Страница конфигурации изменена",
+        "pt": "Página de configuração alterada",
+        "nl": "Configuratiepagina gewijzigd",
+        "fr": "La page de configuration a été modifiée",
+        "it": "Pagina di configurazione modificata",
+        "es": "Página de configuración modificada",
+        "pl": "Strona konfiguracji zmieniona",
+        "zh-cn": "配置页面已更改"
+      },
       "0.1.2": {
         "en": "log level adjusted",
         "de": "Log Level angepasst",
@@ -202,11 +214,9 @@
         "dsn": "https://8520b03c99c4437da90e414ab4bd1959@o384969.ingest.sentry.io/5217020"
       }
     },
-    "dependencies": [
-      {
-        "js-controller": ">=1.4.2"
-      }
-    ],
+    "dependencies": [{
+      "js-controller": ">=1.4.2"
+    }],
     "installedFrom": "https://github.com/xXBJXx/ioBroker.tablet-control/tarball/1cfffc99638af4b529abf1720a9bb308361aa525"
   },
   "native": {
@@ -227,8 +237,7 @@
     "fireTablet": 3
   },
   "objects": [],
-  "instanceObjects": [
-    {
+  "instanceObjects": [{
       "_id": "info",
       "type": "channel",
       "common": {

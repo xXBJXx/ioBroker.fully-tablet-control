@@ -17,3 +17,5 @@ admin/i18n/*/flat.txt
 .vs/
 
 .vscode/launch.json
+
+request.http

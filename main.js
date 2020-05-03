@@ -1074,7 +1074,7 @@ class TabletControl extends utils.Adapter {
 			for (const Unl in tabletName) {
 				if (ScreensaverTimer[Unl]) clearTimeout(ScreensaverTimer[Unl]);
 				if (foregroundAppTimer[Unl]) clearTimeout(foregroundAppTimer[Unl]);
-				
+
 			}
 			this.log.info('Adapter Tablet Constrol stopped...');
 			this.setState('info.connection', false, true);
@@ -1113,21 +1113,31 @@ class TabletControl extends utils.Adapter {
 
 				// manual brightness States change
 				for (const change in tabletName) {
-					console.log(id == `${this.namespace}${brightnessControlModeID[change]}` || id == `${this.namespace}${manualBrightnessID[change]}`);
-					if (id == `${this.namespace}${brightnessControlModeID[change]}` || id == `${this.namespace}${manualBrightnessID[change]}` && state.from !== `system.adapter.${this.namespace}`) {
-						this.log.debug(`state ${id} changed: ${state.val} from: ${this.namespace}`);
-						this.manualStates();
+					if (deviceEnabled[change]) {
+						if (!state.ack) {
+							// console.log(id == `${this.namespace}${brightnessControlModeID[change]}` || id == `${this.namespace}${manualBrightnessID[change]}`);
+							if (id == `${this.namespace}${brightnessControlModeID[change]}` || id == `${this.namespace}${manualBrightnessID[change]}` && state.from !== `system.adapter.${this.namespace}`) {
+								this.log.debug(`state ${id} changed: ${state.val} from: ${this.namespace}`);
+								this.manualStates();
+								// @ts-ignore
+								this.setState(id, state.val, true);
+								// console.log(state.val);
+							}
+						}
 					}
 				}
 
 				// Motion Sensor State Change
 				for (const change in motionID) {
-					console.log(id == `${motionID[change]}`);
+					// console.log(id == `${motionID[change]}`);
 					if (id == `${motionID[change]}`) {
 						this.log.debug(`state ${id} changed: ${state.val}`);
 						this.motionSensor();
 					}
+
 				}
+
+
 
 			}
 		} catch (error) {

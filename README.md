@@ -126,6 +126,10 @@ _______________________________
 
 ## Changelog
 
+### 0.1.4
+
+* (xXBJXx) manuell StateChange optimized 
+
 ### 0.1.3
 
 * (xXBJXx) Configuration page changed
