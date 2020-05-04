@@ -482,29 +482,30 @@ class TabletControl extends utils.Adapter {
 			const brightnessN = this.config.brightness;
 			if (!brightnessN || brightnessN !== []) {
 				for (const i in ip) {
+					if (deviceEnabled[i]) {
+						if (brightnessN[i]) {
+							for (const b in brightnessN) {
 
-					if (brightnessN[i] && deviceEnabled[i]) {
-						for (const b in brightnessN) {
+								const brightnessNight = Math.round(await this.convert_percent(brightnessN[b].nightBrightness));
+								const nightBrightnessURL = `http://${ip[b]}:${port[b]}/?cmd=setStringSetting&key=screenBrightness&value=${brightnessNight}&password=${password[b]}`;
+								const ScreensaverOnBri = `http://${ip[b]}:${port[b]}/?cmd=setStringSetting&key=screensaverBrightness&value=${brightnessNight}&password=${password[b]}`;
 
-							const brightnessNight = Math.round(await this.convert_percent(brightnessN[b].nightBrightness));
-							const nightBrightnessURL = `http://${ip[b]}:${port[b]}/?cmd=setStringSetting&key=screenBrightness&value=${brightnessNight}&password=${password[b]}`;
-							const ScreensaverOnBri = `http://${ip[b]}:${port[b]}/?cmd=setStringSetting&key=screensaverBrightness&value=${brightnessNight}&password=${password[b]}`;
+								if (await brightness[b] == 0) {
 
-							if (await brightness[b] == 0) {
-
-								this.log.debug(`The brightness from ${await tabletName[b]} is ${await brightness[b]} change is not necessary`);
-							}
-							else {
-								this.sendCommand(nightBrightnessURL, `nightBri ${await tabletName[b]}`);
-								this.sendCommand(ScreensaverOnBri, `ScreensaverOnBri ${await tabletName[b]}`);
-								this.log.debug(`${await tabletName[b]} sendCommand: ${nightBrightnessURL}`);
-								this.log.debug(`${await tabletName[b]} sendCommand: ${ScreensaverOnBri}`);
+									this.log.debug(`The brightness from ${await tabletName[b]} is ${await brightness[b]} change is not necessary`);
+								}
+								else {
+									this.sendCommand(nightBrightnessURL, `nightBri ${await tabletName[b]}`);
+									this.sendCommand(ScreensaverOnBri, `ScreensaverOnBri ${await tabletName[b]}`);
+									this.log.debug(`${await tabletName[b]} sendCommand: ${nightBrightnessURL}`);
+									this.log.debug(`${await tabletName[b]} sendCommand: ${ScreensaverOnBri}`);
+								}
 							}
 						}
-					}
-					else {
-						console.log(`${await tabletName[i]} nightBri not specified`);
-						this.log.warn(`${await tabletName[i]} nightBri not specified`);
+						else {
+							console.log(`${await tabletName[i]} nightBri not specified`);
+							this.log.warn(`${await tabletName[i]} nightBri not specified`);
+						}
 					}
 				}
 			}
@@ -516,32 +517,37 @@ class TabletControl extends utils.Adapter {
 	//read manualStates
 	async manualStates() {
 		try {
-			for (const name in tabletName) {
+			for (const name in ip) {
+				if (deviceEnabled[name]) {
+					const stateID = await this.replaceFunction(tabletName[name]);
+					const manual = await this.getStateAsync(`device.${stateID}.manualBrightness`);
+					if (manual && manual.val) {
+						manualBrightness[name] = manual.val;
+						// @ts-ignore
+						await this.setStateAsync(`device.${stateID}.manualBrightness`, manual.val, true);
+					}
+					else {
+						await this.setStateAsync(`device.${stateID}.manualBrightness`, 0, true);
+						manualBrightness[name] = 0;
+					}
 
-				const stateID = await this.replaceFunction(tabletName[name]);
-				const manual = await this.getStateAsync(`device.${stateID}.manualBrightness`);
-				if (manual && manual.val) {
-					manualBrightness[name] = manual.val;
-				}
-				else {
-					await this.setStateAsync(`device.${stateID}.manualBrightness`, 0, true);
-					manualBrightness[name] = 0;
+					const manualMode = await this.getStateAsync(`device.${stateID}.brightness_control_mode`);
+					if (manualMode && (manualMode.val || !manualMode.val)) {
+						manualBrightnessMode[name] = manualMode.val;
+						// @ts-ignore
+						await this.setStateAsync(`device.${stateID}.brightness_control_mode`, manualMode.val, true);
+					}
+					else {
+						await this.setStateAsync(`device.${stateID}.brightness_control_mode`, false, true);
+						manualBrightnessMode[name] = false;
+					}
+
+					this.log.debug(`[manualBrightness] name: ${tabletName[name]} val: ${await manualBrightness[name]}`);
+					this.log.debug(`[manualBrightnessMode] name: ${tabletName[name]} val: ${await manualBrightnessMode[name]}`);
+					this.dayBri();
 				}
 
-				const manualMode = await this.getStateAsync(`device.${stateID}.brightness_control_mode`);
-				if (manualMode && (manualMode.val || !manualMode.val)) {
-					manualBrightnessMode[name] = manualMode.val;
-
-				}
-				else {
-					await this.setStateAsync(`device.${stateID}.brightness_control_mode`, false, true);
-					manualBrightnessMode[name] = false;
-				}
-
-				this.log.debug(`[manualBrightness] name: ${tabletName[name]} val: ${await manualBrightness[name]}`);
-				this.log.debug(`[manualBrightnessMode] name: ${tabletName[name]} val: ${await manualBrightnessMode[name]}`);
 			}
-			this.dayBri();
 		} catch (error) {
 			this.log.error(`[manualStates] : ${error.message}, stack: ${error.stack}`);
 		}
@@ -601,10 +607,6 @@ class TabletControl extends utils.Adapter {
 
 					}
 				}
-
-
-
-
 			}
 		} catch (error) {
 			this.log.error(`[dayBri] : ${error.message}, stack: ${error.stack}`);
@@ -1119,9 +1121,7 @@ class TabletControl extends utils.Adapter {
 							if (id == `${this.namespace}${brightnessControlModeID[change]}` || id == `${this.namespace}${manualBrightnessID[change]}` && state.from !== `system.adapter.${this.namespace}`) {
 								this.log.debug(`state ${id} changed: ${state.val} from: ${this.namespace}`);
 								this.manualStates();
-								// @ts-ignore
-								this.setState(id, state.val, true);
-								// console.log(state.val);
+								console.log(`onStateChange: ${id} val: ${state.val}`);
 							}
 						}
 					}
@@ -1133,6 +1133,7 @@ class TabletControl extends utils.Adapter {
 					if (id == `${motionID[change]}`) {
 						this.log.debug(`state ${id} changed: ${state.val}`);
 						this.motionSensor();
+						console.log(`onStateChange: ${id} val: ${state.val}`);
 					}
 
 				}
