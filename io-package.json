@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "tablet-control",
-    "version": "0.1.4",
+    "version": "0.1.5",
     "news": {
+      "0.1.5": {
+        "en": "brightness bug fix",
+        "de": "Fehlerbehebung bei der Helligkeit",
+        "ru": "исправлена ошибка яркости",
+        "pt": "correção de bug de brilho",
+        "nl": "helderheid bugfix",
+        "fr": "correction d'un bug de luminosité",
+        "it": "correzione di bug di luminosità",
+        "es": "corrección de errores de brillo",
+        "pl": "naprawa błędu jasności",
+        "zh-cn": "亮度错误修复"
+      },
       "0.1.4": {
         "en": "manuell StateChange optimized",
         "de": "manuell StateChange optimiert",

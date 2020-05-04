@@ -481,30 +481,31 @@ class TabletControl extends utils.Adapter {
 		try {
 			const brightnessN = this.config.brightness;
 			if (!brightnessN || brightnessN !== []) {
-				for (const i in ip) {
-					if (deviceEnabled[i]) {
-						if (brightnessN[i]) {
-							for (const b in brightnessN) {
 
-								const brightnessNight = Math.round(await this.convert_percent(brightnessN[b].nightBrightness));
-								const nightBrightnessURL = `http://${ip[b]}:${port[b]}/?cmd=setStringSetting&key=screenBrightness&value=${brightnessNight}&password=${password[b]}`;
-								const ScreensaverOnBri = `http://${ip[b]}:${port[b]}/?cmd=setStringSetting&key=screensaverBrightness&value=${brightnessNight}&password=${password[b]}`;
+				for (const b in ip) {
 
-								if (await brightness[b] == 0) {
+					if (deviceEnabled[b]) {
 
-									this.log.debug(`The brightness from ${await tabletName[b]} is ${await brightness[b]} change is not necessary`);
-								}
-								else {
-									this.sendCommand(nightBrightnessURL, `nightBri ${await tabletName[b]}`);
-									this.sendCommand(ScreensaverOnBri, `ScreensaverOnBri ${await tabletName[b]}`);
-									this.log.debug(`${await tabletName[b]} sendCommand: ${nightBrightnessURL}`);
-									this.log.debug(`${await tabletName[b]} sendCommand: ${ScreensaverOnBri}`);
-								}
+						if (brightnessN[b]) {
+
+							const brightnessNight = Math.round(await this.convert_percent(brightnessN[b].nightBrightness));
+							const nightBrightnessURL = `http://${ip[b]}:${port[b]}/?cmd=setStringSetting&key=screenBrightness&value=${brightnessNight}&password=${password[b]}`;
+							const ScreensaverOnBri = `http://${ip[b]}:${port[b]}/?cmd=setStringSetting&key=screensaverBrightness&value=${brightnessNight}&password=${password[b]}`;
+
+							if (await brightness[b] == 0) {
+
+								this.log.debug(`The brightness from ${await tabletName[b]} is ${await brightness[b]} change is not necessary`);
+							}
+							else {
+								this.sendCommand(nightBrightnessURL, `nightBri ${await tabletName[b]}`);
+								this.sendCommand(ScreensaverOnBri, `ScreensaverOnBri ${await tabletName[b]}`);
+								this.log.debug(`${await tabletName[b]} sendCommand: ${nightBrightnessURL}`);
+								this.log.debug(`${await tabletName[b]} sendCommand: ${ScreensaverOnBri}`);
 							}
 						}
 						else {
-							console.log(`${await tabletName[i]} nightBri not specified`);
-							this.log.warn(`${await tabletName[i]} nightBri not specified`);
+							console.log(`${await tabletName[b]} nightBri not specified`);
+							this.log.warn(`${await tabletName[b]} nightBri not specified`);
 						}
 					}
 				}

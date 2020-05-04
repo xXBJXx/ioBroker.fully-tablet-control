@@ -126,9 +126,13 @@ _______________________________
 
 ## Changelog
 
+### 0.1.5
+
+* (xXBJXx) brightness bug fix
+
 ### 0.1.4
 
-* (xXBJXx) manuell StateChange optimized 
+* (xXBJXx) manuell StateChange optimized
 
 ### 0.1.3
 
