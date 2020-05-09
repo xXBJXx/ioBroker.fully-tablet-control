@@ -911,42 +911,44 @@ class TabletControl extends utils.Adapter {
 
 	async checkView() {
 		try {
-			if (!mode) {
-				const currentView = await this.getForeignStateAsync(`vis.0.control.data`);
+			if (view_enabled) {
+				if (!mode) {
+					const currentView = await this.getForeignStateAsync(`vis.0.control.data`);
 
-				for (let i = 0; i < Object.keys(visView).length; i++) {
+					for (let i = 0; i < Object.keys(visView).length; i++) {
 
-					if (currentView && currentView.val) {
+						if (currentView && currentView.val) {
 
-						if (wishView[i] == currentView.val) {
+							if (wishView[i] == currentView.val) {
 
-							if (viewTimer) clearTimeout(viewTimer);
-							this.setState(`vis_View.Timer_View_Switch`, 0, true);
+								if (viewTimer) clearTimeout(viewTimer);
+								this.setState(`vis_View.Timer_View_Switch`, 0, true);
 
-							if (visView[i].time !== 0) {
+								if (visView[i].time !== 0) {
 
-								this.setState(`vis_View.Timer_View_Switch`, time[i]);
-								this.switchToHomeView();
+									this.setState(`vis_View.Timer_View_Switch`, time[i]);
+									this.switchToHomeView();
+								}
 							}
 						}
 					}
 				}
-			}
-			else {
-				const currentView = await this.getStateAsync(`vis_View.widget_8_view`);
-				for (let i = 0; i < Object.keys(visView).length; i++) {
+				else {
+					const currentView = await this.getStateAsync(`vis_View.widget_8_view`);
+					for (let i = 0; i < Object.keys(visView).length; i++) {
 
-					if (currentView && currentView.val) {
+						if (currentView && currentView.val) {
 
-						if (viewNumber[i] == currentView.val) {
+							if (viewNumber[i] == currentView.val) {
 
-							if (viewTimer) clearTimeout(viewTimer);
-							this.setState(`vis_View.Timer_View_Switch`, 0, true);
+								if (viewTimer) clearTimeout(viewTimer);
+								this.setState(`vis_View.Timer_View_Switch`, 0, true);
 
-							if (visView[i].time !== 0) {
+								if (visView[i].time !== 0) {
 
-								this.setState(`vis_View.Timer_View_Switch`, time[i]);
-								this.switchToHomeView();
+									this.setState(`vis_View.Timer_View_Switch`, time[i]);
+									this.switchToHomeView();
+								}
 							}
 						}
 					}
