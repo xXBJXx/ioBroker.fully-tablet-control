@@ -2,10 +2,10 @@
 
 # ioBroker.tablet-control
 
-[![NPM version](http://img.shields.io/npm/v/iobroker.tablet-control.svg)](https://www.npmjs.com/package/iobroker.tablet-control)
-[![Downloads](https://img.shields.io/npm/dm/iobroker.tablet-control.svg)](https://www.npmjs.com/package/iobroker.tablet-control)
-![Number of Installations (latest)](http://iobroker.live/badges/tablet-control-installed.svg)
-![Number of Installations (stable)](http://iobroker.live/badges/tablet-control-stable.svg)
+[![NPM version](http://img.shields.io/npm/v/iobroker.tablet-control.svg?logo=npm)](https://www.npmjs.com/package/iobroker.tablet-control) 
+[![Downloads](https://img.shields.io/npm/dm/iobroker.tablet-control.svg?logo=npm)](https://www.npmjs.com/package/iobroker.tablet-control) 
+![Installations (latest)](http://iobroker.live/badges/tablet-control-installed.svg)
+![(stable)](http://iobroker.live/badges/tablet-control-stable.svg)
 [![Dependency Status](https://img.shields.io/david/xXBJXx/iobroker.tablet-control.svg)](https://david-dm.org/xXBJXx/iobroker.tablet-control)
 
 [![NPM](https://nodei.co/npm/iobroker.tablet-control.png?downloads=true)](https://nodei.co/npm/iobroker.tablet-control/)
@@ -155,6 +155,10 @@ hier sind 2 Dp.
 _______________________________
 
 ## Changelog
+
+### 0.1.9
+
+* (xXBJXx) bug in Automatic change to home view widget 8 fixed 
 
 ### 0.1.8
 

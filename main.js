@@ -928,6 +928,7 @@ class TabletControl extends utils.Adapter {
 
 									this.setState(`vis_View.Timer_View_Switch`, time[i]);
 									this.switchToHomeView();
+									break;
 								}
 							}
 						}
@@ -935,9 +936,14 @@ class TabletControl extends utils.Adapter {
 				}
 				else {
 					const currentView = await this.getStateAsync(`vis_View.widget_8_view`);
-					for (let i = 0; i < Object.keys(visView).length; i++) {
 
-						if (currentView && currentView.val) {
+
+					if (currentView == null || currentView == null && currentView.val == 0) {
+						this.setState(`vis_View.Timer_View_Switch`, 0, true);
+					}
+					for (let i = -1; i <= Object.keys(visView).length; i++) {
+						// for (const i in visView) {
+						if (currentView) {
 
 							if (viewNumber[i] == currentView.val) {
 
@@ -948,6 +954,7 @@ class TabletControl extends utils.Adapter {
 
 									this.setState(`vis_View.Timer_View_Switch`, time[i]);
 									this.switchToHomeView();
+									break;
 								}
 							}
 						}

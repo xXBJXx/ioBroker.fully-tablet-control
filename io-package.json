@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "tablet-control",
-    "version": "0.1.8",
+    "version": "0.1.9",
     "news": {
+      "0.1.9": {
+        "en": "bug in Automatic change to home view widget 8 fixed ",
+        "de": "Fehler im automatischen Wechsel zum Home View Widget 8 behoben",
+        "ru": "исправлена ошибка в автоматическом переходе на виджет 8 для домашнего просмотра",
+        "pt": "corrigido o erro na mudança automática para o widget de exibição em casa 8 corrigido",
+        "nl": "bug in Automatische wijziging naar startweergave widget 8 opgelost",
+        "fr": "bug dans le changement automatique du widget de vue d'accueil 8 corrigé",
+        "it": "bug in Correzione automatica del widget 8 della vista principale risolto",
+        "es": "error en el cambio automático al widget de vista de inicio 8 corregido",
+        "pl": "błąd w automatycznej zmianie widżetu 8 widoku domowego",
+        "zh-cn": "自动更改为主视图小部件中的错误8已修复"
+      },
       "0.1.8": {
         "en": "add Automatic change to home view",
         "de": "Automatische Änderung zur Startansicht hinzufügen",
