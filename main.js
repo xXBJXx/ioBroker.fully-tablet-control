@@ -79,12 +79,12 @@ class TabletControl extends utils.Adapter {
 		await this.initialization();
 		await this.create_state();
 		await this.checkView();
-		// await this.stateRequest();
-		// if (!JSON.parse(this.config.motionSensor_enabled)) {
-		// 	await this.screenSaver();
-		// }
-		// await this.brightnessCron();
-		// await this.motionSensor();
+		await this.stateRequest();
+		if (!JSON.parse(this.config.motionSensor_enabled)) {
+			await this.screenSaver();
+		}
+		await this.brightnessCron();
+		await this.motionSensor();
 
 	}
 
@@ -848,7 +848,6 @@ class TabletControl extends utils.Adapter {
 			return str;
 		}
 	}
-
 
 	/*
 	Vis function

@@ -1,9 +1,9 @@
 {
   "common": {
     "name": "tablet-control",
-    "version": "0.1.6",
+    "version": "0.1.7",
     "news": {
-      "0.1.6": {
+      "0.1.7": {
         "en": "add Automatic change to home view",
         "de": "Automatische Änderung zur Startansicht hinzufügen",
         "ru": "добавить автоматическое изменение в домашний вид",

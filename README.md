@@ -156,7 +156,7 @@ _______________________________
 
 ## Changelog
 
-### 0.1.6
+### 0.1.7
 
 * (xXBJXx) add Automatic change to home view
 
