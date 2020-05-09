@@ -26,6 +26,7 @@
         var telegram = [];
         var motion = [];
         var charger = [];
+        var visView = [];
         //the function loadSettings has to exist ...
         function load(settings, onChange) {
             if (!settings) return;
@@ -57,6 +58,7 @@
             telegram = settings.telegram || [];
             motion = settings.motion || [];
             charger = settings.charger || [];
+            visView = settings.visView || [];
 
             onChange(false);
 
@@ -66,6 +68,7 @@
             values2table('telegram', telegram, onChange);
             values2table('motion', motion, onChange);
             values2table('charger', charger, onChange);
+            values2table('visView', visView, onChange);
         }
 
 
@@ -88,6 +91,8 @@
             obj.telegram = table2values('telegram');
             obj.motion = table2values('motion');
             obj.charger = table2values('charger');
+            obj.visView = table2values('visView');
+            
             callback(obj);
         }
     //    screen
@@ -109,6 +114,7 @@
                     <li class="tab col s1.7"><a href="#tab-screen" class="translate">screen</a></li>
                     <li class="tab col s2"><a href="#tab-telegram" class="translate">telegram</a></li>
                     <li class="tab col s1.7"><a href="#tab-motion" class="translate">motion detector</a></li>
+                    <li class="tab col s1.7"><a href="#tab-vis_view" class="translate">vis view</a></li>
                     
                 </ul>
             </div>
@@ -370,14 +376,14 @@
                 <!-- Tab with id "tab-motion" -->
                 <div id="tab-motion" class="col s12">
                     <div class="row">
-                        <!-- select telegram active -->
+                        <!-- select motion active -->
                         <div class="input-field col s3 select" style="width: 300px; text-align: center;">
                             <select class="value" autofocus="autofocus" value="false" id="motionSensor_enabled">
                                 <option class="translate" value="true">Activate motion sensors</option>
                                 <option class="translate" value="false" selected>Deactivate motion sensors</option>
                             </select>
                         </div>
-                        <!-- end select telegram active -->
+                        <!-- end select motion active -->
                 
                     <div class="row"></div>
                      <!-- motion table -->
@@ -403,8 +409,63 @@
                     </div>
                 </div>
                 <!-- end Tab with id "tab-motion" -->
-        </div>   
-    </div>
+                
+                <!-- Tab with id "tab-motion" -->
+                <div id="tab-vis_view" class="col s12"> 
+                    <div class="row"> 
+                        <!-- select motion active -->
+                        <div class="input-field col s3 select" style="width: 300px; text-align: center;">
+                            <select class="value" autofocus="autofocus" value="false" id="viewChange_enabled">
+                                <option class="translate" value="true">Activate view change</option>
+                                <option class="translate" value="false" selected>Deactivate view change</option>
+                            </select>
+                            <span class="translate">Automatic Vis view change</span>
+                        </div>
+                        <!-- end select motion active -->
+                        <!-- select motion active -->
+                        <div class="input-field col s3 select" style="width: 300px; text-align: center;">
+                            <select class="value" autofocus="autofocus" value="false" id="viewMode">
+                                <option class="translate" value="true">View in Widget 8</option>
+                                <option class="translate" value="false" selected>Vis control</option>
+                            </select>
+                            <span class="translate">vis Mode widget 8 or vis control</span>
+                        </div>
+                        <!-- end select motion active -->
+
+                        <div class="row"></div>
+                        <!-- motion table -->
+                        <div class="col s12" id="visView">
+                            <div class="row center">
+                                <a class="waves-effect waves-light btn table-button-add translate">add View</a>
+                            </div>
+                
+                            <div class="table-values-div">
+                                <table class="table-values center">
+                                    <thead>
+                                        <tr>
+
+                                            <th data-name="_index" style="width: 1.1%" class="translate">Nr.</th>
+                                            <th data-name="visProjekt" class="translate" data-style="text-align: center" 
+                                                data-default="main" style="width: 25%; text-align: center;">Vis Projekt name</th>
+                                            <th data-name="viewName" class="translate" data-style="text-align: center" 
+                                                style="width: 25%; text-align: center;">Vis View Name</th>
+                                            <th data-name="viewNumber" class="translate " data-style="text-align: center"
+                                                style="width: 25%; text-align: center;">number of the view in widget 8</th>
+                                            <th data-name="time" class="translate" data-style="text-align: center" data-type="number"
+                                                style="width: 10%; text-align: center;" data-default="00">time in (sec)</th>
+                                            <th class="translate" style="width: 8%; text-align: center;" data-buttons="delete up down">delete</th>
+
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- end motion table -->
+                    </div>
+                </div>
+                <!-- end Tab with id "tab-motion" -->
+                </div>
+                </div>
             
 </body>
             

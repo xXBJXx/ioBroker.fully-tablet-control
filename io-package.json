@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "tablet-control",
-    "version": "0.1.5",
+    "version": "0.1.6",
     "news": {
+      "0.1.6": {
+        "en": "add Automatic change to home view",
+        "de": "Automatische Änderung zur Startansicht hinzufügen",
+        "ru": "добавить автоматическое изменение в домашний вид",
+        "pt": "adicionar Alteração automática à visualização inicial",
+        "nl": "automatische wijziging toevoegen aan startweergave",
+        "fr": "ajouter un changement automatique à la vue d'accueil",
+        "it": "aggiungi Modifica automatica alla vista principale",
+        "es": "agregar cambio automático a la vista de inicio",
+        "pl": "dodaj Automatyczną zmianę do widoku głównego",
+        "zh-cn": "将自动更改添加到主视图"
+      },
       "0.1.5": {
         "en": "brightness bug fix",
         "de": "Fehlerbehebung bei der Helligkeit",
@@ -246,7 +258,10 @@
     "checkInterval": 5,
     "dayTime": 7,
     "nightTime": 22,
-    "fireTablet": 3
+    "fireTablet": 3,
+    "viewChange_enabled": "false",
+    "viewMode": "false",
+    "visView": []
   },
   "objects": [],
   "instanceObjects": [{

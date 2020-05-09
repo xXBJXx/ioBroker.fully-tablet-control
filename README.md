@@ -122,9 +122,43 @@ Hier kann man externe Bewegungsmelder eintragen, die den Bildschirmschoner absch
 
 ![battery-settings](admin/media/battery-settings.png)
 
+## Automatischer Wechsel auf Home View
+
+unter Vis View kann man seine Views von der Vis eintragen und die Zeit, nach der sie wieder auf die Home View wechseln sollen.
+
+![config_vis](admin/media/config_vis.png)
+
+1. Einschalten oder Ausschalten der Automatische Änderung der Vis-Ansicht.
+
+2. Auswählen welche View Methode man verwendet Widget 8 wird z.B. bei (**Material Design Widgets (Top App Bar verwendet)**).
+
+3. hier wird euer Project eingetragen wer nicht weiß wo man es findet hier z.B:
+![project_name1](admin/media/project_name1.png)
+![project_name](admin/media/project_name.png)
+
+4. hier kommt die View rein die oberste also **Nr.: 1 ist immer die Home View**.
+
+5. hier kommt die Nummer der **Widget 8 View** rein die erste ist wie bei Nr.: 4 immer die Home View.
+
+6. hier kommt nun die Zeit rein in Sekunden.
+
+## Vis View Objekte
+
+hier sind 2 Dp.
+
+![objects_vis](admin/media/objects_vis.png)
+
+1. hier ist der Timer der die Rest Zeit anzeigt.
+
+2. das ist der Dp für die Widget 8 View's.
+
 _______________________________
 
 ## Changelog
+
+### 0.1.6
+
+* (xXBJXx) add Automatic change to home view
 
 ### 0.1.5
 

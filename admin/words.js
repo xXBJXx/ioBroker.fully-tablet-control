@@ -1,7 +1,128 @@
+// eslint-disable-next-line no-unused-vars
 /*global systemDictionary:true */
 'use strict';
 
 systemDictionary = {
+	"vis view": {
+		"en": "vis view",
+		"de": "vis view",
+		"ru": "вид зрения",
+		"pt": "vis view",
+		"nl": "vis uitzicht",
+		"fr": "vue vue",
+		"it": "vis view",
+		"es": "vista visual",
+		"pl": "widok",
+		"zh-cn": "可见"
+	  },
+	'number of the view in widget 8': {
+		'en': 'number of the view in widget 8',
+		'de': 'Nummer der Ansicht im Widget 8',
+		'ru': 'номер представления в виджете 8',
+		'pt': 'número da visualização no widget 8',
+		'nl': 'nummer van de weergave in widget 8',
+		'fr': 'numéro de la vue dans le widget 8',
+		'it': 'numero della vista nel widget 8',
+		'es': 'número de la vista en el widget 8',
+		'pl': 'numer widoku w widżecie 8',
+		'zh-cn': '小部件8中的视图编号'
+	},
+	"time in (sec)": {
+		"en": "time in (sec)",
+		"de": "Zeit in (Sek.)",
+		"ru": "время в (сек)",
+		"pt": "tempo em (s)",
+		"nl": "tijd in (sec)",
+		"fr": "temps en (sec)",
+		"it": "tempo in (sec)",
+		"es": "tiempo en (seg)",
+		"pl": "czas w sekundach",
+		"zh-cn": "时间（秒）"
+	  },
+	'Instance ID from the tablet': {
+		'en': 'Instance ID from the tablet',
+		'de': 'Instanz-ID vom Tablet',
+		'ru': 'ID экземпляра с планшета',
+		'pt': 'ID da instância do tablet',
+		'nl': 'Instantie-ID van de tablet',
+		'fr': "ID d'instance de la tablette",
+		'it': 'ID istanza dal tablet',
+		'es': 'ID de instancia de la tableta',
+		'pl': 'Identyfikator wystąpienia z tabletu',
+		'zh-cn': '平板电脑的实例ID'
+	},
+	'Vis View Name': {
+		'en': 'Vis View Name',
+		'de': 'Vis View Name',
+		'ru': 'Vis View Name',
+		'pt': 'Nome da vista visível',
+		'nl': 'Vis View Name',
+		'fr': 'Vis View Name',
+		'it': 'Vis View Name',
+		'es': 'Nombre de vista de Vis',
+		'pl': 'Vis Wyświetl nazwę',
+		'zh-cn': '可见视图名称'
+	},
+	'add View': {
+		'en': 'add View',
+		'de': 'Ansicht hinzufügen',
+		'ru': 'добавить вид',
+		'pt': 'adicionar vista',
+		'nl': 'weergave toevoegen',
+		'fr': 'ajouter une vue',
+		'it': 'aggiungi Visualizza',
+		'es': 'agregar vista',
+		'pl': 'dodaj Widok',
+		'zh-cn': '添加视图'
+	},
+	'vis Mode widget 8 or vis control': {
+		'en': 'vis Mode widget 8 or vis control',
+		'de': 'vis Modus Widget 8 oder vis control',
+		'ru': 'Виджет Виджет режима 8 или контроль видимости',
+		'pt': 'vis Mode widget 8 ou vis control',
+		'nl': 'vis Mode widget 8 of vis controle',
+		'fr': 'widget mode vis 8 ou contrôle vis',
+		'it': 'widget modalità vis 8 o controllo vis',
+		'es': 'vis Modo widget 8 o vis control',
+		'pl': 'Widżet trybu vis 8 lub kontrola',
+		'zh-cn': 'vis Mode小部件8或vis control'
+	},
+	'Activate view change': {
+		'en': 'Activate view change',
+		'de': 'Ansichtsänderung aktivieren',
+		'ru': 'Активировать изменение вида',
+		'pt': 'Ativar alteração de visualização',
+		'nl': 'Activeer weergave wijzigen',
+		'fr': 'Activer le changement de vue',
+		'it': 'Attiva modifica vista',
+		'es': 'Activar cambio de vista',
+		'pl': 'Aktywuj zmianę widoku',
+		'zh-cn': '激活视图更改'
+	},
+	'Deactivate view change': {
+		'en': 'Deactivate view change',
+		'de': 'Ansichtsänderung deaktivieren',
+		'ru': 'Отключить изменение вида',
+		'pt': 'Desativar alteração de exibição',
+		'nl': 'Weergave wijzigen deactiveren',
+		'fr': 'Désactiver le changement de vue',
+		'it': 'Disattiva la modifica della vista',
+		'es': 'Desactivar cambio de vista',
+		'pl': 'Dezaktywuj zmianę widoku',
+		'zh-cn': '停用视图更改'
+	},
+	'Automatic Vis view change': {
+		'en': 'Automatic Vis view change',
+		'de': 'Automatische Änderung der Vis-Ansicht',
+		'ru': 'Автоматическое изменение вида Vis',
+		'pt': 'Alteração automática da visualização Vis',
+		'nl': 'Automatische Vis-weergave wijzigen',
+		'fr': 'Changement automatique de la vue Vis',
+		'it': 'Cambio automatico della vista Vis',
+		'es': 'Cambio automático de vista de Vis',
+		'pl': 'Automatyczna zmiana widoku Vis',
+		'zh-cn': '自动Vis视图更改'
+	},
 	'18Clock': {
 		'en': '18 Clock',
 		'de': '18 Uhr',

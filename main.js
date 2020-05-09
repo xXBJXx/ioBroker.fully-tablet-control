@@ -39,6 +39,15 @@ const foreground = [];
 const foregroundStart = [];
 const deviceEnabled = [];
 let ScreensaverReturn = null;
+let view_enabled = null;
+let mode = null;
+const time = [];
+const viewName = [];
+const viewNumber = [];
+let visView = null;
+const wishView = [];
+let viewTimer = null;
+let homeView = null;
 
 class TabletControl extends utils.Adapter {
 
@@ -66,14 +75,16 @@ class TabletControl extends utils.Adapter {
 		// Reset the connection indicator during startup
 		this.setState('info.connection', false, true);
 
+
 		await this.initialization();
 		await this.create_state();
-		await this.stateRequest();
-		if (!JSON.parse(this.config.motionSensor_enabled)) {
-			await this.screenSaver();
-		}
-		await this.brightnessCron();
-		await this.motionSensor();
+		await this.checkView();
+		// await this.stateRequest();
+		// if (!JSON.parse(this.config.motionSensor_enabled)) {
+		// 	await this.screenSaver();
+		// }
+		// await this.brightnessCron();
+		// await this.motionSensor();
 
 	}
 
@@ -91,6 +102,8 @@ class TabletControl extends utils.Adapter {
 
 					Screen[i] = `http://${ip[i]}:${port[i]}/?cmd=screenOn&password=${password[i]}`;
 					deviceInfo[i] = `http://${ip[i]}:${port[i]}/?cmd=deviceInfo&type=json&password=${password[i]}`;
+
+
 				}
 
 			}
@@ -211,6 +224,44 @@ class TabletControl extends utils.Adapter {
 					}
 				}
 			}
+
+			// read visView and screenSaverSelect
+			view_enabled = JSON.parse(this.config.viewChange_enabled);
+			mode = JSON.parse(this.config.viewMode);
+			console.log(mode);
+			console.log(view_enabled);
+
+			if (view_enabled) {
+				visView = this.config.visView;
+				console.log(visView);
+
+				for (const view in visView) {
+					// @ts-ignore
+					const visProjekt = visView[view].visProjekt;
+					// @ts-ignore
+					viewName[view] = visView[view].viewName;
+					// @ts-ignore
+					if (visView[view].viewNumber !== '') {
+						// @ts-ignore
+						viewNumber[view] = JSON.parse(visView[view].viewNumber);
+					}
+					// @ts-ignore
+					const tempTime = visView[view].time;
+					homeView = `${visProjekt}/${viewName[0]}`;
+					wishView[view] = `${visProjekt}/${viewName[view]}`;
+					if (tempTime == '0' || tempTime == '00') {
+						time[view] = 0;
+					}
+					else {
+						// @ts-ignore
+						time[view] = JSON.parse(visView[view].time);
+					}
+					console.log(time);
+					console.log(viewNumber);
+					console.log(viewName);
+					console.log(visProjekt);
+				}
+			}
 		} catch (error) {
 			this.log.error(`[initialization] : ${error.message}, stack: ${error.stack}`);
 		}
@@ -226,6 +277,7 @@ class TabletControl extends utils.Adapter {
 						const stateID = await this.replaceFunction(tabletName[i]);
 
 						let apiResult = null;
+
 						try {
 							// Try to reach API and receive data
 							apiResult = await axios.get(deviceInfo[i]);
@@ -798,6 +850,114 @@ class TabletControl extends utils.Adapter {
 	}
 
 
+	/*
+	Vis function
+	*/
+	async switchToHomeView() {
+		try {
+			if (view_enabled) {
+
+				if (!mode) {
+
+					const visCmd = '{"instance": "FFFFFFFF", "command": "changeView", "data": "' + homeView + '"}';
+
+					viewTimer = setTimeout(async () => {
+
+						let timer = await this.getStateAsync(`vis_View.Timer_View_Switch`);
+						if (timer && timer.val) {
+
+							timer = parseInt(timer.val);
+							if (timer > 1) {
+
+								await this.setStateChangedAsync(`vis_View.Timer_View_Switch`, timer - 1, true);
+								this.switchToHomeView();
+							}
+							else {
+
+								if (viewTimer) clearTimeout(viewTimer);
+								await this.setStateAsync(`vis_View.Timer_View_Switch`, 0, true);
+								await this.setForeignStateAsync('vis.0.control.command', visCmd);
+								console.log(visCmd);
+							}
+						}
+					}, 1000);
+				}
+				else {
+					viewTimer = setTimeout(async () => {
+						let timer = await this.getStateAsync(`vis_View.Timer_View_Switch`);
+						if (timer && timer.val) {
+
+							timer = parseInt(timer.val);
+
+							if (timer > 1) {
+
+								await this.setStateChangedAsync(`vis_View.Timer_View_Switch`, timer - 1, true);
+								this.switchToHomeView();
+							}
+							else {
+
+								if (viewTimer) clearTimeout(viewTimer);
+								await this.setStateAsync(`vis_View.Timer_View_Switch`, 0, true);
+								await this.setStateAsync('vis_View.widget_8_view', 0, true);
+
+							}
+						}
+					}, 1000);
+				}
+			}
+		} catch (error) {
+			this.log.error(`[switchToHomeView] : ${error.message}, stack: ${error.stack}`);
+		}
+	}
+
+	async checkView() {
+		try {
+			if (!mode) {
+				const currentView = await this.getForeignStateAsync(`vis.0.control.data`);
+
+				for (let i = 0; i < Object.keys(visView).length; i++) {
+
+					if (currentView && currentView.val) {
+
+						if (wishView[i] == currentView.val) {
+
+							if (viewTimer) clearTimeout(viewTimer);
+							this.setState(`vis_View.Timer_View_Switch`, 0, true);
+
+							if (visView[i].time !== 0) {
+
+								this.setState(`vis_View.Timer_View_Switch`, time[i]);
+								this.switchToHomeView();
+							}
+						}
+					}
+				}
+			}
+			else {
+				const currentView = await this.getStateAsync(`vis_View.widget_8_view`);
+				for (let i = 0; i < Object.keys(visView).length; i++) {
+
+					if (currentView && currentView.val) {
+
+						if (viewNumber[i] == currentView.val) {
+
+							if (viewTimer) clearTimeout(viewTimer);
+							this.setState(`vis_View.Timer_View_Switch`, 0, true);
+
+							if (visView[i].time !== 0) {
+
+								this.setState(`vis_View.Timer_View_Switch`, time[i]);
+								this.switchToHomeView();
+							}
+						}
+					}
+				}
+			}
+		} catch (error) {
+			this.log.error(`[checkView] : ${error.message}, stack: ${error.stack}`);
+		}
+	}
+
 	async create_state() {
 
 		try {
@@ -1045,7 +1205,34 @@ class TabletControl extends utils.Adapter {
 					},
 					native: {},
 				});
+				await this.extendObjectAsync(`vis_View.Timer_View_Switch`, {
+					type: 'state',
+					common: {
+						name: `Timer View Switch`,
+						type: 'number',
+						role: 'value',
+						read: true,
+						write: false
 
+					},
+					native: {},
+				});
+
+				await this.extendObjectAsync(`vis_View.widget_8_view`, {
+					type: 'state',
+					common: {
+						name: `widget 8 view`,
+						type: 'number',
+						role: 'value',
+						read: true,
+						write: true
+
+					},
+					native: {},
+				});
+
+				this.subscribeStates(`vis_View.widget_8_view`);
+				this.subscribeForeignStates(`vis.0.control.data`);
 				this.subscribeStates(`device.${stateID}.manualBrightness`);
 				this.subscribeStates(`device.${stateID}.brightness_control_mode`);
 				manualBrightnessID[name] = `.device.${stateID}.manualBrightness`;
@@ -1072,6 +1259,7 @@ class TabletControl extends utils.Adapter {
 	 */
 	onUnload(callback) {
 		try {
+			if (viewTimer) clearTimeout(viewTimer);
 			if (requestTimeout) clearTimeout(requestTimeout);
 			if (ScreensaverReturn) clearTimeout(ScreensaverReturn);
 			for (const Unl in tabletName) {
@@ -1137,6 +1325,24 @@ class TabletControl extends utils.Adapter {
 						console.log(`onStateChange: ${id} val: ${state.val}`);
 					}
 
+				}
+				if (view_enabled) {
+					if (!mode) {
+						if (id == `vis.0.control.data`) {
+							this.log.debug(`state ${id} changed: ${state.val}`);
+							this.checkView();
+							console.log(`onStateChange: ${id} val: ${state.val}`);
+						}
+					}
+					else {
+						if (!state.ack) {
+							if (id == `${this.namespace}.vis_View.widget_8_view`) {
+								this.log.debug(`state ${id} changed: ${state.val}`);
+								this.checkView();
+								console.log(`onStateChange: ${id} val: ${state.val}`);
+							}
+						}
+					}
 				}
 
 
