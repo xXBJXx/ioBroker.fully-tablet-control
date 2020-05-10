@@ -1,6 +1,6 @@
 {
   "common": {
-    "name": "tablet-control",
+    "name": "fully-tablet-control",
     "version": "0.2.0",
     "news": {
       "0.2.0": {
@@ -208,30 +208,13 @@
         "zh-cn": "首次出版"
       }
     },
-    "title": "Tablet Control",
+    "title": "Fully Tablet Control",
     "titleLang": {
-      "en": "Tablet Control",
-      "de": "Tablet-Steuerung",
-      "ru": "Планшетный контроль",
-      "pt": "Controle de Tablet",
-      "nl": "Tabletbediening",
-      "fr": "Contrôle de la tablette",
-      "it": "Controllo tablet",
-      "es": "Control de tableta",
-      "pl": "Kontrola tabletu",
-      "zh-cn": "平板电脑控制"
+      "en": "Fully Tablet Control"
     },
     "desc": {
       "en": "Tablet control with the FullyBrowser (charge control, screen saver, brightness control)",
-      "de": "Tablet-Steuerung, mit der FullyBrowser (Ladekontrolle, Bildschirmschoner, Helligkeit)",
-      "ru": "Управление планшетом с FullyBrowser (контроль заряда, заставки, регулировка яркости)",
-      "pt": "Tablet com o FullyBrowser (carga de controle, proteção de tela, o controle de brilho)",
-      "nl": "Een Tablet bedienen met de FullyBrowser (charge control, screensaver helderheid)",
-      "fr": "Tablette de contrôle avec le FullyBrowser (contrôle de charge, économiseur d'écran, réglage de la luminosité)",
-      "it": "Di controllo della tavoletta con la FullyBrowser (controllo di carica, screen saver, controllo di luminosità)",
-      "es": "De control de la tableta con la FullyBrowser (control de la carga, protector de pantalla, la de brillo de control)",
-      "pl": "Sterowanie tabletem z FullyBrowser (kontrola naładowania, wygaszacze ekranu, regulacja jasności)",
-      "zh-cn": "平板电脑控制的FullyBrowser(负责控制、屏幕保护程序、控制亮度)"
+      "de": "Fully Tablet Steuerung, mit dem FullyBrowser (Ladekontrolle, Bildschirmschoner, Helligkeit)"
     },
     "authors": [
       "xXBJXx <alienware.games@gmail.com>"
@@ -247,8 +230,8 @@
     "main": "main.js",
     "icon": "tablet-control.png",
     "enabled": true,
-    "extIcon": "https://raw.githubusercontent.com/xXBJXx/ioBroker.tablet-control/master/admin/tablet-control.png",
-    "readme": "https://github.com/xXBJXx/ioBroker.tablet-control/blob/master/README.md",
+    "extIcon": "https://raw.githubusercontent.com/xXBJXx/ioBroker.fully-tablet-control/master/admin/tablet-control.png",
+    "readme": "https://github.com/xXBJXx/ioBroker.fully-tablet-control/blob/master/README.md",
     "loglevel": "info",
     "mode": "daemon",
     "type": "general",
@@ -265,7 +248,7 @@
     "dependencies": [{
       "js-controller": ">=1.4.2"
     }],
-    "installedFrom": "https://github.com/xXBJXx/ioBroker.tablet-control/tarball/1cfffc99638af4b529abf1720a9bb308361aa525"
+    "installedFrom": "https://github.com/xXBJXx/ioBroker.fully-tablet-control/tarball/1cfffc99638af4b529abf1720a9bb308361aa525"
   },
   "native": {
     "interval": 30,

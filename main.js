@@ -50,7 +50,7 @@ let viewTimer = null;
 let homeView = null;
 const messageSend = [];
 const AlertMessageSend = [];
-class TabletControl extends utils.Adapter {
+class FullyTabletControl extends utils.Adapter {
 
 	/**
 	 * @param {Partial<utils.AdapterOptions>} [options={}]
@@ -59,7 +59,7 @@ class TabletControl extends utils.Adapter {
 
 		super({
 			...options,
-			name: 'tablet-control',
+			name: 'fully-tablet-control',
 		});
 		this.on('ready', this.onReady.bind(this));
 		this.on('objectChange', this.onObjectChange.bind(this));
@@ -1399,8 +1399,8 @@ if (module.parent) {
 	/**
 	 * @param {Partial<utils.AdapterOptions>} [options={}]
 	 */
-	module.exports = (options) => new TabletControl(options);
+	module.exports = (options) => new FullyTabletControl(options);
 } else {
 	// otherwise start the instance directly
-	new TabletControl();
+	new FullyTabletControl();
 }

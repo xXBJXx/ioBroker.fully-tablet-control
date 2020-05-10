@@ -1,18 +1,18 @@
 ![Logo](admin/tablet-control.png)
 
-# ioBroker.tablet-control
+# ioBroker.fully-tablet-control
 
-[![NPM version](http://img.shields.io/npm/v/iobroker.tablet-control.svg?logo=npm)](https://www.npmjs.com/package/iobroker.tablet-control) 
-[![Downloads](https://img.shields.io/npm/dm/iobroker.tablet-control.svg?logo=npm)](https://www.npmjs.com/package/iobroker.tablet-control) 
-![Installations (latest)](http://iobroker.live/badges/tablet-control-installed.svg)
-![(stable)](http://iobroker.live/badges/tablet-control-stable.svg)
-[![Dependency Status](https://img.shields.io/david/xXBJXx/iobroker.tablet-control.svg)](https://david-dm.org/xXBJXx/iobroker.tablet-control)
+[![NPM version](http://img.shields.io/npm/v/iobroker.fully-tablet-control.svg?logo=npm)](https://www.npmjs.com/package/iobroker.fully-tablet-control) 
+[![Downloads](https://img.shields.io/npm/dm/iobroker.fully-tablet-control.svg?logo=npm)](https://www.npmjs.com/package/iobroker.fully-tablet-control) 
+![Installations (latest)](http://iobroker.live/badges/fully-tablet-control-installed.svg)
+![(stable)](http://iobroker.live/badges/fully-tablet-control-stable.svg)
+[![Dependency Status](https://img.shields.io/david/xXBJXx/iobroker.fully-tablet-control.svg)](https://david-dm.org/xXBJXx/iobroker.fully-tablet-control)
 
-[![NPM](https://nodei.co/npm/iobroker.tablet-control.png?downloads=true)](https://nodei.co/npm/iobroker.tablet-control/)
+[![NPM](https://nodei.co/npm/iobroker.fully-tablet-control.png?downloads=true)](https://nodei.co/npm/iobroker.fully-tablet-control/)
 
-**Tests:**: [![Travis-CI](http://img.shields.io/travis/xXBJXx/ioBroker.tablet-control/master.svg)](https://travis-ci.org/xXBJXx/ioBroker.tablet-control)
+**Tests:**: [![Travis-CI](http://img.shields.io/travis/xXBJXx/ioBroker.fully-tablet-control/master.svg)](https://travis-ci.org/xXBJXx/ioBroker.fully-tablet-control)
 
-# Tablet Control Adapter für ioBroker
+# Fully Tablet Control Adapter für ioBroker
 
 ## Steuern Sie Ihr Tablet mit dem Fully Kiosk Browser **(Plus License erforderlich)**
 
