@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "fully-tablet-control",
-    "version": "0.2.0",
+    "version": "0.2.2",
     "news": {
+      "0.2.2": {
+        "en": "Adapter Name Change",
+        "de": "Änderung des Adapternamens",
+        "ru": "Изменение имени адаптера",
+        "pt": "Alteração de nome do adaptador",
+        "nl": "Adapternaam wijzigen",
+        "fr": "Changement de nom de l'adaptateur",
+        "it": "Modifica nome adattatore",
+        "es": "Cambio de nombre del adaptador",
+        "pl": "Zmiana nazwy adaptera",
+        "zh-cn": "适配器名称更改"
+      },
       "0.2.0": {
         "en": "bug in Automatic change to home view widget 8 fixed ",
         "de": "Fehler im automatischen Wechsel zum Home View Widget 8 behoben",

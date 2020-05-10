@@ -156,6 +156,10 @@ _______________________________
 
 ## Changelog
 
+### 0.2.2
+
+* (xXBJXx) Adapter Name Change
+
 ### 0.2.0
 
 * (xXBJXx) charging warning message output adjusted
