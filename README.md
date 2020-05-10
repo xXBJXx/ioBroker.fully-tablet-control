@@ -156,9 +156,13 @@ _______________________________
 
 ## Changelog
 
+### 0.2.0
+
+* (xXBJXx) charging warning message output adjusted
+
 ### 0.1.9
 
-* (xXBJXx) bug in Automatic change to home view widget 8 fixed 
+* (xXBJXx) bug in Automatic change to home view widget 8 fixed
 
 ### 0.1.8
 

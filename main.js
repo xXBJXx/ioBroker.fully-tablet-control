@@ -48,7 +48,8 @@ let visView = null;
 const wishView = [];
 let viewTimer = null;
 let homeView = null;
-
+const messageSend = [];
+const AlertMessageSend = [];
 class TabletControl extends utils.Adapter {
 
 	/**
@@ -129,11 +130,15 @@ class TabletControl extends utils.Adapter {
 					if (deviceEnabled[t]) {
 						telegramStatus[t] = false;
 						this.log.debug(`telegramSendStatus: ${JSON.stringify(telegramStatus)}`);
+
+						//charger message set default state false for all devices
+						messageSend[t] = true;
+						AlertMessageSend[t] = false;
 					}
 				}
 			}
 
-			//telegramSendStatus set default state false for all devices
+			//foregroundStart set default state false for all devices
 			const tempStart = this.config.devices;
 			if (!tempStart || tempStart !== []) {
 				for (const f in tempStart) {
@@ -447,7 +452,7 @@ class TabletControl extends utils.Adapter {
 
 								}
 								else if (await bat[i] >= loadStop && chargeDeviceValue[i]) {
-
+									messageSend[i] = false;
 									await this.setForeignStateAsync(await chargerid, false, false);
 									this.log.info(`${await tabletName[i]} Charging cycle ended`);
 
@@ -480,20 +485,28 @@ class TabletControl extends utils.Adapter {
 								telegramStatus[i] = false;
 								this.onMessage(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${await tabletName[i]} Tablet is charging the problem has been fixed.`, User);
 								this.log.warn(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${await tabletName[i]} Tablet is charging the problem has been fixed.`);
-								this.setState(`device.${await tabletName[i]}.active_display`, { val: false, ack: true });
+								this.setState(`device.${await tabletName[i]}.charging_warning`, { val: false, ack: true });
 							}
 
 						}
 						else {
-
-							if (await bat[i] <= 18 && !chargeDeviceValue[i] || bat[i] <= 18 && chargeDeviceValue[i]) {
+							if (await bat[i] >= 20 && !messageSend[i]) {
+								messageSend[i] = false;
+								
+							}
+							if (await bat[i] <= 18 && !chargeDeviceValue[i] && !AlertMessageSend[i] || bat[i] <= 18 && chargeDeviceValue[i] && !AlertMessageSend[i]) {
+								AlertMessageSend[i] = true;
+								messageSend[i] = false;
 								this.log.warn(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${await tabletName[i]} Tablet charging function has detected a malfunction, the tablet is not charging, please check it !!!`);
 								this.setForeignStateAsync(await chargerid[i], true, false);
 								this.setState(`device.${await tabletName[i]}.charging_warning`, { val: true, ack: true });
 
-							} else if (await bat[i] > 18 && chargeDeviceValue[i]) {
-								this.log.warn(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${await tabletName[i]} Tablet is charging the problem has been fixed.`);
-								this.setState(`device.${await tabletName[i]}.active_display`, { val: false, ack: true });
+							} else if (await bat[i] > 18 && bat[i] < 20 && chargeDeviceValue[i] && !messageSend[i]) {
+								// } else if (await bat[i] > 18 && chargeDeviceValue[i]) {
+								messageSend[i] = true;
+								AlertMessageSend[i] = false;
+								this.log.info(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${await tabletName[i]} Tablet is charging the problem has been fixed.`);
+								this.setState(`device.${await tabletName[i]}.charging_warning`, { val: false, ack: true });
 							}
 						}
 					}
@@ -935,6 +948,7 @@ class TabletControl extends utils.Adapter {
 					}
 				}
 				else {
+
 					const currentView = await this.getStateAsync(`vis_View.widget_8_view`);
 
 
