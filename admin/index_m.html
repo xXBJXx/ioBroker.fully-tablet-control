@@ -27,6 +27,7 @@
         var motion = [];
         var charger = [];
         var visView = [];
+        var TabletName =[];
         //the function loadSettings has to exist ...
         function load(settings, onChange) {
             if (!settings) return;
@@ -50,16 +51,40 @@
                     });
                 }
             }
-
-
+        
+           
+            devices = settings.devices || [];
             brightness = settings.brightness || [];
             screenSaver = settings.screenSaver || [];
-            devices = settings.devices || [];
             telegram = settings.telegram || [];
             motion = settings.motion || [];
             charger = settings.charger || [];
             visView = settings.visView || [];
 
+            for (const n in devices) {
+                TabletName[n] = devices[n].name;
+                for (var i = 0; i < brightness.length; i++) {
+                    brightness[i].TabletName = TabletName[i];
+
+                    console.log('devices: ' + JSON.stringify(brightness));
+
+                }
+
+                for (var i = 0; i < charger.length; i++) {
+                    charger[i].TabletName = TabletName[i];
+                    console.log('devices: ' + JSON.stringify(charger));
+
+                }
+
+                for (var i = 0; i < screenSaver.length; i++) {
+                    screenSaver[i].TabletName = TabletName[i];
+                    console.log('devices: ' + JSON.stringify(screenSaver));
+
+                }
+
+            }
+              
+          
             onChange(false);
 
             values2table('brightness', brightness, onChange);
@@ -188,7 +213,8 @@
                                     <thead>
                                         <tr>
                                             <th data-name="_index" style="width: 1.1%" class="translate">Nr.</th>
-                                            <th class="translate" data-style="text-align: center" style="width: 50px; text-align: center;" data-name="chargerid">chargerID</th>
+                                            <th data-name="TabletName" style="width: 15%" class="translate" >name</th>
+                                            <th class="translate" data-style="text-align: center" style="width: 45px; text-align: center;" data-name="chargerid">chargerID</th>
                                             <th class="translate" style="width: 12%; text-align: center;" data-type="select" data-name="power_mode" 
                                                 data-options="false/Continuous current;true/Charge cycle">power_mode</th>
                                             <th class="translate" data-default="20" style="width: 10%; text-align: center;" data-type="select" data-name="loadStart" 
@@ -244,8 +270,8 @@
                     </div>
                     <!-- end select screen active -->
                     <!-- select screen active -->
-                    <div class="input-field col s3 select" style="width: 150px; text-align: center;">
-                        <select class="value" autofocus="autofocus" id="nightTime">
+                    <div class="input-field col s3 select"  style="width: 150px; text-align: center;">
+                        <select class="value" autofocus="autofocus"  id="nightTime">
                             <option class="translate" value="18" >18Clock</option>
                             <option class="translate" value="19" >19Clock</option>
                             <option class="translate" value="20" >20Clock</option>
@@ -267,6 +293,7 @@
                                     <thead>
                                         <tr>
                                             <th data-name="_index" style="width: 1%" class="translate">Nr.</th>
+                                            <th data-name="TabletName" style="width: 6%" class="translate" >name</th>
                                                 <th data-name="dayBrightness" class="translate" style="width: 6%; text-align: center;" data-default="20" data-type="select" data-style="text-align: center" 
                                                     data-options="0/0%;1/1%;2/2%;3/3%;4/4%;5/5%;6/6%;7/7%;8/8%;9/9%;10/10%;11/11%;12/12%;13/13%;14/14%;15/15%;16/16%;17/17%;18/18%;19/19%;20/20%;
                                                     ;21/21%;22/22%;23/23%;24/24%;25/25%;26/26%;27/27%;28/28%;29/29%;30/30%;31/31%;32/32%;33/33%;34/34%;35/35%;36/36%;37/37%;38/38%;39/39%;40/40%;
@@ -316,16 +343,17 @@
                         <div class="row center" style="margin-right: 93px;">
                             <a class="waves-effect waves-light btn table-button-add translate">add Device</a>
                         </div>
-                        <div class="table-values-div">
+                        <div class="table-values-div select">
                             <table class="table-values">
                                 <thead>
                                     <tr>
                                         <th data-name="_index" style="width: 1.1%" class="translate">Nr.</th>
+                                        <th data-name="TabletName" style="width: 12%; text-align: center;" class="translate" >name</th>
                                         <th class="translate" data-style="text-align: center" style="width: auto; text-align: center;" data-name="screensaverName">Description of the screensaver</th>
                                         <th class="translate" data-style="text-align: center" style="width: auto; text-align: center;" data-name="url">YouTube-Url or wallpaper-Url</th>
-                                        <th class="translate"  style="width: 10%; text-align: center;" data-type="select" data-style="text-align: center" data-name="screensaverMode" 
+                                        <th class="translate"  style="width: 7%; text-align: center;" data-type="select" data-style="text-align: center" data-name="screensaverMode" 
                                             data-options="true/YouTube Url;false/Wallpaper Url">Screensaver Mode</th>
-                                        <th class="translate"  style="width: 6%; text-align: center;" data-type="select" data-style="text-align: center" data-name="minute" 
+                                        <th class="translate"  style="width: 10%; text-align: center;" data-type="select" data-style="text-align: center" data-name="minute" 
                                             data-options="5/05 min;10/10 min;15/15 min;20/20 min;25/25 min;30/30 min;35/35 min;40/40 min;45/45 min;50/50 min;55/55 min;60/60min">minute</th>
                                         <th class="translate" style="width: 8%; text-align: center;" data-buttons="delete up down">delete</th>
                                     </tr>

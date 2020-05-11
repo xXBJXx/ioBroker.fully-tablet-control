@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "fully-tablet-control",
-    "version": "0.2.2",
+    "version": "0.2.3",
     "news": {
+      "0.2.3": {
+        "en": "config page adapted: automatic name setting for charger / brightness / screen saver added",
+        "de": "Konfigurationsseite angepasst: Automatische Namenseinstellung für Ladegerät / Helligkeit / Bildschirmschoner hinzugefügt",
+        "ru": "адаптирована страница конфигурации: добавлена автоматическая настройка имени для зарядного устройства / яркости / заставки",
+        "pt": "página de configuração adaptada: configuração automática de nome para carregador / brilho / proteção de tela adicionada",
+        "nl": "configuratiepagina aangepast: automatische naaminstelling voor oplader / helderheid / schermbeveiliging toegevoegd",
+        "fr": "page de configuration adaptée: ajout automatique du nom du chargeur / luminosité / économiseur d'écran",
+        "it": "pagina di configurazione adattata: aggiunta impostazione automatica del nome per caricatore / luminosità / salvaschermo",
+        "es": "página de configuración adaptada: configuración de nombre automática para cargador / brillo / protector de pantalla agregado",
+        "pl": "Dostosowano stronę konfiguracji: dodano automatyczne ustawienie nazwy ładowarki / jasności / wygaszacza ekranu",
+        "zh-cn": "修改了配置页：添加了充电器/亮度/屏幕保护程序的自动名称设置"
+      },
       "0.2.2": {
         "en": "Adapter Name Change",
         "de": "Änderung des Adapternamens",

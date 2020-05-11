@@ -156,6 +156,10 @@ _______________________________
 
 ## Changelog
 
+### 0.2.3
+
+* (xXBJXx) config page adapted: automatic name setting for charger / brightness / screen saver added
+
 ### 0.2.2
 
 * (xXBJXx) Adapter Name Change
