@@ -156,6 +156,14 @@ _______________________________
 
 ## Changelog
 
+### 0.2.4
+
+* (xXBJXx) Screen saver time adjusted now in 1 min steps
+* (xXBJXx) State_of_charge adjusted
+* (xXBJXx) interval limit added
+* (xXBJXx) Switch charging control on / off added
+* (xXBJXx) Brightness activated individually
+
 ### 0.2.3
 
 * (xXBJXx) config page adapted: automatic name setting for charger / brightness / screen saver added

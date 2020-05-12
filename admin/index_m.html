@@ -204,6 +204,15 @@
                     <div class="row"></div>
                      <!-- charger table -->
                     <div class="row">
+                    <!-- select screen active -->
+                    <div class="input-field col s3 select" style="width: 300px; text-align: center;">
+                        <select class="value" autofocus="autofocus" data-default="false" value="false" id="chargerON">
+                            <option class="translate" value="true" selected>Switch on charging control</option>
+                            <option class="translate" value="false">Switch off charging control</option>
+                        </select>
+                    </div>
+                    <!-- end select screen active -->
+
                         <div class="col s12" id="charger">
                             <div class="row center">
                                 <a class="waves-effect waves-light btn table-button-add translate">add Device</a>
@@ -233,6 +242,7 @@
                 </div>
                 <!-- end Tab with id "tab-charger" -->
                 
+
                 <!-- Tab with id "tab-brightness" -->
                 <div id="tab-brightness" class="col s12">
                     <div class="row"></div>
@@ -314,6 +324,7 @@
                                                     ;41/41%;42/42%;43/43%;44/44%;45/45%;46/46%;47/47%;48/48%;49/49%;50/50%;51/51%;52/52%;53/53%;54/54%;55/55%;56/56%;57/57%;58/58%;59/59%;60/60%;
                                                     ;61/61%;62/62%;63/63%;64/64%;65/65%;66/66%;67/67%;68/68%;69/69%;70/70%;71/71%;72/72%;73/73%;74/74%;75/75%;76/76%;77/77%;78/78%;79/79%;80/80%;
                                                     ;81/81%;82/82%;83/83%;84/84%;85/85%;86/86%;87/87%;88/88%;89/89%;90/90%;91/91%;92/92%;93/93%;94/94%;95/95%;96/96%;97/97%;98/98%;100/100%">lowering when loading</th>
+                                                <th class="translate " style="width: 1%; text-align: center;" data-default= "true" data-type="checkbox" data-name="enabledBrightness">enabled</th>
                                             <th class="translate" style="width: 8%; text-align: center;" data-buttons="delete up down">delete</th>
                                         </tr>
                                     </thead>
@@ -325,6 +336,7 @@
                 </div>
                 <!-- end Tab with id "tab-brightness" -->
                 
+
                 <!-- Tab with id "tab-screen"-->
                 <div id="tab-screen" class="col s12">
                 <div class="row">
@@ -354,7 +366,12 @@
                                         <th class="translate"  style="width: 7%; text-align: center;" data-type="select" data-style="text-align: center" data-name="screensaverMode" 
                                             data-options="true/YouTube Url;false/Wallpaper Url">Screensaver Mode</th>
                                         <th class="translate"  style="width: 10%; text-align: center;" data-type="select" data-style="text-align: center" data-name="minute" 
-                                            data-options="5/05 min;10/10 min;15/15 min;20/20 min;25/25 min;30/30 min;35/35 min;40/40 min;45/45 min;50/50 min;55/55 min;60/60min">minute</th>
+                                            data-options="1/01 min;2/02 min;3/03 min;4/04 min;5/05 min;6/06 min;7/07 min;8/08 min;9/09 min;10/10 min;
+                                            ;11/11 min;12/12 min;13/13 min;14/14 min;15/15 min;16/16 min;17/17 min;18/18 min;19/19 min;20/20 min;
+                                            ;21/21 min;22/22 min;23/23 min;24/24 min;25/25 min;26/26 min;27/27 min;28/28 min;29/29 min;30/30 min;
+                                            ;31/31 min;32/32 min;33/33 min;34/34 min;35/35 min;36/36 min;37/37 min;38/38 min;39/39 min;40/40 min;
+                                            ;41/41 min;42/42 min;43/43 min;44/44 min;45/45 min;46/46 min;47/47 min;48/48 min;49/49 min;50/50 min;
+                                            ;51/51 min;52/52 min;53/53 min;54/54 min;55/55 min;56/56 min;57/57 min;58/58 min;59/59 min;60/60 min">minute</th>
                                         <th class="translate" style="width: 8%; text-align: center;" data-buttons="delete up down">delete</th>
                                     </tr>
                                 </thead>
@@ -365,6 +382,7 @@
                 </div>
             </div>
                 <!-- end screen table -->
+
 
             <!-- Tab with id "tab-telegram"-->
             <div id="tab-telegram" class="col s12">
@@ -401,6 +419,7 @@
             </div>
                 <!-- end telegram table -->
             
+
                 <!-- Tab with id "tab-motion" -->
                 <div id="tab-motion" class="col s12">
                     <div class="row">

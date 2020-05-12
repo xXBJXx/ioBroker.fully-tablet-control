@@ -3,6 +3,30 @@
 'use strict';
 
 systemDictionary = {
+	"Switch off charging control": {
+		"en": "Switch off charging control",
+		"de": "Ladesteuerung ausschalten",
+		"ru": "Отключить контроль зарядки",
+		"pt": "Desligue o controle de carregamento",
+		"nl": "Schakel het opladen uit",
+		"fr": "Désactiver le contrôle de charge",
+		"it": "Disattiva il controllo di ricarica",
+		"es": "Apague el control de carga",
+		"pl": "Wyłącz kontrolę ładowania",
+		"zh-cn": "关闭充电控制"
+	  },
+	"Switch on charging control": {
+		"en": "Switch on charging control",
+		"de": "Ladesteuerung einschalten",
+		"ru": "Включить контроль зарядки",
+		"pt": "Ligue o controle de carregamento",
+		"nl": "Schakel het opladen in",
+		"fr": "Activer le contrôle de charge",
+		"it": "Attiva il controllo di ricarica",
+		"es": "Encienda el control de carga",
+		"pl": "Włącz kontrolę ładowania",
+		"zh-cn": "开启充电控制"
+	  },
 	"vis view": {
 		"en": "vis view",
 		"de": "vis view",
