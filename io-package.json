@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "fully-tablet-control",
-    "version": "0.2.4",
+    "version": "0.2.5",
     "news": {
+      "0.2.5": {
+        "en": "FullyBrowser implemented\n fixed some bugs",
+        "de": "FullyBrowser implementiert\n Einige Fehler wurden behoben",
+        "ru": "Полностью Браузер реализован\n исправлены некоторые ошибки",
+        "pt": "FullyBrowser implementado\n corrigido alguns bugs",
+        "nl": "FullyBrowser geïmplementeerd\n enkele bugs opgelost",
+        "fr": "FullyBrowser implémenté\n correction de quelques bugs",
+        "it": "Implementato completamente\n risolti alcuni bug",
+        "es": "FullyBrowser implementado\n arreglado algunos errores",
+        "pl": "W pełni zaimplementowany\n naprawiono kilka błędów",
+        "zh-cn": "FullyBrowser已实现\n 修复了一些错误"
+      },
       "0.2.4": {
         "en": "Screen saver time adjusted now in 1 min steps,\n State_of_charge adjusted,\n interval limit added,\n Switch charging control on / off added,\n Brightness activated individually,\n",
         "de": "Bildschirmschonerzeit jetzt in Schritten von 1 Minute eingestellt,\nLadezustand angepasst,\nIntervalllimit hinzugefügt,\nLadesteuerung ein- / ausschalten hinzugefügt,\nHelligkeit einzeln aktiviert,\n",

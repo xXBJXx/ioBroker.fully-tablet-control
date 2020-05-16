@@ -26,7 +26,7 @@ const User = [];
 const telegramStatus = [];
 const isScreenOn = [];
 const brightness = [];
-const currentFragment = [];
+const isInScreensaver = [];
 const bat = [];
 const chargeDeviceValue = [];
 const manualBrightness = [];
@@ -52,6 +52,15 @@ const messageSend = [];
 const AlertMessageSend = [];
 let interval = null;
 let checkInterval = null;
+const enabledBrightness = [];
+let reloadAllID = null;
+const startApplicationID = [];
+const loadURLID = [];
+const textToSpeechID = [];
+const setStringSettingID = [];
+const commandsID = [];
+const commandsStr = 'commands';
+let fireTabletInterval = null;
 
 class FullyTabletControl extends utils.Adapter {
 
@@ -79,9 +88,9 @@ class FullyTabletControl extends utils.Adapter {
 		// Reset the connection indicator during startup
 		this.setState('info.connection', false, true);
 
-		
+
 		await this.initialization();
-		await this.create_state();this.dayBri();
+		await this.create_state();
 		await this.checkView();
 		await this.stateRequest();
 		if (!JSON.parse(this.config.motionSensor_enabled)) {
@@ -125,6 +134,12 @@ class FullyTabletControl extends utils.Adapter {
 			if (checkInterval < 1) {
 				checkInterval = 1;
 			}
+
+			// polling min 5 sec.
+			fireTabletInterval = this.config.fireTablet * 60000;
+			if (fireTabletInterval < 60000) {
+				fireTabletInterval = 60000;
+			}
 			//read Testegram user 
 			const telegramOn = this.config.telegram_enabled;
 			const telegramUser = this.config.telegram;
@@ -163,6 +178,21 @@ class FullyTabletControl extends utils.Adapter {
 				}
 			}
 
+			const brightnessEnabled = this.config.brightness;
+			if (!brightnessEnabled || brightnessEnabled !== []) {
+				for (const b in tempStart) {
+					enabledBrightness[b] = brightnessEnabled[b].enabledBrightness;
+					if (enabledBrightness[b] == 'undefined') {
+						enabledBrightness[b] = false;
+					}
+					if (enabledBrightness[b]) {
+						this.manualStates();
+					}
+					console.log(enabledBrightness);
+					this.log.debug(`enabledBrightness: ${enabledBrightness}`);
+				}
+			}
+
 			//read motion ID from Admin and subscribe
 			const motion = this.config.motion;
 			for (const sensor in motion) {
@@ -195,11 +225,17 @@ class FullyTabletControl extends utils.Adapter {
 
 								if (screenSaverUrl == '') {
 									const playlistUrl = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverPlaylist&value=&password=${password[s]}`;
-									this.sendCommand(playlistUrl, `playlist Url  ${await tabletName}`);
-									this.log.warn(`No screensaver URL was entered for ${tabletName}, a standard picture is set`);
 									const wallpaperURL = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverWallpaperURL&value=${'fully://color black'}&password=${password[s]}`;
-									this.sendCommand(wallpaperURL, `screenSaver no Url  ${await tabletName}`);
 
+									try {
+										await axios.get(playlistUrl);
+										await axios.get(wallpaperURL);
+									} catch (error) {
+										this.log.error(`${await tabletName[s]} [wallpaperURL] ( screenSaver no Url ) could not be sent: ${error.message}, stack: ${error.stack}`);
+										this.log.error(`${await tabletName[s]} [playlistUrl] ( playlist Url ) could not be sent: ${error.message}, stack: ${error.stack}`);
+									}
+
+									this.log.warn(`No screensaver URL was entered for ${tabletName}, a standard picture is set`);
 								}
 								else {
 									const screenUrl = [
@@ -218,24 +254,48 @@ class FullyTabletControl extends utils.Adapter {
 									const playlistUrl = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverPlaylist&value=${JSON.stringify(screenUrl)}&password=${password[s]}`;
 									console.log('fully Url ' + playlistUrl);
 									this.log.debug(`set Screensaver for ${tabletName} to YouTube Url: ${playlistUrl} entered`);
-									this.sendCommand(playlistUrl, `screenSaverSelect ${await tabletName}`);
+
+									try {
+										await axios.get(playlistUrl);
+
+									} catch (error) {
+										this.log.error(`${await tabletName[s]} [playlistUrl] ( screenSaverSelect ) could not be sent: ${error.message}, stack: ${error.stack}`);
+
+									}
 								}
 
 							} else if (!screensaverMode) {
 								if (screenSaverUrl == '') {
 									const playlistUrl = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverPlaylist&value=&password=${password[s]}`;
-									this.sendCommand(playlistUrl, `playlist Url  ${await tabletName}`);
-									this.log.warn(`No screensaver URL was entered for ${tabletName}, a standard picture is set`);
 									const wallpaperURL = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverWallpaperURL&value=${'fully://color black'}&password=${password[s]}`;
-									this.sendCommand(wallpaperURL, `screenSaver no Url  ${await tabletName}`);
+
+									try {
+										await axios.get(playlistUrl);
+										await axios.get(wallpaperURL);
+
+									} catch (error) {
+										this.log.error(`${await tabletName[s]} [playlistUrl] ( playlist Url ) could not be sent: ${error.message}, stack: ${error.stack}`);
+										this.log.error(`${await tabletName[s]} [wallpaperURL] ( screenSaver no Url ) could not be sent: ${error.message}, stack: ${error.stack}`);
+
+									}
+
+									this.log.warn(`No screensaver URL was entered for ${tabletName}, a standard picture is set`);
 									this.log.debug(`set Screensaver for ${tabletName} to default picture: ${wallpaperURL} entered:`);
 									console.log(`set Screensaver for ${tabletName} to default picture: ${wallpaperURL} entered`);
 								}
 								else {
 									const playlistUrl = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverPlaylist&value=&password=${password[s]}`;
-									this.sendCommand(playlistUrl, `playlist Url  ${await tabletName}`);
 									const wallpaperURL = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverWallpaperURL&value=${screenSaverUrl}&password=${password[s]}`;
-									this.sendCommand(wallpaperURL, `screenSaver no Url  ${await tabletName}`);
+
+									try {
+										await axios.get(playlistUrl);
+										await axios.get(wallpaperURL);
+
+									} catch (error) {
+										this.log.error(`${await tabletName[s]} [playlistUrl] ( playlist Url ) could not be sent: ${error.message}, stack: ${error.stack}`);
+										this.log.error(`${await tabletName[s]} [wallpaperURL] ( screenSaver no Url ) could not be sent: ${error.message}, stack: ${error.stack}`);
+									}
+
 									this.log.debug(`set Screensaver for ${tabletName} to Wallpaper URL: ${wallpaperURL} entered:`);
 								}
 							}
@@ -313,12 +373,100 @@ class FullyTabletControl extends utils.Adapter {
 
 							this.log.debug(`[result]: ${JSON.stringify(objects)}`);
 
-							const ipadresse = objects.ip4;
-							this.setState(`device.${stateID}.device_ip`, { val: await ipadresse, ack: true });
-							this.log.debug(`IP: ${ipadresse}`);
+							isInScreensaver[i] = objects.isInScreensaver;
+							this.setState(`device.${stateID}.device_info.isInScreensaver`, { val: await isInScreensaver[i], ack: true });
+							this.log.debug(`IP: ${isInScreensaver}`);
+
+							const currentFragment = objects.currentFragment;
+							this.setState(`device.${stateID}.device_info.currentFragment`, { val: await currentFragment, ack: true });
+							this.log.debug(`currentFragment ${currentFragment}`);
+
+							const deviceModel = objects.deviceModel;
+							this.setState(`device.${stateID}.device_info.deviceModel`, { val: await deviceModel, ack: true });
+							this.log.debug(`deviceModel ${deviceModel}`);
+
+							const deviceName = objects.deviceName;
+							this.setState(`device.${stateID}.device_info.deviceName`, { val: await deviceName, ack: true });
+							this.log.debug(`IP: ${deviceName}`);
+
+							const wifiSignalLevel = objects.wifiSignalLevel;
+							this.setState(`device.${stateID}.device_info.wifiSignalLevel`, { val: await wifiSignalLevel, ack: true });
+							this.log.debug(`IP: ${wifiSignalLevel}`);
+
+							const kioskMode = objects.kioskMode;
+							this.setState(`device.${stateID}.device_info.kioskMode`, { val: await kioskMode, ack: true });
+							this.log.debug(`IP: ${kioskMode}`);
+
+							const displayHeightPixels = objects.displayHeightPixels;
+							this.setState(`device.${stateID}.device_info.displayHeightPixels`, { val: await displayHeightPixels, ack: true });
+							this.log.debug(`IP: ${displayHeightPixels}`);
+
+							const appVersionName = objects.appVersionName;
+							this.setState(`device.${stateID}.device_info.appVersionName`, { val: await appVersionName, ack: true });
+							this.log.debug(`IP: ${appVersionName}`);
+
+							const maintenanceMode = objects.maintenanceMode;
+							this.setState(`device.${stateID}.device_info.maintenanceMode`, { val: await maintenanceMode, ack: true });
+							this.log.debug(`IP: ${maintenanceMode}`);
+
+							const mac = objects.mac;
+							this.setState(`device.${stateID}.device_info.mac`, { val: await mac, ack: true });
+							this.log.debug(`IP: ${mac}`);
+
+							const startUrl = objects.startUrl;
+							this.setState(`device.${stateID}.device_info.startUrl`, { val: await startUrl, ack: true });
+							this.log.debug(`IP: ${startUrl}`);
+
+							const screenOrientation = objects.screenOrientation;
+							this.setState(`device.${stateID}.device_info.screenOrientation`, { val: await screenOrientation, ack: true });
+							this.log.debug(`IP: ${screenOrientation}`);
+
+							const isInDaydream = objects.isInDaydream;
+							this.setState(`device.${stateID}.device_info.isInDaydream`, { val: await isInDaydream, ack: true });
+							this.log.debug(`IP: ${isInDaydream}`);
+
+							const isLicensed = objects.isLicensed;
+							this.setState(`device.${stateID}.device_info.isLicensed`, { val: await isLicensed, ack: true });
+							this.log.debug(`IP: ${isLicensed}`);
+
+							const deviceManufacturer = objects.deviceManufacturer;
+							this.setState(`device.${stateID}.device_info.deviceManufacturer`, { val: await deviceManufacturer, ack: true });
+							this.log.debug(`IP: ${deviceManufacturer}`);
+
+							const keyguardLocked = objects.keyguardLocked;
+							this.setState(`device.${stateID}.device_info.keyguardLocked`, { val: await keyguardLocked, ack: true });
+							this.log.debug(`IP: ${keyguardLocked}`);
+
+							const isDeviceAdmin = objects.isDeviceAdmin;
+							this.setState(`device.${stateID}.device_info.isDeviceAdmin`, { val: await isDeviceAdmin, ack: true });
+							this.log.debug(`IP: ${isDeviceAdmin}`);
+
+							const kioskLocked = objects.kioskLocked;
+							this.setState(`device.${stateID}.device_info.kioskLocked`, { val: await kioskLocked, ack: true });
+							this.log.debug(`IP: ${kioskLocked}`);
+
+							const isDeviceOwner = objects.isDeviceOwner;
+							this.setState(`device.${stateID}.device_info.isDeviceOwner`, { val: await isDeviceOwner, ack: true });
+							this.log.debug(`IP: ${isDeviceOwner}`);
+
+							const ip6 = objects.ip6;
+							this.setState(`device.${stateID}.device_info.ip6`, { val: await ip6, ack: true });
+							this.log.debug(`IP: ${ip6}`);
+
+							const displayWidthPixels = objects.displayWidthPixels;
+							this.setState(`device.${stateID}.device_info.displayWidthPixels`, { val: await displayWidthPixels, ack: true });
+							this.log.debug(`IP: ${displayWidthPixels}`);
+
+							const androidVersion = objects.androidVersion;
+							this.setState(`device.${stateID}.device_info.androidVersion`, { val: await androidVersion, ack: true });
+							this.log.debug(`IP: ${androidVersion}`);
+
+							const ip4 = objects.ip4;
+							this.setState(`device.${stateID}.device_info.device_ip`, { val: await ip4, ack: true });
+							this.log.debug(`IP: ${ip4}`);
 
 							const plugged = objects.plugged;
-							this.setState(`device.${stateID}.Plugged`, { val: await plugged, ack: true });
+							this.setState(`device.${stateID}.device_info.plugged`, { val: await plugged, ack: true });
 							this.log.debug(`plugged ${plugged}`);
 
 							bat[i] = objects.batteryLevel;
@@ -326,7 +474,7 @@ class FullyTabletControl extends utils.Adapter {
 							this.log.debug(`bat ${bat}`);
 
 							isScreenOn[i] = objects.isScreenOn;
-							this.setState(`device.${stateID}.ScreenOn`, { val: await isScreenOn[i], ack: true });
+							this.setState(`device.${stateID}.device_info.isScreenOn`, { val: await isScreenOn[i], ack: true });
 							this.log.debug(`isScreenOn ${isScreenOn}`);
 
 							if (!isScreenOn[i]) {
@@ -337,32 +485,25 @@ class FullyTabletControl extends utils.Adapter {
 							this.setState(`device.${stateID}.brightness`, { val: await brightness[i], ack: true });
 							this.log.debug(`bright ${brightness}`);
 
-							currentFragment[i] = objects.currentFragment;
-							this.setState(`device.${stateID}.active_display`, { val: await currentFragment[i], ack: true });
-							this.log.debug(`currentFragment ${currentFragment}`);
-
-							const deviceModel = objects.deviceModel;
-							this.setState(`device.${stateID}.deviceModel`, { val: await deviceModel, ack: true });
-							this.log.debug(`deviceModel ${deviceModel}`);
-
 							const lastAppStart = objects.lastAppStart;
-							this.setState(`device.${stateID}.LastAppStart`, { val: await lastAppStart, ack: true });
+							this.setState(`device.${stateID}.device_info.LastAppStart`, { val: await lastAppStart, ack: true });
 							this.log.debug(`lastAppStart ${lastAppStart}`);
 
 							const ssid = objects.ssid.replace(/"/gi, '');
 							this.log.debug(`ssid: ${ssid}`);
 
 							if (ssid.replace(/_/gi, ' ') == '<unknown ssid>') {
-								this.setState(`device.${stateID}.ssid`, { val: 'is not supported', ack: true });
+								this.setState(`device.${stateID}.device_info.ssid`, { val: 'is not supported', ack: true });
 							}
 							else if (ssid.replace(/_/gi, ' ') == '') {
-								this.setState(`device.${stateID}.ssid`, { val: 'is not supported', ack: true });
+								this.setState(`device.${stateID}.device_info.ssid`, { val: 'is not supported', ack: true });
 							}
 							else {
-								this.setState(`device.${stateID}.ssid`, { val: ssid.replace(/_/gi, ' '), ack: true });
+								this.setState(`device.${stateID}.device_info.ssid`, { val: ssid.replace(/_/gi, ' '), ack: true });
 							}
 
 							foreground[i] = objects.foregroundApp;
+							this.setState(`device.${stateID}.device_info.foregroundApp`, { val: foreground[i], ack: true });
 							this.log.debug(`foregroundApp ${foreground}`);
 							if (await foreground[i] !== 'de.ozerov.fully' && await foregroundStart[i] == false) {
 								foregroundStart[i] = true;
@@ -375,6 +516,39 @@ class FullyTabletControl extends utils.Adapter {
 								console.log(`${await tabletName[i]} foreground is Fully: ${await foreground[i]}`);
 								this.log.debug(`${await tabletName[i]} foreground is Fully: ${await foreground[i]}`);
 							}
+
+							const internalStorageFreeSpace = objects.internalStorageFreeSpace;
+							this.setState(`device.${stateID}.device_info.memory.internalStorageFreeSpace`, { val: await this.bytesToSize(internalStorageFreeSpace), ack: true });
+							this.log.debug(`internalStorageFreeSpace ${internalStorageFreeSpace}`);
+
+							const appTotalMemory = objects.appTotalMemory;
+							this.setState(`device.${stateID}.device_info.memory.appTotalMemory`, { val: await this.bytesToSize(appTotalMemory), ack: true });
+							this.log.debug(`appTotalMemory ${appTotalMemory}`);
+
+							const ramFreeMemory = objects.ramFreeMemory;
+							this.setState(`device.${stateID}.device_info.memory.ramFreeMemory`, { val: await this.bytesToSize(ramFreeMemory), ack: true });
+							this.log.debug(`ramFreeMemory ${ramFreeMemory}`);
+
+							const appFreeMemory = objects.appFreeMemory;
+							this.setState(`device.${stateID}.device_info.memory.appFreeMemory`, { val: await this.bytesToSize(appFreeMemory), ack: true });
+							this.log.debug(`appFreeMemory ${appFreeMemory}`);
+
+							const internalStorageTotalSpace = objects.internalStorageTotalSpace;
+							this.setState(`device.${stateID}.device_info.memory.internalStorageTotalSpace`, { val: await this.bytesToSize(internalStorageTotalSpace), ack: true });
+							this.log.debug(`internalStorageTotalSpace ${internalStorageTotalSpace}`);
+
+							const ramUsedMemory = objects.ramUsedMemory;
+							this.setState(`device.${stateID}.device_info.memory.ramUsedMemory`, { val: await this.bytesToSize(ramUsedMemory), ack: true });
+							this.log.debug(`ramUsedMemory ${ramUsedMemory}`);
+
+							const appUsedMemory = objects.appUsedMemory;
+							this.setState(`device.${stateID}.device_info.memory.appUsedMemory`, { val: await this.bytesToSize(appUsedMemory), ack: true });
+							this.log.debug(`appUsedMemory ${appUsedMemory}`);
+
+							const ramTotalMemory = objects.ramTotalMemory;
+							this.setState(`device.${stateID}.device_info.memory.ramTotalMemory`, { val: await this.bytesToSize(ramTotalMemory), ack: true });
+							this.log.debug(`ramTotalMemory ${ramTotalMemory}`);
+
 							let visBattery = null;
 
 							if (plugged && bat[i] <= 100) visBattery = 20; 	// 100 %
@@ -405,7 +579,7 @@ class FullyTabletControl extends utils.Adapter {
 							this.setState(`device.${await stateID}.state_of_charge_vis`, { val: visBattery, ack: true });
 						}
 						else {
-							this.log.error(`${apiResult.data.statustext}`)
+							this.log.error(`${apiResult.data.statustext}`);
 						}
 						// last Info Update
 						this.setState(`device.${await stateID}.lastInfoUpdate`, { val: Date.now(), ack: true });
@@ -428,6 +602,116 @@ class FullyTabletControl extends utils.Adapter {
 		}
 	}
 
+	async sendFullyCommand(id, state) {
+		let comm;
+		let dp;
+		let name;
+		const tmp = id.split('.');
+
+		if (tmp.length > 4) {
+			dp = tmp.pop();
+			comm = tmp.pop();
+			name = tmp.pop();
+		} else {
+			dp = tmp.pop();
+		}
+
+
+		if (state.ack != null) {
+			if (state && !state.ack) {
+
+				for (const s in tabletName) {
+
+					if (deviceEnabled[s]) {
+						if (dp !== 'reloadAll') {
+
+							if (name.replace(/_/gi, ' ') == tabletName[s].toLowerCase()) {
+
+								switch (dp) {
+									case 'setStringSetting':
+										let txtKey = state.val;
+										if (txtKey.length > 1) {
+
+											const textToSpeechURL = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=${txtKey}&password=${password[s]}`;
+											try {
+												await axios.get(textToSpeechURL);
+											} catch (error) {
+												this.log.warn(`[send textToSpeechURL] Unable to contact: ${error} | ${error}`);
+											}
+										}
+										break;
+									case 'textToSpeech':
+										let txtSp = state.val;
+										txtSp = encodeURIComponent(txtSp.replace(/ +/g, ' ')); // Remove multiple spaces
+										if (txtSp.length > 1) {
+
+											const textToSpeechURL = `http://${ip[s]}:${port[s]}/?cmd=textToSpeech&text=${txtSp}&password=${password[s]}`;
+											try {
+												await axios.get(textToSpeechURL);
+											} catch (error) {
+												this.log.warn(`[send textToSpeechURL] Unable to contact: ${error} | ${error}`);
+											}
+										}
+										break;
+									case 'loadURL':
+										let strUrl = state.val;
+										strUrl = strUrl.replace(/ /g, ''); // Remove Spaces
+
+										const encodeUrl = encodeURIComponent(strUrl);
+
+										if (strUrl.length > 10) {
+
+											const loadURL = `http://${ip[s]}:${port[s]}/?cmd=loadURL&url=${encodeUrl}&password=${password[s]}`;
+											try {
+												await axios.get(loadURL);
+											} catch (error) {
+												this.log.warn(`[send loadURL] Unable to contact: ${error} | ${error}`);
+											}
+										}
+										break;
+									case 'startApplication':
+										// eslint-disable-next-line no-case-declarations
+										let strApp = state.val;
+										strApp = strApp.replace(/ /g, ''); // Remove Spaces
+
+										if (strApp.length > 2) {
+											const startApplicationURL = `http://${ip[s]}:${port[s]}/?cmd=startApplication&package=${strApp}&password=${password[s]}`;
+											try {
+												await axios.get(startApplicationURL);
+											} catch (error) {
+												this.log.warn(`[send startApplicationURL] Unable to contact: ${error} | ${error}`);
+											}
+
+										}
+										break;
+									default:
+										if (comm === commandsStr) {
+
+											const commandsURL = `http://${ip[s]}:${port[s]}/?cmd=${dp}&password=${password[s]}`;
+											try {
+												await axios.get(commandsURL);
+											} catch (error) {
+												this.log.warn(`[send commandsURL] Unable to contact: ${error} | ${error}`);
+											}
+										}
+								}
+							}
+						} else {
+							const reloadAllURL = `http://${ip[s]}:${port[s]}/?cmd=loadStartURL&password=${password[s]}`;
+							try {
+								await axios.get(reloadAllURL);
+							} catch (error) {
+								this.log.warn(`[send reloadAll] Unable to contact: ${error} | ${error}`);
+							}
+
+						}
+					}
+
+				}
+			}
+		}
+	}
+
 	async foregroundApp() {
 		try {
 			for (const c in ip) {
@@ -440,8 +724,13 @@ class FullyTabletControl extends utils.Adapter {
 						const foregroundAppUrl = `http://${await ip[app]}:${await port[app]}/?cmd=toForeground&password=${await password[app]}`;
 						console.log(`${await tabletName[app]} foreground: ${foregroundAppUrl}`);
 						foregroundAppTimer[app] = setTimeout(async () => {
-							this.sendCommand(foregroundAppUrl, `foregroundApp ${await tabletName[app]}`);
-						}, this.config.fireTablet * 60000);
+
+							try {
+								await axios.get(foregroundAppUrl);
+							} catch (error) {
+								this.log.error(`${await tabletName[app]} [foregroundApp] could not be sent: ${error.message}, stack: ${error.stack}`);
+							}
+						}, fireTabletInterval);
 					}
 				}
 			}
@@ -582,7 +871,7 @@ class FullyTabletControl extends utils.Adapter {
 				for (const b in ip) {
 
 					if (deviceEnabled[b]) {
-						if (JSON.parse(brightnessN[b].enabledBrightness)) {
+						if (enabledBrightness[b]) {
 
 							if (brightnessN[b]) {
 
@@ -595,10 +884,17 @@ class FullyTabletControl extends utils.Adapter {
 									this.log.debug(`The brightness from ${await tabletName[b]} is ${await brightness[b]} change is not necessary`);
 								}
 								else {
-									this.sendCommand(nightBrightnessURL, `nightBri ${await tabletName[b]}`);
-									this.sendCommand(ScreensaverOnBri, `ScreensaverOnBri ${await tabletName[b]}`);
-									this.log.debug(`${await tabletName[b]} sendCommand: ${nightBrightnessURL}`);
-									this.log.debug(`${await tabletName[b]} sendCommand: ${ScreensaverOnBri}`);
+
+									try {
+										await axios.get(nightBrightnessURL);
+										await axios.get(ScreensaverOnBri);
+									} catch (error) {
+										this.log.error(`${await tabletName[b]} [nightBri] could not be sent: ${error.message}, stack: ${error.stack}`);
+										this.log.error(`${await tabletName[b]} [ScreensaverOnBri] could not be sent: ${error.message}, stack: ${error.stack}`);
+									}
+
+									this.log.debug(`${await tabletName[b]} send Command: ${nightBrightnessURL}`);
+									this.log.debug(`${await tabletName[b]} send Command: ${ScreensaverOnBri}`);
 								}
 							}
 							else {
@@ -620,7 +916,7 @@ class FullyTabletControl extends utils.Adapter {
 			for (const name in ip) {
 				if (deviceEnabled[name]) {
 
-					if (JSON.parse(this.config.brightness[name].enabledBrightness)) {
+					if (enabledBrightness[name]) {
 
 						const stateID = await this.replaceFunction(tabletName[name]);
 						const manual = await this.getStateAsync(`device.${stateID}.manualBrightness`);
@@ -662,11 +958,12 @@ class FullyTabletControl extends utils.Adapter {
 	async dayBri() {
 		try {
 			const brightnessD = this.config.brightness;
+
 			if (!brightnessD || brightnessD !== []) {
 
 				for (const d in ip) {
 					if (deviceEnabled[d]) {
-						if (JSON.parse(brightnessD[d].enabledBrightness)) {
+						if (enabledBrightness[d]) {
 
 							if (brightnessD[d]) {
 								let daytimeBrightnessURL = null;
@@ -701,10 +998,16 @@ class FullyTabletControl extends utils.Adapter {
 								daytimeBrightnessURL = `http://${ip[d]}:${port[d]}/?cmd=setStringSetting&key=screenBrightness&value=${newBrightnessDay}&password=${password[d]}`;
 								ScreensaverOnBri = `http://${ip[d]}:${port[d]}/?cmd=setStringSetting&key=screensaverBrightness&value=${newBrightnessDay}&password=${password[d]}`;
 								if (await brightness[d] != newBrightnessDay) {
-									await this.sendCommand(daytimeBrightnessURL, `dayBri`);
-									await this.sendCommand(ScreensaverOnBri, `[ScreensaverOnBri] ${await tabletName[d]}`);
-									this.log.debug(`${await tabletName[d]} sendCommand: ${daytimeBrightnessURL}`);
-									this.log.debug(`${await tabletName[d]} sendCommand: ${ScreensaverOnBri}`);
+
+									try {
+										await axios.get(daytimeBrightnessURL);
+										await axios.get(ScreensaverOnBri);
+									} catch (error) {
+										this.log.error(`${await tabletName[d]} [dayBri] could not be sent: ${error.message}, stack: ${error.stack}`);
+										this.log.error(`${await tabletName[d]} [ScreensaverOnBri] could not be sent: ${error.message}, stack: ${error.stack}`);
+									}
+									this.log.debug(`${await tabletName[d]} send Command: ${daytimeBrightnessURL}`);
+									this.log.debug(`${await tabletName[d]} send Command: ${ScreensaverOnBri}`);
 								}
 							}
 							else {
@@ -712,9 +1015,15 @@ class FullyTabletControl extends utils.Adapter {
 								this.log.warn(`${await tabletName[d]} dayBri not specified`);
 							}
 
-						} else {
-							const system_Default = `http://${ip[d]}:${port[d]}/?cmd=setStringSetting&key=screenBrightness&value=''&password=${password[d]}`;
-							await this.sendCommand(system_Default, `system Default`);
+						}
+						else {
+							const system_Default = `http://${ip[d]}:${port[d]}/?cmd=setStringSetting&key=screenBrightness&value=&password=${password[d]}`;
+
+							try {
+								await axios.get(system_Default);
+							} catch (error) {
+								this.log.warn(`${await tabletName[d]} [screenSaver On] could not be sent: ${error.message}, stack: ${error.stack}`);
+							}
 						}
 					}
 				}
@@ -795,49 +1104,67 @@ class FullyTabletControl extends utils.Adapter {
 								if (!motionVal[on]) {
 
 									console.log(`motionVal == false: ${motionVal[on]}`);
-									if (currentFragment[on] == 'main') {
+									if (!isInScreensaver[on]) {
 										const ScreensaverOnURL = `http://${ip[on]}:${port[on]}/?cmd=startScreensaver&password=${password[on]}`;
 
 										this.log.debug(`${await tabletName[on]} Screensaver starts in ${await screenSaverTimer[on]} ms`);
-										console.log(`currentFragment == main: ${currentFragment[on]}`);
+										console.log(`isInScreensaver: ${isInScreensaver[on]}`);
 
 										ScreensaverTimer[on] = setTimeout(async () => {
-											await this.sendCommand(ScreensaverOnURL, `[screenSaver On] ${await tabletName[on]}`);
-											this.log.debug(`${await tabletName[on]} sendCommand: screenSaver On ${ScreensaverOnURL}`);
-											console.log(`sendCommand: screenSaver On ${ScreensaverOnURL}`);
+
+											try {
+												await axios.get(ScreensaverOnURL);
+											} catch (error) {
+												this.log.error(`${await tabletName[on]} [screenSaver On] could not be sent: ${error.message}, stack: ${error.stack}`);
+											}
+
+											this.log.debug(`${await tabletName[on]} send Command: screenSaver On ${ScreensaverOnURL}`);
+											console.log(`send Command: screenSaver On ${ScreensaverOnURL}`);
 											this.stateRequest();
 										}, screenSaverTimer[on]);
 
 										console.log(`screenSaverTimer[on] ${await screenSaverTimer[on]}`);
-									} else if (currentFragment[on] == 'screensaver') {
+									} else if (isInScreensaver[on]) {
 										this.log.debug(`${await tabletName[on]} Screensaver already on`);
-										console.log(`currentFragment[on] == 'screensaver': ${currentFragment[on]}`);
+										console.log(`isInScreensaver': ${isInScreensaver[on]}`);
 									}
 								} else {
 									console.log(`motionVal == true: ${motionVal[on]}`);
 									this.log.debug(`${await tabletName[on]} Movement was detected. Screen saver is switched off`);
 									const ScreensaverOffURL = `http://${ip[on]}:${port[on]}/?cmd=stopScreensaver&password=${password[on]}`;
-									if (currentFragment[on] == 'main') {
-										console.log(`currentFragment[on] == 'main': ${currentFragment[on]}`);
+									if (!isInScreensaver[on]) {
+										console.log(`isInScreensaver: ${isInScreensaver[on]}`);
 										this.log.debug('no screensaver switched on');
-									} else if (currentFragment[on] == 'screensaver') {
-										console.log(`currentFragment[on] == 'screensaver': ${currentFragment[on]}`);
-										this.sendCommand(ScreensaverOffURL, `[screenSaver Off] ${await tabletName[on]}`);
-										this.log.debug(`${await tabletName[on]} sendCommand: screenSaver Off ${ScreensaverOffURL} `);
+									} else if (isInScreensaver[on]) {
+										console.log(`isInScreensaver: ${isInScreensaver[on]}`);
+
+										try {
+											await axios.get(ScreensaverOffURL);
+										} catch (error) {
+											this.log.error(`${await tabletName[on]} [screenSaver Off] could not be sent: ${error.message}, stack: ${error.stack}`);
+										}
+
+										this.log.debug(`${await tabletName[on]} send Command: screenSaver Off ${ScreensaverOffURL} `);
 									}
 								}
 							} else {
 								const ScreensaverOn = `http://${ip[on]}:${port[on]}/?cmd=startScreensaver&password=${password[on]}`;
 								console.log(`motionSensor_enabled Off: ${motionSensor_enabled}`);
-								if (currentFragment[on] == 'main') {
+								if (!isInScreensaver[on]) {
 									this.log.debug(`${await tabletName[on]} Screensaver starts in ${await screenSaverTimer[on]} ms`);
-									console.log(`currentFragment[on] == 'main': ${motionSensor_enabled}`);
+									console.log(`isInScreensaver[on]: ${isInScreensaver[on]}`);
 
 									ScreensaverTimer[on] = setTimeout(async () => {
 										if (ScreensaverReturn) clearTimeout(ScreensaverReturn);
 										console.log(`[screenSaver On] ${await tabletName[on]}`);
-										this.sendCommand(ScreensaverOn, `[screenSaver On] ${await tabletName[on]}`);
-										this.log.debug(`${await tabletName[on]} sendCommand: screenSaver On ${ScreensaverOn}`);
+
+										try {
+											await axios.get(ScreensaverOn);
+										} catch (error) {
+											this.log.error(`${await tabletName[on]} [screenSaver On] could not be sent: ${error.message}, stack: ${error.stack}`);
+										}
+
+										this.log.debug(`${await tabletName[on]} send Command: screenSaver On ${ScreensaverOn}`);
 										ScreensaverReturn = setTimeout(async () => {
 											this.screenSaver();
 											console.log(`[screenSaver restart]`);
@@ -867,20 +1194,15 @@ class FullyTabletControl extends utils.Adapter {
 					if (isScreenOn[s] == false) {
 
 						this.log.warn(`[ATTENTION] Screen from ${await tabletName[s]} has been switched off Screen is being switched on again`);
+						try {
+							await axios.get(Screen[s]);
+						} catch (error) {
+							this.log.warn(`${await tabletName[s]} [screenON] could not be sent: ${error.message}, stack: ${error.stack}`);
+						}
 
-						this.sendCommand(Screen[s], `[screenON()] ${await tabletName[s]}`);
 					}
 				}
 			}
-		}
-	}
-
-
-	async sendCommand(link, log) {
-		try {
-			await axios.get(link);
-		} catch (error) {
-			this.log.warn(`[${log}] Unable to contact: ${error} | ${error}`);
 		}
 	}
 
@@ -891,6 +1213,12 @@ class FullyTabletControl extends utils.Adapter {
 		return str / 100 * 255;
 	}
 
+	async bytesToSize(bytes) {
+		const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+		if (bytes == 0) return '0 Byte';
+		const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+		return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
+	}
 
 	async replaceFunction(str) {
 		if (str) {
@@ -1050,8 +1378,79 @@ class FullyTabletControl extends utils.Adapter {
 
 				const stateID = await this.replaceFunction(tabletName[name]);
 				const stateName = await tabletName[name];
+				const boolenArray = ['isInScreensaver', 'isScreenOn', 'kioskMode', 'maintenanceMode', 'isInDaydream', 'isLicensed', 'plugged', 'keyguardLocked', 'isDeviceAdmin',
+					'kioskLocked', 'isDeviceOwner'];
 
-				await this.extendObjectAsync(`device.${stateID}.device_ip`, {
+				const memoryArray = ['internalStorageFreeSpace', 'appTotalMemory', 'ramFreeMemory', 'appFreeMemory',
+					'internalStorageTotalSpace', 'ramUsedMemory', 'appUsedMemory', 'ramTotalMemory'];
+
+				const commandArray = ['loadStartURL', 'clearCache', 'clearWebstorage', 'clearCookies', 'restartApp', 'exitApp', 'screenOn', 'screenOff', 'forceSleep', 'triggerMotion', 'startScreensaver',
+					'stopScreensaver', 'startDaydream', 'stopDaydream', 'toForeground', 'popFragment', 'enableLockedMode', 'disableLockedMode'];
+
+
+				for (const d in boolenArray) {
+					await this.extendObjectAsync(`device.${stateID}.device_info.${boolenArray[d]}`, {
+						type: 'state',
+						common: {
+							name: `${stateName} ${boolenArray[d]}`,
+							type: 'boolean',
+							role: 'indicator',
+							def: false,
+							read: true,
+							write: false
+						},
+						native: {},
+					});
+				}
+
+				for (const m in memoryArray) {
+					await this.extendObjectAsync(`device.${stateID}.device_info.memory.${memoryArray[m]}`, {
+						type: 'state',
+						common: {
+							name: `${stateName} ${memoryArray[m]}`,
+							type: 'string',
+							role: 'state',
+							def: '0',
+							read: true,
+							write: false
+						},
+						native: {},
+					});
+				}
+
+				for (const c in commandArray) {
+					await this.extendObjectAsync(`device.${stateID}.commands.${commandArray[c]}`, {
+						type: 'state',
+						common: {
+							name: `${stateName} ${commandArray[c]}`,
+							type: 'boolean',
+							role: 'button',
+							def: true,
+							read: true,
+							write: true
+						},
+						native: {},
+					});
+
+					this.subscribeStates(`device.${stateID}.commands.${commandArray[c]}`);
+					commandsID.push(`.device.${stateID}.commands.${commandArray[c]}`);
+				}
+
+				await this.extendObjectAsync(`device.reloadAll`, {
+					type: 'state',
+					common: {
+						name: `reload All Tablet view`,
+						type: 'boolean',
+						role: 'button',
+						def: true,
+						read: true,
+						write: true
+					},
+					native: {},
+				});
+
+
+				await this.extendObjectAsync(`device.${stateID}.device_info.device_ip`, {
 					type: 'state',
 					common: {
 						name: `${stateName} device ip`,
@@ -1064,12 +1463,12 @@ class FullyTabletControl extends utils.Adapter {
 					native: {},
 				});
 
-				await this.extendObjectAsync(`device.${stateID}.deviceModel`, {
+				await this.extendObjectAsync(`device.${stateID}.device_info.deviceModel`, {
 					type: 'state',
 					common: {
 						name: `${stateName} device Model`,
 						type: 'string',
-						role: 'info.name',
+						role: 'text',
 						def: '',
 						read: true,
 						write: false
@@ -1077,26 +1476,13 @@ class FullyTabletControl extends utils.Adapter {
 					native: {},
 				});
 
-				await this.extendObjectAsync(`device.${stateID}.ssid`, {
+				await this.extendObjectAsync(`device.${stateID}.device_info.ssid`, {
 					type: 'state',
 					common: {
 						name: `${stateName} Wlan ssid`,
 						type: 'string',
 						def: '',
 						role: 'info',
-						read: true,
-						write: false
-					},
-					native: {},
-				});
-
-				await this.extendObjectAsync(`device.${stateID}.Plugged`, {
-					type: 'state',
-					common: {
-						name: `${stateName} power plugged`,
-						type: 'boolean',
-						role: 'switch',
-						def: false,
 						read: true,
 						write: false
 					},
@@ -1119,18 +1505,6 @@ class FullyTabletControl extends utils.Adapter {
 					native: {},
 				});
 
-				await this.extendObjectAsync(`device.${stateID}.ScreenOn`, {
-					type: 'state',
-					common: {
-						name: `${stateName} is screen on`,
-						type: 'boolean',
-						role: 'switch',
-						read: true,
-						write: false
-					},
-					native: {},
-				});
-
 				await this.extendObjectAsync(`device.${stateID}.brightness`, {
 					type: 'state',
 					common: {
@@ -1146,10 +1520,10 @@ class FullyTabletControl extends utils.Adapter {
 					native: {},
 				});
 
-				await this.extendObjectAsync(`device.${stateID}.active_display`, {
+				await this.extendObjectAsync(`device.${stateID}.device_info.currentFragment`, {
 					type: 'state',
 					common: {
-						name: `${stateName} active display`,
+						name: `${stateName} currentFragment`,
 						type: 'string',
 						role: 'info',
 						def: '',
@@ -1171,7 +1545,7 @@ class FullyTabletControl extends utils.Adapter {
 					native: {},
 				});
 
-				await this.extendObjectAsync(`device.${stateID}.LastAppStart`, {
+				await this.extendObjectAsync(`device.${stateID}.device_info.LastAppStart`, {
 					type: 'state',
 					common: {
 						name: `${stateName} Last App Start`,
@@ -1307,12 +1681,236 @@ class FullyTabletControl extends utils.Adapter {
 					native: {},
 				});
 
+				await this.extendObjectAsync(`device.${stateID}.device_info.wifiSignalLevel`, {
+					type: 'state',
+					common: {
+						name: `${stateName} wifiSignalLevel`,
+						type: 'number',
+						role: 'value',
+						def: 0,
+						read: true,
+						write: true
+
+					},
+					native: {},
+				});
+
+				await this.extendObjectAsync(`device.${stateID}.device_info.deviceName`, {
+					type: 'state',
+					common: {
+						name: `${stateName} deviceName`,
+						type: 'string',
+						role: 'info.name',
+						def: '',
+						read: true,
+						write: false
+					},
+					native: {},
+				});
+
+				await this.extendObjectAsync(`device.${stateID}.device_info.displayHeightPixels`, {
+					type: 'state',
+					common: {
+						name: `${stateName} displayHeightPixels`,
+						type: 'string',
+						role: 'info.display',
+						def: '',
+						unit: 'px',
+						read: true,
+						write: false
+					},
+					native: {},
+				});
+
+				await this.extendObjectAsync(`device.${stateID}.device_info.displayWidthPixels`, {
+					type: 'state',
+					common: {
+						name: `${stateName} displayWidthPixels`,
+						type: 'string',
+						role: 'info.display',
+						def: '',
+						unit: 'px',
+						read: true,
+						write: false
+					},
+					native: {},
+				});
+
+				await this.extendObjectAsync(`device.${stateID}.device_info.screenOrientation`, {
+					type: 'state',
+					common: {
+						name: `${stateName} screenOrientation`,
+						type: 'number',
+						role: 'info.display',
+						def: 0,
+						read: true,
+						write: false
+					},
+					native: {},
+				});
+
+				await this.extendObjectAsync(`device.${stateID}.device_info.ip6`, {
+					type: 'state',
+					common: {
+						name: `${stateName} ip6`,
+						type: 'string',
+						role: 'info.ip',
+						def: '',
+						read: true,
+						write: false
+					},
+					native: {},
+				});
+
+				await this.extendObjectAsync(`device.${stateID}.device_info.mac`, {
+					type: 'state',
+					common: {
+						name: `${stateName} mac`,
+						type: 'string',
+						role: 'info.mac',
+						def: '',
+						read: true,
+						write: false
+					},
+					native: {},
+				});
+
+				await this.extendObjectAsync(`device.${stateID}.device_info.appVersionName`, {
+					type: 'state',
+					common: {
+						name: `${stateName} appVersionName`,
+						type: 'string',
+						role: 'text',
+						def: '',
+						read: true,
+						write: false
+					},
+					native: {},
+				});
+
+				await this.extendObjectAsync(`device.${stateID}.device_info.startUrl`, {
+					type: 'state',
+					common: {
+						name: `${stateName} startUrl`,
+						type: 'string',
+						role: 'url',
+						def: '',
+						read: true,
+						write: false
+					},
+					native: {},
+				});
+
+				await this.extendObjectAsync(`device.${stateID}.device_info.deviceManufacturer`, {
+					type: 'state',
+					common: {
+						name: `${stateName} deviceManufacturer`,
+						type: 'string',
+						role: 'text',
+						def: '',
+						read: true,
+						write: false
+					},
+					native: {},
+				});
+
+				await this.extendObjectAsync(`device.${stateID}.device_info.androidVersion`, {
+					type: 'state',
+					common: {
+						name: `${stateName} androidVersion`,
+						type: 'string',
+						role: 'text',
+						def: '',
+						read: true,
+						write: false
+					},
+					native: {},
+				});
+
+				await this.extendObjectAsync(`device.${stateID}.device_info.foregroundApp`, {
+					type: 'state',
+					common: {
+						name: `${stateName} foregroundApp`,
+						type: 'string',
+						role: 'text',
+						def: '',
+						read: true,
+						write: false
+					},
+					native: {},
+				});
+
+
+				await this.extendObjectAsync(`device.${stateID}.commands.startApplication`, {
+					type: 'state',
+					common: {
+						name: `${stateName} startApplication`,
+						type: 'string',
+						role: 'text',
+						def: '',
+						read: true,
+						write: true
+					},
+					native: {},
+				});
+
+				await this.extendObjectAsync(`device.${stateID}.commands.loadURL`, {
+					type: 'state',
+					common: {
+						name: `${stateName} loadURL`,
+						type: 'string',
+						role: 'text',
+						def: '',
+						read: true,
+						write: true
+					},
+					native: {},
+				});
+
+				await this.extendObjectAsync(`device.${stateID}.commands.textToSpeech`, {
+					type: 'state',
+					common: {
+						name: `${stateName} textToSpeech`,
+						type: 'string',
+						role: 'text',
+						def: '',
+						read: true,
+						write: true
+					},
+					native: {},
+				});
+
+				await this.extendObjectAsync(`device.${stateID}.commands.setStringSetting`, {
+					type: 'state',
+					common: {
+						name: `${stateName} setStringSetting`,
+						type: 'string',
+						role: 'text',
+						def: '',
+						read: true,
+						write: true
+					},
+					native: {},
+				});
+
+
 				this.subscribeStates(`vis_View.widget_8_view`);
 				this.subscribeForeignStates(`vis.0.control.data`);
 				this.subscribeStates(`device.${stateID}.manualBrightness`);
 				this.subscribeStates(`device.${stateID}.brightness_control_mode`);
+				this.subscribeStates(`device.${stateID}.commands.setStringSetting`);
+				this.subscribeStates(`device.${stateID}.commands.textToSpeech`);
+				this.subscribeStates(`device.${stateID}.commands.loadURL`);
+				this.subscribeStates(`device.${stateID}.commands.startApplication`);
+				this.subscribeStates(`device.reloadAll`);
+
 				manualBrightnessID[name] = `.device.${stateID}.manualBrightness`;
 				brightnessControlModeID[name] = `.device.${stateID}.brightness_control_mode`;
+				reloadAllID = `.device.reloadAll`;
+				startApplicationID[name] = `.device.${stateID}.commands.startApplication`;
+				loadURLID[name] = `.device.${stateID}.commands.loadURL`;
+				textToSpeechID[name] = `.device.${stateID}.commands.textToSpeech`;
+				setStringSettingID[name] = `.device.${stateID}.commands.setStringSetting`;
 
 				if (!deviceEnabled[name]) {
 					this.setState(`device.${tabletName[name]}.isFullyAlive`, { val: false, ack: true });
@@ -1387,10 +1985,55 @@ class FullyTabletControl extends utils.Adapter {
 								this.log.debug(`state ${id} changed: ${state.val} from: ${this.namespace}`);
 								this.manualStates();
 								console.log(`onStateChange: ${id} val: ${state.val}`);
+								break;
 							}
 						}
 					}
 				}
+
+				for (const change in tabletName) {
+					if (deviceEnabled[change]) {
+						if (!state.ack) {
+							// console.log(id == `${this.namespace}${brightnessControlModeID[change]}` || id == `${this.namespace}${manualBrightnessID[change]}`);
+							if (id == `${this.namespace}${startApplicationID[change]}` || id == `${this.namespace}${loadURLID[change]}` || id == `${this.namespace}${textToSpeechID[change]}` || id == `${this.namespace}${setStringSettingID[change]}`) {
+								this.log.debug(`state ${id} changed: ${state.val} from: ${this.namespace}`);
+								this.sendFullyCommand(id, state);
+								console.log(`onStateChange: ${id} val: ${state.val}`);
+								break;
+							}
+						}
+					}
+				}
+
+				for (const change in tabletName) {
+					if (deviceEnabled[change]) {
+						if (!state.ack) {
+							// console.log(id == `${this.namespace}${brightnessControlModeID[change]}` || id == `${this.namespace}${manualBrightnessID[change]}`);
+							for (const b in commandsID) {
+								if (id == `${this.namespace}${commandsID[b]}`) {
+									this.log.debug(`state ${id} changed: ${state.val} from: ${this.namespace}`);
+									this.sendFullyCommand(id, state);
+									console.log(`onStateChange: ${id} val: ${state.val}`);
+									break;
+								}
+							}
+						}
+					}
+				}
+
+				for (const change in tabletName) {
+					if (deviceEnabled[change]) {
+						if (!state.ack) {
+
+							if (id == `${this.namespace}${reloadAllID}`) {
+								this.log.debug(`state ${id} changed: ${state.val} from: ${this.namespace}`);
+								this.sendFullyCommand(id, state);
+								console.log(`onStateChange: ${id} val: ${state.val}`);
+							}
+						}
+					}
+				}
+
 
 				// Motion Sensor State Change
 				for (const change in motionID) {
