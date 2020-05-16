@@ -182,7 +182,7 @@ class FullyTabletControl extends utils.Adapter {
 			if (!brightnessEnabled || brightnessEnabled !== []) {
 				for (const b in tempStart) {
 					enabledBrightness[b] = brightnessEnabled[b].enabledBrightness;
-					if (enabledBrightness[b] == 'undefined') {
+					if (enabledBrightness[b] == undefined) {
 						enabledBrightness[b] = false;
 					}
 					if (enabledBrightness[b]) {
