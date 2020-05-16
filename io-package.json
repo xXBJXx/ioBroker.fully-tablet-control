@@ -16,28 +16,16 @@
         "zh-cn": "FullyBrowser已实现\n 修复了一些错误"
       },
       "0.2.4": {
-        "en": "Screen saver time adjusted now in 1 min steps,\n State_of_charge adjusted,\n interval limit added,\n Switch charging control on / off added,\n Brightness activated individually,\n",
-        "de": "Bildschirmschonerzeit jetzt in Schritten von 1 Minute eingestellt,\nLadezustand angepasst,\nIntervalllimit hinzugefügt,\nLadesteuerung ein- / ausschalten hinzugefügt,\nHelligkeit einzeln aktiviert,\n",
-        "ru": "Время заставки настроено с шагом в 1 минуту,\nState_of_charge скорректирована,\nдобавлен предел интервала,\nВключено / выключено управление зарядкой,\nЯркость активируется индивидуально,\n",
-        "pt": "Tempo de proteção de tela ajustado agora em etapas de 1 minuto,\nState_of_charge ajustado,\nlimite de intervalo adicionado,\nLigue / desligue o controle de carregamento,\nBrilho ativado individualmente,\n",
-        "nl": "Schermbeveiligingstijd nu aangepast in stappen van 1 minuut,\nState_of_charge aangepast,\ninterval limiet toegevoegd,\nSchakel laadcontrole aan / uit toegevoegd,\nIndividueel geactiveerde helderheid,\n",
-        "fr": "Économiseur d'écran ajusté maintenant en 1 minute,\nState_of_charge ajusté,\nlimite d'intervalle ajoutée,\nActiver / désactiver le contrôle de charge,\nLuminosité activée individuellement,\n",
-        "it": "Il tempo di screen saver ora è regolato in passi di 1 minuto\nState_of_charge corretto,\nlimite di intervallo aggiunto,\nAttiva / disattiva il controllo di ricarica,\nLuminosità attivata individualmente,\n",
-        "es": "Tiempo de protector de pantalla ajustado ahora en pasos de 1 minuto,\nEstado_de_carga ajustado,\nlímite de intervalo agregado,\nActivar / desactivar el control de carga agregado,\nBrillo activado individualmente,\n",
-        "pl": "Czas wygaszacza ekranu dostosowywany teraz co 1 minutę,\nSkorygowano stan naładowania,\ndodano limit interwału,\nDodano włączenie / wyłączenie kontroli ładowania,\nJasność aktywowana indywidualnie,\n",
-        "zh-cn": "屏幕保护程序时间现在以1分钟为单位进行了调整，\n充电状态已调整，\n添加了间隔限制，\n添加了开启/关闭充电控制功能，\n亮度单独激活，\n"
-      },
-      "0.2.3": {
-        "en": "config page adapted: automatic name setting for charger / brightness / screen saver added",
-        "de": "Konfigurationsseite angepasst: Automatische Namenseinstellung für Ladegerät / Helligkeit / Bildschirmschoner hinzugefügt",
-        "ru": "адаптирована страница конфигурации: добавлена автоматическая настройка имени для зарядного устройства / яркости / заставки",
-        "pt": "página de configuração adaptada: configuração automática de nome para carregador / brilho / proteção de tela adicionada",
-        "nl": "configuratiepagina aangepast: automatische naaminstelling voor oplader / helderheid / schermbeveiliging toegevoegd",
-        "fr": "page de configuration adaptée: ajout automatique du nom du chargeur / luminosité / économiseur d'écran",
-        "it": "pagina di configurazione adattata: aggiunta impostazione automatica del nome per caricatore / luminosità / salvaschermo",
-        "es": "página de configuración adaptada: configuración de nombre automática para cargador / brillo / protector de pantalla agregado",
-        "pl": "Dostosowano stronę konfiguracji: dodano automatyczne ustawienie nazwy ładowarki / jasności / wygaszacza ekranu",
-        "zh-cn": "修改了配置页：添加了充电器/亮度/屏幕保护程序的自动名称设置"
+        "en": "Screen saver time adjusted now in 1 min steps,\n State_of_charge adjusted,",
+        "de": "Bildschirmschonerzeit jetzt in Schritten von 1 Minute eingestellt,\nLadezustand angepasst,",
+        "ru": "Время заставки настроено с шагом в 1 минуту,\nState_of_charge скорректирована,",
+        "pt": "Tempo de proteção de tela ajustado agora em etapas de 1 minuto,\nState_of_charge ajustado,",
+        "nl": "Schermbeveiligingstijd nu aangepast in stappen van 1 minuut,\nState_of_charge aangepast,",
+        "fr": "Économiseur d'écran ajusté maintenant en 1 minute,\nState_of_charge ajusté,",
+        "it": "Il tempo di screen saver ora è regolato in passi di 1 minuto\nState_of_charge corretto,",
+        "es": "Tiempo de protector de pantalla ajustado ahora en pasos de 1 minuto,\nEstado_de_carga ajustado,",
+        "pl": "Czas wygaszacza ekranu dostosowywany teraz co 1 minutę,\nSkorygowano stan naładowania,",
+        "zh-cn": "屏幕保护程序时间现在以1分钟为单位进行了调整，\n充电状态已调整,"
       },
       "0.2.2": {
         "en": "Adapter Name Change",

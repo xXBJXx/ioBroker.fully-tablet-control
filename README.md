@@ -229,10 +229,6 @@ _______________________________
 * (xXBJXx) Switch charging control on / off added
 * (xXBJXx) Brightness activated individually
 
-### 0.2.3
-
-* (xXBJXx) config page adapted: automatic name setting for charger / brightness / screen saver added
-
 ### 0.2.2
 
 * (xXBJXx) Adapter Name Change
