@@ -61,6 +61,7 @@ const setStringSettingID = [];
 const commandsID = [];
 const commandsStr = 'commands';
 let fireTabletInterval = null;
+let brightnessControlEnabled = null;
 
 class FullyTabletControl extends utils.Adapter {
 
@@ -178,18 +179,34 @@ class FullyTabletControl extends utils.Adapter {
 				}
 			}
 
+			brightnessControlEnabled = JSON.parse(this.config.brightness_on);
 			const brightnessEnabled = this.config.brightness;
-			if (!brightnessEnabled || brightnessEnabled !== []) {
+			if (brightnessControlEnabled) {
+				if (!brightnessEnabled || brightnessEnabled !== []) {
+
+					for (const b in tempStart) {
+
+						enabledBrightness[b] = brightnessEnabled[b].enabledBrightness;
+
+						if (enabledBrightness[b] == undefined) {
+							enabledBrightness[b] = false;
+						}
+
+						if (enabledBrightness[b]) {
+							await this.setStateAsync(`device.${await this.replaceFunction(tempStart[b].name)}.brightness_control_mode`, false, true);
+							// this.manualStates();
+						}
+
+						console.log(enabledBrightness);
+						this.log.debug(`enabledBrightness: ${enabledBrightness}`);
+					}
+				}
+			}
+			else {
 				for (const b in tempStart) {
-					enabledBrightness[b] = brightnessEnabled[b].enabledBrightness;
-					if (enabledBrightness[b] == undefined) {
-						enabledBrightness[b] = false;
-					}
-					if (enabledBrightness[b]) {
-						this.manualStates();
-					}
-					console.log(enabledBrightness);
-					this.log.debug(`enabledBrightness: ${enabledBrightness}`);
+					enabledBrightness[b] = false;
+					await this.setStateAsync(`device.${await this.replaceFunction(tempStart[b].name)}.brightness_control_mode`, true, false);
+					console.log(`device.${await this.replaceFunction(tempStart[b].name)}.brightness_control_mode`);
 				}
 			}
 
@@ -348,6 +365,7 @@ class FullyTabletControl extends utils.Adapter {
 
 	async stateRequest() {
 		try {
+			if (requestTimeout) clearTimeout(requestTimeout);
 			if (!deviceInfo || deviceInfo !== []) {
 
 				for (const i in deviceInfo) {
@@ -841,26 +859,30 @@ class FullyTabletControl extends utils.Adapter {
 	}
 
 	async brightnessCron() {
+		if (brightnessControlEnabled) {
+			for (const c in tabletName) {
+				if (enabledBrightness[c]) {
+					const dayTime = this.config.dayTime;
+					const nightTime = this.config.nightTime;
+					this.log.debug('checkInterval ' + checkInterval);
+					this.log.debug('dayTime ' + dayTime);
+					this.log.debug('nightTime ' + nightTime);
 
+					const neightBriCron = new schedule('*/' + checkInterval + ' ' + '0' + '-' + (dayTime - 1) + ',' + nightTime + ' * * *', async () => {
+						this.log.debug('night [ */' + checkInterval + ' ' + '0' + '-' + (dayTime - 1) + ',' + nightTime + ' * * * ]');
+						this.nightBri();
+					});
 
-		const dayTime = this.config.dayTime;
-		const nightTime = this.config.nightTime;
-		this.log.debug('checkInterval ' + checkInterval);
-		this.log.debug('dayTime ' + dayTime);
-		this.log.debug('nightTime ' + nightTime);
+					const dayBriCron = new schedule('*/' + checkInterval + ' ' + dayTime + '-' + (nightTime - 1) + ' * * *', async () => {
+						this.log.debug('day [ */' + checkInterval + ' ' + dayTime + '-' + (nightTime - 1) + ' * * * ]');
+						this.dayBri();
+					});
 
-		const neightBriCron = new schedule('*/' + checkInterval + ' ' + '0' + '-' + (dayTime - 1) + ',' + nightTime + ' * * *', async () => {
-			this.log.debug('night [ */' + checkInterval + ' ' + '0' + '-' + (dayTime - 1) + ',' + nightTime + ' * * * ]');
-			this.nightBri();
-		});
-
-		const dayBriCron = new schedule('*/' + checkInterval + ' ' + dayTime + '-' + (nightTime - 1) + ' * * *', async () => {
-			this.log.debug('day [ */' + checkInterval + ' ' + dayTime + '-' + (nightTime - 1) + ' * * * ]');
-			this.dayBri();
-		});
-
-		neightBriCron.start();
-		dayBriCron.start();
+					neightBriCron.start();
+					dayBriCron.start();
+				}
+			}
+		}
 	}
 
 	async nightBri() {
@@ -916,37 +938,47 @@ class FullyTabletControl extends utils.Adapter {
 			for (const name in ip) {
 				if (deviceEnabled[name]) {
 
-					if (enabledBrightness[name]) {
+					// if (enabledBrightness[name]) {
 
-						const stateID = await this.replaceFunction(tabletName[name]);
-						const manual = await this.getStateAsync(`device.${stateID}.manualBrightness`);
-						if (manual && manual.val) {
-							manualBrightness[name] = manual.val;
-							// @ts-ignore
-							await this.setStateAsync(`device.${stateID}.manualBrightness`, manual.val, true);
-						}
-						else {
-							await this.setStateAsync(`device.${stateID}.manualBrightness`, 0, true);
-							manualBrightness[name] = 0;
-						}
-
-						const manualMode = await this.getStateAsync(`device.${stateID}.brightness_control_mode`);
-						if (manualMode && (manualMode.val || !manualMode.val)) {
-							manualBrightnessMode[name] = manualMode.val;
-							// @ts-ignore
-							await this.setStateAsync(`device.${stateID}.brightness_control_mode`, manualMode.val, true);
-						}
-						else {
-							await this.setStateAsync(`device.${stateID}.brightness_control_mode`, false, true);
-							manualBrightnessMode[name] = false;
-						}
-
-						this.log.debug(`[manualBrightness] name: ${tabletName[name]} val: ${await manualBrightness[name]}`);
-						this.log.debug(`[manualBrightnessMode] name: ${tabletName[name]} val: ${await manualBrightnessMode[name]}`);
-						this.dayBri();
+					const stateID = await this.replaceFunction(tabletName[name]);
+					const manual = await this.getStateAsync(`device.${stateID}.manualBrightness`);
+					if (manual && manual.val) {
+						manualBrightness[name] = manual.val;
+						// @ts-ignore
+						await this.setStateAsync(`device.${stateID}.manualBrightness`, manual.val, true);
+					}
+					else {
+						await this.setStateAsync(`device.${stateID}.manualBrightness`, 0, true);
+						manualBrightness[name] = 0;
 					}
 
+					const manualMode = await this.getStateAsync(`device.${stateID}.brightness_control_mode`);
+					if (manualMode && (manualMode.val || !manualMode.val)) {
+						manualBrightnessMode[name] = manualMode.val;
+						// @ts-ignore
+						await this.setStateAsync(`device.${stateID}.brightness_control_mode`, manualMode.val, true);
+					}
+					else {
+						await this.setStateAsync(`device.${stateID}.brightness_control_mode`, false, true);
+						manualBrightnessMode[name] = false;
+					}
+
+					// if (manualMode && (manualMode.val || !manualMode.val)) {
+					// 	manualBrightnessMode[name] = manualMode.val;
+					// 	// @ts-ignore
+					// 	await this.setStateAsync(`device.${stateID}.brightness_control_mode`, manualMode.val, true);
+					// }
+					// else {
+					// 	await this.setStateAsync(`device.${stateID}.brightness_control_mode`, false, true);
+					// 	manualBrightnessMode[name] = false;
+					// }
+
+					this.log.debug(`[manualBrightness] name: ${tabletName[name]} val: ${await manualBrightness[name]}`);
+					this.log.debug(`[manualBrightnessMode] name: ${tabletName[name]} val: ${await manualBrightnessMode[name]}`);
+					this.dayBri();
 				}
+
+				// }
 
 			}
 		} catch (error) {
@@ -963,45 +995,83 @@ class FullyTabletControl extends utils.Adapter {
 
 				for (const d in ip) {
 					if (deviceEnabled[d]) {
-						if (enabledBrightness[d]) {
+						if (brightnessControlEnabled) {
+							if (enabledBrightness[d]) {
 
-							if (brightnessD[d]) {
+								if (brightnessD[d]) {
+									let daytimeBrightnessURL = null;
+									let ScreensaverOnBri = null;
+									let newBrightnessDay = 0;
+									if (chargeDeviceValue[d]) {
+
+										let brightnessDayPuffer;
+										if (await manualBrightnessMode[d]) {
+											brightnessDayPuffer = Math.round(await this.convert_percent(await manualBrightness[d] - brightnessD[d].loadingLowering));
+										}
+										else {
+											brightnessDayPuffer = Math.round(await this.convert_percent(brightnessD[d].dayBrightness - brightnessD[d].loadingLowering));
+										}
+										if (brightnessDayPuffer <= 0) {
+											newBrightnessDay = 0;
+											this.log.debug(`brightness from ${await tabletName[d]} is less than 0 brightness is set to`);
+										} else {
+											newBrightnessDay = brightnessDayPuffer;
+											this.log.debug(`new brightness from ${await tabletName[d]}: ` + newBrightnessDay + `[` + (brightnessD[d].dayBrightness - brightnessD[d].loadingLowering) + `%]`);
+										}
+									} else {
+										if (await manualBrightnessMode[d]) {
+											newBrightnessDay = Math.round(await this.convert_percent(await manualBrightness[d]));
+											this.log.debug(`${await tabletName[d]} brightness set on: ` + newBrightnessDay + `[` + manualBrightness[d] + `%]`);
+										}
+										else {
+											newBrightnessDay = Math.round(await this.convert_percent(brightnessD[d].dayBrightness));
+											this.log.debug(`${await tabletName[d]} brightness set on: ` + newBrightnessDay + `[` + brightnessD[d].dayBrightness + `%]`);
+										}
+									}
+									daytimeBrightnessURL = `http://${ip[d]}:${port[d]}/?cmd=setStringSetting&key=screenBrightness&value=${newBrightnessDay}&password=${password[d]}`;
+									ScreensaverOnBri = `http://${ip[d]}:${port[d]}/?cmd=setStringSetting&key=screensaverBrightness&value=${newBrightnessDay}&password=${password[d]}`;
+									if (await brightness[d] != newBrightnessDay) {
+
+										try {
+											await axios.get(daytimeBrightnessURL);
+											await axios.get(ScreensaverOnBri);
+										} catch (error) {
+											this.log.error(`${await tabletName[d]} [dayBri] could not be sent: ${error.message}, stack: ${error.stack}`);
+											this.log.error(`${await tabletName[d]} [ScreensaverOnBri] could not be sent: ${error.message}, stack: ${error.stack}`);
+										}
+										this.log.debug(`${await tabletName[d]} send Command: ${daytimeBrightnessURL}`);
+										this.log.debug(`${await tabletName[d]} send Command: ${ScreensaverOnBri}`);
+									}
+								}
+								else {
+									console.log(`${await tabletName[d]} dayBri not specified`);
+									this.log.warn(`${await tabletName[d]} dayBri not specified`);
+								}
+
+							}
+							else {
+
 								let daytimeBrightnessURL = null;
 								let ScreensaverOnBri = null;
 								let newBrightnessDay = 0;
-								if (chargeDeviceValue[d]) {
 
-									let brightnessDayPuffer;
-									if (await manualBrightnessMode[d]) {
-										brightnessDayPuffer = Math.round(await this.convert_percent(await manualBrightness[d] - brightnessD[d].loadingLowering));
-									}
-									else {
-										brightnessDayPuffer = Math.round(await this.convert_percent(brightnessD[d].dayBrightness - brightnessD[d].loadingLowering));
-									}
-									if (brightnessDayPuffer <= 0) {
-										newBrightnessDay = 0;
-										this.log.debug(`brightness from ${await tabletName[d]} is less than 0 brightness is set to`);
-									} else {
-										newBrightnessDay = brightnessDayPuffer;
-										this.log.debug(`new brightness from ${await tabletName[d]}: ` + newBrightnessDay + `[` + (brightnessD[d].dayBrightness - brightnessD[d].loadingLowering) + `%]`);
-									}
-								} else {
-									if (await manualBrightnessMode[d]) {
-										newBrightnessDay = Math.round(await this.convert_percent(await manualBrightness[d]));
-										this.log.debug(`${await tabletName[d]} brightness set on: ` + newBrightnessDay + `[` + manualBrightness[d] + `%]`);
-									}
-									else {
-										newBrightnessDay = Math.round(await this.convert_percent(brightnessD[d].dayBrightness));
-										this.log.debug(`${await tabletName[d]} brightness set on: ` + newBrightnessDay + `[` + brightnessD[d].dayBrightness + `%]`);
-									}
+								if (await manualBrightnessMode[d]) {
+									newBrightnessDay = Math.round(await this.convert_percent(await manualBrightness[d]));
+									this.log.debug(`${await tabletName[d]} brightness set on: ` + newBrightnessDay + `[` + manualBrightness[d] + `%]`);
 								}
+								else {
+									newBrightnessDay = Math.round(await this.convert_percent(brightnessD[d].dayBrightness));
+									this.log.debug(`${await tabletName[d]} brightness set on: ` + newBrightnessDay + `[` + brightnessD[d].dayBrightness + `%]`);
+								}
+
 								daytimeBrightnessURL = `http://${ip[d]}:${port[d]}/?cmd=setStringSetting&key=screenBrightness&value=${newBrightnessDay}&password=${password[d]}`;
 								ScreensaverOnBri = `http://${ip[d]}:${port[d]}/?cmd=setStringSetting&key=screensaverBrightness&value=${newBrightnessDay}&password=${password[d]}`;
-								if (await brightness[d] != newBrightnessDay) {
+								if (await brightness[d] !== newBrightnessDay) {
 
 									try {
 										await axios.get(daytimeBrightnessURL);
 										await axios.get(ScreensaverOnBri);
+										await this.stateRequest();
 									} catch (error) {
 										this.log.error(`${await tabletName[d]} [dayBri] could not be sent: ${error.message}, stack: ${error.stack}`);
 										this.log.error(`${await tabletName[d]} [ScreensaverOnBri] could not be sent: ${error.message}, stack: ${error.stack}`);
@@ -1009,20 +1079,39 @@ class FullyTabletControl extends utils.Adapter {
 									this.log.debug(`${await tabletName[d]} send Command: ${daytimeBrightnessURL}`);
 									this.log.debug(`${await tabletName[d]} send Command: ${ScreensaverOnBri}`);
 								}
-							}
-							else {
-								console.log(`${await tabletName[d]} dayBri not specified`);
-								this.log.warn(`${await tabletName[d]} dayBri not specified`);
-							}
 
+							}
 						}
 						else {
-							const system_Default = `http://${ip[d]}:${port[d]}/?cmd=setStringSetting&key=screenBrightness&value=&password=${password[d]}`;
 
-							try {
-								await axios.get(system_Default);
-							} catch (error) {
-								this.log.warn(`${await tabletName[d]} [screenSaver On] could not be sent: ${error.message}, stack: ${error.stack}`);
+							let daytimeBrightnessURL = null;
+							let ScreensaverOnBri = null;
+							let newBrightnessDay = 0;
+							if (deviceEnabled) {
+								if (await manualBrightnessMode[d]) {
+									newBrightnessDay = Math.round(await this.convert_percent(await manualBrightness[d]));
+									this.log.debug(`${await tabletName[d]} brightness set on: ` + newBrightnessDay + `[` + manualBrightness[d] + `%]`);
+								}
+								else {
+									newBrightnessDay = Math.round(await this.convert_percent(brightnessD[d].dayBrightness));
+									this.log.debug(`${await tabletName[d]} brightness set on: ` + newBrightnessDay + `[` + brightnessD[d].dayBrightness + `%]`);
+								}
+
+								daytimeBrightnessURL = `http://${ip[d]}:${port[d]}/?cmd=setStringSetting&key=screenBrightness&value=${newBrightnessDay}&password=${password[d]}`;
+								ScreensaverOnBri = `http://${ip[d]}:${port[d]}/?cmd=setStringSetting&key=screensaverBrightness&value=${newBrightnessDay}&password=${password[d]}`;
+								if (await brightness[d] !== newBrightnessDay) {
+
+									try {
+										await axios.get(daytimeBrightnessURL);
+										await axios.get(ScreensaverOnBri);
+										await this.stateRequest();
+									} catch (error) {
+										this.log.error(`${await tabletName[d]} [dayBri] could not be sent: ${error.message}, stack: ${error.stack}`);
+										this.log.error(`${await tabletName[d]} [ScreensaverOnBri] could not be sent: ${error.message}, stack: ${error.stack}`);
+									}
+									this.log.debug(`${await tabletName[d]} send Command: ${daytimeBrightnessURL}`);
+									this.log.debug(`${await tabletName[d]} send Command: ${ScreensaverOnBri}`);
+								}
 							}
 						}
 					}
@@ -1032,7 +1121,6 @@ class FullyTabletControl extends utils.Adapter {
 			this.log.error(`[dayBri] : ${error.message}, stack: ${error.stack}`);
 		}
 	}
-
 
 	async motionSensor() {
 		try {

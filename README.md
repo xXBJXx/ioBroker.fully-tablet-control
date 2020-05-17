@@ -48,9 +48,9 @@ Hier muss die ID von dem Ladegerät eingetragen werden damit das Tablet geladen 
 
 1. Nicht Ausfülen wird automatisch nach einem reload ausgefült.
 
-2. Ladesteuerung Einschalten oder ausschalten
+2. Ladesteuerung Einschalten oder ausschalten wen ausgeschaltet ignoriert der Adapter alles was mit dem laden des Tablets zu tun hat es werden auch keine Warnungen bei schwacher Batterie ausgegeben.
 
-3. Datenpunkt ID von dem Ladegerät.
+3. Datenpunkt ID (aus den Iobroker Objekten) von dem Ladegerät.
 
 4. Lademodus auswählbar sind **Dauerstrom** oder **Ladezyklus** bei Dauerstrom wird das Tablet dauerhaft am Strom gehalten und bei Ladezyklus wird das Tablet z.B. bei 20% anfangen zu laden und bei 85% das Laden abschalten.
 
@@ -81,6 +81,8 @@ Hier wird die Helligkeit von dem Tablet eingestellt.
 8. hier kann man die Helligkeit Steuerung Admin und manuell ausschalten es wird dann die Standard Helligkeit vom Tablett benutzt.
 
 9. Nicht Ausfülen wird automatisch nach einem reload ausgefült.
+
+10. hier kann man entscheiden wie man die Helligkeit steuern will über die Konfigurationsseite mit Möglichkeit die Steuerung Manuel zu verändern dazu **MUSS** die Tabelle unten angelegt werden, oder generell alles auf Manuell zuschalten dann braucht man die Tabelle unten nicht und die Zeit Steuerung funktioniert dann auch nicht die Helligkeit wird dann nur noch über den Datenpunkt in den Objekten veränderbar sein.
 
 ## Bildschirmschoner
 
@@ -215,6 +217,10 @@ hier sind 2 Dp.
 _______________________________
 
 ## Changelog
+
+### 0.2.6
+
+* (xXBJXx) Brightness control changed and Configuration page changed
 
 ### 0.2.5
 

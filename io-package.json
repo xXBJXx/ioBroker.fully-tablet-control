@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "fully-tablet-control",
-    "version": "0.2.5",
+    "version": "0.2.6",
     "news": {
+      "0.2.6": {
+        "en": "Brightness control changed and Configuration page changed",
+        "de": "Die Helligkeitssteuerung und die Konfigurationsseite wurden geändert",
+        "ru": "Изменено управление яркостью и изменена страница конфигурации",
+        "pt": "Controle de brilho alterado e página de configuração alterada",
+        "nl": "Helderheidsregeling gewijzigd en configuratiepagina gewijzigd",
+        "fr": "Contrôle de la luminosité modifié et page de configuration modifiée",
+        "it": "Controllo della luminosità modificato e pagina di configurazione modificata",
+        "es": "El control de brillo cambió y la página de configuración cambió",
+        "pl": "Zmieniono kontrolę jasności i zmieniono stronę konfiguracji",
+        "zh-cn": "亮度控制已更改，配置页面已更改"
+      },
       "0.2.5": {
         "en": "FullyBrowser implemented\n fixed some bugs",
         "de": "FullyBrowser implementiert\n Einige Fehler wurden behoben",
@@ -134,114 +146,6 @@
         "es": "editar README",
         "pl": "edytuj README",
         "zh-cn": "编辑自述文件"
-      },
-      "0.1.0": {
-        "en": "Beta Release",
-        "de": "Beta-Version",
-        "ru": "Бета-версия",
-        "pt": "Versão Beta",
-        "nl": "Bètaversie",
-        "fr": "Version bêta",
-        "it": "Rilascio beta",
-        "es": "Lanzamiento Beta",
-        "pl": "Wersja beta",
-        "zh-cn": "测试版"
-      },
-      "0.0.8": {
-        "en": "device activate added",
-        "de": "Geräteaktivierung hinzugefügt",
-        "ru": "добавлена активация устройства",
-        "pt": "dispositivo ativado adicionado",
-        "nl": "apparaat activeren toegevoegd",
-        "fr": "activation de l'appareil ajoutée",
-        "it": "dispositivo attivato aggiunto",
-        "es": "dispositivo activado agregado",
-        "pl": "Dodano aktywację urządzenia",
-        "zh-cn": "设备激活已添加"
-      },
-      "0.0.7": {
-        "en": "implemented back to Fully Browser,\n bug fixes",
-        "de": "zurück zu Fully Browser implementiert,\n Fehlerbehebung",
-        "ru": "реализован обратно в полностью браузер,\n исправление ошибок",
-        "pt": "implementado de volta ao navegador totalmente,\n correções de bugs",
-        "nl": "geïmplementeerd terug naar volledig browser,\n bugfixes",
-        "fr": "implémenté de nouveau au navigateur entièrement,\n corrections de bugs",
-        "it": "implementato di nuovo in Browser completo,\n correzioni di bug",
-        "es": "implementado de nuevo en el navegador completo,\nc orrección de errores",
-        "pl": "zaimplementowane z powrotem do w pełni przeglądarki,\n poprawki błędów",
-        "zh-cn": "实施回完全浏览器,\n bug修复"
-      },
-      "0.0.6": {
-        "en": "Screensaver selection implemented,\n Motion detector added",
-        "de": "Bildschirmschoner-Auswahl,\n Motion detector Hinzugefügt",
-        "ru": "Выбор заставки выполнены,\n Детектор движения добавлен",
-        "pt": "Protetor de tela de seleção implementado,\n Detector de movimento adicionados",
-        "nl": "Screensaver selectie uitgevoerd,\n Bewegingsmelder toegevoegd",
-        "fr": "Économiseur d'écran de sélection mis en œuvre,\n Détecteur de mouvement ajoutée",
-        "it": "Screensaver di selezione attuate,\n Rilevatore di movimento aggiunto",
-        "es": "Salvapantallas de selección implementado,\n Detector de movimiento añadido",
-        "pl": "Wybór wygaszacza ekranu spełnione,\n Czujnik ruchu dodany",
-        "zh-cn": "屏幕保护程序的选择实施，\n 加入运动检测器"
-      },
-      "0.0.5": {
-        "en": "manual brightness control implemented,\n Screensavers added",
-        "de": "manuelle Helligkeitsregelung implementiert,\n Bildschirmschoner Hinzugefügt",
-        "ru": "ручное управление яркостью реализовано,\n Скринсейверы добавлен",
-        "pt": "manual de controle de brilho implementado,\n Protetores de tela adicionados",
-        "nl": "handmatige instelling van de helderheid toegepast,\n Screensavers toegevoegd",
-        "fr": "manuel de la luminosité de contrôle mis en œuvre,\n Économiseurs d'écran ajoutés",
-        "it": "controllo manuale della luminosità implementato,\n Screensaver aggiunto",
-        "es": "control de brillo manual implementado,\n Protectores de pantalla añadido",
-        "pl": "ręczne sterowanie jasnością realizowane,\n Wygaszacze ekranu dodano",
-        "zh-cn": "手册的亮度控制实现的，\n 屏幕保护程序加入"
-      },
-      "0.0.4": {
-        "en": "request optimized for multiple devices,\nbrightness control implemented,",
-        "de": "Anfrage für mehrere Geräte optimiert,\nHelligkeitsregelung implementiert,",
-        "ru": "запрос оптимизирован для различных устройств,\nрегулировка яркости реализована,",
-        "pt": "solicitação otimizada para vários dispositivos,\ncontrole de brilho implementado,",
-        "nl": "verzoek geoptimaliseerd voor meerdere apparaten,\nhelderheid controle uitgevoerd,",
-        "fr": "demande optimisé pour plusieurs appareils,\nréglage de la luminosité mis en œuvre,",
-        "it": "richiesta ottimizzato per dispositivi multipli,\ncontrollo della luminosità implementato,",
-        "es": "solicitud optimizado para múltiples dispositivos,\ncontrol de brillo implementado,",
-        "pl": "wniosek zoptymalizowane dla różnych urządzeń,\nregulacja jasności zrealizowany,",
-        "zh-cn": "的请求，优化用于多个装置，\n亮度控制实现的，"
-      },
-      "0.0.3": {
-        "en": "Charging function optimized,\nAdded selection for continuous operation screen,\nTelegram warning added",
-        "de": "Ladefunktion optimiert,\nAuswahl für Dauerbetriebsbildschirm hinzugefügt,\nTelegramm Warnung Hinzugefügt",
-        "ru": "функция зарядки оптимизирован,\nдобавлен экран выбора для непрерывной работы,\nпредупреждение телеграмму добавлено",
-        "pt": "função de Carregamento otimizado,\nAdicionado ecrã de selecção para a operação contínua\nTelegrama de aviso adicionado",
-        "nl": "Opladen functie geoptimaliseerd,\nToegevoegd selectie scherm voor continue werking,\nTelegram waarschuwing toegevoegd",
-        "fr": "la fonction de Chargement optimisé,\nAjout de la sélection de l'écran pour un fonctionnement en continu,\nTélégramme avertissement ajouté",
-        "it": "funzione di Carica della batteria ottimizzata,\nAggiunta la schermata di selezione per il funzionamento continuo\nTelegramma di avviso aggiunto",
-        "es": "la función de Carga optimizada,\nAñadido pantalla de selección para la operación continua,\nTelegrama de aviso añadido",
-        "pl": "funkcja ładowania zoptymalizowany,\ndodano ekran wyboru do ciągłej pracy,\nostrzeżenie telegram dodano",
-        "zh-cn": "充功能最优化，\n加入的选择视为连续操作，\n电报警告加入"
-      },
-      "0.0.2": {
-        "en": "added charging function",
-        "de": "Hinzugefügt Ladefunktion",
-        "ru": "добавлена функция зарядки ",
-        "pt": "adicionado função de carregamento",
-        "nl": "toegevoegd laadfunctie",
-        "fr": " a ajouté la fonction de chargement",
-        "it": "aggiunta la funzione di ricarica",
-        "es": "se añadió la función de carga",
-        "pl": "dodano funkcję ładowania ",
-        "zh-cn": "加充功能"
-      },
-      "0.0.1": {
-        "en": "initial release",
-        "de": "Erstveröffentlichung",
-        "ru": "Начальная версия",
-        "pt": "lançamento inicial",
-        "nl": "Eerste uitgave",
-        "fr": "Première version",
-        "it": "Versione iniziale",
-        "es": "Versión inicial",
-        "pl": "Pierwsze wydanie",
-        "zh-cn": "首次出版"
       }
     },
     "title": "Fully Tablet Control",
@@ -305,7 +209,8 @@
     "viewChange_enabled": "false",
     "viewMode": "false",
     "visView": [],
-    "chargerON": "true"
+    "chargerON": "true",
+    "brightness_on": "true"
   },
   "objects": [],
   "instanceObjects": [{

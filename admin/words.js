@@ -3,6 +3,30 @@
 'use strict';
 
 systemDictionary = {
+	"Brightness control manually": {
+		"en": "Brightness control manually",
+		"de": "Helligkeitsregelung manuell",
+		"ru": "Ручная регулировка яркости",
+		"pt": "Controle de brilho manualmente",
+		"nl": "Helderheidsregeling handmatig",
+		"fr": "Contrôle de la luminosité manuellement",
+		"it": "Controllo della luminosità manualmente",
+		"es": "Control de brillo manualmente",
+		"pl": "Kontrola jasności ręcznie",
+		"zh-cn": "手动亮度控制"
+	  },
+	"Brightness control via config page": {
+		"en": "Brightness control via config page",
+		"de": "Helligkeitsregelung über Konfigurationsseite",
+		"ru": "Управление яркостью через страницу конфигурации",
+		"pt": "Controle de brilho via página de configuração",
+		"nl": "Helderheidsregeling via configuratiepagina",
+		"fr": "Contrôle de la luminosité via la page de configuration",
+		"it": "Controllo della luminosità tramite pagina di configurazione",
+		"es": "Control de brillo a través de la página de configuración",
+		"pl": "Kontrola jasności poprzez stronę konfiguracji",
+		"zh-cn": "通过配置页面进行亮度控制"
+	  },
 	"Switch off charging control": {
 		"en": "Switch off charging control",
 		"de": "Ladesteuerung ausschalten",
