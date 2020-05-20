@@ -256,6 +256,7 @@
                         </select>
                     </div>
                     <!-- end select screen active -->
+                
                     <div class="row"></div>
                     <p class="translate sub-title-brightness">brightness</p>
                                <!-- select screen active -->
@@ -266,15 +267,58 @@
                                 </select>
                             </div>
                             <!-- end select screen active -->
+                            <!-- select screen active -->
+                            <div class="input-field col s3 select" style="width: 200px; text-align: center;">
+                                <select class="value" autofocus="autofocus" value="true" id="timeMode">
+                                    <option class="translate" value="true" selected>astro time</option>
+                                    <option class="translate" value="false">Manual time</option>
+                                </select>
+                            </div>
+                            <!-- end select screen active -->
                             <div class="row"></div>
-                    <!-- check interval -->
-                    <div class="col s3 input-field" style="width: 335px">
-                      
-                        <input type="number" class="value" id="checkInterval" style="width:310px; text-align: center" max="120" min="0"
-                            value="5" />
-                        <span style="color: #000000; font-size: medium;" for="interval" class="translate">interval for the Checked the brightness in minutes</span>
-                    </div>
-                    <!-- end check interval -->
+           
+                         <!-- select screen active -->
+                         <div class="input-field col s3 select"  style="width: 300px; text-align: center;">
+                            <select class="value" autofocus="autofocus"  id="astroSelectDay">
+                                <option class="translate" value="sunrise" selected>sunrise</option>
+                                <option class="translate" value="sunriseEnd">sunriseEnd</option>
+                                <option class="translate" value="goldenHourEnd">goldenHourEnd</option>
+                                <option class="translate" value="solarNoon">solarNoon</option>
+                                <option class="translate" value="goldenHour">goldenHour</option>
+                                <option class="translate" value="sunsetStart">sunsetStart</option>
+                                <option class="translate" value="sunset">sunset</option>
+                                <option class="translate" value="dusk">dusk</option>
+                                <option class="translate" value="nauticalDusk">nauticalDusk</option>
+                                <option class="translate" value="night">night</option>
+                                <option class="translate" value="nadir">nadir</option>
+                                <option class="translate" value="nightEnd">nightEnd</option>
+                                <option class="translate" value="nauticalDawn">nauticalDawn</option>
+                                <option class="translate" value="dawn">dawn</option>
+                            </select>
+                            <label style="color: #000000; font-size: medium;" for="astroSelectDay" class="translate">astro time day</label>
+                        </div>
+                        <!-- end select screen active -->
+                        <!-- select screen active -->
+                        <div class="input-field col s3 select" style="width: 300px; text-align: center;">
+                            <select class="value" autofocus="autofocus" id="astroSelectNight">
+                                <option class="translate" value="sunrise" >sunrise</option>
+                                <option class="translate" value="sunriseEnd">sunriseEnd</option>
+                                <option class="translate" value="goldenHourEnd">goldenHourEnd</option>
+                                <option class="translate" value="solarNoon">solarNoon</option>
+                                <option class="translate" value="goldenHour">goldenHour</option>
+                                <option class="translate" value="sunsetStart">sunsetStart</option>
+                                <option class="translate" value="sunset" selected>sunset</option>
+                                <option class="translate" value="dusk">dusk</option>
+                                <option class="translate" value="nauticalDusk">nauticalDusk</option>
+                                <option class="translate" value="night">night</option>
+                                <option class="translate" value="nadir">nadir</option>
+                                <option class="translate" value="nightEnd">nightEnd</option>
+                                <option class="translate" value="nauticalDawn">nauticalDawn</option>
+                                <option class="translate" value="dawn">dawn</option>
+                            </select>
+                            <label style="color: #000000; font-size: medium;" for="astroSelectNight" class="translate">astro time night</label>
+                        </div>
+                        <!-- end select screen active -->
                     <!-- select screen active -->
                     <div class="input-field col s3 select" style="width: 150px; text-align: center;">
                         <select class="value" autofocus="autofocus" id="dayTime">
@@ -288,6 +332,7 @@
                         <label style="color: #000000; font-size: medium;" for="interval" class="translate">dayTime</label>
                     </div>
                     <!-- end select screen active -->
+                    
                     <!-- select screen active -->
                     <div class="input-field col s3 select"  style="width: 150px; text-align: center;">
                         <select class="value" autofocus="autofocus"  id="nightTime">
@@ -301,6 +346,15 @@
                         <label style="color: #000000; font-size: medium;" for="interval" class="translate">nightTime</label>
                     </div>
                     <!-- end select screen active -->
+                   
+                    <!-- check interval -->
+                    <div class="col s3 input-field" >
+                        <input type="number" class="value" id="checkInterval" style="width:150px; text-align: center" max="120" min="0"
+                            value="5" />
+                            <div class="row"></div>
+                        <label style="color: #000000; font-size: medium;" for="interval" class="translate">Check interval</label>
+                    </div>
+                    <!-- end check interval -->
                     <div class="row"></div>
                     <div class="row"></div>
                     <div class="col s12" id="brightness">

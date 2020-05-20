@@ -10,6 +10,7 @@
 const utils = require('@iobroker/adapter-core');
 const { default: axios } = require('axios');
 const schedule = require('cron').CronJob; // Cron Scheduler
+const SunCalc = require('suncalc2');
 
 // let SentryIntegrations;
 const manualBrightnessID = [];
@@ -62,6 +63,18 @@ const commandsID = [];
 const commandsStr = 'commands';
 let fireTabletInterval = null;
 let brightnessControlEnabled = null;
+let AstroDayHours = null;
+let AstroDayMinutes = null;
+let AstroNightHours = null;
+let AstroNightMinutes = null;
+let nightBriMode = null;
+let dayBriMode = null;
+let nightBriTimeout = null;
+let dayBriTimeout = null;
+let AstroNightMilis = null;
+let AstroDayMilis = null;
+
+
 
 class FullyTabletControl extends utils.Adapter {
 
@@ -91,19 +104,26 @@ class FullyTabletControl extends utils.Adapter {
 
 
 		await this.initialization();
+		
 		await this.create_state();
+		
 		await this.checkView();
+		
 		await this.stateRequest();
+
 		if (!JSON.parse(this.config.motionSensor_enabled)) {
 			await this.screenSaver();
 		}
-		await this.brightnessCron();
+		// await this.astroTime();
+		// await this.brightnessCron();
 		await this.motionSensor();
 
 	}
 
+
 	async initialization() {
 		try {
+
 			//read devices and created httpLink 
 			const login = this.config.devices;
 			if (!login || login !== []) {
@@ -130,17 +150,18 @@ class FullyTabletControl extends utils.Adapter {
 				interval = 5000;
 			}
 
-			// polling min 5 sec.
-			checkInterval = this.config.checkInterval;
-			if (checkInterval < 1) {
-				checkInterval = 1;
+			// polling min 1 min.
+			checkInterval = this.config.checkInterval * 60000;
+			if (checkInterval < 60000) {
+				checkInterval = 60000;
 			}
 
-			// polling min 5 sec.
+			// polling min 1 min.
 			fireTabletInterval = this.config.fireTablet * 60000;
 			if (fireTabletInterval < 60000) {
 				fireTabletInterval = 60000;
 			}
+
 			//read Testegram user 
 			const telegramOn = this.config.telegram_enabled;
 			const telegramUser = this.config.telegram;
@@ -358,6 +379,15 @@ class FullyTabletControl extends utils.Adapter {
 					console.log(visProjekt);
 				}
 			}
+
+			const astroTimeCron = new schedule(`0 1 * * * `, async () => {
+				this.astroTime();
+			});
+
+			astroTimeCron.start();
+
+
+
 		} catch (error) {
 			this.log.error(`[initialization] : ${error.message}, stack: ${error.stack}`);
 		}
@@ -858,28 +888,113 @@ class FullyTabletControl extends utils.Adapter {
 		}
 	}
 
+	async astroTime() {
+
+		this.getObjectList({ include_docs: true }, (err, res) => {
+			res = res.rows;
+			let objects = {};
+			for (let i = 0; i < res.length; i++) {
+				if (!res[i].doc) {
+					this.log.debug('Got empty object for index ' + i + ' (' + res[i].id + ')');
+					continue;
+				}
+				objects[res[i].doc._id] = res[i].doc;
+			}
+			const systemConfig = objects['system.config'];
+
+			const iobrokerLatitude = systemConfig.common.latitude;
+			const iobrokerLongitude = systemConfig.common.longitude;
+			// console.log('test' + systemConfig.common);
+
+			const ts = SunCalc.getTimes(new Date, iobrokerLatitude, iobrokerLongitude);
+			// const sunriseStr = ts.sunrise.getHours() + ':' + ts.sunrise.getMinutes();
+			const astroSelectDay = this.config.astroSelectDay;
+			const astroSelectNight = this.config.astroSelectNight;
+
+			AstroDayHours = ts[astroSelectDay].getHours();
+			AstroDayMinutes = ts[astroSelectDay].getMinutes();
+			AstroDayMilis = ts[astroSelectDay].getTime();
+			
+
+			AstroNightHours = ts[astroSelectNight].getHours();
+			AstroNightMinutes = ts[astroSelectNight].getMinutes();
+			AstroNightMilis = ts[astroSelectNight].getTime();
+
+			this.brightnessCron();
+		});
+
+	}
+
 	async brightnessCron() {
+		const timeMode = JSON.parse(this.config.timeMode);
 		if (brightnessControlEnabled) {
 			for (const c in tabletName) {
 				if (enabledBrightness[c]) {
-					const dayTime = this.config.dayTime;
-					const nightTime = this.config.nightTime;
-					this.log.debug('checkInterval ' + checkInterval);
-					this.log.debug('dayTime ' + dayTime);
-					this.log.debug('nightTime ' + nightTime);
 
-					const neightBriCron = new schedule('*/' + checkInterval + ' ' + '0' + '-' + (dayTime - 1) + ',' + nightTime + ' * * *', async () => {
-						this.log.debug('night [ */' + checkInterval + ' ' + '0' + '-' + (dayTime - 1) + ',' + nightTime + ' * * * ]');
-						this.nightBri();
-					});
+					if (timeMode) {
 
-					const dayBriCron = new schedule('*/' + checkInterval + ' ' + dayTime + '-' + (nightTime - 1) + ' * * *', async () => {
-						this.log.debug('day [ */' + checkInterval + ' ' + dayTime + '-' + (nightTime - 1) + ' * * * ]');
-						this.dayBri();
-					});
+						console.log(`night cron: ${AstroNightMinutes} ${AstroNightHours} * * * `);
+						this.log.debug(`night cron: ${AstroNightMinutes} ${AstroNightHours} * * * `);
+						const astroNightBriCron = new schedule(`${AstroNightMinutes} ${AstroNightHours} * * * `, async () => {
+							this.log.debug(`nacht bri`);
 
-					neightBriCron.start();
-					dayBriCron.start();
+							nightBriMode = true;
+							dayBriMode = false;
+							if (dayBriTimeout) clearInterval(dayBriTimeout);
+							if (nightBriTimeout) clearInterval(nightBriTimeout);
+							this.nightBri();
+						});
+
+						console.log(`${AstroDayMinutes} ${AstroDayHours} * * * `);
+						this.log.debug(`day cron: ${AstroDayMinutes} ${AstroDayHours} * * * `);
+						const astroDayBriCron = new schedule(`${AstroDayMinutes} ${AstroDayHours} * * * `, async () => {
+							this.log.debug(`day bri`);
+
+							nightBriMode = false;
+							dayBriMode = true;
+							if (dayBriTimeout) clearInterval(dayBriTimeout);
+							if (nightBriTimeout) clearInterval(nightBriTimeout);
+							this.dayBri();
+						});
+
+						astroNightBriCron.start();
+						astroDayBriCron.start();
+
+					}
+					else {
+						const dayTime = this.config.dayTime;
+						const nightTime = this.config.nightTime;
+						this.log.debug('checkInterval ' + checkInterval);
+						this.log.debug('dayTime ' + dayTime);
+						this.log.debug('nightTime ' + nightTime);
+
+						console.log(`night [ ${0} 0-${dayTime},${nightTime} * * * ]`);
+						this.log.debug(`night [ ${0} 0-${dayTime},${nightTime} * * * ]`);
+						const nightBriCron = new schedule(`${0} 0-${dayTime},${nightTime} * * * `, async () => {
+
+							nightBriMode = true;
+							dayBriMode = false;
+							if (dayBriTimeout) clearInterval(dayBriTimeout);
+							if (nightBriTimeout) clearInterval(nightBriTimeout);
+							this.nightBri();
+
+						});
+
+						console.log(`day [ ${0} ${dayTime},${nightTime} * * * ]`);
+						this.log.debug(`day [ ${0} ${dayTime},${nightTime} * * * ]`);
+						const dayBriCron = new schedule(`${0} ${dayTime},${nightTime} * * * `, async () => {
+
+							nightBriMode = false;
+							dayBriMode = true;
+							if (dayBriTimeout) clearInterval(dayBriTimeout);
+							if (nightBriTimeout) clearInterval(nightBriTimeout);
+							this.dayBri();
+
+						});
+
+						nightBriCron.start();
+						dayBriCron.start();
+					}
 				}
 			}
 		}
@@ -927,6 +1042,36 @@ class FullyTabletControl extends utils.Adapter {
 					}
 				}
 			}
+
+			if (nightBriMode && !dayBriMode) {
+
+				const newDate = new Date();
+				const nowTimeMilis = newDate.getTime();
+			
+				if (AstroDayMilis <= nowTimeMilis && AstroNightMilis >= nowTimeMilis) {
+					
+					nightBriMode = false;
+					dayBriMode = true;
+					if (dayBriTimeout) clearInterval(dayBriTimeout);
+					if (nightBriTimeout) clearInterval(nightBriTimeout);
+					this.dayBri();
+
+				}
+				else {
+
+					nightBriMode = true;
+					dayBriMode = false;
+					if (dayBriTimeout) clearInterval(dayBriTimeout);
+					if (nightBriTimeout) clearInterval(nightBriTimeout);
+
+					nightBriTimeout = setTimeout(async () => {
+
+						this.nightBri();
+						this.log.debug(`nightBri loop restart: in ${checkInterval} ms`);
+					}, checkInterval);
+				}
+
+			}
 		} catch (error) {
 			this.log.error(`[nightBri] : ${error.message}, stack: ${error.stack}`);
 		}
@@ -937,8 +1082,6 @@ class FullyTabletControl extends utils.Adapter {
 		try {
 			for (const name in ip) {
 				if (deviceEnabled[name]) {
-
-					// if (enabledBrightness[name]) {
 
 					const stateID = await this.replaceFunction(tabletName[name]);
 					const manual = await this.getStateAsync(`device.${stateID}.manualBrightness`);
@@ -963,22 +1106,32 @@ class FullyTabletControl extends utils.Adapter {
 						manualBrightnessMode[name] = false;
 					}
 
-					// if (manualMode && (manualMode.val || !manualMode.val)) {
-					// 	manualBrightnessMode[name] = manualMode.val;
-					// 	// @ts-ignore
-					// 	await this.setStateAsync(`device.${stateID}.brightness_control_mode`, manualMode.val, true);
-					// }
-					// else {
-					// 	await this.setStateAsync(`device.${stateID}.brightness_control_mode`, false, true);
-					// 	manualBrightnessMode[name] = false;
-					// }
-
 					this.log.debug(`[manualBrightness] name: ${tabletName[name]} val: ${await manualBrightness[name]}`);
 					this.log.debug(`[manualBrightnessMode] name: ${tabletName[name]} val: ${await manualBrightnessMode[name]}`);
-					this.dayBri();
+
+					const newDate = new Date();
+					const nowTimeMilis = newDate.getTime();
+				
+					if (AstroDayMilis <= nowTimeMilis && AstroNightMilis >= nowTimeMilis) {
+						
+						nightBriMode = false;
+						dayBriMode = true;
+						if (dayBriTimeout) clearInterval(dayBriTimeout);
+						if (nightBriTimeout) clearInterval(nightBriTimeout);
+						this.dayBri();
+	
+					}
+					else {
+	
+						nightBriMode = true;
+						dayBriMode = false;
+						if (dayBriTimeout) clearInterval(dayBriTimeout);
+						if (nightBriTimeout) clearInterval(nightBriTimeout);
+						this.nightBri();
+
+					}
 				}
 
-				// }
 
 			}
 		} catch (error) {
@@ -1117,6 +1270,59 @@ class FullyTabletControl extends utils.Adapter {
 					}
 				}
 			}
+			if (!nightBriMode && dayBriMode && brightnessControlEnabled) {
+
+				const newDate = new Date();
+				const nowTimeMilis = newDate.getTime();
+			
+				if (AstroDayMilis <= nowTimeMilis && AstroNightMilis >= nowTimeMilis) {
+					
+					nightBriMode = false;
+					dayBriMode = true;
+					if (dayBriTimeout) clearInterval(dayBriTimeout);
+					if (nightBriTimeout) clearInterval(nightBriTimeout);
+
+					dayBriTimeout = setTimeout(async () => {
+
+						this.dayBri();
+						this.log.debug(`dayBri loop restart: in ${checkInterval} ms`);
+					}, checkInterval);
+
+				}
+				else  {
+
+					nightBriMode = true;
+					dayBriMode = false;
+					if (dayBriTimeout) clearInterval(dayBriTimeout);
+					if (nightBriTimeout) clearInterval(nightBriTimeout);
+					this.nightBri();
+					
+				}
+
+
+			}
+			else if (!nightBriMode && dayBriMode && !brightnessControlEnabled) {
+
+				const newDate = new Date();
+				const nowTimeMilis = newDate.getTime();
+			
+				if (AstroDayMilis <= nowTimeMilis && AstroNightMilis >= nowTimeMilis) {
+					
+					nightBriMode = false;
+					dayBriMode = true;
+					if (dayBriTimeout) clearInterval(dayBriTimeout);
+					if (nightBriTimeout) clearInterval(nightBriTimeout);
+
+					dayBriTimeout = setTimeout(async () => {
+
+						this.dayBri();
+						this.log.debug(`dayBri loop restart: in ${checkInterval} ms`);
+					}, checkInterval);
+
+				}
+				
+			}
+
 		} catch (error) {
 			this.log.error(`[dayBri] : ${error.message}, stack: ${error.stack}`);
 		}
@@ -2005,6 +2211,7 @@ class FullyTabletControl extends utils.Adapter {
 				}
 
 			}
+			this.astroTime();
 			this.manualStates();
 			this.setState('info.connection', true, true);
 
@@ -2021,6 +2228,11 @@ class FullyTabletControl extends utils.Adapter {
 	 */
 	onUnload(callback) {
 		try {
+			
+			if (dayBriTimeout) clearInterval(dayBriTimeout);
+			if (nightBriTimeout) clearInterval(nightBriTimeout);
+			if (dayBriTimeout) clearInterval(dayBriTimeout);
+			if (nightBriTimeout) clearInterval(nightBriTimeout);
 			if (viewTimer) clearTimeout(viewTimer);
 			if (requestTimeout) clearTimeout(requestTimeout);
 			if (ScreensaverReturn) clearTimeout(ScreensaverReturn);

@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "fully-tablet-control",
-    "version": "0.2.6",
+    "version": "0.2.7",
     "news": {
+      "0.2.7": {
+        "en": "Astro time added",
+        "de": "Astro-Zeit hinzugefügt",
+        "ru": "Астро время добавлено",
+        "pt": "Astro time added",
+        "nl": "Astro-tijd toegevoegd",
+        "fr": "Temps Astro ajouté",
+        "it": "Tempo di Astro aggiunto",
+        "es": "Astro tiempo agregado",
+        "pl": "Dodano czas Astro",
+        "zh-cn": "天文时间已添加"
+      },
       "0.2.6": {
         "en": "Brightness control changed and Configuration page changed",
         "de": "Die Helligkeitssteuerung und die Konfigurationsseite wurden geändert",
@@ -210,7 +222,10 @@
     "viewMode": "false",
     "visView": [],
     "chargerON": "true",
-    "brightness_on": "true"
+    "brightness_on": "true",
+    "astroSelectNight": "sunset",
+    "astroSelectDay": "sunrise",
+    "timeMode": "true"
   },
   "objects": [],
   "instanceObjects": [{

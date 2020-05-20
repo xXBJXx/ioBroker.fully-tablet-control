@@ -83,6 +83,11 @@ Hier wird die Helligkeit von dem Tablet eingestellt.
 9. Nicht Ausfülen wird automatisch nach einem reload ausgefült.
 
 10. hier kann man entscheiden wie man die Helligkeit steuern will über die Konfigurationsseite mit Möglichkeit die Steuerung Manuel zu verändern dazu **MUSS** die Tabelle unten angelegt werden, oder generell alles auf Manuell zuschalten dann braucht man die Tabelle unten nicht und die Zeit Steuerung funktioniert dann auch nicht die Helligkeit wird dann nur noch über den Datenpunkt in den Objekten veränderbar sein.
+11. Umschalten zwischen Astro Zeit und Manuelle Zeit.
+
+12. AstroZeit für den Tag.
+
+13. AstroZeit für die Nacht
 
 ## Bildschirmschoner
 
@@ -217,6 +222,10 @@ hier sind 2 Dp.
 _______________________________
 
 ## Changelog
+
+### 0.2.7
+
+* (xXBJXx) Astro time added
 
 ### 0.2.6
 
