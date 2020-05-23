@@ -223,6 +223,10 @@ _______________________________
 
 ## Changelog
 
+### 0.2.8
+
+* (xXBJXx) bug in brightness control and charging function fixed
+
 ### 0.2.7
 
 * (xXBJXx) Astro time added

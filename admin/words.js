@@ -65,7 +65,7 @@ systemDictionary = {
 	},
 	'dawn': {
 		'en': 'dawn',
-		'de': 'Dämmerung',
+		'de': 'Morgendämmerung',
 		'ru': 'рассвет',
 		'pt': 'alvorecer',
 		'nl': 'dageraad',
@@ -137,7 +137,7 @@ systemDictionary = {
 	},
 	'dusk': {
 		'en': 'dusk',
-		'de': 'Dämmerung',
+		'de': 'Abenddämmerung',
 		'ru': 'смеркаться',
 		'pt': 'crepúsculo',
 		'nl': 'schemer',

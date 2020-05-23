@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "fully-tablet-control",
-    "version": "0.2.7",
+    "version": "0.2.8",
     "news": {
+      "0.2.8": {
+        "en": "bug in brightness control and charging function fixed",
+        "de": "Fehler in der Helligkeitsregelung und Ladefunktion behoben",
+        "ru": "исправлена ошибка в регулировке яркости и функции зарядки",
+        "pt": "Corrigido o erro no controle de brilho e função de carregamento",
+        "nl": "bug in helderheidsregeling en oplaadfunctie opgelost",
+        "fr": "correction d'un bug dans le contrôle de la luminosité et la fonction de charge",
+        "it": "bug nel controllo della luminosità e funzione di ricarica risolto",
+        "es": "error en el control de brillo y función de carga corregida",
+        "pl": "naprawiono błąd w kontroli jasności i funkcji ładowania",
+        "zh-cn": "修正了亮度控制和充电功能中的错误"
+      },
       "0.2.7": {
         "en": "Astro time added",
         "de": "Astro-Zeit hinzugefügt",
