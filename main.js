@@ -1017,39 +1017,128 @@ class FullyTabletControl extends utils.Adapter {
 			const brightnessN = this.config.brightness;
 			if (!brightnessN || brightnessN !== []) {
 
-				for (const b in ip) {
+				for (const d in ip) {
+					if (deviceEnabled[d]) {
+						if (brightnessControlEnabled) {
+							if (enabledBrightness[d]) {
+								if (brightnessN[d]) {
 
-					if (deviceEnabled[b]) {
-						if (enabledBrightness[b]) {
+									let nightTimeBrightnessURL = null;
+									let ScreensaverOnBri = null;
+									let newBrightnessNight = 0;
+									if (chargeDeviceValue[d]) {
 
-							if (brightnessN[b]) {
+										let brightnessNightPuffer;
+										if (await manualBrightnessMode[d]) {
+											brightnessNightPuffer = Math.round(await this.convert_percent(await manualBrightness[d] - brightnessN[d].loadingLowering));
+											
+										}
+										else {
+											brightnessNightPuffer = Math.round(await this.convert_percent(brightnessN[d].nightBrightness - brightnessN[d].loadingLowering));
+										
+										}
+										if (brightnessNightPuffer <= 0) {
+											newBrightnessNight = 0;
+											this.log.debug(`brightness from ${await tabletName[d]} is less than 0 brightness is set to`);
+										} else {
+											newBrightnessNight = brightnessNightPuffer;
+											this.log.debug(`new brightness from ${await tabletName[d]}: ` + newBrightnessNight + `[` + (brightnessN[d].nightBrightness - brightnessN[d].loadingLowering) + `%]`);
+										}
+									} else {
+										if (await manualBrightnessMode[d]) {
+											newBrightnessNight = Math.round(await this.convert_percent(await manualBrightness[d]));
+											this.log.debug(`${await tabletName[d]} brightness set on: ` + newBrightnessNight + `[` + manualBrightness[d] + `%]`);
+										}
+										else {
+											newBrightnessNight = Math.round(await this.convert_percent(brightnessN[d].nightBrightness));
+											this.log.debug(`${await tabletName[d]} brightness set on: ` + newBrightnessNight + `[` + brightnessN[d].nightBrightness + `%]`);
+										}
+									}
+									nightTimeBrightnessURL = `http://${ip[d]}:${port[d]}/?cmd=setStringSetting&key=screenBrightness&value=${newBrightnessNight}&password=${password[d]}`;
+									ScreensaverOnBri = `http://${ip[d]}:${port[d]}/?cmd=setStringSetting&key=screensaverBrightness&value=${newBrightnessNight}&password=${password[d]}`;
+									if (await brightness[d] != newBrightnessNight) {
 
-								const brightnessNight = Math.round(await this.convert_percent(brightnessN[b].nightBrightness));
-								const nightBrightnessURL = `http://${ip[b]}:${port[b]}/?cmd=setStringSetting&key=screenBrightness&value=${brightnessNight}&password=${password[b]}`;
-								const ScreensaverOnBri = `http://${ip[b]}:${port[b]}/?cmd=setStringSetting&key=screensaverBrightness&value=${brightnessNight}&password=${password[b]}`;
-
-								if (await brightness[b] == 0) {
-
-									this.log.debug(`The brightness from ${await tabletName[b]} is ${await brightness[b]} change is not necessary`);
+										try {
+											await axios.get(nightTimeBrightnessURL);
+											await axios.get(ScreensaverOnBri);
+											await this.stateRequest();
+										} catch (error) {
+											this.log.error(`${await tabletName[d]} [nightBri] could not be sent: ${error.message}, stack: ${error.stack}`);
+											this.log.error(`${await tabletName[d]} [ScreensaverOnBri] could not be sent: ${error.message}, stack: ${error.stack}`);
+										}
+										this.log.debug(`${await tabletName[d]} send Command: ${nightTimeBrightnessURL}`);
+										this.log.debug(`${await tabletName[d]} send Command: ${ScreensaverOnBri}`);
+									}
 								}
 								else {
-
-									try {
-										await axios.get(nightBrightnessURL);
-										await axios.get(ScreensaverOnBri);
-										this.stateRequest();
-									} catch (error) {
-										this.log.error(`${await tabletName[b]} [nightBri] could not be sent: ${error.message}, stack: ${error.stack}`);
-										this.log.error(`${await tabletName[b]} [ScreensaverOnBri] could not be sent: ${error.message}, stack: ${error.stack}`);
-									}
-
-									this.log.debug(`${await tabletName[b]} send Command: ${nightBrightnessURL}`);
-									this.log.debug(`${await tabletName[b]} send Command: ${ScreensaverOnBri}`);
+									console.log(`${await tabletName[d]} dayBri not specified`);
+									this.log.warn(`${await tabletName[d]} dayBri not specified`);
 								}
+
 							}
 							else {
-								console.log(`${await tabletName[b]} nightBri not specified`);
-								this.log.warn(`${await tabletName[b]} nightBri not specified`);
+
+								let nightTimeBrightnessURL = null;
+								let ScreensaverOnBri = null;
+								let newBrightnessNight = 0;
+
+								if (await manualBrightnessMode[d]) {
+									newBrightnessNight = Math.round(await this.convert_percent(await manualBrightness[d]));
+									this.log.debug(`${await tabletName[d]} brightness set on: ` + newBrightnessNight + `[` + manualBrightness[d] + `%]`);
+								}
+								else {
+									newBrightnessNight = Math.round(await this.convert_percent(brightnessN[d].nightBrightness));
+									this.log.debug(`${await tabletName[d]} brightness set on: ` + newBrightnessNight + `[` + brightnessN[d].nightBrightness + `%]`);
+								}
+
+								nightTimeBrightnessURL = `http://${ip[d]}:${port[d]}/?cmd=setStringSetting&key=screenBrightness&value=${newBrightnessNight}&password=${password[d]}`;
+								ScreensaverOnBri = `http://${ip[d]}:${port[d]}/?cmd=setStringSetting&key=screensaverBrightness&value=${newBrightnessNight}&password=${password[d]}`;
+								if (await brightness[d] !== newBrightnessNight) {
+
+									try {
+										await axios.get(nightTimeBrightnessURL);
+										await axios.get(ScreensaverOnBri);
+										await this.stateRequest();
+									} catch (error) {
+										this.log.error(`${await tabletName[d]} [nightBri] could not be sent: ${error.message}, stack: ${error.stack}`);
+										this.log.error(`${await tabletName[d]} [ScreensaverOnBri] could not be sent: ${error.message}, stack: ${error.stack}`);
+									}
+									this.log.debug(`${await tabletName[d]} send Command: ${nightTimeBrightnessURL}`);
+									this.log.debug(`${await tabletName[d]} send Command: ${ScreensaverOnBri}`);
+								}
+
+							}
+						}
+						else {
+
+							let nightTimeBrightnessURL = null;
+							let ScreensaverOnBri = null;
+							let newBrightnessNight = 0;
+							if (deviceEnabled) {
+								if (await manualBrightnessMode[d]) {
+									newBrightnessNight = Math.round(await this.convert_percent(await manualBrightness[d]));
+									this.log.debug(`${await tabletName[d]} brightness set on: ` + newBrightnessNight + `[` + manualBrightness[d] + `%]`);
+								}
+								else {
+									newBrightnessNight = Math.round(await this.convert_percent(brightnessN[d].nightBrightness));
+									this.log.debug(`${await tabletName[d]} brightness set on: ` + newBrightnessNight + `[` + brightnessN[d].nightBrightness + `%]`);
+								}
+
+								nightTimeBrightnessURL = `http://${ip[d]}:${port[d]}/?cmd=setStringSetting&key=screenBrightness&value=${newBrightnessNight}&password=${password[d]}`;
+								ScreensaverOnBri = `http://${ip[d]}:${port[d]}/?cmd=setStringSetting&key=screensaverBrightness&value=${newBrightnessNight}&password=${password[d]}`;
+								if (await brightness[d] !== newBrightnessNight) {
+
+									try {
+										await axios.get(nightTimeBrightnessURL);
+										await axios.get(ScreensaverOnBri);
+										await this.stateRequest();
+									} catch (error) {
+										this.log.error(`${await tabletName[d]} [nightBri] could not be sent: ${error.message}, stack: ${error.stack}`);
+										this.log.error(`${await tabletName[d]} [ScreensaverOnBri] could not be sent: ${error.message}, stack: ${error.stack}`);
+									}
+									this.log.debug(`${await tabletName[d]} send Command: ${nightTimeBrightnessURL}`);
+									this.log.debug(`${await tabletName[d]} send Command: ${ScreensaverOnBri}`);
+								}
 							}
 						}
 					}
@@ -1201,6 +1290,7 @@ class FullyTabletControl extends utils.Adapter {
 										try {
 											await axios.get(daytimeBrightnessURL);
 											await axios.get(ScreensaverOnBri);
+											await this.stateRequest();
 										} catch (error) {
 											this.log.error(`${await tabletName[d]} [dayBri] could not be sent: ${error.message}, stack: ${error.stack}`);
 											this.log.error(`${await tabletName[d]} [ScreensaverOnBri] could not be sent: ${error.message}, stack: ${error.stack}`);

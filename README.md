@@ -223,6 +223,10 @@ _______________________________
 
 ## Changelog
 
+### 0.2.9
+
+* (xXBJXx) night brightness manual change added
+
 ### 0.2.8
 
 * (xXBJXx) bug in brightness control and charging function fixed
