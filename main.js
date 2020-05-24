@@ -1550,7 +1550,7 @@ class FullyTabletControl extends utils.Adapter {
 
 											this.log.debug(`${await tabletName[on]} send Command: screenSaver On ${ScreensaverOnURL}`);
 											console.log(`send Command: screenSaver On ${ScreensaverOnURL}`);
-											// this.stateRequest();
+											this.stateRequest();
 										}, screenSaverTimer[on]);
 
 										console.log(`screenSaverTimer[on] ${await screenSaverTimer[on]}`);
