@@ -106,9 +106,11 @@ class FullyTabletControl extends utils.Adapter {
 
 		await this.create_state();
 
-		await this.checkView();
+		await this.stateRequest();
 
-		// await this.stateRequest();
+		this.astroTime();
+
+		this.manualStates();
 
 		if (!JSON.parse(this.config.motionSensor_enabled)) {
 			await this.screenSaver();
@@ -116,6 +118,8 @@ class FullyTabletControl extends utils.Adapter {
 		// await this.astroTime();
 		// await this.brightnessCron();
 		await this.motionSensor();
+
+		await this.checkView();
 
 	}
 
@@ -215,7 +219,7 @@ class FullyTabletControl extends utils.Adapter {
 
 						if (enabledBrightness[b]) {
 							await this.setStateAsync(`device.${await this.replaceFunction(tempStart[b].name)}.brightness_control_mode`, false, true);
-							// this.manualStates();
+							
 						}
 
 						console.log(enabledBrightness);
@@ -269,8 +273,8 @@ class FullyTabletControl extends utils.Adapter {
 										await axios.get(playlistUrl);
 										await axios.get(wallpaperURL);
 									} catch (error) {
-										if (!logMessage[s]) this.log.error(`${await tabletName[s]} [wallpaperURL] ( screenSaver no Url ) could not be sent: ${error.message}, stack: ${error.stack}`);
-										if (!logMessage[s]) this.log.error(`${await tabletName[s]} [playlistUrl] ( playlist Url ) could not be sent: ${error.message}, stack: ${error.stack}`);
+										if (!logMessage[s]) this.log.error(`${await tabletName} [wallpaperURL] ( screenSaver no Url ) could not be sent: ${error.message}, stack: ${error.stack}`);
+										if (!logMessage[s]) this.log.error(`${await tabletName} [playlistUrl] ( playlist Url ) could not be sent: ${error.message}, stack: ${error.stack}`);
 									}
 
 									this.log.warn(`No screensaver URL was entered for ${tabletName}, a standard picture is set`);
@@ -297,7 +301,7 @@ class FullyTabletControl extends utils.Adapter {
 										await axios.get(playlistUrl);
 
 									} catch (error) {
-										if (!logMessage[s]) this.log.error(`${await tabletName[s]} [playlistUrl] ( screenSaverSelect ) could not be sent: ${error.message}, stack: ${error.stack}`);
+										if (!logMessage[s]) this.log.error(`${await tabletName} [playlistUrl] ( screenSaverSelect ) could not be sent: ${error.message}, stack: ${error.stack}`);
 
 									}
 								}
@@ -312,8 +316,8 @@ class FullyTabletControl extends utils.Adapter {
 										await axios.get(wallpaperURL);
 
 									} catch (error) {
-										if (!logMessage[s]) this.log.error(`${await tabletName[s]} [playlistUrl] ( playlist Url ) could not be sent: ${error.message}, stack: ${error.stack}`);
-										if (!logMessage[s]) this.log.error(`${await tabletName[s]} [wallpaperURL] ( screenSaver no Url ) could not be sent: ${error.message}, stack: ${error.stack}`);
+										if (!logMessage[s]) this.log.error(`${await tabletName} [playlistUrl] ( playlist Url ) could not be sent: ${error.message}, stack: ${error.stack}`);
+										if (!logMessage[s]) this.log.error(`${await tabletName} [wallpaperURL] ( screenSaver no Url ) could not be sent: ${error.message}, stack: ${error.stack}`);
 
 									}
 
@@ -330,8 +334,8 @@ class FullyTabletControl extends utils.Adapter {
 										await axios.get(wallpaperURL);
 
 									} catch (error) {
-										if (!logMessage[s]) this.log.error(`${await tabletName[s]} [playlistUrl] ( playlist Url ) could not be sent: ${error.message}, stack: ${error.stack}`);
-										if (!logMessage[s]) this.log.error(`${await tabletName[s]} [wallpaperURL] ( screenSaver no Url ) could not be sent: ${error.message}, stack: ${error.stack}`);
+										if (!logMessage[s]) this.log.error(`${await tabletName} [playlistUrl] ( playlist Url ) could not be sent: ${error.message}, stack: ${error.stack}`);
+										if (!logMessage[s]) this.log.error(`${await tabletName} [wallpaperURL] ( screenSaver no Url ) could not be sent: ${error.message}, stack: ${error.stack}`);
 									}
 
 									this.log.debug(`set Screensaver for ${tabletName} to Wallpaper URL: ${wallpaperURL} entered:`);
@@ -407,8 +411,7 @@ class FullyTabletControl extends utils.Adapter {
 							apiResult = await axios.get(deviceInfo[i]);
 							this.setState(`device.${stateID}.isFullyAlive`, { val: true, ack: true });
 							if (logMessageTimer[i]) clearTimeout(logMessageTimer[i]);
-							if (logMessage[i]) logMessage[i] = false;
-
+							logMessage[i] = false; 
 						} catch (error) {
 
 							if (!logMessage[i]) {
@@ -1547,7 +1550,7 @@ class FullyTabletControl extends utils.Adapter {
 
 											this.log.debug(`${await tabletName[on]} send Command: screenSaver On ${ScreensaverOnURL}`);
 											console.log(`send Command: screenSaver On ${ScreensaverOnURL}`);
-											this.stateRequest();
+											// this.stateRequest();
 										}, screenSaverTimer[on]);
 
 										console.log(`screenSaverTimer[on] ${await screenSaverTimer[on]}`);
@@ -2350,8 +2353,7 @@ class FullyTabletControl extends utils.Adapter {
 				}
 
 			}
-			this.astroTime();
-			this.manualStates();
+			
 			this.setState('info.connection', true, true);
 
 		} catch (error) {
