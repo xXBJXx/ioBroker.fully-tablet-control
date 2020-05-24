@@ -223,6 +223,10 @@ _______________________________
 
 ## Changelog
 
+### 0.2.10
+
+* (xXBJXx) request log output adjusted
+
 ### 0.2.9
 
 * (xXBJXx) night brightness manual change added

@@ -72,6 +72,8 @@ let nightBriTimeout = null;
 let dayBriTimeout = null;
 let AstroNightMilis = null;
 let AstroDayMilis = null;
+const logMessage = [];
+const logMessageTimer = [];
 
 class FullyTabletControl extends utils.Adapter {
 
@@ -106,7 +108,7 @@ class FullyTabletControl extends utils.Adapter {
 
 		await this.checkView();
 
-		await this.stateRequest();
+		// await this.stateRequest();
 
 		if (!JSON.parse(this.config.motionSensor_enabled)) {
 			await this.screenSaver();
@@ -182,6 +184,7 @@ class FullyTabletControl extends utils.Adapter {
 						//charger message set default state false for all devices
 						messageSend[t] = true;
 						AlertMessageSend[t] = false;
+						logMessage[t] = false;
 					}
 				}
 			}
@@ -266,8 +269,8 @@ class FullyTabletControl extends utils.Adapter {
 										await axios.get(playlistUrl);
 										await axios.get(wallpaperURL);
 									} catch (error) {
-										this.log.error(`${await tabletName[s]} [wallpaperURL] ( screenSaver no Url ) could not be sent: ${error.message}, stack: ${error.stack}`);
-										this.log.error(`${await tabletName[s]} [playlistUrl] ( playlist Url ) could not be sent: ${error.message}, stack: ${error.stack}`);
+										if (!logMessage[s]) this.log.error(`${await tabletName[s]} [wallpaperURL] ( screenSaver no Url ) could not be sent: ${error.message}, stack: ${error.stack}`);
+										if (!logMessage[s]) this.log.error(`${await tabletName[s]} [playlistUrl] ( playlist Url ) could not be sent: ${error.message}, stack: ${error.stack}`);
 									}
 
 									this.log.warn(`No screensaver URL was entered for ${tabletName}, a standard picture is set`);
@@ -294,7 +297,7 @@ class FullyTabletControl extends utils.Adapter {
 										await axios.get(playlistUrl);
 
 									} catch (error) {
-										this.log.error(`${await tabletName[s]} [playlistUrl] ( screenSaverSelect ) could not be sent: ${error.message}, stack: ${error.stack}`);
+										if (!logMessage[s]) this.log.error(`${await tabletName[s]} [playlistUrl] ( screenSaverSelect ) could not be sent: ${error.message}, stack: ${error.stack}`);
 
 									}
 								}
@@ -309,8 +312,8 @@ class FullyTabletControl extends utils.Adapter {
 										await axios.get(wallpaperURL);
 
 									} catch (error) {
-										this.log.error(`${await tabletName[s]} [playlistUrl] ( playlist Url ) could not be sent: ${error.message}, stack: ${error.stack}`);
-										this.log.error(`${await tabletName[s]} [wallpaperURL] ( screenSaver no Url ) could not be sent: ${error.message}, stack: ${error.stack}`);
+										if (!logMessage[s]) this.log.error(`${await tabletName[s]} [playlistUrl] ( playlist Url ) could not be sent: ${error.message}, stack: ${error.stack}`);
+										if (!logMessage[s]) this.log.error(`${await tabletName[s]} [wallpaperURL] ( screenSaver no Url ) could not be sent: ${error.message}, stack: ${error.stack}`);
 
 									}
 
@@ -327,8 +330,8 @@ class FullyTabletControl extends utils.Adapter {
 										await axios.get(wallpaperURL);
 
 									} catch (error) {
-										this.log.error(`${await tabletName[s]} [playlistUrl] ( playlist Url ) could not be sent: ${error.message}, stack: ${error.stack}`);
-										this.log.error(`${await tabletName[s]} [wallpaperURL] ( screenSaver no Url ) could not be sent: ${error.message}, stack: ${error.stack}`);
+										if (!logMessage[s]) this.log.error(`${await tabletName[s]} [playlistUrl] ( playlist Url ) could not be sent: ${error.message}, stack: ${error.stack}`);
+										if (!logMessage[s]) this.log.error(`${await tabletName[s]} [wallpaperURL] ( screenSaver no Url ) could not be sent: ${error.message}, stack: ${error.stack}`);
 									}
 
 									this.log.debug(`set Screensaver for ${tabletName} to Wallpaper URL: ${wallpaperURL} entered:`);
@@ -403,12 +406,34 @@ class FullyTabletControl extends utils.Adapter {
 							// Try to reach API and receive data
 							apiResult = await axios.get(deviceInfo[i]);
 							this.setState(`device.${stateID}.isFullyAlive`, { val: true, ack: true });
+							if (logMessageTimer[i]) clearTimeout(logMessageTimer[i]);
+							if (logMessage[i]) logMessage[i] = false;
 
 						} catch (error) {
-							this.log.warn(`[Request] ${tabletName[i]} Unable to contact: ${error} | ${error}`);
+
+							if (!logMessage[i]) {
+								logMessage[i] = true;
+								console.log(`[Request] ${tabletName[i]} Unable to contact: ${error} | ${error}`);
+								this.log.error(`[Request] ${tabletName[i]} Unable to contact: ${error} | ${error}`);
+							} else if (!logMessageTimer[i]) {
+
+								if (logMessageTimer[i]) clearTimeout(logMessageTimer[i]);
+
+								console.log([i]);
+								logMessageTimer[i] = setTimeout(async () => {
+	
+									logMessage[i] = false;
+
+									console.log(logMessage[i]);
+
+								}, 3600000);
+	
+							}
+							
 							this.setState(`device.${stateID}.isFullyAlive`, { val: false, ack: true });
 							continue;
 						}
+
 						if (apiResult.data.status !== 'Error') {
 
 
@@ -680,7 +705,7 @@ class FullyTabletControl extends utils.Adapter {
 												try {
 													await axios.get(textToSpeechURL);
 												} catch (error) {
-													this.log.warn(`[send textToSpeechURL] Unable to contact: ${error} | ${error}`);
+													this.log.error(`[send textToSpeechURL] Unable to contact: ${error} | ${error}`);
 												}
 											}
 											break;
@@ -693,7 +718,7 @@ class FullyTabletControl extends utils.Adapter {
 												try {
 													await axios.get(textToSpeechURL);
 												} catch (error) {
-													this.log.warn(`[send textToSpeechURL] Unable to contact: ${error} | ${error}`);
+													this.log.error(`[send textToSpeechURL] Unable to contact: ${error} | ${error}`);
 												}
 											}
 											break;
@@ -709,7 +734,7 @@ class FullyTabletControl extends utils.Adapter {
 												try {
 													await axios.get(loadURL);
 												} catch (error) {
-													this.log.warn(`[send loadURL] Unable to contact: ${error} | ${error}`);
+													this.log.error(`[send loadURL] Unable to contact: ${error} | ${error}`);
 												}
 											}
 											break;
@@ -723,7 +748,7 @@ class FullyTabletControl extends utils.Adapter {
 												try {
 													await axios.get(startApplicationURL);
 												} catch (error) {
-													this.log.warn(`[send startApplicationURL] Unable to contact: ${error} | ${error}`);
+													this.log.error(`[send startApplicationURL] Unable to contact: ${error} | ${error}`);
 												}
 
 											}
@@ -735,7 +760,7 @@ class FullyTabletControl extends utils.Adapter {
 												try {
 													await axios.get(commandsURL);
 												} catch (error) {
-													this.log.warn(`[send commandsURL] Unable to contact: ${error} | ${error}`);
+													this.log.error(`[send commandsURL] Unable to contact: ${error} | ${error}`);
 												}
 											}
 									}
@@ -745,7 +770,7 @@ class FullyTabletControl extends utils.Adapter {
 								try {
 									await axios.get(reloadAllURL);
 								} catch (error) {
-									this.log.warn(`[send reloadAll] Unable to contact: ${error} | ${error}`);
+									this.log.error(`[send reloadAll] Unable to contact: ${error} | ${error}`);
 								}
 
 							}
@@ -814,7 +839,7 @@ class FullyTabletControl extends utils.Adapter {
 
 											await this.setForeignStateAsync(await chargerid, true, false);
 											this.log.info(`${await tabletName[i]} Loading started`);
-											this.manualStates();
+											// this.manualStates();
 
 										}
 										else if (await bat[i] >= loadStop && chargeDeviceValue[i]) {
@@ -829,7 +854,7 @@ class FullyTabletControl extends utils.Adapter {
 
 										if (!chargeDeviceValue[i]) this.setForeignStateAsync(await chargerid, true, false);
 										if (!chargeDeviceValue[i]) this.log.debug(`${await tabletName[i]} Continuous current`);
-										this.manualStates();
+										// this.manualStates();
 
 									}
 
@@ -947,8 +972,8 @@ class FullyTabletControl extends utils.Adapter {
 
 								nightBriMode = true;
 								dayBriMode = false;
-								if (dayBriTimeout) clearInterval(dayBriTimeout);
-								if (nightBriTimeout) clearInterval(nightBriTimeout);
+								if (dayBriTimeout) clearTimeout(dayBriTimeout);
+								if (nightBriTimeout) clearTimeout(nightBriTimeout);
 								this.nightBri();
 							});
 
@@ -959,8 +984,8 @@ class FullyTabletControl extends utils.Adapter {
 
 								nightBriMode = false;
 								dayBriMode = true;
-								if (dayBriTimeout) clearInterval(dayBriTimeout);
-								if (nightBriTimeout) clearInterval(nightBriTimeout);
+								if (dayBriTimeout) clearTimeout(dayBriTimeout);
+								if (nightBriTimeout) clearTimeout(nightBriTimeout);
 								this.dayBri();
 							});
 
@@ -983,8 +1008,8 @@ class FullyTabletControl extends utils.Adapter {
 
 								nightBriMode = true;
 								dayBriMode = false;
-								if (dayBriTimeout) clearInterval(dayBriTimeout);
-								if (nightBriTimeout) clearInterval(nightBriTimeout);
+								if (dayBriTimeout) clearTimeout(dayBriTimeout);
+								if (nightBriTimeout) clearTimeout(nightBriTimeout);
 								this.nightBri();
 
 							});
@@ -995,8 +1020,8 @@ class FullyTabletControl extends utils.Adapter {
 
 								nightBriMode = false;
 								dayBriMode = true;
-								if (dayBriTimeout) clearInterval(dayBriTimeout);
-								if (nightBriTimeout) clearInterval(nightBriTimeout);
+								if (dayBriTimeout) clearTimeout(dayBriTimeout);
+								if (nightBriTimeout) clearTimeout(nightBriTimeout);
 								this.dayBri();
 
 							});
@@ -1031,11 +1056,11 @@ class FullyTabletControl extends utils.Adapter {
 										let brightnessNightPuffer;
 										if (await manualBrightnessMode[d]) {
 											brightnessNightPuffer = Math.round(await this.convert_percent(await manualBrightness[d] - brightnessN[d].loadingLowering));
-											
+
 										}
 										else {
 											brightnessNightPuffer = Math.round(await this.convert_percent(brightnessN[d].nightBrightness - brightnessN[d].loadingLowering));
-										
+
 										}
 										if (brightnessNightPuffer <= 0) {
 											newBrightnessNight = 0;
@@ -1063,8 +1088,8 @@ class FullyTabletControl extends utils.Adapter {
 											await axios.get(ScreensaverOnBri);
 											await this.stateRequest();
 										} catch (error) {
-											this.log.error(`${await tabletName[d]} [nightBri] could not be sent: ${error.message}, stack: ${error.stack}`);
-											this.log.error(`${await tabletName[d]} [ScreensaverOnBri] could not be sent: ${error.message}, stack: ${error.stack}`);
+											if (!logMessage[d]) this.log.error(`${await tabletName[d]} [nightBri] could not be sent: ${error.message}, stack: ${error.stack}`);
+											if (!logMessage[d]) this.log.error(`${await tabletName[d]} [ScreensaverOnBri] could not be sent: ${error.message}, stack: ${error.stack}`);
 										}
 										this.log.debug(`${await tabletName[d]} send Command: ${nightTimeBrightnessURL}`);
 										this.log.debug(`${await tabletName[d]} send Command: ${ScreensaverOnBri}`);
@@ -1100,8 +1125,8 @@ class FullyTabletControl extends utils.Adapter {
 										await axios.get(ScreensaverOnBri);
 										await this.stateRequest();
 									} catch (error) {
-										this.log.error(`${await tabletName[d]} [nightBri] could not be sent: ${error.message}, stack: ${error.stack}`);
-										this.log.error(`${await tabletName[d]} [ScreensaverOnBri] could not be sent: ${error.message}, stack: ${error.stack}`);
+										if (!logMessage[d]) this.log.error(`${await tabletName[d]} [nightBri] could not be sent: ${error.message}, stack: ${error.stack}`);
+										if (!logMessage[d]) this.log.error(`${await tabletName[d]} [ScreensaverOnBri] could not be sent: ${error.message}, stack: ${error.stack}`);
 									}
 									this.log.debug(`${await tabletName[d]} send Command: ${nightTimeBrightnessURL}`);
 									this.log.debug(`${await tabletName[d]} send Command: ${ScreensaverOnBri}`);
@@ -1133,8 +1158,8 @@ class FullyTabletControl extends utils.Adapter {
 										await axios.get(ScreensaverOnBri);
 										await this.stateRequest();
 									} catch (error) {
-										this.log.error(`${await tabletName[d]} [nightBri] could not be sent: ${error.message}, stack: ${error.stack}`);
-										this.log.error(`${await tabletName[d]} [ScreensaverOnBri] could not be sent: ${error.message}, stack: ${error.stack}`);
+										if (!logMessage[d]) this.log.error(`${await tabletName[d]} [nightBri] could not be sent: ${error.message}, stack: ${error.stack}`);
+										if (!logMessage[d]) this.log.error(`${await tabletName[d]} [ScreensaverOnBri] could not be sent: ${error.message}, stack: ${error.stack}`);
 									}
 									this.log.debug(`${await tabletName[d]} send Command: ${nightTimeBrightnessURL}`);
 									this.log.debug(`${await tabletName[d]} send Command: ${ScreensaverOnBri}`);
@@ -1154,8 +1179,8 @@ class FullyTabletControl extends utils.Adapter {
 
 					nightBriMode = false;
 					dayBriMode = true;
-					if (dayBriTimeout) clearInterval(dayBriTimeout);
-					if (nightBriTimeout) clearInterval(nightBriTimeout);
+					if (dayBriTimeout) clearTimeout(dayBriTimeout);
+					if (nightBriTimeout) clearTimeout(nightBriTimeout);
 					this.dayBri();
 
 				}
@@ -1163,8 +1188,8 @@ class FullyTabletControl extends utils.Adapter {
 
 					nightBriMode = true;
 					dayBriMode = false;
-					if (dayBriTimeout) clearInterval(dayBriTimeout);
-					if (nightBriTimeout) clearInterval(nightBriTimeout);
+					if (dayBriTimeout) clearTimeout(dayBriTimeout);
+					if (nightBriTimeout) clearTimeout(nightBriTimeout);
 
 					nightBriTimeout = setTimeout(async () => {
 
@@ -1218,8 +1243,8 @@ class FullyTabletControl extends utils.Adapter {
 
 						nightBriMode = false;
 						dayBriMode = true;
-						if (dayBriTimeout) clearInterval(dayBriTimeout);
-						if (nightBriTimeout) clearInterval(nightBriTimeout);
+						if (dayBriTimeout) clearTimeout(dayBriTimeout);
+						if (nightBriTimeout) clearTimeout(nightBriTimeout);
 						this.dayBri();
 
 					}
@@ -1227,8 +1252,8 @@ class FullyTabletControl extends utils.Adapter {
 
 						nightBriMode = true;
 						dayBriMode = false;
-						if (dayBriTimeout) clearInterval(dayBriTimeout);
-						if (nightBriTimeout) clearInterval(nightBriTimeout);
+						if (dayBriTimeout) clearTimeout(dayBriTimeout);
+						if (nightBriTimeout) clearTimeout(nightBriTimeout);
 						this.nightBri();
 
 					}
@@ -1288,12 +1313,15 @@ class FullyTabletControl extends utils.Adapter {
 									if (await brightness[d] != newBrightnessDay) {
 
 										try {
+
 											await axios.get(daytimeBrightnessURL);
 											await axios.get(ScreensaverOnBri);
 											await this.stateRequest();
+
 										} catch (error) {
-											this.log.error(`${await tabletName[d]} [dayBri] could not be sent: ${error.message}, stack: ${error.stack}`);
-											this.log.error(`${await tabletName[d]} [ScreensaverOnBri] could not be sent: ${error.message}, stack: ${error.stack}`);
+											if (!logMessage[d]) this.log.error(`${await tabletName[d]} [dayBri] could not be sent: ${error.message}, stack: ${error.stack}`);
+											if (!logMessage[d]) this.log.error(`${await tabletName[d]} [ScreensaverOnBri] could not be sent: ${error.message}, stack: ${error.stack}`);
+											continue;
 										}
 										this.log.debug(`${await tabletName[d]} send Command: ${daytimeBrightnessURL}`);
 										this.log.debug(`${await tabletName[d]} send Command: ${ScreensaverOnBri}`);
@@ -1329,8 +1357,9 @@ class FullyTabletControl extends utils.Adapter {
 										await axios.get(ScreensaverOnBri);
 										await this.stateRequest();
 									} catch (error) {
-										this.log.error(`${await tabletName[d]} [dayBri] could not be sent: ${error.message}, stack: ${error.stack}`);
-										this.log.error(`${await tabletName[d]} [ScreensaverOnBri] could not be sent: ${error.message}, stack: ${error.stack}`);
+										if (!logMessage[d]) this.log.error(`${await tabletName[d]} [dayBri] could not be sent: ${error.message}, stack: ${error.stack}`);
+										if (!logMessage[d]) this.log.error(`${await tabletName[d]} [ScreensaverOnBri] could not be sent: ${error.message}, stack: ${error.stack}`);
+										continue;
 									}
 									this.log.debug(`${await tabletName[d]} send Command: ${daytimeBrightnessURL}`);
 									this.log.debug(`${await tabletName[d]} send Command: ${ScreensaverOnBri}`);
@@ -1362,8 +1391,9 @@ class FullyTabletControl extends utils.Adapter {
 										await axios.get(ScreensaverOnBri);
 										await this.stateRequest();
 									} catch (error) {
-										this.log.error(`${await tabletName[d]} [dayBri] could not be sent: ${error.message}, stack: ${error.stack}`);
-										this.log.error(`${await tabletName[d]} [ScreensaverOnBri] could not be sent: ${error.message}, stack: ${error.stack}`);
+										if (!logMessage[d]) this.log.error(`${await tabletName[d]} [dayBri] could not be sent: ${error.message}, stack: ${error.stack}`);
+										if (!logMessage[d]) this.log.error(`${await tabletName[d]} [ScreensaverOnBri] could not be sent: ${error.message}, stack: ${error.stack}`);
+										continue;
 									}
 									this.log.debug(`${await tabletName[d]} send Command: ${daytimeBrightnessURL}`);
 									this.log.debug(`${await tabletName[d]} send Command: ${ScreensaverOnBri}`);
@@ -1382,8 +1412,8 @@ class FullyTabletControl extends utils.Adapter {
 
 					nightBriMode = false;
 					dayBriMode = true;
-					if (dayBriTimeout) clearInterval(dayBriTimeout);
-					if (nightBriTimeout) clearInterval(nightBriTimeout);
+					if (dayBriTimeout) clearTimeout(dayBriTimeout);
+					if (nightBriTimeout) clearTimeout(nightBriTimeout);
 
 					dayBriTimeout = setTimeout(async () => {
 
@@ -1396,8 +1426,8 @@ class FullyTabletControl extends utils.Adapter {
 
 					nightBriMode = true;
 					dayBriMode = false;
-					if (dayBriTimeout) clearInterval(dayBriTimeout);
-					if (nightBriTimeout) clearInterval(nightBriTimeout);
+					if (dayBriTimeout) clearTimeout(dayBriTimeout);
+					if (nightBriTimeout) clearTimeout(nightBriTimeout);
 					this.nightBri();
 
 				}
@@ -1413,8 +1443,8 @@ class FullyTabletControl extends utils.Adapter {
 
 					nightBriMode = false;
 					dayBriMode = true;
-					if (dayBriTimeout) clearInterval(dayBriTimeout);
-					if (nightBriTimeout) clearInterval(nightBriTimeout);
+					if (dayBriTimeout) clearTimeout(dayBriTimeout);
+					if (nightBriTimeout) clearTimeout(nightBriTimeout);
 
 					dayBriTimeout = setTimeout(async () => {
 
@@ -1512,7 +1542,7 @@ class FullyTabletControl extends utils.Adapter {
 											try {
 												await axios.get(ScreensaverOnURL);
 											} catch (error) {
-												this.log.error(`${await tabletName[on]} [screenSaver On] could not be sent: ${error.message}, stack: ${error.stack}`);
+												if (!logMessage[on]) this.log.error(`${await tabletName[on]} [screenSaver On] could not be sent: ${error.message}, stack: ${error.stack}`);
 											}
 
 											this.log.debug(`${await tabletName[on]} send Command: screenSaver On ${ScreensaverOnURL}`);
@@ -1538,7 +1568,7 @@ class FullyTabletControl extends utils.Adapter {
 										try {
 											await axios.get(ScreensaverOffURL);
 										} catch (error) {
-											this.log.error(`${await tabletName[on]} [screenSaver Off] could not be sent: ${error.message}, stack: ${error.stack}`);
+											if (!logMessage[on]) this.log.error(`${await tabletName[on]} [screenSaver Off] could not be sent: ${error.message}, stack: ${error.stack}`);
 										}
 
 										this.log.debug(`${await tabletName[on]} send Command: screenSaver Off ${ScreensaverOffURL} `);
@@ -1558,7 +1588,8 @@ class FullyTabletControl extends utils.Adapter {
 										try {
 											await axios.get(ScreensaverOn);
 										} catch (error) {
-											this.log.error(`${await tabletName[on]} [screenSaver On] could not be sent: ${error.message}, stack: ${error.stack}`);
+											if (!logMessage[on]) this.log.error(`${await tabletName[on]} [screenSaver On] could not be sent: ${error.message}, stack: ${error.stack}`);
+											
 										}
 
 										this.log.debug(`${await tabletName[on]} send Command: screenSaver On ${ScreensaverOn}`);
@@ -1595,7 +1626,8 @@ class FullyTabletControl extends utils.Adapter {
 							try {
 								await axios.get(Screen[s]);
 							} catch (error) {
-								this.log.warn(`${await tabletName[s]} [screenON] could not be sent: ${error.message}, stack: ${error.stack}`);
+								if (!logMessage[s]) this.log.warn(`${await tabletName[s]} [screenON] could not be sent: ${error.message}, stack: ${error.stack}`);
+								
 							}
 
 						}
@@ -2335,15 +2367,16 @@ class FullyTabletControl extends utils.Adapter {
 	 */
 	onUnload(callback) {
 		try {
-
-			if (dayBriTimeout) clearInterval(dayBriTimeout);
-			if (nightBriTimeout) clearInterval(nightBriTimeout);
-			if (dayBriTimeout) clearInterval(dayBriTimeout);
-			if (nightBriTimeout) clearInterval(nightBriTimeout);
+			
+			if (dayBriTimeout) clearTimeout(dayBriTimeout);
+			if (nightBriTimeout) clearTimeout(nightBriTimeout);
+			if (dayBriTimeout) clearTimeout(dayBriTimeout);
+			if (nightBriTimeout) clearTimeout(nightBriTimeout);
 			if (viewTimer) clearTimeout(viewTimer);
 			if (requestTimeout) clearTimeout(requestTimeout);
 			if (ScreensaverReturn) clearTimeout(ScreensaverReturn);
 			for (const Unl in tabletName) {
+				if (logMessageTimer[Unl]) clearTimeout(logMessageTimer[Unl]);
 				if (ScreensaverTimer[Unl]) clearTimeout(ScreensaverTimer[Unl]);
 				if (foregroundAppTimer[Unl]) clearTimeout(foregroundAppTimer[Unl]);
 

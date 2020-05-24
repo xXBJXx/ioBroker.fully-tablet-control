@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "fully-tablet-control",
-    "version": "0.2.9",
+    "version": "0.2.10",
     "news": {
+      "0.2.10": {
+        "en": "log output adjusted",
+        "de": "Protokollausgabe angepasst",
+        "ru": "настроен выход журнала",
+        "pt": "saída de log ajustada",
+        "nl": "log output aangepast",
+        "fr": "sortie du journal ajustée",
+        "it": "uscita del registro modificata",
+        "es": "salida de registro ajustada",
+        "pl": "skorygowano moc wyjściową dziennika",
+        "zh-cn": "日志输出已调整"
+      },
       "0.2.9": {
         "en": "night brightness manual change added",
         "de": "manuelle Änderung der Nachthelligkeit hinzugefügt",
