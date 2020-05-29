@@ -713,7 +713,7 @@ systemDictionary = {
 	},
 	'Warning activated': {
 		'en': 'Telegram Warning activated',
-		'de': 'Telegrammwarnung aktiviert',
+		'de': 'Telegram Warnung aktiviert',
 		'ru': 'Telegram Warning активирован',
 		'pt': 'Aviso de Telegrama ativado',
 		'nl': 'Telegramwaarschuwing geactiveerd',
@@ -725,7 +725,7 @@ systemDictionary = {
 	},
 	'Warning deactivated': {
 		'en': 'Telegram Warning deactivated',
-		'de': 'Telegrammwarnung deaktiviert',
+		'de': 'Telegram Warnung deaktiviert',
 		'ru': 'Телеграмма Предупреждение деактивировано',
 		'pt': 'Aviso de Telegrama desativado',
 		'nl': 'Telegramwaarschuwing gedeactiveerd',
@@ -1024,7 +1024,7 @@ systemDictionary = {
 	},
 	'telegram': {
 		'en': '(Optional) Telegram',
-		'de': '(Optional) Telegramm',
+		'de': '(Optional) Telegram',
 		'ru': '(Необязательно) Telegram',
 		'pt': '(Opcional) Telegrama',
 		'nl': '(Optioneel) Telegram',
@@ -1036,7 +1036,7 @@ systemDictionary = {
 	},
 	'telegram-enabled': {
 		'en': 'Activate Telegram Warning',
-		'de': 'Aktivieren Sie die Telegrammwarnung',
+		'de': 'Aktivieren Sie die Telegram Warnung',
 		'ru': 'Активировать предупреждение Telegram',
 		'pt': 'Ativar aviso de telegrama',
 		'nl': 'Activeer Telegram-waarschuwing',
@@ -1048,7 +1048,7 @@ systemDictionary = {
 	},
 	'telegramUser': {
 		'en': 'Telegram user',
-		'de': 'Telegrammbenutzer',
+		'de': 'Telegrambenutzer',
 		'ru': 'Пользователь Telegram',
 		'pt': 'Usuário de telegrama',
 		'nl': 'Telegram-gebruiker',
