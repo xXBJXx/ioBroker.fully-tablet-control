@@ -223,6 +223,18 @@ _______________________________
 
 ## Changelog
 
+### 0.2.10
+
+* (xXBJXx) request log output adjusted
+
+### 0.2.9
+
+* (xXBJXx) night brightness manual change added
+
+### 0.2.8
+
+* (xXBJXx) bug in brightness control and charging function fixed
+
 ### 0.2.7
 
 * (xXBJXx) Astro time added
