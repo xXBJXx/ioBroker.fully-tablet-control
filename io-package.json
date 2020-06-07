@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "fully-tablet-control",
-    "version": "0.2.10",
+    "version": "0.2.11",
     "news": {
+      "0.2.11": {
+        "en": "add new charge option",
+        "de": "neue Ladeoption hinzufügen",
+        "ru": "добавить новый вариант оплаты",
+        "pt": "adicionar nova opção de cobrança",
+        "nl": "nieuwe kostenoptie toevoegen",
+        "fr": "ajouter une nouvelle option de facturation",
+        "it": "aggiungi una nuova opzione di addebito",
+        "es": "agregar nueva opción de carga",
+        "pl": "dodaj nową opcję ładowania",
+        "zh-cn": "添加新的收费选项"
+      },
       "0.2.10": {
         "en": "log output adjusted",
         "de": "Protokollausgabe angepasst",

@@ -2,7 +2,20 @@
 /*global systemDictionary:true */
 'use strict';
 
+// @ts-ignore
 systemDictionary = {
+	'Off': {
+		'en': 'Off',
+		'de': 'aus',
+		'ru': 'от',
+		'pt': 'Fora',
+		'nl': 'Uit',
+		'fr': 'De',
+		'it': 'via',
+		'es': 'Apagado',
+		'pl': 'Poza',
+		'zh-cn': '关'
+	},
 	'Manual time': {
 		'en': 'Manual time',
 		'de': 'Manuelle Zeit',

@@ -52,7 +52,9 @@ Hier muss die ID von dem Ladegerät eingetragen werden damit das Tablet geladen 
 
 3. Datenpunkt ID (aus den Iobroker Objekten) von dem Ladegerät.
 
-4. Lademodus auswählbar sind **Dauerstrom** oder **Ladezyklus** bei Dauerstrom wird das Tablet dauerhaft am Strom gehalten und bei Ladezyklus wird das Tablet z.B. bei 20% anfangen zu laden und bei 85% das Laden abschalten.
+4. Lademodus auswählbar sind **Dauerstrom** oder **Ladezyklus** bei beiden muss die **ID eingetragen sein**  bei Dauerstrom wird das Tablet dauerhaft am Strom gehalten und bei Ladezyklus wird das Tablet z.B. bei 20% anfangen zu laden und bei 85% das Laden abschalten. \
+Bei der Auswahl **aus** wird die Ladesteuerung für dieses Tablet ausgeschaltet es muss auch keine **ID** eingetragen werden.
+![charger-mode](admin/media/charger-mode.png)
 
 5. **(nur für Ladezyklus relevant)** Ladestart ab dieser grenze startet das Tablet das laden.
 
@@ -222,6 +224,11 @@ hier sind 2 Dp.
 _______________________________
 
 ## Changelog
+
+### 0.2.11
+
+* (xXBJXx) add new charge option
+* (Steff42) Fix typo in words.js
 
 ### 0.2.10
 

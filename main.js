@@ -74,6 +74,7 @@ let AstroNightMilis = null;
 let AstroDayMilis = null;
 const logMessage = [];
 const logMessageTimer = [];
+const messageCharging = [];
 
 class FullyTabletControl extends utils.Adapter {
 
@@ -189,6 +190,7 @@ class FullyTabletControl extends utils.Adapter {
 						messageSend[t] = true;
 						AlertMessageSend[t] = false;
 						logMessage[t] = false;
+						messageCharging[t] = false;
 					}
 				}
 			}
@@ -219,7 +221,7 @@ class FullyTabletControl extends utils.Adapter {
 
 						if (enabledBrightness[b]) {
 							await this.setStateAsync(`device.${await this.replaceFunction(tempStart[b].name)}.brightness_control_mode`, false, true);
-							
+
 						}
 
 						console.log(enabledBrightness);
@@ -411,7 +413,7 @@ class FullyTabletControl extends utils.Adapter {
 							apiResult = await axios.get(deviceInfo[i]);
 							this.setState(`device.${stateID}.isFullyAlive`, { val: true, ack: true });
 							if (logMessageTimer[i]) clearTimeout(logMessageTimer[i]);
-							logMessage[i] = false; 
+							logMessage[i] = false;
 						} catch (error) {
 
 							if (!logMessage[i]) {
@@ -424,15 +426,15 @@ class FullyTabletControl extends utils.Adapter {
 
 								console.log([i]);
 								logMessageTimer[i] = setTimeout(async () => {
-	
+
 									logMessage[i] = false;
 
 									console.log(logMessage[i]);
 
 								}, 3600000);
-	
+
 							}
-							
+
 							this.setState(`device.${stateID}.isFullyAlive`, { val: false, ack: true });
 							continue;
 						}
@@ -694,14 +696,15 @@ class FullyTabletControl extends utils.Adapter {
 
 					for (const s in tabletName) {
 
-						if (deviceEnabled[s]) {
+						if (deviceEnabled[s] && !logMessage[s]) {
 							if (dp !== 'reloadAll') {
 
 								if (name.replace(/_/gi, ' ') == tabletName[s].toLowerCase()) {
 
 									switch (dp) {
 										case 'setStringSetting':
-											let txtKey = state.val;
+											// eslint-disable-next-line no-case-declarations
+											const txtKey = state.val;
 											if (txtKey.length > 1) {
 
 												const textToSpeechURL = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=${txtKey}&password=${password[s]}`;
@@ -713,6 +716,7 @@ class FullyTabletControl extends utils.Adapter {
 											}
 											break;
 										case 'textToSpeech':
+											// eslint-disable-next-line no-case-declarations
 											let txtSp = state.val;
 											txtSp = encodeURIComponent(txtSp.replace(/ +/g, ' ')); // Remove multiple spaces
 											if (txtSp.length > 1) {
@@ -726,9 +730,11 @@ class FullyTabletControl extends utils.Adapter {
 											}
 											break;
 										case 'loadURL':
+											// eslint-disable-next-line no-case-declarations
 											let strUrl = state.val;
 											strUrl = strUrl.replace(/ /g, ''); // Remove Spaces
 
+											// eslint-disable-next-line no-case-declarations
 											const encodeUrl = encodeURIComponent(strUrl);
 
 											if (strUrl.length > 10) {
@@ -790,7 +796,7 @@ class FullyTabletControl extends utils.Adapter {
 	async foregroundApp() {
 		try {
 			for (const c in ip) {
-				if (deviceEnabled[c]) {
+				if (deviceEnabled[c] && !logMessage[c]) {
 					for (const app in foreground) {
 						if (foregroundAppTimer[app]) clearTimeout(foregroundAppTimer[app]);
 						console.log(`${await tabletName[app]} foreground: ${await foreground[app]}`);
@@ -818,26 +824,37 @@ class FullyTabletControl extends utils.Adapter {
 		try {
 			const charger = this.config.charger;
 			const telegram_enabled = JSON.parse(this.config.telegram_enabled);
+
+
 			if (JSON.parse(this.config.chargerON)) {
 				if (!charger || charger !== []) {
 					for (const i in ip) {
-						if (deviceEnabled[i]) {
+						if (deviceEnabled[i] && !logMessage[i]) {
 							if (charger[i]) {
 
 								const chargerid = charger[i].chargerid;
-								const power_mode = JSON.parse(charger[i].power_mode);
+								const power_mode = charger[i].power_mode;
 								const loadStart = JSON.parse(charger[i].loadStart);
 								const loadStop = JSON.parse(charger[i].loadStop);
-								const chargeDevice = await this.getForeignStateAsync(chargerid);
-
-								chargeDeviceValue[i] = chargeDevice == null ? false : chargeDevice.val;
 
 								if (chargerid) {
+									const chargeDevice = await this.getForeignStateAsync(chargerid);
 
+									chargeDeviceValue[i] = chargeDevice == null ? false : chargeDevice.val;
 									this.log.debug(`chargerid: ` + chargerid + ` val: ` + chargeDeviceValue[i]);
+								}
+								else {
+									if (power_mode != 'off') {
+										console.log(`${await tabletName[i]} Charger ID not specified`);
+										this.log.warn(`${await tabletName[i]} Charger ID not specified`);
+									}
+								}
 
-									if (await power_mode == true) {
 
+
+								if (await power_mode == 'true') {
+									if (chargerid) {
+										messageCharging[i] = false;
 										if (await bat[i] <= loadStart && !chargeDeviceValue[i]) {
 
 											await this.setForeignStateAsync(await chargerid, true, false);
@@ -851,58 +868,71 @@ class FullyTabletControl extends utils.Adapter {
 											this.log.info(`${await tabletName[i]} Charging cycle ended`);
 
 										}
-
 									}
 									else {
+										console.log(`${await tabletName[i]} Charger ID for Charging cycle not specified`);
+										this.log.warn(`${await tabletName[i]} Charger ID for Charging cycle not specified`);
+									}
 
+								}
+								else if (await power_mode == 'false') {
+									if (chargerid) {
+										messageCharging[i] = false;
 										if (!chargeDeviceValue[i]) this.setForeignStateAsync(await chargerid, true, false);
 										if (!chargeDeviceValue[i]) this.log.debug(`${await tabletName[i]} Continuous current`);
 										// this.manualStates();
-
 									}
-
+									else {
+										console.log(`${await tabletName[i]} Charger ID for Continuous current not specified`);
+										this.log.warn(`${await tabletName[i]} Charger ID for Continuous current not specified`);
+									}
 								}
-								else {
-									console.log(`${await tabletName[i]} Charger ID not specified`);
-									this.log.warn(`${await tabletName[i]} Charger ID not specified`);
+								else if (await power_mode == 'off') {
+									if (!messageCharging[i]) {
+										this.log.info(`${await tabletName[i]} Charging Off`);
+										messageCharging[i] = true;
+									}
 								}
 
-								if (telegram_enabled === true) {
 
-									if (await bat[i] <= 18 && !chargeDeviceValue[i] && !telegramStatus[i] || bat[i] <= 18 && chargeDeviceValue[i] && !telegramStatus[i]) {
-										telegramStatus[i] = true;
-										this.onMessage(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${await tabletName[i]} Tablet charging function has detected a malfunction, the tablet is not charging, please check it !!!`, User);
-										this.log.warn(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + `  ${await tabletName[i]} Tablet charging function has detected a malfunction, the tablet is not charging, please check it !!!`);
-										this.setForeignStateAsync(await chargerid[i], true, false);
-										this.setState(`device.${await tabletName[i]}.charging_warning`, { val: true, ack: true });
+								if (power_mode != 'off') {
+									if (telegram_enabled === true) {
 
-									}
-									else if (await bat[i] > 18 && chargeDeviceValue[i] && telegramStatus[i]) {
-										telegramStatus[i] = false;
-										this.onMessage(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${await tabletName[i]} Tablet is charging the problem has been fixed.`, User);
-										this.log.warn(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${await tabletName[i]} Tablet is charging the problem has been fixed.`);
-										this.setState(`device.${await tabletName[i]}.charging_warning`, { val: false, ack: true });
-									}
+										if (await bat[i] <= 18 && !chargeDeviceValue[i] && !telegramStatus[i] || bat[i] <= 18 && chargeDeviceValue[i] && !telegramStatus[i]) {
+											telegramStatus[i] = true;
+											this.onMessage(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${await tabletName[i]} Tablet charging function has detected a malfunction, the tablet is not charging, please check it !!!`, User);
+											this.log.warn(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + `  ${await tabletName[i]} Tablet charging function has detected a malfunction, the tablet is not charging, please check it !!!`);
+											this.setForeignStateAsync(await chargerid[i], true, false);
+											this.setState(`device.${await tabletName[i]}.charging_warning`, { val: true, ack: true });
 
-								}
-								else {
-									if (await bat[i] >= 20 && !messageSend[i]) {
-										messageSend[i] = false;
+										}
+										else if (await bat[i] > 18 && chargeDeviceValue[i] && telegramStatus[i]) {
+											telegramStatus[i] = false;
+											this.onMessage(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${await tabletName[i]} Tablet is charging the problem has been fixed.`, User);
+											this.log.warn(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${await tabletName[i]} Tablet is charging the problem has been fixed.`);
+											this.setState(`device.${await tabletName[i]}.charging_warning`, { val: false, ack: true });
+										}
 
 									}
-									if (await bat[i] <= 18 && !chargeDeviceValue[i] && !AlertMessageSend[i] || bat[i] <= 18 && chargeDeviceValue[i] && !AlertMessageSend[i]) {
-										AlertMessageSend[i] = true;
-										messageSend[i] = false;
-										this.log.warn(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${await tabletName[i]} Tablet charging function has detected a malfunction, the tablet is not charging, please check it !!!`);
-										this.setForeignStateAsync(await chargerid[i], true, false);
-										this.setState(`device.${await tabletName[i]}.charging_warning`, { val: true, ack: true });
+									else {
+										if (await bat[i] >= 20 && !messageSend[i]) {
+											messageSend[i] = false;
 
-									} else if (await bat[i] > 18 && bat[i] < 20 && chargeDeviceValue[i] && !messageSend[i]) {
+										}
+										if (await bat[i] <= 18 && !chargeDeviceValue[i] && !AlertMessageSend[i] || bat[i] <= 18 && chargeDeviceValue[i] && !AlertMessageSend[i]) {
+											AlertMessageSend[i] = true;
+											messageSend[i] = false;
+											this.log.warn(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${await tabletName[i]} Tablet charging function has detected a malfunction, the tablet is not charging, please check it !!!`);
+											this.setForeignStateAsync(await chargerid[i], true, false);
+											this.setState(`device.${await tabletName[i]}.charging_warning`, { val: true, ack: true });
 
-										messageSend[i] = true;
-										AlertMessageSend[i] = false;
-										this.log.info(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${await tabletName[i]} Tablet is charging the problem has been fixed.`);
-										this.setState(`device.${await tabletName[i]}.charging_warning`, { val: false, ack: true });
+										} else if (await bat[i] > 18 && bat[i] < 20 && chargeDeviceValue[i] && !messageSend[i]) {
+
+											messageSend[i] = true;
+											AlertMessageSend[i] = false;
+											this.log.info(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${await tabletName[i]} Tablet is charging the problem has been fixed.`);
+											this.setState(`device.${await tabletName[i]}.charging_warning`, { val: false, ack: true });
+										}
 									}
 								}
 							}
@@ -922,13 +952,18 @@ class FullyTabletControl extends utils.Adapter {
 	async astroTime() {
 		try {
 			this.getObjectList({ include_docs: true }, (err, res) => {
+				// @ts-ignore
 				res = res.rows;
-				let objects = {};
+				const objects = {};
+				// @ts-ignore
 				for (let i = 0; i < res.length; i++) {
+					// @ts-ignore
 					if (!res[i].doc) {
+						// @ts-ignore
 						this.log.debug('Got empty object for index ' + i + ' (' + res[i].id + ')');
 						continue;
 					}
+					// @ts-ignore
 					objects[res[i].doc._id] = res[i].doc;
 				}
 				const systemConfig = objects['system.config'];
@@ -964,7 +999,7 @@ class FullyTabletControl extends utils.Adapter {
 			const timeMode = JSON.parse(this.config.timeMode);
 			if (brightnessControlEnabled) {
 				for (const c in tabletName) {
-					if (enabledBrightness[c]) {
+					if (enabledBrightness[c] && !logMessage[c]) {
 
 						if (timeMode) {
 
@@ -1046,7 +1081,7 @@ class FullyTabletControl extends utils.Adapter {
 			if (!brightnessN || brightnessN !== []) {
 
 				for (const d in ip) {
-					if (deviceEnabled[d]) {
+					if (deviceEnabled[d] && !logMessage[d]) {
 						if (brightnessControlEnabled) {
 							if (enabledBrightness[d]) {
 								if (brightnessN[d]) {
@@ -1211,7 +1246,7 @@ class FullyTabletControl extends utils.Adapter {
 	async manualStates() {
 		try {
 			for (const name in ip) {
-				if (deviceEnabled[name]) {
+				if (deviceEnabled[name] && !logMessage[name]) {
 
 					const stateID = await this.replaceFunction(tabletName[name]);
 					const manual = await this.getStateAsync(`device.${stateID}.manualBrightness`);
@@ -1277,7 +1312,7 @@ class FullyTabletControl extends utils.Adapter {
 			if (!brightnessD || brightnessD !== []) {
 
 				for (const d in ip) {
-					if (deviceEnabled[d]) {
+					if (deviceEnabled[d] && !logMessage[d]) {
 						if (brightnessControlEnabled) {
 							if (enabledBrightness[d]) {
 
@@ -1527,7 +1562,7 @@ class FullyTabletControl extends utils.Adapter {
 				if (!tabletName || tabletName !== []) {
 					for (const on in ip) {
 						if (ScreensaverTimer[on]) clearTimeout(ScreensaverTimer[on]);
-						if (deviceEnabled[on]) {
+						if (deviceEnabled[on] && !logMessage[on]) {
 							if (motionSensor_enabled) {
 								this.log.debug(`Motion Sensor is On`);
 								console.log(`Motion Sensor is On: ${motionSensor_enabled}`);
@@ -1592,7 +1627,7 @@ class FullyTabletControl extends utils.Adapter {
 											await axios.get(ScreensaverOn);
 										} catch (error) {
 											if (!logMessage[on]) this.log.error(`${await tabletName[on]} [screenSaver On] could not be sent: ${error.message}, stack: ${error.stack}`);
-											
+
 										}
 
 										this.log.debug(`${await tabletName[on]} send Command: screenSaver On ${ScreensaverOn}`);
@@ -1622,7 +1657,7 @@ class FullyTabletControl extends utils.Adapter {
 			if (screen_on) {
 
 				for (const s in isScreenOn) {
-					if (deviceEnabled[s]) {
+					if (deviceEnabled[s] && !logMessage[s]) {
 						if (isScreenOn[s] == false) {
 
 							this.log.warn(`[ATTENTION] Screen from ${await tabletName[s]} has been switched off Screen is being switched on again`);
@@ -1630,7 +1665,7 @@ class FullyTabletControl extends utils.Adapter {
 								await axios.get(Screen[s]);
 							} catch (error) {
 								if (!logMessage[s]) this.log.warn(`${await tabletName[s]} [screenON] could not be sent: ${error.message}, stack: ${error.stack}`);
-								
+
 							}
 
 						}
@@ -1652,7 +1687,9 @@ class FullyTabletControl extends utils.Adapter {
 	async bytesToSize(bytes) {
 		const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
 		if (bytes == 0) return '0 Byte';
+		// @ts-ignore
 		const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+		// @ts-ignore
 		return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
 	}
 
@@ -1687,9 +1724,12 @@ class FullyTabletControl extends utils.Adapter {
 						let timer = await this.getStateAsync(`vis_View.Timer_View_Switch`);
 						if (timer && timer.val) {
 
+							// @ts-ignore
 							timer = parseInt(timer.val);
+							// @ts-ignore
 							if (timer > 1) {
 
+								// @ts-ignore
 								await this.setStateChangedAsync(`vis_View.Timer_View_Switch`, timer - 1, true);
 								this.switchToHomeView();
 							}
@@ -1708,10 +1748,13 @@ class FullyTabletControl extends utils.Adapter {
 						let timer = await this.getStateAsync(`vis_View.Timer_View_Switch`);
 						if (timer && timer.val) {
 
+							// @ts-ignore
 							timer = parseInt(timer.val);
 
+							// @ts-ignore
 							if (timer > 1) {
 
+								// @ts-ignore
 								await this.setStateChangedAsync(`vis_View.Timer_View_Switch`, timer - 1, true);
 								this.switchToHomeView();
 							}
@@ -1761,6 +1804,7 @@ class FullyTabletControl extends utils.Adapter {
 					const currentView = await this.getStateAsync(`vis_View.widget_8_view`);
 
 
+					// @ts-ignore
 					if (currentView == null || currentView == null && currentView.val == 0) {
 						this.setState(`vis_View.Timer_View_Switch`, 0, true);
 					}
@@ -2348,12 +2392,12 @@ class FullyTabletControl extends utils.Adapter {
 				textToSpeechID[name] = `.device.${stateID}.commands.textToSpeech`;
 				setStringSettingID[name] = `.device.${stateID}.commands.setStringSetting`;
 
-				if (!deviceEnabled[name]) {
+				if (!deviceEnabled[name] && !logMessage[name]) {
 					this.setState(`device.${tabletName[name]}.isFullyAlive`, { val: false, ack: true });
 				}
 
 			}
-			
+
 			this.setState('info.connection', true, true);
 
 		} catch (error) {
@@ -2369,7 +2413,7 @@ class FullyTabletControl extends utils.Adapter {
 	 */
 	onUnload(callback) {
 		try {
-			
+
 			if (dayBriTimeout) clearTimeout(dayBriTimeout);
 			if (nightBriTimeout) clearTimeout(nightBriTimeout);
 			if (dayBriTimeout) clearTimeout(dayBriTimeout);
