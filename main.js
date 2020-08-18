@@ -1095,7 +1095,7 @@ class FullyTabletControl extends utils.Adapter {
 	async nightBri() {
 		try {
 			const brightnessN = this.config.brightness;
-
+			const screenSaverON = JSON.parse(this.config.screenSaverON);
 			if (!brightnessN || brightnessN !== []) {
 
 				for (const d in ip) {
@@ -1142,7 +1142,7 @@ class FullyTabletControl extends utils.Adapter {
 										try {
 
 											//checks whether the screen saver is on and then sends the command
-											if (enableScreenSaverBrightness) {
+											if (enableScreenSaverBrightness && screenSaverON) {
 												await axios.get(ScreensaverOnBri);
 											}
 
@@ -1185,7 +1185,7 @@ class FullyTabletControl extends utils.Adapter {
 									try {
 
 										//checks whether the screen saver is on and then sends the command
-										if (enableScreenSaverBrightness) {
+										if (enableScreenSaverBrightness && screenSaverON) {
 											await axios.get(ScreensaverOnBri);
 										}
 
@@ -1224,7 +1224,7 @@ class FullyTabletControl extends utils.Adapter {
 									try {
 
 										//checks whether the screen saver is on and then sends the command
-										if (enableScreenSaverBrightness) {
+										if (enableScreenSaverBrightness && screenSaverON) {
 											await axios.get(ScreensaverOnBri);
 										}
 
@@ -1344,7 +1344,7 @@ class FullyTabletControl extends utils.Adapter {
 	async dayBri() {
 		try {
 			const brightnessD = this.config.brightness;
-			
+			const screenSaverON = JSON.parse(this.config.screenSaverON);
 			if (!brightnessD || brightnessD !== []) {
 
 				for (const d in ip) {
@@ -1388,7 +1388,7 @@ class FullyTabletControl extends utils.Adapter {
 
 										try {
 											//checks whether the screen saver is on and then sends the command
-											if (enableScreenSaverBrightness[d]) {
+											if (enableScreenSaverBrightness && screenSaverON) {
 
 												await axios.get(ScreensaverOnBri);
 											}
@@ -1431,7 +1431,7 @@ class FullyTabletControl extends utils.Adapter {
 
 									try {
 										//checks whether the screen saver is on and then sends the command
-										if (enableScreenSaverBrightness) {
+										if (enableScreenSaverBrightness && screenSaverON) {
 											await axios.get(ScreensaverOnBri);
 										}
 										await axios.get(daytimeBrightnessURL);
@@ -1468,7 +1468,7 @@ class FullyTabletControl extends utils.Adapter {
 
 									try {
 										//checks whether the screen saver is on and then sends the command
-										if (enableScreenSaverBrightness) {
+										if (enableScreenSaverBrightness && screenSaverON) {
 											await axios.get(ScreensaverOnBri);
 										}
 										await axios.get(daytimeBrightnessURL);

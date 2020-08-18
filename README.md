@@ -227,6 +227,10 @@ _______________________________
 
 ## Changelog
 
+### 0.2.13
+
+* (xXBJXx) bug fix
+
 ### 0.2.12
 
 * (xXBJXx) screensaver brightness control can be switched on or off

@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "fully-tablet-control",
-    "version": "0.2.12",
+    "version": "0.2.13",
     "news": {
+      "0.2.13": {
+      "en": "bug fix",
+      "de": "Fehlerbehebung",
+      "ru": "Исправлена ошибка",
+      "pt": "correção de bug",
+      "nl": "bug opgelost",
+      "fr": "correction d'un bug",
+      "it": "risoluzione del problema",
+      "es": "arreglo del fallo",
+      "pl": "naprawa błędów",
+      "zh-cn": "错误修复"
+    },
       "0.2.12": {
         "en": "screensaver brightness control can be switched on or off\n dependencies updates",
         "de": "Die Helligkeitsregelung des Bildschirmschoners kann ein- oder ausgeschaltet werden\n Abhängigkeitsaktualisierungen",
@@ -134,90 +146,6 @@
         "es": "error en el cambio automático al widget de vista de inicio 8 corregido",
         "pl": "błąd w automatycznej zmianie widżetu 8 widoku domowego",
         "zh-cn": "自动更改为主视图小部件中的错误8已修复"
-      },
-      "0.1.9": {
-        "en": "bug in Automatic change to home view widget 8 fixed ",
-        "de": "Fehler im automatischen Wechsel zum Home View Widget 8 behoben",
-        "ru": "исправлена ошибка в автоматическом переходе на виджет 8 для домашнего просмотра",
-        "pt": "corrigido o erro na mudança automática para o widget de exibição em casa 8 corrigido",
-        "nl": "bug in Automatische wijziging naar startweergave widget 8 opgelost",
-        "fr": "bug dans le changement automatique du widget de vue d'accueil 8 corrigé",
-        "it": "bug in Correzione automatica del widget 8 della vista principale risolto",
-        "es": "error en el cambio automático al widget de vista de inicio 8 corregido",
-        "pl": "błąd w automatycznej zmianie widżetu 8 widoku domowego",
-        "zh-cn": "自动更改为主视图小部件中的错误8已修复"
-      },
-      "0.1.8": {
-        "en": "add Automatic change to home view",
-        "de": "Automatische Änderung zur Startansicht hinzufügen",
-        "ru": "добавить автоматическое изменение в домашний вид",
-        "pt": "adicionar Alteração automática à visualização inicial",
-        "nl": "automatische wijziging toevoegen aan startweergave",
-        "fr": "ajouter un changement automatique à la vue d'accueil",
-        "it": "aggiungi Modifica automatica alla vista principale",
-        "es": "agregar cambio automático a la vista de inicio",
-        "pl": "dodaj Automatyczną zmianę do widoku głównego",
-        "zh-cn": "将自动更改添加到主视图"
-      },
-      "0.1.5": {
-        "en": "brightness bug fix",
-        "de": "Fehlerbehebung bei der Helligkeit",
-        "ru": "исправлена ошибка яркости",
-        "pt": "correção de bug de brilho",
-        "nl": "helderheid bugfix",
-        "fr": "correction d'un bug de luminosité",
-        "it": "correzione di bug di luminosità",
-        "es": "corrección de errores de brillo",
-        "pl": "naprawa błędu jasności",
-        "zh-cn": "亮度错误修复"
-      },
-      "0.1.4": {
-        "en": "manuell StateChange optimized",
-        "de": "manuell StateChange optimiert",
-        "ru": "Manuell StateChange оптимизирован",
-        "pt": "StateChange otimizado",
-        "nl": "manuell StateChange geoptimaliseerd",
-        "fr": "manuell StateChange optimisé",
-        "it": "manuell StateChange ottimizzato",
-        "es": "Manuell StateChange optimizado",
-        "pl": "manuell StateChange zoptymalizowany",
-        "zh-cn": "manuell StateChange优化"
-      },
-      "0.1.3": {
-        "en": "Configuration page changed",
-        "de": "Konfigurationsseite geändert",
-        "ru": "Страница конфигурации изменена",
-        "pt": "Página de configuração alterada",
-        "nl": "Configuratiepagina gewijzigd",
-        "fr": "La page de configuration a été modifiée",
-        "it": "Pagina di configurazione modificata",
-        "es": "Página de configuración modificada",
-        "pl": "Strona konfiguracji zmieniona",
-        "zh-cn": "配置页面已更改"
-      },
-      "0.1.2": {
-        "en": "log level adjusted",
-        "de": "Log Level angepasst",
-        "ru": "уровень лога отрегулирован",
-        "pt": "nível de log ajustado",
-        "nl": "log niveau aangepast",
-        "fr": "niveau du journal ajusté",
-        "it": "livello del registro regolato",
-        "es": "nivel de registro ajustado",
-        "pl": "poziom logu dostosowany",
-        "zh-cn": "日志级别调整"
-      },
-      "0.1.1": {
-        "en": "edit README",
-        "de": "README bearbeiten",
-        "ru": "редактировать README",
-        "pt": "editar README",
-        "nl": "wijzig LEESMIJ",
-        "fr": "modifier le LISEZMOI",
-        "it": "modifica README",
-        "es": "editar README",
-        "pl": "edytuj README",
-        "zh-cn": "编辑自述文件"
       }
     },
     "title": "Fully Tablet Control",
