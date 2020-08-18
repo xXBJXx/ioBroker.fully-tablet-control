@@ -1,9 +1,9 @@
 {
   "common": {
     "name": "fully-tablet-control",
-    "version": "0.2.13",
+    "version": "0.2.14",
     "news": {
-      "0.2.13": {
+      "0.2.14": {
       "en": "bug fix",
       "de": "Fehlerbehebung",
       "ru": "Исправлена ошибка",

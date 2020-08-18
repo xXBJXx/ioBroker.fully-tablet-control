@@ -6,7 +6,7 @@
 systemDictionary = {
 	'enableBrightnessSync': {
 		'en': 'enable Brightness Sync',
-		'de': 'Aktiviere die Helligkeitssynchronisierung',
+		'de': 'Aktiviere die Helligkeits Synchronisierung',
 		'ru': 'включить синхронизацию яркости',
 		'pt': 'habilitar Sincronização de Brilho',
 		'nl': 'Schakel Brightness Sync in',

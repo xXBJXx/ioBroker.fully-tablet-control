@@ -281,7 +281,7 @@ class FullyTabletControl extends utils.Adapter {
 									if (screenSaverUrl == '') {
 										const playlistUrl = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverPlaylist&value=&password=${password[s]}`;
 										const wallpaperURL = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverWallpaperURL&value=${'fully://color black'}&password=${password[s]}`;
-										
+
 										try {
 											await axios.get(playlistUrl);
 											await axios.get(wallpaperURL);
@@ -1142,12 +1142,17 @@ class FullyTabletControl extends utils.Adapter {
 										try {
 
 											//checks whether the screen saver is on and then sends the command
-											if (enableScreenSaverBrightness && screenSaverON) {
+											if (enableScreenSaverBrightness[d] && screenSaverON) {
 												await axios.get(ScreensaverOnBri);
+												await axios.get(nightTimeBrightnessURL);
+												await this.stateRequest();
+											}
+											else if (isInScreensaver[d] == false) {
+
+												await axios.get(nightTimeBrightnessURL);
+												await this.stateRequest();
 											}
 
-											await axios.get(nightTimeBrightnessURL);
-											await this.stateRequest();
 
 										} catch (error) {
 											if (!logMessage[d]) this.log.error(`${await tabletName[d]} [nightBri] could not be sent: ${error.message}, stack: ${error.stack}`);
@@ -1185,12 +1190,16 @@ class FullyTabletControl extends utils.Adapter {
 									try {
 
 										//checks whether the screen saver is on and then sends the command
-										if (enableScreenSaverBrightness && screenSaverON) {
+										if (enableScreenSaverBrightness[d] && screenSaverON) {
 											await axios.get(ScreensaverOnBri);
+											await axios.get(nightTimeBrightnessURL);
+											await this.stateRequest();
 										}
+										else if (isInScreensaver[d] == false) {
 
-										await axios.get(nightTimeBrightnessURL);
-										await this.stateRequest();
+											await axios.get(nightTimeBrightnessURL);
+											await this.stateRequest();
+										}
 
 									} catch (error) {
 										if (!logMessage[d]) this.log.error(`${await tabletName[d]} [nightBri] could not be sent: ${error.message}, stack: ${error.stack}`);
@@ -1224,12 +1233,16 @@ class FullyTabletControl extends utils.Adapter {
 									try {
 
 										//checks whether the screen saver is on and then sends the command
-										if (enableScreenSaverBrightness && screenSaverON) {
+										if (enableScreenSaverBrightness[d] && screenSaverON) {
 											await axios.get(ScreensaverOnBri);
+											await axios.get(nightTimeBrightnessURL);
+											await this.stateRequest();
 										}
+										else if (isInScreensaver[d] == false) {
 
-										await axios.get(nightTimeBrightnessURL);
-										await this.stateRequest();
+											await axios.get(nightTimeBrightnessURL);
+											await this.stateRequest();
+										}
 
 									} catch (error) {
 										if (!logMessage[d]) this.log.error(`${await tabletName[d]} [nightBri] could not be sent: ${error.message}, stack: ${error.stack}`);
@@ -1388,12 +1401,17 @@ class FullyTabletControl extends utils.Adapter {
 
 										try {
 											//checks whether the screen saver is on and then sends the command
-											if (enableScreenSaverBrightness && screenSaverON) {
 
+											if (enableScreenSaverBrightness[d] && screenSaverON) {
 												await axios.get(ScreensaverOnBri);
+												await axios.get(daytimeBrightnessURL);
+												await this.stateRequest();
 											}
-											await axios.get(daytimeBrightnessURL);
-											await this.stateRequest();
+											else if (isInScreensaver[d] == false) {
+
+												await axios.get(daytimeBrightnessURL);
+												await this.stateRequest();
+											}
 
 										} catch (error) {
 											if (!logMessage[d]) this.log.error(`${await tabletName[d]} [dayBri] could not be sent: ${error.message}, stack: ${error.stack}`);
@@ -1431,11 +1449,17 @@ class FullyTabletControl extends utils.Adapter {
 
 									try {
 										//checks whether the screen saver is on and then sends the command
-										if (enableScreenSaverBrightness && screenSaverON) {
+										if (enableScreenSaverBrightness[d] && screenSaverON) {
 											await axios.get(ScreensaverOnBri);
+											await axios.get(daytimeBrightnessURL);
+											await this.stateRequest();
 										}
-										await axios.get(daytimeBrightnessURL);
-										await this.stateRequest();
+										else if (isInScreensaver[d] == false) {
+
+											await axios.get(daytimeBrightnessURL);
+											await this.stateRequest();
+										}
+
 									} catch (error) {
 										if (!logMessage[d]) this.log.error(`${await tabletName[d]} [dayBri] could not be sent: ${error.message}, stack: ${error.stack}`);
 										if (!logMessage[d]) this.log.error(`${await tabletName[d]} [ScreensaverOnBri] could not be sent: ${error.message}, stack: ${error.stack}`);
@@ -1468,11 +1492,17 @@ class FullyTabletControl extends utils.Adapter {
 
 									try {
 										//checks whether the screen saver is on and then sends the command
-										if (enableScreenSaverBrightness && screenSaverON) {
+										if (enableScreenSaverBrightness[d] && screenSaverON) {
 											await axios.get(ScreensaverOnBri);
+											await axios.get(daytimeBrightnessURL);
+											await this.stateRequest();
 										}
-										await axios.get(daytimeBrightnessURL);
-										await this.stateRequest();
+										else if (isInScreensaver[d] == false) {
+
+											await axios.get(daytimeBrightnessURL);
+											await this.stateRequest();
+										}
+
 									} catch (error) {
 										if (!logMessage[d]) this.log.error(`${await tabletName[d]} [dayBri] could not be sent: ${error.message}, stack: ${error.stack}`);
 										if (!logMessage[d]) this.log.error(`${await tabletName[d]} [ScreensaverOnBri] could not be sent: ${error.message}, stack: ${error.stack}`);
