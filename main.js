@@ -274,7 +274,7 @@ class FullyTabletControl extends utils.Adapter {
 									if (screenSaverUrl == '') {
 										const playlistUrl = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverPlaylist&value=&password=${password[s]}`;
 										const wallpaperURL = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverWallpaperURL&value=${'fully://color black'}&password=${password[s]}`;
-
+										
 										try {
 											await axios.get(playlistUrl);
 											await axios.get(wallpaperURL);
@@ -1088,7 +1088,7 @@ class FullyTabletControl extends utils.Adapter {
 	async nightBri() {
 		try {
 			const brightnessN = this.config.brightness;
-			
+
 			if (!brightnessN || brightnessN !== []) {
 
 				for (const d in ip) {

@@ -4,18 +4,18 @@
 
 // @ts-ignore
 systemDictionary = {
-	'enableBrightness': {
-		'en': 'enable Brightness',
-		'de': 'Helligkeit aktivieren',
-		'ru': 'включить яркость',
-		'pt': 'habilitar brilho',
-		'nl': 'Schakel Helderheid in',
-		'fr': 'activer la luminosité',
-		'it': 'abilitare la luminosità',
-		'es': 'habilitar brillo',
-		'pl': 'włącz Jasność',
-		'zh-cn': '启用亮度'
-	  },
+	'enableBrightnessSync': {
+		'en': 'enable Brightness Sync',
+		'de': 'Aktiviere die Helligkeitssynchronisierung',
+		'ru': 'включить синхронизацию яркости',
+		'pt': 'habilitar Sincronização de Brilho',
+		'nl': 'Schakel Brightness Sync in',
+		'fr': 'activer la synchronisation de la luminosité',
+		'it': 'abilitare Brightness Sync',
+		'es': 'habilitar Brightness Sync',
+		'pl': 'włącz synchronizację jasności',
+		'zh-cn': '启用亮度同步'
+	},
 	'Off': {
 		'en': 'Off',
 		'de': 'aus',

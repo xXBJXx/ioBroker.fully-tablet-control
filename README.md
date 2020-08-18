@@ -225,6 +225,10 @@ _______________________________
 
 ## Changelog
 
+### 0.2.12
+
+* (xXBJXx) screensaver brightness can be switched on or off
+
 ### 0.2.11
 
 * (xXBJXx) add new charge option
