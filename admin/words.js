@@ -4,6 +4,18 @@
 
 // @ts-ignore
 systemDictionary = {
+	'enableBrightness': {
+		'en': 'enable Brightness',
+		'de': 'Helligkeit aktivieren',
+		'ru': 'включить яркость',
+		'pt': 'habilitar brilho',
+		'nl': 'Schakel Helderheid in',
+		'fr': 'activer la luminosité',
+		'it': 'abilitare la luminosità',
+		'es': 'habilitar brillo',
+		'pl': 'włącz Jasność',
+		'zh-cn': '启用亮度'
+	  },
 	'Off': {
 		'en': 'Off',
 		'de': 'aus',

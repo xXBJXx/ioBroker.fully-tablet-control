@@ -75,6 +75,7 @@ let AstroDayMilis = null;
 const logMessage = [];
 const logMessageTimer = [];
 const messageCharging = [];
+const enableScreenSaverBrightness = [];
 
 class FullyTabletControl extends utils.Adapter {
 
@@ -258,90 +259,99 @@ class FullyTabletControl extends utils.Adapter {
 					for (const s in tablets) {
 						if (deviceEnabled[s]) {
 							const tabletName = tablets[s].name;
-							screenSaverTimer[s] = JSON.parse(screenSaverObj[s].minute) * 60000;
-							this.log.debug(`read telegram user: ${JSON.stringify(User)}`);
-							const screenSaverUrl = screenSaverObj[s].url;
-							const screensaverMode = JSON.parse(screenSaverObj[s].screensaverMode);
-							console.log(`screenSaverUrl ${screenSaverUrl}`);
-							this.log.debug(`read screenSaverUrl: ${screenSaverUrl}`);
+							if (screenSaverObj[s] != undefined) {
+								screenSaverTimer[s] = JSON.parse(screenSaverObj[s].minute) * 60000;
+								this.log.debug(`read telegram user: ${JSON.stringify(User)}`);
+								const screenSaverUrl = screenSaverObj[s].url;
+								enableScreenSaverBrightness[s] = screenSaverObj[s].enabled;
 
-							if (screensaverMode) {
+								const screensaverMode = JSON.parse(screenSaverObj[s].screensaverMode);
+								console.log(`screenSaverUrl ${screenSaverUrl}`);
+								this.log.debug(`read screenSaverUrl: ${screenSaverUrl}`);
 
-								if (screenSaverUrl == '') {
-									const playlistUrl = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverPlaylist&value=&password=${password[s]}`;
-									const wallpaperURL = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverWallpaperURL&value=${'fully://color black'}&password=${password[s]}`;
+								if (screensaverMode) {
 
-									try {
-										await axios.get(playlistUrl);
-										await axios.get(wallpaperURL);
-									} catch (error) {
-										if (!logMessage[s]) this.log.error(`${await tabletName} [wallpaperURL] ( screenSaver no Url ) could not be sent: ${error.message}, stack: ${error.stack}`);
-										if (!logMessage[s]) this.log.error(`${await tabletName} [playlistUrl] ( playlist Url ) could not be sent: ${error.message}, stack: ${error.stack}`);
-									}
+									if (screenSaverUrl == '') {
+										const playlistUrl = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverPlaylist&value=&password=${password[s]}`;
+										const wallpaperURL = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverWallpaperURL&value=${'fully://color black'}&password=${password[s]}`;
 
-									this.log.warn(`No screensaver URL was entered for ${tabletName}, a standard picture is set`);
-								}
-								else {
-									const screenUrl = [
-										{
-											'type': 4,
-											'url': screenSaverUrl,
-											'loopItem': true,
-											'loopFile': false,
-											'fileOrder': 0,
-											'nextItemOnTouch': false,
-											'nextFileOnTouch': false,
-											'nextItemTimer': 0,
-											'nextFileTimer': 0
+										try {
+											await axios.get(playlistUrl);
+											await axios.get(wallpaperURL);
+										} catch (error) {
+											if (!logMessage[s]) this.log.error(`${await tabletName} [wallpaperURL] ( screenSaver no Url ) could not be sent: ${error.message}, stack: ${error.stack}`);
+											if (!logMessage[s]) this.log.error(`${await tabletName} [playlistUrl] ( playlist Url ) could not be sent: ${error.message}, stack: ${error.stack}`);
 										}
-									];
-									const playlistUrl = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverPlaylist&value=${JSON.stringify(screenUrl)}&password=${password[s]}`;
-									console.log('fully Url ' + playlistUrl);
-									this.log.debug(`set Screensaver for ${tabletName} to YouTube Url: ${playlistUrl} entered`);
 
-									try {
-										await axios.get(playlistUrl);
-
-									} catch (error) {
-										if (!logMessage[s]) this.log.error(`${await tabletName} [playlistUrl] ( screenSaverSelect ) could not be sent: ${error.message}, stack: ${error.stack}`);
-
+										this.log.warn(`No screensaver URL was entered for ${tabletName}, a standard picture is set`);
 									}
-								}
+									else {
+										const screenUrl = [
+											{
+												'type': 4,
+												'url': screenSaverUrl,
+												'loopItem': true,
+												'loopFile': false,
+												'fileOrder': 0,
+												'nextItemOnTouch': false,
+												'nextFileOnTouch': false,
+												'nextItemTimer': 0,
+												'nextFileTimer': 0
+											}
+										];
+										const playlistUrl = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverPlaylist&value=${JSON.stringify(screenUrl)}&password=${password[s]}`;
+										console.log('fully Url ' + playlistUrl);
+										this.log.debug(`set Screensaver for ${tabletName} to YouTube Url: ${playlistUrl} entered`);
 
-							} else if (!screensaverMode) {
-								if (screenSaverUrl == '') {
-									const playlistUrl = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverPlaylist&value=&password=${password[s]}`;
-									const wallpaperURL = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverWallpaperURL&value=${'fully://color black'}&password=${password[s]}`;
+										try {
+											await axios.get(playlistUrl);
 
-									try {
-										await axios.get(playlistUrl);
-										await axios.get(wallpaperURL);
+										} catch (error) {
+											if (!logMessage[s]) this.log.error(`${await tabletName} [playlistUrl] ( screenSaverSelect ) could not be sent: ${error.message}, stack: ${error.stack}`);
 
-									} catch (error) {
-										if (!logMessage[s]) this.log.error(`${await tabletName} [playlistUrl] ( playlist Url ) could not be sent: ${error.message}, stack: ${error.stack}`);
-										if (!logMessage[s]) this.log.error(`${await tabletName} [wallpaperURL] ( screenSaver no Url ) could not be sent: ${error.message}, stack: ${error.stack}`);
-
-									}
-
-									this.log.warn(`No screensaver URL was entered for ${tabletName}, a standard picture is set`);
-									this.log.debug(`set Screensaver for ${tabletName} to default picture: ${wallpaperURL} entered:`);
-									console.log(`set Screensaver for ${tabletName} to default picture: ${wallpaperURL} entered`);
-								}
-								else {
-									const playlistUrl = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverPlaylist&value=&password=${password[s]}`;
-									const wallpaperURL = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverWallpaperURL&value=${screenSaverUrl}&password=${password[s]}`;
-
-									try {
-										await axios.get(playlistUrl);
-										await axios.get(wallpaperURL);
-
-									} catch (error) {
-										if (!logMessage[s]) this.log.error(`${await tabletName} [playlistUrl] ( playlist Url ) could not be sent: ${error.message}, stack: ${error.stack}`);
-										if (!logMessage[s]) this.log.error(`${await tabletName} [wallpaperURL] ( screenSaver no Url ) could not be sent: ${error.message}, stack: ${error.stack}`);
+										}
 									}
 
-									this.log.debug(`set Screensaver for ${tabletName} to Wallpaper URL: ${wallpaperURL} entered:`);
+								} else if (!screensaverMode) {
+									if (screenSaverUrl == '') {
+										const playlistUrl = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverPlaylist&value=&password=${password[s]}`;
+										const wallpaperURL = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverWallpaperURL&value=${'fully://color black'}&password=${password[s]}`;
+
+										try {
+											await axios.get(playlistUrl);
+											await axios.get(wallpaperURL);
+
+										} catch (error) {
+											if (!logMessage[s]) this.log.error(`${await tabletName} [playlistUrl] ( playlist Url ) could not be sent: ${error.message}, stack: ${error.stack}`);
+											if (!logMessage[s]) this.log.error(`${await tabletName} [wallpaperURL] ( screenSaver no Url ) could not be sent: ${error.message}, stack: ${error.stack}`);
+
+										}
+
+										this.log.warn(`No screensaver URL was entered for ${tabletName}, a standard picture is set`);
+										this.log.debug(`set Screensaver for ${tabletName} to default picture: ${wallpaperURL} entered:`);
+										console.log(`set Screensaver for ${tabletName} to default picture: ${wallpaperURL} entered`);
+									}
+									else {
+										const playlistUrl = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverPlaylist&value=&password=${password[s]}`;
+										const wallpaperURL = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverWallpaperURL&value=${screenSaverUrl}&password=${password[s]}`;
+
+										try {
+											await axios.get(playlistUrl);
+											await axios.get(wallpaperURL);
+
+										} catch (error) {
+											if (!logMessage[s]) this.log.error(`${await tabletName} [playlistUrl] ( playlist Url ) could not be sent: ${error.message}, stack: ${error.stack}`);
+											if (!logMessage[s]) this.log.error(`${await tabletName} [wallpaperURL] ( screenSaver no Url ) could not be sent: ${error.message}, stack: ${error.stack}`);
+										}
+
+										this.log.debug(`set Screensaver for ${tabletName} to Wallpaper URL: ${wallpaperURL} entered:`);
+									}
 								}
+							} else {
+								console.log(`[${tabletName}] Screensaver config was not created !!!`);
+								console.log(`[${tabletName}] Please put on the config or switch off the screensaver.`);
+								this.log.warn(`[${tabletName}] Screensaver config was not created !!!`);
+								this.log.warn(`[${tabletName}] Please put on the config or switch off the screensaver.`);
 							}
 						}
 					}
@@ -1078,6 +1088,7 @@ class FullyTabletControl extends utils.Adapter {
 	async nightBri() {
 		try {
 			const brightnessN = this.config.brightness;
+			
 			if (!brightnessN || brightnessN !== []) {
 
 				for (const d in ip) {
@@ -1122,9 +1133,15 @@ class FullyTabletControl extends utils.Adapter {
 									if (await brightness[d] != newBrightnessNight) {
 
 										try {
+
+											//checks whether the screen saver is on and then sends the command
+											if (enableScreenSaverBrightness) {
+												await axios.get(ScreensaverOnBri);
+											}
+
 											await axios.get(nightTimeBrightnessURL);
-											await axios.get(ScreensaverOnBri);
 											await this.stateRequest();
+
 										} catch (error) {
 											if (!logMessage[d]) this.log.error(`${await tabletName[d]} [nightBri] could not be sent: ${error.message}, stack: ${error.stack}`);
 											if (!logMessage[d]) this.log.error(`${await tabletName[d]} [ScreensaverOnBri] could not be sent: ${error.message}, stack: ${error.stack}`);
@@ -1159,9 +1176,15 @@ class FullyTabletControl extends utils.Adapter {
 								if (await brightness[d] !== newBrightnessNight) {
 
 									try {
+
+										//checks whether the screen saver is on and then sends the command
+										if (enableScreenSaverBrightness) {
+											await axios.get(ScreensaverOnBri);
+										}
+
 										await axios.get(nightTimeBrightnessURL);
-										await axios.get(ScreensaverOnBri);
 										await this.stateRequest();
+
 									} catch (error) {
 										if (!logMessage[d]) this.log.error(`${await tabletName[d]} [nightBri] could not be sent: ${error.message}, stack: ${error.stack}`);
 										if (!logMessage[d]) this.log.error(`${await tabletName[d]} [ScreensaverOnBri] could not be sent: ${error.message}, stack: ${error.stack}`);
@@ -1192,9 +1215,15 @@ class FullyTabletControl extends utils.Adapter {
 								if (await brightness[d] !== newBrightnessNight) {
 
 									try {
+
+										//checks whether the screen saver is on and then sends the command
+										if (enableScreenSaverBrightness) {
+											await axios.get(ScreensaverOnBri);
+										}
+
 										await axios.get(nightTimeBrightnessURL);
-										await axios.get(ScreensaverOnBri);
 										await this.stateRequest();
+
 									} catch (error) {
 										if (!logMessage[d]) this.log.error(`${await tabletName[d]} [nightBri] could not be sent: ${error.message}, stack: ${error.stack}`);
 										if (!logMessage[d]) this.log.error(`${await tabletName[d]} [ScreensaverOnBri] could not be sent: ${error.message}, stack: ${error.stack}`);
@@ -1308,7 +1337,7 @@ class FullyTabletControl extends utils.Adapter {
 	async dayBri() {
 		try {
 			const brightnessD = this.config.brightness;
-
+			
 			if (!brightnessD || brightnessD !== []) {
 
 				for (const d in ip) {
@@ -1351,9 +1380,12 @@ class FullyTabletControl extends utils.Adapter {
 									if (await brightness[d] != newBrightnessDay) {
 
 										try {
+											//checks whether the screen saver is on and then sends the command
+											if (enableScreenSaverBrightness[d]) {
 
+												await axios.get(ScreensaverOnBri);
+											}
 											await axios.get(daytimeBrightnessURL);
-											await axios.get(ScreensaverOnBri);
 											await this.stateRequest();
 
 										} catch (error) {
@@ -1391,8 +1423,11 @@ class FullyTabletControl extends utils.Adapter {
 								if (await brightness[d] !== newBrightnessDay) {
 
 									try {
+										//checks whether the screen saver is on and then sends the command
+										if (enableScreenSaverBrightness) {
+											await axios.get(ScreensaverOnBri);
+										}
 										await axios.get(daytimeBrightnessURL);
-										await axios.get(ScreensaverOnBri);
 										await this.stateRequest();
 									} catch (error) {
 										if (!logMessage[d]) this.log.error(`${await tabletName[d]} [dayBri] could not be sent: ${error.message}, stack: ${error.stack}`);
@@ -1425,8 +1460,11 @@ class FullyTabletControl extends utils.Adapter {
 								if (await brightness[d] !== newBrightnessDay) {
 
 									try {
+										//checks whether the screen saver is on and then sends the command
+										if (enableScreenSaverBrightness) {
+											await axios.get(ScreensaverOnBri);
+										}
 										await axios.get(daytimeBrightnessURL);
-										await axios.get(ScreensaverOnBri);
 										await this.stateRequest();
 									} catch (error) {
 										if (!logMessage[d]) this.log.error(`${await tabletName[d]} [dayBri] could not be sent: ${error.message}, stack: ${error.stack}`);
@@ -1713,23 +1751,29 @@ class FullyTabletControl extends utils.Adapter {
 	*/
 	async switchToHomeView() {
 		try {
+			// check whether switch To Home View is switched on
 			if (view_enabled) {
-
+				// check whether which mode is set
 				if (!mode) {
-
+					// build vis command string
 					const visCmd = '{"instance": "FFFFFFFF", "command": "changeView", "data": "' + homeView + '"}';
 
+					// Set the timer to 1 sec
 					viewTimer = setTimeout(async () => {
 
+						// Check the state Timer_View_Switch for the set time
 						let timer = await this.getStateAsync(`vis_View.Timer_View_Switch`);
+
 						if (timer && timer.val) {
 
 							// @ts-ignore
 							timer = parseInt(timer.val);
 							// @ts-ignore
+							// check whether the timer is greater than 1 if so then count down otherwise for action
 							if (timer > 1) {
 
 								// @ts-ignore
+								// Count down the timer
 								await this.setStateChangedAsync(`vis_View.Timer_View_Switch`, timer - 1, true);
 								this.switchToHomeView();
 							}
@@ -1744,22 +1788,27 @@ class FullyTabletControl extends utils.Adapter {
 					}, 1000);
 				}
 				else {
+					// Set the timer to 1 sec
 					viewTimer = setTimeout(async () => {
+						// Check the state Timer_View_Switch for the set time
 						let timer = await this.getStateAsync(`vis_View.Timer_View_Switch`);
+
 						if (timer && timer.val) {
 
 							// @ts-ignore
 							timer = parseInt(timer.val);
 
 							// @ts-ignore
+							// check whether the timer is greater than 1 if so then count down otherwise for action
 							if (timer > 1) {
 
 								// @ts-ignore
+								// Count down the timer
 								await this.setStateChangedAsync(`vis_View.Timer_View_Switch`, timer - 1, true);
 								this.switchToHomeView();
 							}
 							else {
-
+								// the command is executed and the timer is deleted
 								if (viewTimer) clearTimeout(viewTimer);
 								await this.setStateAsync(`vis_View.Timer_View_Switch`, 0, true);
 								await this.setStateAsync('vis_View.widget_8_view', 0, true);
@@ -1776,14 +1825,19 @@ class FullyTabletControl extends utils.Adapter {
 
 	async checkView() {
 		try {
+			// check whether switch To Home View is switched on
 			if (view_enabled) {
+				// check whether which mode is set
 				if (!mode) {
+					//Check the state 'vis.0.control.data' for the current view
 					const currentView = await this.getForeignStateAsync(`vis.0.control.data`);
 
-					for (let i = 0; i < Object.keys(visView).length; i++) {
+					//for (let i = 0; i < Object.keys(visView).length; i++) {
+					//perform a loop through the 'visView'
+					for (const i in visView) {
 
 						if (currentView && currentView.val) {
-
+							//check whether the currentView == wishView is if not start timer
 							if (wishView[i] == currentView.val) {
 
 								if (viewTimer) clearTimeout(viewTimer);
@@ -1801,17 +1855,19 @@ class FullyTabletControl extends utils.Adapter {
 				}
 				else {
 
+					// Check the state 'vis_View.widget_8_view' for the current view
 					const currentView = await this.getStateAsync(`vis_View.widget_8_view`);
-
 
 					// @ts-ignore
 					if (currentView == null || currentView == null && currentView.val == 0) {
 						this.setState(`vis_View.Timer_View_Switch`, 0, true);
 					}
-					for (let i = -1; i <= Object.keys(visView).length; i++) {
-						// for (const i in visView) {
+					//for (let i = -1; i <= Object.keys(visView).length; i++) {
+					//perform a loop through the 'visView'
+					for (const i in visView) {
 						if (currentView) {
 
+							//check whether the currentView == wishView is if not start timer
 							if (viewNumber[i] == currentView.val) {
 
 								if (viewTimer) clearTimeout(viewTimer);
@@ -2416,8 +2472,6 @@ class FullyTabletControl extends utils.Adapter {
 
 			if (dayBriTimeout) clearTimeout(dayBriTimeout);
 			if (nightBriTimeout) clearTimeout(nightBriTimeout);
-			if (dayBriTimeout) clearTimeout(dayBriTimeout);
-			if (nightBriTimeout) clearTimeout(nightBriTimeout);
 			if (viewTimer) clearTimeout(viewTimer);
 			if (requestTimeout) clearTimeout(requestTimeout);
 			if (ScreensaverReturn) clearTimeout(ScreensaverReturn);
@@ -2427,7 +2481,7 @@ class FullyTabletControl extends utils.Adapter {
 				if (foregroundAppTimer[Unl]) clearTimeout(foregroundAppTimer[Unl]);
 
 			}
-			this.log.info('Adapter Tablet Constrol stopped...');
+			this.log.info('Adapter Tablet Control stopped...');
 			this.setState('info.connection', false, true);
 
 			callback();
