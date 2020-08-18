@@ -229,7 +229,8 @@ _______________________________
 
 ### 0.2.12
 
-* (xXBJXx) screensaver brightness can be switched on or off
+* (xXBJXx) screensaver brightness control can be switched on or off
+* (xXBJXx) dependencies updates
 
 ### 0.2.11
 

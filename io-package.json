@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "fully-tablet-control",
-    "version": "0.2.11",
+    "version": "0.2.12",
     "news": {
+      "0.2.12": {
+        "en": "screensaver brightness control can be switched on or off\n dependencies updates",
+        "de": "Die Helligkeitsregelung des Bildschirmschoners kann ein- oder ausgeschaltet werden\n Abhängigkeitsaktualisierungen",
+        "ru": "регулировку яркости заставки можно включить или выключить\n обновления зависимостей",
+        "pt": "o controle de brilho do protetor de tela pode ser ligado ou desligado\n atualizações de dependências",
+        "nl": "De helderheid van de screensaver kan worden in- of uitgeschakeld\n afhankelijkheden updates",
+        "fr": "le contrôle de la luminosité de l'économiseur d'écran peut être activé ou désactivé\n mises à jour des dépendances",
+        "it": "il controllo della luminosità dello screensaver può essere attivato o disattivato\n aggiornamenti delle dipendenze",
+        "es": "el control de brillo del protector de pantalla se puede activar o desactivar\n actualizaciones de dependencias",
+        "pl": "regulację jasności wygaszacza ekranu można włączyć lub wyłączyć\n aktualizacje zależności",
+        "zh-cn": "屏保亮度控制可以打开或关闭\n 依赖关系更新"
+      },
       "0.2.11": {
         "en": "add new charge option",
         "de": "neue Ladeoption hinzufügen",
