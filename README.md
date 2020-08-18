@@ -109,6 +109,8 @@ Hier wird der Bildschirmschoner eingestellt.
 
 6. Nicht Ausfülen wird automatisch nach einem reload ausgefült.
 
+7. Damit wird die Screensaver Helligkeitssynchronisierung aktiviert das bedeutet das die Screensaver Helligkeit an  die Helligkeit an die Helligkeit Einstellung vom Tablet angeglichen wird z.B. Tagsüber 45% und nachts 0%.
+
 ## (Optional) Telegramm
 
 ![telegram](admin/media/telegram.png)

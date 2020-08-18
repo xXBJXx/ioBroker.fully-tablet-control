@@ -264,6 +264,13 @@ class FullyTabletControl extends utils.Adapter {
 								this.log.debug(`read telegram user: ${JSON.stringify(User)}`);
 								const screenSaverUrl = screenSaverObj[s].url;
 								enableScreenSaverBrightness[s] = screenSaverObj[s].enabled;
+								if (enableScreenSaverBrightness[s] == undefined) {
+									enableScreenSaverBrightness[s] = false;
+									this.log.error(`[ATTENTION] the brightness synchronization for [ ${tabletName} ] was not initialized, please check the box and save it.`);
+								}
+								else {
+									enableScreenSaverBrightness[s] = screenSaverObj[s].enabled;
+								}
 
 								const screensaverMode = JSON.parse(screenSaverObj[s].screensaverMode);
 								console.log(`screenSaverUrl ${screenSaverUrl}`);
