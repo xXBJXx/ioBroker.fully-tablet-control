@@ -227,6 +227,10 @@ _______________________________
 
 ## Changelog
 
+### 0.2.15
+
+* (xXBJXx) add media Volume
+
 ### 0.2.14
 
 * (xXBJXx) bug fix

@@ -58,6 +58,7 @@ const startApplicationID = [];
 const loadURLID = [];
 const textToSpeechID = [];
 const setStringSettingID = [];
+const mediaVolumenID = [];
 const commandsID = [];
 const commandsStr = 'commands';
 let fireTabletInterval = null;
@@ -729,6 +730,20 @@ class FullyTabletControl extends utils.Adapter {
 													await axios.get(textToSpeechURL);
 												} catch (error) {
 													this.log.error(`[send textToSpeechURL] Unable to contact: ${error} | ${error}`);
+												}
+											}
+											break;
+										case 'mediaVolumen':
+											// eslint-disable-next-line no-case-declarations
+											const volume = state.val;
+
+											if (volume >= 0 && volume <= 100) {
+												
+												const mediaVolumeURL = `http://${ip[s]}:${port[s]}/?cmd=setAudioVolume&level=${volume}&stream=3&password=${password[s]}`;
+												try {
+													await axios.get(mediaVolumeURL);
+												} catch (error) {
+													this.log.error(`[send mediaVolumeURL] Unable to contact: ${error} | ${error}`);
 												}
 											}
 											break;
@@ -2466,6 +2481,21 @@ class FullyTabletControl extends utils.Adapter {
 					native: {},
 				});
 
+				await this.extendObjectAsync(`device.${stateID}.commands.mediaVolumen`, {
+					type: 'state',
+					common: {
+						name: `${stateName} media Volumen`,
+						type: 'number',
+						role: 'level.volume',
+						unit: '%',
+						max: 100,
+						min: 0,
+						def: 0,
+						read: true,
+						write: true
+					},
+					native: {},
+				});
 
 				this.subscribeStates(`vis_View.widget_8_view`);
 				this.subscribeForeignStates(`vis.0.control.data`);
@@ -2474,6 +2504,7 @@ class FullyTabletControl extends utils.Adapter {
 				this.subscribeStates(`device.${stateID}.commands.setStringSetting`);
 				this.subscribeStates(`device.${stateID}.commands.textToSpeech`);
 				this.subscribeStates(`device.${stateID}.commands.loadURL`);
+				this.subscribeStates(`device.${stateID}.commands.mediaVolumen`);
 				this.subscribeStates(`device.${stateID}.commands.startApplication`);
 				this.subscribeStates(`device.reloadAll`);
 
@@ -2484,6 +2515,7 @@ class FullyTabletControl extends utils.Adapter {
 				loadURLID[name] = `.device.${stateID}.commands.loadURL`;
 				textToSpeechID[name] = `.device.${stateID}.commands.textToSpeech`;
 				setStringSettingID[name] = `.device.${stateID}.commands.setStringSetting`;
+				mediaVolumenID[name] = `.device.${stateID}.commands.mediaVolumen`;
 
 				if (!deviceEnabled[name] && !logMessage[name]) {
 					this.setState(`device.${tabletName[name]}.isFullyAlive`, { val: false, ack: true });
@@ -2572,7 +2604,7 @@ class FullyTabletControl extends utils.Adapter {
 					if (deviceEnabled[change]) {
 						if (!state.ack) {
 							// console.log(id == `${this.namespace}${brightnessControlModeID[change]}` || id == `${this.namespace}${manualBrightnessID[change]}`);
-							if (id == `${this.namespace}${startApplicationID[change]}` || id == `${this.namespace}${loadURLID[change]}` || id == `${this.namespace}${textToSpeechID[change]}` || id == `${this.namespace}${setStringSettingID[change]}`) {
+							if (id == `${this.namespace}${startApplicationID[change]}` || id == `${this.namespace}${loadURLID[change]}` || id == `${this.namespace}${textToSpeechID[change]}` || id == `${this.namespace}${setStringSettingID[change]}` || id == `${this.namespace}${mediaVolumenID[change]}`) {
 								this.log.debug(`state ${id} changed: ${state.val} from: ${this.namespace}`);
 								this.sendFullyCommand(id, state);
 								console.log(`onStateChange: ${id} val: ${state.val}`);

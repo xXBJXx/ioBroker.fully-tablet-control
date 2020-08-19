@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "fully-tablet-control",
-    "version": "0.2.14",
+    "version": "0.2.15",
     "news": {
+      "0.2.15": {
+        "en": "add media volume",
+        "de": "Medienvolumen hinzufügen",
+        "ru": "добавить объем мультимедиа",
+        "pt": "adicionar volume de mídia",
+        "nl": "mediavolume toevoegen",
+        "fr": "ajouter un volume multimédia",
+        "it": "aggiungi volume multimediale",
+        "es": "agregar volumen de medios",
+        "pl": "dodać głośność multimediów",
+        "zh-cn": "增加媒体量"
+      },
       "0.2.14": {
       "en": "bug fix",
       "de": "Fehlerbehebung",
