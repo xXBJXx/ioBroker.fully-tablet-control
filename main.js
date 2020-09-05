@@ -415,7 +415,7 @@ class FullyTabletControl extends utils.Adapter {
 		}
 	}
 
-	async stateRequest() {
+		async stateRequest() {
 		try {
 			if (requestTimeout) clearTimeout(requestTimeout);
 			if (!deviceInfo || deviceInfo !== []) {
@@ -464,210 +464,453 @@ class FullyTabletControl extends utils.Adapter {
 
 							this.log.debug(`[result]: ${JSON.stringify(objects)}`);
 
-							isInScreensaver[i] = objects.isInScreensaver;
-							this.setState(`device.${stateID}.device_info.isInScreensaver`, { val: await isInScreensaver[i], ack: true });
-							this.log.debug(`IP: ${isInScreensaver}`);
+							for (const obj in objects) {
 
-							const currentFragment = objects.currentFragment;
-							this.setState(`device.${stateID}.device_info.currentFragment`, { val: await currentFragment, ack: true });
-							this.log.debug(`currentFragment ${currentFragment}`);
+								switch (obj) {
+									case 'isInScreensaver':
 
-							const deviceModel = objects.deviceModel;
-							this.setState(`device.${stateID}.device_info.deviceModel`, { val: await deviceModel, ack: true });
-							this.log.debug(`deviceModel ${deviceModel}`);
+										isInScreensaver[i] = objects['isInScreensaver'];
+										this.setState(`device.${stateID}.device_info.isInScreensaver`, {val: await isInScreensaver[i], ack: true});
+										this.log.debug(`IP state for ${stateID} : ${isInScreensaver[i]}`);
 
-							const deviceName = objects.deviceName;
-							this.setState(`device.${stateID}.device_info.deviceName`, { val: await deviceName, ack: true });
-							this.log.debug(`IP: ${deviceName}`);
+										break;
 
-							const wifiSignalLevel = objects.wifiSignalLevel;
-							this.setState(`device.${stateID}.device_info.wifiSignalLevel`, { val: await wifiSignalLevel, ack: true });
-							this.log.debug(`IP: ${wifiSignalLevel}`);
+									case 'currentFragment':
 
-							const kioskMode = objects.kioskMode;
-							this.setState(`device.${stateID}.device_info.kioskMode`, { val: await kioskMode, ack: true });
-							this.log.debug(`IP: ${kioskMode}`);
+										const currentFragment = objects['currentFragment'];
+										this.setState(`device.${stateID}.device_info.currentFragment`, {val: await currentFragment, ack: true});
+										this.log.debug(`currentFragment state for ${stateID} :  ${currentFragment}`);
 
-							const displayHeightPixels = objects.displayHeightPixels;
-							this.setState(`device.${stateID}.device_info.displayHeightPixels`, { val: await displayHeightPixels, ack: true });
-							this.log.debug(`IP: ${displayHeightPixels}`);
+										break;
 
-							const appVersionName = objects.appVersionName;
-							this.setState(`device.${stateID}.device_info.appVersionName`, { val: await appVersionName, ack: true });
-							this.log.debug(`IP: ${appVersionName}`);
+									case 'topFragmentTag':
+										// new form App Version 1.40.3
+										const topFragmentTag = objects['topFragmentTag'];
+										this.setState(`device.${stateID}.device_info.currentFragment`, {val: await topFragmentTag, ack: true});
+										this.log.debug(`currentFragment state for ${stateID} :  ${topFragmentTag}`);
 
-							const maintenanceMode = objects.maintenanceMode;
-							this.setState(`device.${stateID}.device_info.maintenanceMode`, { val: await maintenanceMode, ack: true });
-							this.log.debug(`IP: ${maintenanceMode}`);
+										break;
 
-							const mac = objects.mac;
-							this.setState(`device.${stateID}.device_info.mac`, { val: await mac, ack: true });
-							this.log.debug(`IP: ${mac}`);
+									case 'deviceModel':
 
-							const startUrl = objects.startUrl;
-							this.setState(`device.${stateID}.device_info.startUrl`, { val: await startUrl, ack: true });
-							this.log.debug(`IP: ${startUrl}`);
+										const deviceModel = objects['deviceModel'];
+										this.setState(`device.${stateID}.device_info.deviceModel`, {val: await deviceModel, ack: true});
+										this.log.debug(`deviceModel state for ${stateID} :  ${deviceModel}`);
 
-							const screenOrientation = objects.screenOrientation;
-							this.setState(`device.${stateID}.device_info.screenOrientation`, { val: await screenOrientation, ack: true });
-							this.log.debug(`IP: ${screenOrientation}`);
+										break;
 
-							const isInDaydream = objects.isInDaydream;
-							this.setState(`device.${stateID}.device_info.isInDaydream`, { val: await isInDaydream, ack: true });
-							this.log.debug(`IP: ${isInDaydream}`);
+									case 'deviceName':
 
-							const isLicensed = objects.isLicensed;
-							this.setState(`device.${stateID}.device_info.isLicensed`, { val: await isLicensed, ack: true });
-							this.log.debug(`IP: ${isLicensed}`);
+										const deviceName = objects['deviceName'];
+										this.setState(`device.${stateID}.device_info.deviceName`, {val: await deviceName, ack: true});
+										this.log.debug(`deviceName state for ${stateID} : ${deviceName}`);
 
-							const deviceManufacturer = objects.deviceManufacturer;
-							this.setState(`device.${stateID}.device_info.deviceManufacturer`, { val: await deviceManufacturer, ack: true });
-							this.log.debug(`IP: ${deviceManufacturer}`);
 
-							const keyguardLocked = objects.keyguardLocked;
-							this.setState(`device.${stateID}.device_info.keyguardLocked`, { val: await keyguardLocked, ack: true });
-							this.log.debug(`IP: ${keyguardLocked}`);
+										break;
 
-							const isDeviceAdmin = objects.isDeviceAdmin;
-							this.setState(`device.${stateID}.device_info.isDeviceAdmin`, { val: await isDeviceAdmin, ack: true });
-							this.log.debug(`IP: ${isDeviceAdmin}`);
+									case 'wifiSignalLevel':
 
-							const kioskLocked = objects.kioskLocked;
-							this.setState(`device.${stateID}.device_info.kioskLocked`, { val: await kioskLocked, ack: true });
-							this.log.debug(`IP: ${kioskLocked}`);
+										const wifiSignalLevel = objects['wifiSignalLevel'];
+										this.setState(`device.${stateID}.device_info.wifiSignalLevel`, {val: await wifiSignalLevel, ack: true});
+										this.log.debug(`wifiSignalLevel state for ${stateID} : ${wifiSignalLevel}`);
 
-							const isDeviceOwner = objects.isDeviceOwner;
-							this.setState(`device.${stateID}.device_info.isDeviceOwner`, { val: await isDeviceOwner, ack: true });
-							this.log.debug(`IP: ${isDeviceOwner}`);
+										break;
 
-							const ip6 = objects.ip6;
-							this.setState(`device.${stateID}.device_info.ip6`, { val: await ip6, ack: true });
-							this.log.debug(`IP: ${ip6}`);
+									case 'kioskMode':
 
-							const displayWidthPixels = objects.displayWidthPixels;
-							this.setState(`device.${stateID}.device_info.displayWidthPixels`, { val: await displayWidthPixels, ack: true });
-							this.log.debug(`IP: ${displayWidthPixels}`);
+										const kioskMode = objects['kioskMode'];
+										this.setState(`device.${stateID}.device_info.kioskMode`, {val: await kioskMode, ack: true});
+										this.log.debug(`kioskMode state for ${stateID} : ${kioskMode}`);
 
-							const androidVersion = objects.androidVersion;
-							this.setState(`device.${stateID}.device_info.androidVersion`, { val: await androidVersion, ack: true });
-							this.log.debug(`IP: ${androidVersion}`);
+										break;
 
-							const ip4 = objects.ip4;
-							this.setState(`device.${stateID}.device_info.device_ip`, { val: await ip4, ack: true });
-							this.log.debug(`IP: ${ip4}`);
+									case 'displayHeightPixels':
 
-							const plugged = objects.plugged;
-							this.setState(`device.${stateID}.device_info.plugged`, { val: await plugged, ack: true });
-							this.log.debug(`plugged ${plugged}`);
+										const displayHeightPixels = objects['displayHeightPixels'];
+										this.setState(`device.${stateID}.device_info.displayHeightPixels`, {val: await displayHeightPixels, ack: true});
+										this.log.debug(`displayHeightPixels state for ${stateID} : ${displayHeightPixels}`);
 
-							bat[i] = objects.batteryLevel;
-							this.setState(`device.${stateID}.battery`, { val: await bat[i], ack: true });
-							this.log.debug(`bat ${bat}`);
+										break;
 
-							isScreenOn[i] = objects.isScreenOn;
-							this.setState(`device.${stateID}.device_info.isScreenOn`, { val: await isScreenOn[i], ack: true });
-							this.log.debug(`isScreenOn ${isScreenOn}`);
+									case 'appVersionName':
 
-							if (!isScreenOn[i]) {
-								this.screenOn();
+										const appVersionName = objects['appVersionName'];
+										this.setState(`device.${stateID}.device_info.appVersionName`, {val: await appVersionName, ack: true});
+										this.log.debug(`appVersionName state for ${stateID} : ${appVersionName}`);
+
+										break;
+
+									case 'maintenanceMode':
+
+										const maintenanceMode = objects['maintenanceMode'];
+										this.setState(`device.${stateID}.device_info.maintenanceMode`, {val: await maintenanceMode, ack: true});
+										this.log.debug(`maintenanceMode state for ${stateID} : ${maintenanceMode}`);
+
+
+										break;
+
+									case 'mac':
+
+										const mac = objects.mac;
+										this.setState(`device.${stateID}.device_info.mac`, {val: mac, ack: true});
+										this.log.debug(`mac state for ${stateID} : ${mac}`);
+
+										break;
+
+									case 'Mac':
+										// new form App Version 1.40.3
+										const Mac = objects.Mac;
+										this.setState(`device.${stateID}.device_info.mac`, {val: Mac, ack: true});
+										this.log.debug(`mac state for ${stateID} : ${Mac}`);
+
+										break;
+
+									case 'startUrl':
+
+										const startUrl = objects['startUrl'];
+										this.setState(`device.${stateID}.device_info.startUrl`, {val: await startUrl, ack: true});
+										this.log.debug(`startUrl state for ${stateID} : ${startUrl}`);
+
+
+										break;
+
+									case 'screenOrientation':
+
+										const screenOrientation = objects['screenOrientation'];
+										this.setState(`device.${stateID}.device_info.screenOrientation`, {val: await screenOrientation, ack: true});
+										this.log.debug(`screenOrientation state for ${stateID} : ${screenOrientation}`);
+
+										break;
+
+									case 'isInDaydream':
+
+										const isInDaydream = objects['isInDaydream'];
+										this.setState(`device.${stateID}.device_info.isInDaydream`, {val: await isInDaydream, ack: true});
+										this.log.debug(`isInDaydream state for ${stateID} : ${isInDaydream}`);
+
+
+										break;
+
+									case 'isLicensed':
+
+										const isLicensed = objects['isLicensed'];
+										this.setState(`device.${stateID}.device_info.isLicensed`, {val: await isLicensed, ack: true});
+										this.log.debug(`isLicensed state for ${stateID} : ${isLicensed}`);
+
+										break;
+
+									case 'deviceManufacturer':
+
+										const deviceManufacturer = objects['deviceManufacturer'];
+										this.setState(`device.${stateID}.device_info.deviceManufacturer`, {val: await deviceManufacturer, ack: true});
+										this.log.debug(`deviceManufacturer state for ${stateID} : ${deviceManufacturer}`);
+
+										break;
+
+									case 'keyguardLocked':
+
+										const keyguardLocked = objects['keyguardLocked'];
+										this.setState(`device.${stateID}.device_info.keyguardLocked`, {val: await keyguardLocked, ack: true});
+										this.log.debug(`keyguardLocked state for ${stateID} : ${keyguardLocked}`);
+
+										break;
+
+									case 'isDeviceAdmin':
+
+										const isDeviceAdmin = objects['isDeviceAdmin'];
+										this.setState(`device.${stateID}.device_info.isDeviceAdmin`, {val: await isDeviceAdmin, ack: true});
+										this.log.debug(`isDeviceAdmin state for ${stateID} : ${isDeviceAdmin}`);
+
+										break;
+
+									case 'kioskLocked':
+
+										const kioskLocked = objects['kioskLocked'];
+										this.setState(`device.${stateID}.device_info.kioskLocked`, {val: await kioskLocked, ack: true});
+										this.log.debug(`kioskLocked state for ${stateID} : ${kioskLocked}`);
+
+										break;
+
+									case 'isDeviceOwner':
+
+										const isDeviceOwner = objects['isDeviceOwner'];
+										this.setState(`device.${stateID}.device_info.isDeviceOwner`, {val: await isDeviceOwner, ack: true});
+										this.log.debug(`isDeviceOwner state for ${stateID} : ${isDeviceOwner}`);
+
+										break;
+
+									case 'ip6':
+
+										const ip6 = objects['ip6'];
+										this.setState(`device.${stateID}.device_info.ip6`, {val: await ip6, ack: true});
+										this.log.debug(`ip6 state for ${stateID} : ${ip6}`);
+
+										break;
+
+									case 'displayWidthPixels':
+
+										const displayWidthPixels = objects['displayWidthPixels'];
+										this.setState(`device.${stateID}.device_info.displayWidthPixels`, {val: await displayWidthPixels, ack: true});
+										this.log.debug(`displayWidthPixels state for ${stateID} : ${displayWidthPixels}`);
+
+										break;
+
+									case 'androidVersion':
+
+										const androidVersion = objects['androidVersion'];
+										this.setState(`device.${stateID}.device_info.androidVersion`, {val: await androidVersion, ack: true});
+										this.log.debug(`androidVersion state for ${stateID} : ${androidVersion}`);
+
+										break;
+
+									case 'ip4': {
+
+										const ip4 = objects['ip4'];
+										this.setState(`device.${stateID}.device_info.device_ip`, {val: await ip4, ack: true});
+										this.log.debug(`ip4 state for ${stateID} : ${ip4}`);
+
+										break;
+									}
+
+									case 'plugged':
+
+										const plugged = objects['plugged'];
+										this.setState(`device.${stateID}.device_info.plugged`, {val: await plugged, ack: true});
+										this.log.debug(`plugged state for ${stateID} : ${plugged}`);
+
+										break;
+
+									case 'isPlugged':
+										// new form App Version 1.40.3
+										const isPlugged = objects['isPlugged'];
+										this.setState(`device.${stateID}.device_info.plugged`, {val: await isPlugged, ack: true});
+										this.log.debug(`plugged state for ${stateID} : ${isPlugged}`);
+
+										break;
+
+									case 'batteryLevel': {
+
+										bat[i] = objects['batteryLevel'];
+										let plugged = objects['plugged'] ? objects['plugged'] : objects['isPlugged']
+
+										this.setState(`device.${stateID}.battery`, {val: bat[i], ack: true});
+										this.log.debug(`batteryLevel state for ${stateID} : ${bat[i]}`);
+
+
+										this.log.debug(`The battery level is now determined for ${stateID} `);
+										let visBattery = null;
+
+										if (plugged && bat[i] <= 100) visBattery = 20; 	// 100 %
+										if (!plugged && bat[i] <= 100) visBattery = 19; // 100 %
+										if (plugged && bat[i] <= 90) visBattery = 18; 	// 100 %
+										if (!plugged && bat[i] <= 90) visBattery = 17; 	// 90 %
+										if (plugged && bat[i] <= 80) visBattery = 16; 	// 90 %
+										if (!plugged && bat[i] <= 80) visBattery = 15; 	// 80 %
+										if (plugged && bat[i] <= 70) visBattery = 14; 	// 80 %
+										if (!plugged && bat[i] <= 70) visBattery = 13; 	// 70 %
+										if (plugged && bat[i] <= 60) visBattery = 12; 	// 70 %
+										if (!plugged && bat[i] <= 60) visBattery = 11; 	// 60 %
+										if (plugged && bat[i] <= 50) visBattery = 10; 	// 60 %
+										if (!plugged && bat[i] <= 50) visBattery = 9; 	// 50 %
+										if (plugged && bat[i] <= 40) visBattery = 8; 	// 50 %
+										if (!plugged && bat[i] <= 40) visBattery = 7; 	// 40 %
+										if (plugged && bat[i] <= 30) visBattery = 6; 	// 40 %
+										if (!plugged && bat[i] <= 30) visBattery = 5; 	// 30 %
+										if (plugged && bat[i] <= 20) visBattery = 4; 	// 30 %
+										if (!plugged && bat[i] <= 20) visBattery = 3; 	// 20 %
+										if (plugged && bat[i] <= 10) visBattery = 2; 	// 10 %
+										if (!plugged && bat[i] <= 10) visBattery = 1; 	// 10 %
+										if (bat[i] <= 0) visBattery = 0; 	// empty
+
+										this.log.debug(`Battery level has been determined is now written for ${stateID} `);
+										this.setState(`device.${stateID}.state_of_charge_vis`, {val: visBattery, ack: true});
+										this.log.debug(`visBattery state for ${stateID} : bat: ${bat[i]} visBat: ${visBattery}`);
+
+										break;
+									}
+
+									case 'isScreenOn':
+
+
+										const isScreenOn = objects['isScreenOn'];
+
+										this.setState(`device.${stateID}.device_info.isScreenOn`, {val: await isScreenOn, ack: true});
+										this.log.debug(`isScreenOn state for ${stateID} : ${isScreenOn}`);
+
+										this.log.debug(`It is checked whether the screen is switched on at ${stateID}`);
+										if (isScreenOn) this.log.debug(`The screen is switched on for the ${stateID}`);
+										if (!isScreenOn) {
+											await this.screenOn();
+										}
+
+										break;
+
+									case 'screenOn':
+
+										// new form App Version 1.40.3
+										const screenOn = objects['screenOn'];
+
+										this.setState(`device.${stateID}.device_info.isScreenOn`, {val: screenOn, ack: true});
+										this.log.debug(`isScreenOn state for ${stateID} : ${screenOn}`);
+
+										this.log.debug(`It is checked whether the screen is switched on at ${stateID}`);
+										if (screenOn) this.log.debug(`The screen is switched on for the ${stateID}`);
+										if (!screenOn) {
+											await this.screenOn();
+										}
+
+										break;
+
+									case 'screenBrightness':
+
+										brightness[i] = objects['screenBrightness'];
+										this.setState(`device.${stateID}.brightness`, {val: await brightness[i], ack: true});
+										this.log.debug(`screenBrightness state for ${stateID} : ${brightness[i]}`);
+
+										break;
+
+									case 'lastAppStart':
+
+										const lastAppStart = objects['lastAppStart'];
+										this.setState(`device.${stateID}.device_info.LastAppStart`, {val: await lastAppStart, ack: true});
+										this.log.debug(`lastAppStart state for ${stateID} : ${lastAppStart}`);
+
+										break;
+
+									case 'ssid':
+
+										const ssid = objects['ssid'].replace(/"/gi, '');
+
+
+										this.log.debug(`ssid ROW state for ${stateID} : ${ssid}`);
+
+										if (ssid === '<unknown ssid>') {
+											this.setState(`device.${stateID}.device_info.ssid`, {val: 'is not supported', ack: true});
+											this.log.debug(`ssid state for ${stateID} : ${ssid}`);
+										}
+										else if (ssid === '') {
+											this.setState(`device.${stateID}.device_info.ssid`, {val: 'is not supported', ack: true});
+											this.log.debug(`ssid state for ${stateID} : ${ssid}`);
+										}
+										else {
+											this.setState(`device.${stateID}.device_info.ssid`, {val: ssid, ack: true});
+											this.log.debug(`ssid state for ${stateID} : ${ssid}`);
+										}
+
+										break;
+
+									case 'SSID':
+										// new from App version 1.40.3
+										const SSID = objects['SSID'].replace(/"/gi, '');
+
+
+										this.log.debug(`SSID ROW state for ${stateID} : ${SSID}`);
+
+										if (SSID === '<unknown ssid>') {
+											this.setState(`device.${stateID}.device_info.ssid`, {val: 'is not supported', ack: true});
+											this.log.debug(`SSID state for ${stateID} : ${SSID}`);
+										}
+										else if (SSID === '') {
+											this.setState(`device.${stateID}.device_info.ssid`, {val: 'is not supported', ack: true});
+											this.log.debug(`SSID state for ${stateID} : ${SSID}`);
+										}
+										else {
+											this.setState(`device.${stateID}.device_info.ssid`, {val: SSID, ack: true});
+											this.log.debug(`SSID state for ${stateID} : ${SSID}`);
+										}
+
+										break;
+
+									case 'foregroundApp':
+
+										foreground[i] = objects.foregroundApp;
+										this.setState(`device.${stateID}.device_info.foregroundApp`, {val: foreground[i], ack: true});
+										this.log.debug(`foregroundApp state for ${stateID} : ${foreground[i]}`);
+
+										this.log.debug(`It is checked whether the FullyBrowser is in the foreground at ${stateID}`);
+										if (await foreground[i] !== 'de.ozerov.fully' && await foregroundStart[i] === false) {
+											foregroundStart[i] = true;
+
+											this.log.debug(`FullyBrowser is not in the foreground with ${stateID}`);
+											await this.foregroundApp();
+											this.log.debug(`${await tabletName[i]} foregroundStart true: ${await foreground[i]}`);
+
+										}
+										else {
+											foregroundStart[i] = false;
+											this.log.debug(`${await tabletName[i]} foreground is Fully: ${await foreground[i]}`);
+										}
+
+										break;
+
+									case 'internalStorageFreeSpace':
+
+										const internalStorageFreeSpace = objects['internalStorageFreeSpace'];
+										this.setState(`device.${stateID}.device_info.memory.internalStorageFreeSpace`, {val: await this.bytesToSize(internalStorageFreeSpace), ack: true});
+										this.log.debug(`internalStorageFreeSpace state for ${stateID} : ${internalStorageFreeSpace}`);
+
+										break;
+
+									case 'appTotalMemory':
+
+										const appTotalMemory = objects['appTotalMemory'];
+										this.setState(`device.${stateID}.device_info.memory.appTotalMemory`, {val: await this.bytesToSize(appTotalMemory), ack: true});
+										this.log.debug(`appTotalMemory state for ${stateID} : ${appTotalMemory}`);
+
+										break;
+
+									case 'ramFreeMemory':
+
+										const ramFreeMemory = objects['ramFreeMemory'];
+										this.setState(`device.${stateID}.device_info.memory.ramFreeMemory`, {val: await this.bytesToSize(ramFreeMemory), ack: true});
+										this.log.debug(`ramFreeMemory state for ${stateID} : ${ramFreeMemory}`);
+
+										break;
+
+									case 'appFreeMemory':
+
+										const appFreeMemory = objects['appFreeMemory'];
+										this.setState(`device.${stateID}.device_info.memory.appFreeMemory`, {val: await this.bytesToSize(appFreeMemory), ack: true});
+										this.log.debug(`appFreeMemory state for ${stateID} : ${appFreeMemory}`);
+
+										break;
+
+									case 'internalStorageTotalSpace':
+
+										const internalStorageTotalSpace = objects['internalStorageTotalSpace'];
+										this.setState(`device.${stateID}.device_info.memory.internalStorageTotalSpace`, {val: await this.bytesToSize(internalStorageTotalSpace), ack: true});
+										this.log.debug(`internalStorageTotalSpace state for ${stateID} : ${internalStorageTotalSpace}`);
+
+										break;
+
+									case 'ramUsedMemory':
+
+										const ramUsedMemory = objects['ramUsedMemory'];
+										this.setState(`device.${stateID}.device_info.memory.ramUsedMemory`, {val: await this.bytesToSize(ramUsedMemory), ack: true});
+										this.log.debug(`ramUsedMemory state for ${stateID} : ${ramUsedMemory}`);
+
+										break;
+
+									case 'appUsedMemory':
+
+										const appUsedMemory = objects['appUsedMemory'];
+										this.setState(`device.${stateID}.device_info.memory.appUsedMemory`, {val: await this.bytesToSize(appUsedMemory), ack: true});
+										this.log.debug(`appUsedMemory state for ${stateID} : ${appUsedMemory}`);
+
+										break;
+
+									case 'ramTotalMemory':
+
+										const ramTotalMemory = objects['ramTotalMemory'];
+										this.setState(`device.${stateID}.device_info.memory.ramTotalMemory`, {val: await this.bytesToSize(ramTotalMemory), ack: true});
+										this.log.debug(`ramTotalMemory state for ${stateID} : ${ramTotalMemory}`);
+
+										break;
+
+								}
+
 							}
 
-							brightness[i] = objects.screenBrightness;
-							this.setState(`device.${stateID}.brightness`, { val: await brightness[i], ack: true });
-							this.log.debug(`bright ${brightness}`);
-
-							const lastAppStart = objects.lastAppStart;
-							this.setState(`device.${stateID}.device_info.LastAppStart`, { val: await lastAppStart, ack: true });
-							this.log.debug(`lastAppStart ${lastAppStart}`);
-
-							const ssid = objects.ssid.replace(/"/gi, '');
-							this.log.debug(`ssid: ${ssid}`);
-
-							if (ssid.replace(/_/gi, ' ') == '<unknown ssid>') {
-								this.setState(`device.${stateID}.device_info.ssid`, { val: 'is not supported', ack: true });
-							}
-							else if (ssid.replace(/_/gi, ' ') == '') {
-								this.setState(`device.${stateID}.device_info.ssid`, { val: 'is not supported', ack: true });
-							}
-							else {
-								this.setState(`device.${stateID}.device_info.ssid`, { val: ssid.replace(/_/gi, ' '), ack: true });
-							}
-
-							foreground[i] = objects.foregroundApp;
-							this.setState(`device.${stateID}.device_info.foregroundApp`, { val: foreground[i], ack: true });
-							this.log.debug(`foregroundApp ${foreground}`);
-							if (await foreground[i] !== 'de.ozerov.fully' && await foregroundStart[i] == false) {
-								foregroundStart[i] = true;
-								this.foregroundApp();
-								console.log(`${await tabletName[i]} foregroundStart true: ${await foregroundStart[i]}`);
-								this.log.debug(`${await tabletName[i]} foregroundStart true: ${await foreground[i]}`);
-							}
-							else {
-								foregroundStart[i] = false;
-								console.log(`${await tabletName[i]} foreground is Fully: ${await foreground[i]}`);
-								this.log.debug(`${await tabletName[i]} foreground is Fully: ${await foreground[i]}`);
-							}
-
-							const internalStorageFreeSpace = objects.internalStorageFreeSpace;
-							this.setState(`device.${stateID}.device_info.memory.internalStorageFreeSpace`, { val: await this.bytesToSize(internalStorageFreeSpace), ack: true });
-							this.log.debug(`internalStorageFreeSpace ${internalStorageFreeSpace}`);
-
-							const appTotalMemory = objects.appTotalMemory;
-							this.setState(`device.${stateID}.device_info.memory.appTotalMemory`, { val: await this.bytesToSize(appTotalMemory), ack: true });
-							this.log.debug(`appTotalMemory ${appTotalMemory}`);
-
-							const ramFreeMemory = objects.ramFreeMemory;
-							this.setState(`device.${stateID}.device_info.memory.ramFreeMemory`, { val: await this.bytesToSize(ramFreeMemory), ack: true });
-							this.log.debug(`ramFreeMemory ${ramFreeMemory}`);
-
-							const appFreeMemory = objects.appFreeMemory;
-							this.setState(`device.${stateID}.device_info.memory.appFreeMemory`, { val: await this.bytesToSize(appFreeMemory), ack: true });
-							this.log.debug(`appFreeMemory ${appFreeMemory}`);
-
-							const internalStorageTotalSpace = objects.internalStorageTotalSpace;
-							this.setState(`device.${stateID}.device_info.memory.internalStorageTotalSpace`, { val: await this.bytesToSize(internalStorageTotalSpace), ack: true });
-							this.log.debug(`internalStorageTotalSpace ${internalStorageTotalSpace}`);
-
-							const ramUsedMemory = objects.ramUsedMemory;
-							this.setState(`device.${stateID}.device_info.memory.ramUsedMemory`, { val: await this.bytesToSize(ramUsedMemory), ack: true });
-							this.log.debug(`ramUsedMemory ${ramUsedMemory}`);
-
-							const appUsedMemory = objects.appUsedMemory;
-							this.setState(`device.${stateID}.device_info.memory.appUsedMemory`, { val: await this.bytesToSize(appUsedMemory), ack: true });
-							this.log.debug(`appUsedMemory ${appUsedMemory}`);
-
-							const ramTotalMemory = objects.ramTotalMemory;
-							this.setState(`device.${stateID}.device_info.memory.ramTotalMemory`, { val: await this.bytesToSize(ramTotalMemory), ack: true });
-							this.log.debug(`ramTotalMemory ${ramTotalMemory}`);
-
-							let visBattery = null;
-
-							if (plugged && bat[i] <= 100) visBattery = 20; 	// 100 %
-							if (!plugged && bat[i] <= 100) visBattery = 19; 	// 100 %
-							if (plugged && bat[i] <= 90) visBattery = 18; 	// 100 %
-							if (!plugged && bat[i] <= 90) visBattery = 17; 	// 90 %
-							if (plugged && bat[i] <= 80) visBattery = 16; 	// 90 %
-							if (!plugged && bat[i] <= 80) visBattery = 15; 	// 80 %
-							if (plugged && bat[i] <= 70) visBattery = 14; 	// 80 %
-							if (!plugged && bat[i] <= 70) visBattery = 13; 	// 70 %
-							if (plugged && bat[i] <= 60) visBattery = 12; 	// 70 %
-							if (!plugged && bat[i] <= 60) visBattery = 11; 	// 60 %
-							if (plugged && bat[i] <= 50) visBattery = 10; 	// 60 %
-							if (!plugged && bat[i] <= 50) visBattery = 9; 	// 50 %
-							if (plugged && bat[i] <= 40) visBattery = 8; 	// 50 %
-							if (!plugged && bat[i] <= 40) visBattery = 7; 	// 40 %
-							if (plugged && bat[i] <= 30) visBattery = 6; 	// 40 %
-							if (!plugged && bat[i] <= 30) visBattery = 5; 	// 30 %
-							if (plugged && bat[i] <= 20) visBattery = 4; 	// 30 %
-							if (!plugged && bat[i] <= 20) visBattery = 3; 	// 20 %
-							if (plugged && bat[i] <= 10) visBattery = 2; 	// 10 %
-							if (!plugged && bat[i] <= 10) visBattery = 1; 	// 10 %
-							if (bat[i] <= 0) visBattery = 0; 	// empty
-
-
-
-							this.log.debug(`visBattery ` + bat[i] + ' ' + visBattery);
-							this.setState(`device.${await stateID}.state_of_charge_vis`, { val: visBattery, ack: true });
 						}
 						else {
 							this.log.error(`${apiResult.data.statustext}`);
@@ -682,16 +925,17 @@ class FullyTabletControl extends utils.Adapter {
 					}
 				}
 			}
-			this.charger();
+			await this.charger();
 
 			requestTimeout = setTimeout(async () => {
 
-				this.stateRequest();
+				await this.stateRequest();
 			}, interval);
 		} catch (error) {
 			this.log.error(`[stateRequest] : ${error.message}, stack: ${error.stack}`);
 		}
 	}
+
 
 	async sendFullyCommand(id, state) {
 		try {
