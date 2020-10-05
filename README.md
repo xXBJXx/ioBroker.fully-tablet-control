@@ -250,7 +250,7 @@ _______________________________
  ### __WORK IN PROGRESS__ ( - falls nicht benötigt löschen sonst klammern entfernen und nach dem - dein text schreiben )
 -->
 
-### __WORK IN PROGRESS__
+### 0.3.0-beta.0 (2020-10-05)
 * (xXBJXx) manual brightness revised
 * (xXBJXx) Automatic brightness revised
 * (xXBJXx) Manuele brightness expanded to include the afternoon control

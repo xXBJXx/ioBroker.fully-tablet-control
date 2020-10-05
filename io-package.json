@@ -1,254 +1,269 @@
 {
-  "common": {
-    "name": "fully-tablet-control",
-    "version": "0.2.15",
-    "news": {
-      "0.2.15": {
-        "en": "add media volume",
-        "de": "Medienvolumen hinzufügen",
-        "ru": "добавить объем мультимедиа",
-        "pt": "adicionar volume de mídia",
-        "nl": "mediavolume toevoegen",
-        "fr": "ajouter un volume multimédia",
-        "it": "aggiungi volume multimediale",
-        "es": "agregar volumen de medios",
-        "pl": "dodać głośność multimediów",
-        "zh-cn": "增加媒体量"
-      },
-      "0.2.14": {
-      "en": "bug fix",
-      "de": "Fehlerbehebung",
-      "ru": "Исправлена ошибка",
-      "pt": "correção de bug",
-      "nl": "bug opgelost",
-      "fr": "correction d'un bug",
-      "it": "risoluzione del problema",
-      "es": "arreglo del fallo",
-      "pl": "naprawa błędów",
-      "zh-cn": "错误修复"
+    "common": {
+        "name": "fully-tablet-control",
+        "version": "0.3.0-beta.0",
+        "news": {
+            "0.3.0-beta.0": {
+                "en": "manual brightness revised\nAutomatic brightness revised\nManuele brightness expanded to include the afternoon control\nconfig page revised\nadd StartUrl command\nadd command motionDetection on/Off\nadd command camshot and 2 states for Image (base64 and imageURl)\nchange README",
+                "de": "manuelle Helligkeit überarbeitet\nAutomatische Helligkeit überarbeitet\nDie Manuele-Helligkeit wurde um die Nachmittagssteuerung erweitert\nKonfigurationsseite überarbeitet\nStartUrl-Befehl hinzufügen\nBefehl motionDetection ein / aus hinzufügen\nBefehl camshot und 2 Zustände für Image hinzufügen (base64 und imageURl)\nREADME ändern",
+                "ru": "изменена ручная яркость\nИзменена автоматическая яркость\nЯркость Manuele расширена за счет включения дневного управления\nстраница конфигурации изменена\nдобавить команду StartUrl\nдобавить команду motionDetection on / Off\nдобавить команду camshot и 2 состояния для изображения (base64 и imageURl)\nизменить README",
+                "pt": "brilho manual revisado\nBrilho automático revisado\nBrilho de Manuele expandido para incluir o controle da tarde\npágina de configuração revisada\nadicionar comando StartUrl\nadicionar comando motionDetection on / off\nadicionar camshot de comando e 2 estados para imagem (base64 e imageURl)\nalterar README",
+                "nl": "handmatige helderheid herzien\nAutomatische helderheid herzien\nDe handmatige helderheid werd uitgebreid met de middagregeling\nconfig-pagina herzien\nadd StartUrl commando\ncommando motionDetection aan / uit toevoegen\ncommando camshot en 2 statussen toevoegen voor afbeelding (base64 en imageURl)\nverander README",
+                "fr": "luminosité manuelle révisée\nLuminosité automatique révisée\nLa luminosité Manuele a été étendue pour inclure le contrôle de l'après-midi\npage de configuration révisée\najouter la commande StartUrl\najouter la commande motionDetection on / Off\najouter la commande camshot et 2 états pour l'image (base64 et imageURl)\nchanger README",
+                "it": "luminosità manuale rivista\nLuminosità automatica rivista\nLa luminosità di Manuele si è ampliata per includere il controllo pomeridiano\npagina di configurazione rivista\naggiungere il comando StartUrl\naggiungere il comando motionDetection on / Off\naggiungi il comando camshot e 2 stati per Image (base64 e imageURl)\ncambia README",
+                "es": "brillo manual revisado\nBrillo automático revisado\nBrillo de Manuele ampliado para incluir el control de la tarde\npágina de configuración revisada\nagregar comando StartUrl\nagregar comando motionDetection encendido / apagado\nagregue comando camshot y 2 estados para Image (base64 e imageURl)\ncambiar README",
+                "pl": "poprawiono ręczną regulację jasności\nPoprawiono automatyczną jasność\nJasność Manuele została rozszerzona o sterowanie popołudniowe\nstrona konfiguracji poprawiona\ndodaj polecenie StartUrl\ndodaj polecenie MotionDetection wł. / wył\ndodaj komendę camshot i 2 stany dla obrazu (base64 i imageURl)\nzmień README",
+                "zh-cn": "手动亮度修改\n自动亮度修改\nManuele的亮度扩展到包括下午控制\n配置页面已修改\n添加StartUrl命令\n添加命令motionDetection开/关\n为图像添加命令camshot和2种状态（base64和imageURl）\n更改自述文件"
+            },
+            "0.2.15": {
+                "en": "add media volume",
+                "de": "Medienvolumen hinzufügen",
+                "ru": "добавить объем мультимедиа",
+                "pt": "adicionar volume de mídia",
+                "nl": "mediavolume toevoegen",
+                "fr": "ajouter un volume multimédia",
+                "it": "aggiungi volume multimediale",
+                "es": "agregar volumen de medios",
+                "pl": "dodać głośność multimediów",
+                "zh-cn": "增加媒体量"
+            },
+            "0.2.14": {
+                "en": "bug fix",
+                "de": "Fehlerbehebung",
+                "ru": "Исправлена ошибка",
+                "pt": "correção de bug",
+                "nl": "bug opgelost",
+                "fr": "correction d'un bug",
+                "it": "risoluzione del problema",
+                "es": "arreglo del fallo",
+                "pl": "naprawa błędów",
+                "zh-cn": "错误修复"
+            },
+            "0.2.12": {
+                "en": "screensaver brightness control can be switched on or off\n dependencies updates",
+                "de": "Die Helligkeitsregelung des Bildschirmschoners kann ein- oder ausgeschaltet werden\n Abhängigkeitsaktualisierungen",
+                "ru": "регулировку яркости заставки можно включить или выключить\n обновления зависимостей",
+                "pt": "o controle de brilho do protetor de tela pode ser ligado ou desligado\n atualizações de dependências",
+                "nl": "De helderheid van de screensaver kan worden in- of uitgeschakeld\n afhankelijkheden updates",
+                "fr": "le contrôle de la luminosité de l'économiseur d'écran peut être activé ou désactivé\n mises à jour des dépendances",
+                "it": "il controllo della luminosità dello screensaver può essere attivato o disattivato\n aggiornamenti delle dipendenze",
+                "es": "el control de brillo del protector de pantalla se puede activar o desactivar\n actualizaciones de dependencias",
+                "pl": "regulację jasności wygaszacza ekranu można włączyć lub wyłączyć\n aktualizacje zależności",
+                "zh-cn": "屏保亮度控制可以打开或关闭\n 依赖关系更新"
+            },
+            "0.2.11": {
+                "en": "add new charge option",
+                "de": "neue Ladeoption hinzufügen",
+                "ru": "добавить новый вариант оплаты",
+                "pt": "adicionar nova opção de cobrança",
+                "nl": "nieuwe kostenoptie toevoegen",
+                "fr": "ajouter une nouvelle option de facturation",
+                "it": "aggiungi una nuova opzione di addebito",
+                "es": "agregar nueva opción de carga",
+                "pl": "dodaj nową opcję ładowania",
+                "zh-cn": "添加新的收费选项"
+            },
+            "0.2.10": {
+                "en": "log output adjusted",
+                "de": "Protokollausgabe angepasst",
+                "ru": "настроен выход журнала",
+                "pt": "saída de log ajustada",
+                "nl": "log output aangepast",
+                "fr": "sortie du journal ajustée",
+                "it": "uscita del registro modificata",
+                "es": "salida de registro ajustada",
+                "pl": "skorygowano moc wyjściową dziennika",
+                "zh-cn": "日志输出已调整"
+            },
+            "0.2.9": {
+                "en": "night brightness manual change added",
+                "de": "manuelle Änderung der Nachthelligkeit hinzugefügt",
+                "ru": "добавлено ручное изменение ночной яркости",
+                "pt": "mudança manual de brilho noturno adicionada",
+                "nl": "handmatige aanpassing nachthelderheid toegevoegd",
+                "fr": "luminosité manuelle changement de luminosité ajouté",
+                "it": "cambio manuale luminosità notturna aggiunto",
+                "es": "cambio manual de brillo nocturno agregado",
+                "pl": "dodano ręczną zmianę jasności w nocy",
+                "zh-cn": "添加了夜间亮度手动更改"
+            },
+            "0.2.8": {
+                "en": "bug in brightness control and charging function fixed",
+                "de": "Fehler in der Helligkeitsregelung und Ladefunktion behoben",
+                "ru": "исправлена ошибка в регулировке яркости и функции зарядки",
+                "pt": "Corrigido o erro no controle de brilho e função de carregamento",
+                "nl": "bug in helderheidsregeling en oplaadfunctie opgelost",
+                "fr": "correction d'un bug dans le contrôle de la luminosité et la fonction de charge",
+                "it": "bug nel controllo della luminosità e funzione di ricarica risolto",
+                "es": "error en el control de brillo y función de carga corregida",
+                "pl": "naprawiono błąd w kontroli jasności i funkcji ładowania",
+                "zh-cn": "修正了亮度控制和充电功能中的错误"
+            },
+            "0.2.7": {
+                "en": "Astro time added",
+                "de": "Astro-Zeit hinzugefügt",
+                "ru": "Астро время добавлено",
+                "pt": "Astro time added",
+                "nl": "Astro-tijd toegevoegd",
+                "fr": "Temps Astro ajouté",
+                "it": "Tempo di Astro aggiunto",
+                "es": "Astro tiempo agregado",
+                "pl": "Dodano czas Astro",
+                "zh-cn": "天文时间已添加"
+            },
+            "0.2.6": {
+                "en": "Brightness control changed and Configuration page changed",
+                "de": "Die Helligkeitssteuerung und die Konfigurationsseite wurden geändert",
+                "ru": "Изменено управление яркостью и изменена страница конфигурации",
+                "pt": "Controle de brilho alterado e página de configuração alterada",
+                "nl": "Helderheidsregeling gewijzigd en configuratiepagina gewijzigd",
+                "fr": "Contrôle de la luminosité modifié et page de configuration modifiée",
+                "it": "Controllo della luminosità modificato e pagina di configurazione modificata",
+                "es": "El control de brillo cambió y la página de configuración cambió",
+                "pl": "Zmieniono kontrolę jasności i zmieniono stronę konfiguracji",
+                "zh-cn": "亮度控制已更改，配置页面已更改"
+            },
+            "0.2.5": {
+                "en": "FullyBrowser implemented\n fixed some bugs",
+                "de": "FullyBrowser implementiert\n Einige Fehler wurden behoben",
+                "ru": "Полностью Браузер реализован\n исправлены некоторые ошибки",
+                "pt": "FullyBrowser implementado\n corrigido alguns bugs",
+                "nl": "FullyBrowser geïmplementeerd\n enkele bugs opgelost",
+                "fr": "FullyBrowser implémenté\n correction de quelques bugs",
+                "it": "Implementato completamente\n risolti alcuni bug",
+                "es": "FullyBrowser implementado\n arreglado algunos errores",
+                "pl": "W pełni zaimplementowany\n naprawiono kilka błędów",
+                "zh-cn": "FullyBrowser已实现\n 修复了一些错误"
+            },
+            "0.2.4": {
+                "en": "Screen saver time adjusted now in 1 min steps,\n State_of_charge adjusted,",
+                "de": "Bildschirmschonerzeit jetzt in Schritten von 1 Minute eingestellt,\nLadezustand angepasst,",
+                "ru": "Время заставки настроено с шагом в 1 минуту,\nState_of_charge скорректирована,",
+                "pt": "Tempo de proteção de tela ajustado agora em etapas de 1 minuto,\nState_of_charge ajustado,",
+                "nl": "Schermbeveiligingstijd nu aangepast in stappen van 1 minuut,\nState_of_charge aangepast,",
+                "fr": "Économiseur d'écran ajusté maintenant en 1 minute,\nState_of_charge ajusté,",
+                "it": "Il tempo di screen saver ora è regolato in passi di 1 minuto\nState_of_charge corretto,",
+                "es": "Tiempo de protector de pantalla ajustado ahora en pasos de 1 minuto,\nEstado_de_carga ajustado,",
+                "pl": "Czas wygaszacza ekranu dostosowywany teraz co 1 minutę,\nSkorygowano stan naładowania,",
+                "zh-cn": "屏幕保护程序时间现在以1分钟为单位进行了调整，\n充电状态已调整,"
+            },
+            "0.2.2": {
+                "en": "Adapter Name Change",
+                "de": "Änderung des Adapternamens",
+                "ru": "Изменение имени адаптера",
+                "pt": "Alteração de nome do adaptador",
+                "nl": "Adapternaam wijzigen",
+                "fr": "Changement de nom de l'adaptateur",
+                "it": "Modifica nome adattatore",
+                "es": "Cambio de nombre del adaptador",
+                "pl": "Zmiana nazwy adaptera",
+                "zh-cn": "适配器名称更改"
+            },
+            "0.2.0": {
+                "en": "bug in Automatic change to home view widget 8 fixed ",
+                "de": "Fehler im automatischen Wechsel zum Home View Widget 8 behoben",
+                "ru": "исправлена ошибка в автоматическом переходе на виджет 8 для домашнего просмотра",
+                "pt": "corrigido o erro na mudança automática para o widget de exibição em casa 8 corrigido",
+                "nl": "bug in Automatische wijziging naar startweergave widget 8 opgelost",
+                "fr": "bug dans le changement automatique du widget de vue d'accueil 8 corrigé",
+                "it": "bug in Correzione automatica del widget 8 della vista principale risolto",
+                "es": "error en el cambio automático al widget de vista de inicio 8 corregido",
+                "pl": "błąd w automatycznej zmianie widżetu 8 widoku domowego",
+                "zh-cn": "自动更改为主视图小部件中的错误8已修复"
+            }
+        },
+        "title": "Fully Tablet Control",
+        "titleLang": {
+            "en": "Fully Tablet Control"
+        },
+        "desc": {
+            "en": "Tablet control with the FullyBrowser (charge control, screen saver, brightness control)",
+            "de": "Fully Tablet Steuerung, mit dem FullyBrowser (Ladekontrolle, Bildschirmschoner, Helligkeit)"
+        },
+        "authors": [
+            "xXBJXx <alienware.games@gmail.com>"
+        ],
+        "keywords": [
+            "ioBroker",
+            "Tablet-Control",
+            "Tablet",
+            "Fully Kiosk Browser"
+        ],
+        "license": "MIT",
+        "platform": "Javascript/Node.js",
+        "main": "main.js",
+        "icon": "tablet-control.png",
+        "enabled": true,
+        "extIcon": "https://raw.githubusercontent.com/xXBJXx/ioBroker.fully-tablet-control/master/admin/tablet-control.png",
+        "readme": "https://github.com/xXBJXx/ioBroker.fully-tablet-control/blob/master/README.md",
+        "loglevel": "info",
+        "mode": "daemon",
+        "type": "general",
+        "compact": true,
+        "connectionType": "local",
+        "dataSource": "poll",
+        "materialize": true,
+        "messagebox": true,
+        "plugins": {
+            "sentry": {
+                "dsn": "https://8520b03c99c4437da90e414ab4bd1959@o384969.ingest.sentry.io/5217020"
+            }
+        },
+        "dependencies": [
+            {
+                "js-controller": ">=2.0.0"
+            }
+        ],
+        "installedFrom": "https://github.com/xXBJXx/ioBroker.fully-tablet-control/tarball/1cfffc99638af4b529abf1720a9bb308361aa525"
     },
-      "0.2.12": {
-        "en": "screensaver brightness control can be switched on or off\n dependencies updates",
-        "de": "Die Helligkeitsregelung des Bildschirmschoners kann ein- oder ausgeschaltet werden\n Abhängigkeitsaktualisierungen",
-        "ru": "регулировку яркости заставки можно включить или выключить\n обновления зависимостей",
-        "pt": "o controle de brilho do protetor de tela pode ser ligado ou desligado\n atualizações de dependências",
-        "nl": "De helderheid van de screensaver kan worden in- of uitgeschakeld\n afhankelijkheden updates",
-        "fr": "le contrôle de la luminosité de l'économiseur d'écran peut être activé ou désactivé\n mises à jour des dépendances",
-        "it": "il controllo della luminosità dello screensaver può essere attivato o disattivato\n aggiornamenti delle dipendenze",
-        "es": "el control de brillo del protector de pantalla se puede activar o desactivar\n actualizaciones de dependencias",
-        "pl": "regulację jasności wygaszacza ekranu można włączyć lub wyłączyć\n aktualizacje zależności",
-        "zh-cn": "屏保亮度控制可以打开或关闭\n 依赖关系更新"
-      },
-      "0.2.11": {
-        "en": "add new charge option",
-        "de": "neue Ladeoption hinzufügen",
-        "ru": "добавить новый вариант оплаты",
-        "pt": "adicionar nova opção de cobrança",
-        "nl": "nieuwe kostenoptie toevoegen",
-        "fr": "ajouter une nouvelle option de facturation",
-        "it": "aggiungi una nuova opzione di addebito",
-        "es": "agregar nueva opción de carga",
-        "pl": "dodaj nową opcję ładowania",
-        "zh-cn": "添加新的收费选项"
-      },
-      "0.2.10": {
-        "en": "log output adjusted",
-        "de": "Protokollausgabe angepasst",
-        "ru": "настроен выход журнала",
-        "pt": "saída de log ajustada",
-        "nl": "log output aangepast",
-        "fr": "sortie du journal ajustée",
-        "it": "uscita del registro modificata",
-        "es": "salida de registro ajustada",
-        "pl": "skorygowano moc wyjściową dziennika",
-        "zh-cn": "日志输出已调整"
-      },
-      "0.2.9": {
-        "en": "night brightness manual change added",
-        "de": "manuelle Änderung der Nachthelligkeit hinzugefügt",
-        "ru": "добавлено ручное изменение ночной яркости",
-        "pt": "mudança manual de brilho noturno adicionada",
-        "nl": "handmatige aanpassing nachthelderheid toegevoegd",
-        "fr": "luminosité manuelle changement de luminosité ajouté",
-        "it": "cambio manuale luminosità notturna aggiunto",
-        "es": "cambio manual de brillo nocturno agregado",
-        "pl": "dodano ręczną zmianę jasności w nocy",
-        "zh-cn": "添加了夜间亮度手动更改"
-      },
-      "0.2.8": {
-        "en": "bug in brightness control and charging function fixed",
-        "de": "Fehler in der Helligkeitsregelung und Ladefunktion behoben",
-        "ru": "исправлена ошибка в регулировке яркости и функции зарядки",
-        "pt": "Corrigido o erro no controle de brilho e função de carregamento",
-        "nl": "bug in helderheidsregeling en oplaadfunctie opgelost",
-        "fr": "correction d'un bug dans le contrôle de la luminosité et la fonction de charge",
-        "it": "bug nel controllo della luminosità e funzione di ricarica risolto",
-        "es": "error en el control de brillo y función de carga corregida",
-        "pl": "naprawiono błąd w kontroli jasności i funkcji ładowania",
-        "zh-cn": "修正了亮度控制和充电功能中的错误"
-      },
-      "0.2.7": {
-        "en": "Astro time added",
-        "de": "Astro-Zeit hinzugefügt",
-        "ru": "Астро время добавлено",
-        "pt": "Astro time added",
-        "nl": "Astro-tijd toegevoegd",
-        "fr": "Temps Astro ajouté",
-        "it": "Tempo di Astro aggiunto",
-        "es": "Astro tiempo agregado",
-        "pl": "Dodano czas Astro",
-        "zh-cn": "天文时间已添加"
-      },
-      "0.2.6": {
-        "en": "Brightness control changed and Configuration page changed",
-        "de": "Die Helligkeitssteuerung und die Konfigurationsseite wurden geändert",
-        "ru": "Изменено управление яркостью и изменена страница конфигурации",
-        "pt": "Controle de brilho alterado e página de configuração alterada",
-        "nl": "Helderheidsregeling gewijzigd en configuratiepagina gewijzigd",
-        "fr": "Contrôle de la luminosité modifié et page de configuration modifiée",
-        "it": "Controllo della luminosità modificato e pagina di configurazione modificata",
-        "es": "El control de brillo cambió y la página de configuración cambió",
-        "pl": "Zmieniono kontrolę jasności i zmieniono stronę konfiguracji",
-        "zh-cn": "亮度控制已更改，配置页面已更改"
-      },
-      "0.2.5": {
-        "en": "FullyBrowser implemented\n fixed some bugs",
-        "de": "FullyBrowser implementiert\n Einige Fehler wurden behoben",
-        "ru": "Полностью Браузер реализован\n исправлены некоторые ошибки",
-        "pt": "FullyBrowser implementado\n corrigido alguns bugs",
-        "nl": "FullyBrowser geïmplementeerd\n enkele bugs opgelost",
-        "fr": "FullyBrowser implémenté\n correction de quelques bugs",
-        "it": "Implementato completamente\n risolti alcuni bug",
-        "es": "FullyBrowser implementado\n arreglado algunos errores",
-        "pl": "W pełni zaimplementowany\n naprawiono kilka błędów",
-        "zh-cn": "FullyBrowser已实现\n 修复了一些错误"
-      },
-      "0.2.4": {
-        "en": "Screen saver time adjusted now in 1 min steps,\n State_of_charge adjusted,",
-        "de": "Bildschirmschonerzeit jetzt in Schritten von 1 Minute eingestellt,\nLadezustand angepasst,",
-        "ru": "Время заставки настроено с шагом в 1 минуту,\nState_of_charge скорректирована,",
-        "pt": "Tempo de proteção de tela ajustado agora em etapas de 1 minuto,\nState_of_charge ajustado,",
-        "nl": "Schermbeveiligingstijd nu aangepast in stappen van 1 minuut,\nState_of_charge aangepast,",
-        "fr": "Économiseur d'écran ajusté maintenant en 1 minute,\nState_of_charge ajusté,",
-        "it": "Il tempo di screen saver ora è regolato in passi di 1 minuto\nState_of_charge corretto,",
-        "es": "Tiempo de protector de pantalla ajustado ahora en pasos de 1 minuto,\nEstado_de_carga ajustado,",
-        "pl": "Czas wygaszacza ekranu dostosowywany teraz co 1 minutę,\nSkorygowano stan naładowania,",
-        "zh-cn": "屏幕保护程序时间现在以1分钟为单位进行了调整，\n充电状态已调整,"
-      },
-      "0.2.2": {
-        "en": "Adapter Name Change",
-        "de": "Änderung des Adapternamens",
-        "ru": "Изменение имени адаптера",
-        "pt": "Alteração de nome do adaptador",
-        "nl": "Adapternaam wijzigen",
-        "fr": "Changement de nom de l'adaptateur",
-        "it": "Modifica nome adattatore",
-        "es": "Cambio de nombre del adaptador",
-        "pl": "Zmiana nazwy adaptera",
-        "zh-cn": "适配器名称更改"
-      },
-      "0.2.0": {
-        "en": "bug in Automatic change to home view widget 8 fixed ",
-        "de": "Fehler im automatischen Wechsel zum Home View Widget 8 behoben",
-        "ru": "исправлена ошибка в автоматическом переходе на виджет 8 для домашнего просмотра",
-        "pt": "corrigido o erro na mudança automática para o widget de exibição em casa 8 corrigido",
-        "nl": "bug in Automatische wijziging naar startweergave widget 8 opgelost",
-        "fr": "bug dans le changement automatique du widget de vue d'accueil 8 corrigé",
-        "it": "bug in Correzione automatica del widget 8 della vista principale risolto",
-        "es": "error en el cambio automático al widget de vista de inicio 8 corregido",
-        "pl": "błąd w automatycznej zmianie widżetu 8 widoku domowego",
-        "zh-cn": "自动更改为主视图小部件中的错误8已修复"
-      }
+    "native": {
+        "interval": 30,
+        "devices": [],
+        "charger": [],
+        "brightness": [],
+        "screenSaverON": "false",
+        "screenSaver": [],
+        "telegram_enabled": "false",
+        "telegram": [],
+        "motion": [],
+        "motionSensor_enabled": "false",
+        "screen_on": "true",
+        "checkInterval": 5,
+        "morningTime": 7,
+        "midTime": 13,
+        "nightTime": 22,
+        "fireTablet": 3,
+        "viewChange_enabled": "false",
+        "viewMode": "false",
+        "visView": [],
+        "chargerON": "false",
+        "brightness_on": "false",
+        "astroSelectNight": "sunset",
+        "astroSelectDay": "sunrise",
+        "timeMode": "true"
     },
-    "title": "Fully Tablet Control",
-    "titleLang": {
-      "en": "Fully Tablet Control"
-    },
-    "desc": {
-      "en": "Tablet control with the FullyBrowser (charge control, screen saver, brightness control)",
-      "de": "Fully Tablet Steuerung, mit dem FullyBrowser (Ladekontrolle, Bildschirmschoner, Helligkeit)"
-    },
-    "authors": [
-      "xXBJXx <alienware.games@gmail.com>"
-    ],
-    "keywords": [
-      "ioBroker",
-      "Tablet-Control",
-      "Tablet",
-      "Fully Kiosk Browser"
-    ],
-    "license": "MIT",
-    "platform": "Javascript/Node.js",
-    "main": "main.js",
-    "icon": "tablet-control.png",
-    "enabled": true,
-    "extIcon": "https://raw.githubusercontent.com/xXBJXx/ioBroker.fully-tablet-control/master/admin/tablet-control.png",
-    "readme": "https://github.com/xXBJXx/ioBroker.fully-tablet-control/blob/master/README.md",
-    "loglevel": "info",
-    "mode": "daemon",
-    "type": "general",
-    "compact": true,
-    "connectionType": "local",
-    "dataSource": "poll",
-    "materialize": true,
-    "messagebox": true,
-    "plugins": {
-      "sentry": {
-        "dsn": "https://8520b03c99c4437da90e414ab4bd1959@o384969.ingest.sentry.io/5217020"
-      }
-    },
-    "dependencies": [{
-      "js-controller": ">=2.0.0"
-    }],
-    "installedFrom": "https://github.com/xXBJXx/ioBroker.fully-tablet-control/tarball/1cfffc99638af4b529abf1720a9bb308361aa525"
-  },
-  "native": {
-    "interval": 30,
-    "devices": [],
-    "charger": [],
-    "brightness": [],
-    "screenSaverON": "false",
-    "screenSaver": [],
-    "telegram_enabled": "false",
-    "telegram": [],
-    "motion": [],
-    "motionSensor_enabled": "false",
-    "screen_on": "true",
-    "checkInterval": 5,
-    "morningTime": 7,
-    "midTime": 13,
-    "nightTime": 22,
-    "fireTablet": 3,
-    "viewChange_enabled": "false",
-    "viewMode": "false",
-    "visView": [],
-    "chargerON": "false",
-    "brightness_on": "false",
-    "astroSelectNight": "sunset",
-    "astroSelectDay": "sunrise",
-    "timeMode": "true"
-  },
-  "objects": [],
-  "instanceObjects": [{
-      "_id": "info",
-      "type": "channel",
-      "common": {
-        "name": "Information"
-      },
-      "native": {}
-    },
-    {
-      "_id": "info.connection",
-      "type": "state",
-      "common": {
-        "role": "indicator.connected",
-        "name": "Device or service connected",
-        "type": "boolean",
-        "read": true,
-        "write": false,
-        "def": false
-      },
-      "native": {}
-    }
-  ]
+    "objects": [],
+    "instanceObjects": [
+        {
+            "_id": "info",
+            "type": "channel",
+            "common": {
+                "name": "Information"
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.connection",
+            "type": "state",
+            "common": {
+                "role": "indicator.connected",
+                "name": "Device or service connected",
+                "type": "boolean",
+                "read": true,
+                "write": false,
+                "def": false
+            },
+            "native": {}
+        }
+    ]
 }
