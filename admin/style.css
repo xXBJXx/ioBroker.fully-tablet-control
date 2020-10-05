@@ -1,99 +1,324 @@
-
 /* You can delete those if you want. I just found them very helpful */
 * {
 	box-sizing: border-box;
-}
+	}
 
 .m {
 	/* Don't cut off dropdowns! */
 	overflow: initial;
-}
+	}
 
 /* Add your styles here */
 
-.table_header {
-	background-color: orange;
-	color: White;
-}
+/*.table_header {*/
+/*	background-color: orange;*/
+/*	color: White;*/
+/*}*/
 
-.ip {
-	width: 150px;
+/*.ip {*/
+/*	width: 150px;*/
+/*	text-align: right;*/
+/*}*/
+
+
+/*.m .select-wrapper + label {*/
+/*	top: 100%;*/
+/*}*/
+
+
+/*!* .sub-title {*/
+/*	margin-top: -2.5rem !important;*/
+/*	padding: 0.5rem;*/
+/*	background: #2196f3;*/
+/*	color: white;*/
+/*	border-radius: 10px;*/
+/*	margin-bottom: 7px;*/
+/*} *!*/
+
+
+/*.sub-title-left {*/
+/*    margin-top: -2.5rem !important;*/
+/*    padding: 0.5rem;*/
+/*    background: #2196f3;*/
+/*    color: white;*/
+/*    border-radius: 10px;*/
+/*    max-width: 49.9%;*/
+/*    text-align: center;*/
+/*}*/
+
+/*.sub-title-right {*/
+/*    margin-top: -2.7rem !important;*/
+/*    padding: 0.5rem;*/
+/*    background: #2196f3;*/
+/*    color: white;*/
+/*    border-radius: 10px;*/
+/*    margin-bottom: 7px;*/
+/*    max-width: 50%;*/
+/*    margin-left: 500px;*/
+/*    text-align: center;*/
+/*}*/
+/*.checkbox {*/
+/*	margin: 5em;*/
+/*	padding-top: 1rem !important;*/
+/*	padding-right: 0 !important;*/
+/*	padding-left: 35px !important;*/
+/*	padding-bottom: 1.2em !important;*/
+/*}*/
+/*.polling-interval {*/
+/*	*/
+/*max-width: 10%;*/
+/*	*/
+/*margin-left: 20.5%;*/
+/*}*/
+/*.screen {*/
+/*	*/
+/*max-width: 10%;*/
+/*}*/
+
+
+/* .fire-tablet {*/
+/*	margin: 1em 0;*/
+/*	padding-top: 20px;*/
+/*}*/
+
+
+/*!* Table header *!*/
+table.table-values th.header {
+	background-color: #002cc8;
+	font-size: 90%;
+	text-align: center;
+	line-height: 1em;
+	padding: 6px 2px;
+	border-radius: 5px;
+	text-align-last: center;
+	width: auto;
+	}
+
+div.table-values-div {
+	padding: 6px 2px;
+	text-align-last: center;
+	}
+
+.m .btn, .m .btn-flat, .m .btn-large, .m .btn-small {
+	border-radius: 20px;
+	}
+
+.m #dialog-select-member .modal-content .grid-main-wob-div {
+	height: calc(100% - 140px);
+	}
+
+.values-input {
+	text-align: center !important;
+	font-size: large !important;
+	}
+
+.tabletMessage {
+	font-size: 18px !important;
 	text-align: right;
-}
+	}
 
+.intervalField {
+	width: 125px !important;
+	text-align: center !important;
+	}
 
-.m .select-wrapper + label {
-	top: 100%;
-}
+.m .modal-footer {
+	width: calc(100% - 20px) !important;
+	}
 
+.m .row .col.s6 {
+	width: 80% !important;
+	}
 
-/* .sub-title {
-	margin-top: -2.5rem !important;
-	padding: 0.5rem;
-	background: #2196f3;
-	color: white;
-	border-radius: 10px;
-	margin-bottom: 7px;
-} */
-
-
-
-.sub-title-brightness{
-    padding: 0.5rem;
-    background: #2196f3;
-    color: white;
-    border-radius: 10px;
-    margin-bottom: 7px;
-    text-align: center;
-    font-size: x-large;
-}
-
-
-.sub-title-left {
-    margin-top: -2.5rem !important;
-    padding: 0.5rem;
-    background: #2196f3;
-    color: white;
-    border-radius: 10px;
-    max-width: 49.9%;
-    text-align: center;
-}
-
-.sub-title-right {
-    margin-top: -2.7rem !important;
-    padding: 0.5rem;
-    background: #2196f3;
-    color: white;
-    border-radius: 10px;
-    margin-bottom: 7px;
-    max-width: 50%;
-    margin-left: 500px;
-    text-align: center;
-}
-.checkbox {
-	margin: 5em;
-	padding-top: 1rem !important;
-	padding-right: 0 !important;
-	padding-left: 35px !important;
-	padding-bottom: 1.2em !important;
-}
-.polling-interval {
-	
-max-width: 10%;
-	
-margin-left: 20.5%;
-}
-.screen {
-	
-max-width: 10%;
-}
 .select {
 	text-align-last: center;
-	/* text-align: center; */
-	/* -ms-text-align-last: center;
-	-moz-text-align-last: center; */
- }
- .fire-tablet {
-	margin: 1em 0;
-	padding-top: 20px;
-}
+	}
+
+.add-btn {
+	margin-right: auto;
+	}
+
+/*Login sector*/
+
+.devicesLogin {
+	bottom: 30px;
+	}
+
+/*#############
+
+/*brightness sector*/
+
+.selectScreenOn {
+	text-align-last: center !important;
+	width: 320px !important;
+	position: relative;
+	top: -25px;
+	margin-bottom: 0;
+	}
+
+.sub-title-brightness {
+	padding: 0.5rem;
+	background: #002cc8;
+	color: white;
+	border-radius: 10px;
+	text-align: center;
+	font-size: x-large;
+	position: relative;
+	top: -50px;
+	margin-bottom: 0;
+	}
+
+.sub-title-TimeControl {
+	background: #002cc8;
+	color: white;
+	border-radius: 10px;
+	text-align: center;
+	font-size: x-large;
+	position: relative;
+	top: -90px;
+	margin-bottom: 0;
+	}
+
+.sub-title-table {
+	background: #002cc8;
+	color: white;
+	border-radius: 10px;
+	text-align: center;
+	font-size: x-large;
+	position: relative;
+	top: -130px;
+	margin-bottom: 0;
+	}
+
+.briTables {
+	top: -120px;
+	margin-bottom: 0;
+	}
+
+.AstroBrightness {
+	text-align-last: center !important;
+	width: 300px !important;
+	top: -90px;
+	margin-right: 100px;
+	}
+
+.selectBrightness_time {
+	text-align-last: center !important;
+	width: 150px !important;
+	top: -90px;
+	margin-right: 50px;
+	}
+
+.selectBrightness_checkInterval {
+	text-align-last: center !important;
+	width: 150px !important;
+	top: -50px;
+	margin-right: 100px;
+	}
+
+.selectBrightness_on {
+	text-align-last: center !important;
+	width: 400px !important;
+	position: relative;
+	top: -50px;
+	margin-bottom: 0;
+	margin-right: 100px;
+	}
+
+.selectAstroBrightness {
+	text-align-last: center !important;
+	width: 150px !important;
+	position: relative;
+	top: -50px;
+	margin-bottom: 0;
+	margin-right: 100px;
+	}
+
+.selectBrightness_label {
+	font-size: medium !important;
+	}
+
+
+/*######################*/
+
+/*vis sector*/
+
+.visSelect {
+	text-align-last: center !important;
+	width: 300px !important;
+	}
+
+.Select-text {
+	top: 45px !important;
+	}
+
+/*#########################*/
+
+/*screenSaver sector*/
+
+.selectScreen {
+	width: 300px !important;
+	text-align-last: center !important;
+
+	}
+
+.screenSaver {
+	bottom: 52px !important;;
+	}
+
+
+/*#########################*/
+
+/*telegram sector*/
+
+.selectTelegram {
+	width: 300px !important;;
+	text-align-last: center !important;;
+
+	}
+
+.telegram {
+	bottom: 52px !important;;
+	}
+
+/*Alert*/
+.TelegramAdapter, .TelegramUser {
+	font-size: 70px !important;
+	color: #ff0000;
+	text-align: center;
+	top: 60px;
+	position: absolute;
+	}
+
+/*multiple-select*/
+.multiple-select-dropdown li span{
+	pointer-events: none;
+	}
+
+/*#########################*/
+
+/*motion sector*/
+
+.selectMotion {
+	width: 300px !important;;
+	text-align-last: center !important;;
+
+	}
+
+.motion {
+	bottom: 52px !important;;
+	}
+
+/*#########################*/
+
+/*charger sector*/
+
+.selectCharger {
+	width: 300px !important;
+	text-align-last: center !important;;
+
+	}
+
+.charger {
+	bottom: 52px !important;;
+	}

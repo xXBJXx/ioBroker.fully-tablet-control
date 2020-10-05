@@ -1,2956 +1,3576 @@
-/* eslint-disable no-mixed-spaces-and-tabs */
 'use strict';
-
-/*
- * Created with @iobroker/create-adapter v1.23.0
- */
 
 // The adapter-core module gives you access to the core ioBroker functions
 // you need to create an adapter
 const utils = require('@iobroker/adapter-core');
-const { default: axios } = require('axios');
+const {default: axios} = require('axios');
 const schedule = require('cron').CronJob; // Cron Scheduler
 const SunCalc = require('suncalc2');
+const object = require('./lib/object_definition');
+const device_Folder_Object = object['object_device_Folder_definitions'];
+const main_Object = object['object_main_definitions'];
+const command_Object = object['object_commands_definitions'];
+const device_info_Object = object['object_device_info_definitions'];
+const memory_Object = object['object_memory_definitions'];
+const kiosk_Object = object['object_kiosk_definitions'];
+const vis_View_object = object['object_vis_View_definitions'];
 
-const manualBrightnessID = [];
-const brightnessControlModeID = [];
-const tabletName = [];
+
+//Timeout init
+let requestTimeout = null;
+let automatic_briTimeout = null;
+let viewTimer = null;
+let ScreensaverReturn = null;
+const foregroundAppTimer = [];
+const logMessageTimer = [];
+const kioskPinTimeout = [];
+let BriRequestTimeout = null
+
+//global variables
 const ip = [];
+const User = [];
 const port = [];
 const password = [];
-const Screen = [];
 const deviceInfo = [];
-let requestTimeout = null;
-const ScreensaverTimer = [];
-const User = [];
-const telegramStatus = [];
-const isScreenOn = [];
-const brightness = [];
-const isInScreensaver = [];
-const bat = [];
-const chargeDeviceValue = [];
-const manualBrightness = [];
-const manualBrightnessMode = [];
-const motionID = [];
-const motionVal = [];
-const screenSaverTimer = [];
-const foregroundAppTimer = [];
-const foreground = [];
-const foregroundStart = [];
+const tabletName = [];
+let day_Time = null;
 const deviceEnabled = [];
-let ScreensaverReturn = null;
-let view_enabled = null;
-let mode = null;
-const time = [];
-const viewName = [];
-const viewNumber = [];
-let visView = null;
-const wishView = [];
-let viewTimer = null;
-let homeView = null;
-const messageSend = [];
-const AlertMessageSend = [];
+let fireTabletInterval = null;
 let interval = null;
 let checkInterval = null;
-const enabledBrightness = [];
-let reloadAllID = null;
-const startApplicationID = [];
-const loadURLID = [];
-const textToSpeechID = [];
-const setStringSettingID = [];
-const mediaVolumenID = [];
-const commandsID = [];
-const commandsStr = 'commands';
-let fireTabletInterval = null;
 let brightnessControlEnabled = null;
-let AstroDayHours = null;
-let AstroDayMinutes = null;
-let AstroNightHours = null;
-let AstroNightMinutes = null;
-let nightBriMode = null;
-let dayBriMode = null;
-let nightBriTimeout = null;
-let dayBriTimeout = null;
-let AstroNightMilis = null;
-let AstroDayMilis = null;
+const telegramStatus = [];
+const foregroundStart = [];
+const messageSend = [];
+const AlertMessageSend = [];
 const logMessage = [];
-const logMessageTimer = [];
 const messageCharging = [];
+const enabledBrightness = [];
+const screensaverTimer = [];
+const screenSaverTime = [];
 const enableScreenSaverBrightness = [];
+const viewNumber = [];
+let timeMode = null;
+const chargeDeviceValue = [];
+let homeView = null;
+const wishView = [];
+const time = [];
+const channelFolder = ['device_info', 'commands'];
+const manualBrightnessMode = [];
+const motionID = []
+const motionVal = [];
+const commandsID = [];
+const brightness = [];
+const isInScreensaver = [];
+const foreground = [];
+const versionCheck = [];
+const screensaverOnURL = [];
+const screensaverOffURL = [];
+let manuel_screenSaver = [false, false];
+
 
 class FullyTabletControl extends utils.Adapter {
 
-	/**
-	 * @param {Partial<utils.AdapterOptions>} [options={}]
-	 */
-	constructor(options) {
-
-		super({
-			...options,
-			name: 'fully-tablet-control',
-		});
-		this.on('ready', this.onReady.bind(this));
-		this.on('objectChange', this.onObjectChange.bind(this));
-		this.on('stateChange', this.onStateChange.bind(this));
-		this.on('message', this.onMessage.bind(this));
-		this.on('unload', this.onUnload.bind(this));
-	}
-
-	/**
-	 * Is called when databases are connected and adapter received configuration.
-	 */
-	async onReady() {
-		// Initialize your adapter here
-		// Reset the connection indicator during startup
-		this.setState('info.connection', false, true);
-
-
-		await this.initialization();
-
-		await this.create_state();
-
-		await this.stateRequest();
-
-		this.astroTime();
-
-		this.manualStates();
-
-		if (!JSON.parse(this.config.motionSensor_enabled)) {
-			await this.screenSaver();
-		}
-		// await this.astroTime();
-		// await this.brightnessCron();
-		await this.motionSensor();
-
-		await this.checkView();
-
-	}
-
-
-	async initialization() {
-		try {
-
-			//read devices and created httpLink 
-			const login = this.config.devices;
-			if (!login || login !== []) {
-				for (const i in login) {
-
-					ip[i] = login[i].ip;
-					port[i] = login[i].port;
-					password[i] = login[i].password;
-					deviceEnabled[i] = login[i].enabled;
-
-					Screen[i] = `http://${ip[i]}:${port[i]}/?cmd=screenOn&password=${password[i]}`;
-					deviceInfo[i] = `http://${ip[i]}:${port[i]}/?cmd=deviceInfo&type=json&password=${password[i]}`;
-
-
-				}
-
-			}
-			this.log.debug(`Screen: ${JSON.stringify(Screen)}`);
-			this.log.debug(`deviceInfo: ${JSON.stringify(deviceInfo)}`);
-
-			// polling min 5 sec.
-			interval = this.config.interval * 1000;
-			if (interval < 5000) {
-				interval = 5000;
-			}
-
-			// polling min 1 min.
-			checkInterval = this.config.checkInterval * 60000;
-			if (checkInterval < 60000) {
-				checkInterval = 60000;
-			}
-
-			// polling min 1 min.
-			fireTabletInterval = this.config.fireTablet * 60000;
-			if (fireTabletInterval < 60000) {
-				fireTabletInterval = 60000;
-			}
-
-			//read Testegram user 
-			const telegramOn = this.config.telegram_enabled;
-			const telegramUser = this.config.telegram;
-			if (telegramOn) {
-				if (!telegramUser || telegramUser !== []) {
-					for (const u in telegramUser) {
-						User[u] = telegramUser[u].telegramUser;
-						this.log.debug(`read telegram user: ${JSON.stringify(User)}`);
-					}
-				}
-			}
-
-			//telegramSendStatus set default state false for all devices
-			const temp = this.config.devices;
-			if (!temp || temp !== []) {
-				for (const t in temp) {
-					if (deviceEnabled[t]) {
-						telegramStatus[t] = false;
-						this.log.debug(`telegramSendStatus: ${JSON.stringify(telegramStatus)}`);
-
-						//charger message set default state false for all devices
-						messageSend[t] = true;
-						AlertMessageSend[t] = false;
-						logMessage[t] = false;
-						messageCharging[t] = false;
-					}
-				}
-			}
-
-			//foregroundStart set default state false for all devices
-			const tempStart = this.config.devices;
-			if (!tempStart || tempStart !== []) {
-				for (const f in tempStart) {
-					if (deviceEnabled[f]) {
-						foregroundStart[f] = false;
-						this.log.debug(`foregroundStart: ${JSON.stringify(foregroundStart)}`);
-					}
-				}
-			}
-
-			brightnessControlEnabled = JSON.parse(this.config.brightness_on);
-			const brightnessEnabled = this.config.brightness;
-			if (brightnessControlEnabled) {
-				if (!brightnessEnabled || brightnessEnabled !== []) {
-
-					for (const b in tempStart) {
-
-						enabledBrightness[b] = brightnessEnabled[b].enabledBrightness;
-
-						if (enabledBrightness[b] == undefined) {
-							enabledBrightness[b] = false;
-						}
-
-						if (enabledBrightness[b]) {
-							await this.setStateAsync(`device.${await this.replaceFunction(tempStart[b].name)}.brightness_control_mode`, false, true);
-
-						}
-
-						console.log(enabledBrightness);
-						this.log.debug(`enabledBrightness: ${enabledBrightness}`);
-					}
-				}
-			}
-			else {
-				for (const b in tempStart) {
-					enabledBrightness[b] = false;
-					await this.setStateAsync(`device.${await this.replaceFunction(tempStart[b].name)}.brightness_control_mode`, true, false);
-					console.log(`device.${await this.replaceFunction(tempStart[b].name)}.brightness_control_mode`);
-				}
-			}
-
-			//read motion ID from Admin and subscribe
-			const motion = this.config.motion;
-			for (const sensor in motion) {
-				if (motion[sensor].enabled && motion[sensor].motionid !== '') {
-					motionID[sensor] = await motion[sensor].motionid;
-					this.subscribeForeignStates(motionID[sensor]);
-				} else {
-					this.log.warn(`no motion Sensor ID entered`);
-					console.log(`no motion Sensor ID entered`);
-				}
-			}
-
-			// read screenSaverTimer and screenSaverSelect
-			const screenSaverON = JSON.parse(this.config.screenSaverON);
-			const screenSaverObj = this.config.screenSaver;
-			const tablets = this.config.devices;
-			if (screenSaverON) {
-				if (!screenSaverObj || screenSaverObj !== []) {
-					for (const s in tablets) {
-						if (deviceEnabled[s]) {
-							const tabletName = tablets[s].name;
-							if (screenSaverObj[s] != undefined) {
-								screenSaverTimer[s] = JSON.parse(screenSaverObj[s].minute) * 60000;
-								this.log.debug(`read telegram user: ${JSON.stringify(User)}`);
-								const screenSaverUrl = screenSaverObj[s].url;
-								enableScreenSaverBrightness[s] = screenSaverObj[s].enabled;
-								if (enableScreenSaverBrightness[s] == undefined) {
-									enableScreenSaverBrightness[s] = false;
-									this.log.error(`[ATTENTION] the brightness synchronization for [ ${tabletName} ] was not initialized, please check the box and save it.`);
-								}
-								else {
-									enableScreenSaverBrightness[s] = screenSaverObj[s].enabled;
-								}
-
-								const screensaverMode = JSON.parse(screenSaverObj[s].screensaverMode);
-								console.log(`screenSaverUrl ${screenSaverUrl}`);
-								this.log.debug(`read screenSaverUrl: ${screenSaverUrl}`);
-
-								if (screensaverMode) {
-
-									if (screenSaverUrl == '') {
-										const playlistUrl = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverPlaylist&value=&password=${password[s]}`;
-										const wallpaperURL = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverWallpaperURL&value=${'fully://color black'}&password=${password[s]}`;
-
-										try {
-											await axios.get(playlistUrl);
-											await axios.get(wallpaperURL);
-										} catch (error) {
-											if (!logMessage[s]) this.log.error(`${await tabletName} [wallpaperURL] ( screenSaver no Url ) could not be sent: ${error.message}, stack: ${error.stack}`);
-											if (!logMessage[s]) this.log.error(`${await tabletName} [playlistUrl] ( playlist Url ) could not be sent: ${error.message}, stack: ${error.stack}`);
-										}
-
-										this.log.warn(`No screensaver URL was entered for ${tabletName}, a standard picture is set`);
-									}
-									else {
-										const screenUrl = [
-											{
-												'type': 4,
-												'url': screenSaverUrl,
-												'loopItem': true,
-												'loopFile': false,
-												'fileOrder': 0,
-												'nextItemOnTouch': false,
-												'nextFileOnTouch': false,
-												'nextItemTimer': 0,
-												'nextFileTimer': 0
-											}
-										];
-										const playlistUrl = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverPlaylist&value=${JSON.stringify(screenUrl)}&password=${password[s]}`;
-										console.log('fully Url ' + playlistUrl);
-										this.log.debug(`set Screensaver for ${tabletName} to YouTube Url: ${playlistUrl} entered`);
-
-										try {
-											await axios.get(playlistUrl);
-
-										} catch (error) {
-											if (!logMessage[s]) this.log.error(`${await tabletName} [playlistUrl] ( screenSaverSelect ) could not be sent: ${error.message}, stack: ${error.stack}`);
-
-										}
-									}
-
-								} else if (!screensaverMode) {
-									if (screenSaverUrl == '') {
-										const playlistUrl = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverPlaylist&value=&password=${password[s]}`;
-										const wallpaperURL = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverWallpaperURL&value=${'fully://color black'}&password=${password[s]}`;
-
-										try {
-											await axios.get(playlistUrl);
-											await axios.get(wallpaperURL);
-
-										} catch (error) {
-											if (!logMessage[s]) this.log.error(`${await tabletName} [playlistUrl] ( playlist Url ) could not be sent: ${error.message}, stack: ${error.stack}`);
-											if (!logMessage[s]) this.log.error(`${await tabletName} [wallpaperURL] ( screenSaver no Url ) could not be sent: ${error.message}, stack: ${error.stack}`);
-
-										}
-
-										this.log.warn(`No screensaver URL was entered for ${tabletName}, a standard picture is set`);
-										this.log.debug(`set Screensaver for ${tabletName} to default picture: ${wallpaperURL} entered:`);
-										console.log(`set Screensaver for ${tabletName} to default picture: ${wallpaperURL} entered`);
-									}
-									else {
-										const playlistUrl = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverPlaylist&value=&password=${password[s]}`;
-										const wallpaperURL = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverWallpaperURL&value=${screenSaverUrl}&password=${password[s]}`;
-
-										try {
-											await axios.get(playlistUrl);
-											await axios.get(wallpaperURL);
-
-										} catch (error) {
-											if (!logMessage[s]) this.log.error(`${await tabletName} [playlistUrl] ( playlist Url ) could not be sent: ${error.message}, stack: ${error.stack}`);
-											if (!logMessage[s]) this.log.error(`${await tabletName} [wallpaperURL] ( screenSaver no Url ) could not be sent: ${error.message}, stack: ${error.stack}`);
-										}
-
-										this.log.debug(`set Screensaver for ${tabletName} to Wallpaper URL: ${wallpaperURL} entered:`);
-									}
-								}
-							} else {
-								console.log(`[${tabletName}] Screensaver config was not created !!!`);
-								console.log(`[${tabletName}] Please put on the config or switch off the screensaver.`);
-								this.log.warn(`[${tabletName}] Screensaver config was not created !!!`);
-								this.log.warn(`[${tabletName}] Please put on the config or switch off the screensaver.`);
-							}
-						}
-					}
-				}
-			}
-
-			// read visView and screenSaverSelect
-			view_enabled = JSON.parse(this.config.viewChange_enabled);
-			mode = JSON.parse(this.config.viewMode);
-			console.log(mode);
-			console.log(view_enabled);
-
-			if (view_enabled) {
-				visView = this.config.visView;
-				console.log(visView);
-
-				for (const view in visView) {
-					// @ts-ignore
-					const visProjekt = visView[view].visProjekt;
-					// @ts-ignore
-					viewName[view] = visView[view].viewName;
-					// @ts-ignore
-					if (visView[view].viewNumber !== '') {
-						// @ts-ignore
-						viewNumber[view] = JSON.parse(visView[view].viewNumber);
-					}
-					// @ts-ignore
-					const tempTime = visView[view].time;
-					homeView = `${visProjekt}/${viewName[0]}`;
-					wishView[view] = `${visProjekt}/${viewName[view]}`;
-					if (tempTime == '0' || tempTime == '00') {
-						time[view] = 0;
-					}
-					else {
-						// @ts-ignore
-						time[view] = JSON.parse(visView[view].time);
-					}
-					console.log(time);
-					console.log(viewNumber);
-					console.log(viewName);
-					console.log(visProjekt);
-				}
-			}
-
-			const astroTimeCron = new schedule(`0 2 * * * `, async () => {
-				this.astroTime();
-			});
-
-			astroTimeCron.start();
-
-		} catch (error) {
-			this.log.error(`[initialization] : ${error.message}, stack: ${error.stack}`);
-		}
-	}
-
-		async stateRequest() {
-		try {
-			if (requestTimeout) clearTimeout(requestTimeout);
-			if (!deviceInfo || deviceInfo !== []) {
-
-				for (const i in deviceInfo) {
-					if (deviceEnabled[i]) {
-						console.log(`device: ${tabletName[i]} enabled`);
-						const stateID = await this.replaceFunction(tabletName[i]);
-						let apiResult = null;
-
-						try {
-							// Try to reach API and receive data
-							apiResult = await axios.get(deviceInfo[i]);
-							this.setState(`device.${stateID}.isFullyAlive`, { val: true, ack: true });
-							if (logMessageTimer[i]) clearTimeout(logMessageTimer[i]);
-							logMessage[i] = false;
-						} catch (error) {
-
-							if (!logMessage[i]) {
-								logMessage[i] = true;
-								console.log(`[Request] ${tabletName[i]} Unable to contact: ${error} | ${error}`);
-								this.log.error(`[Request] ${tabletName[i]} Unable to contact: ${error} | ${error}`);
-							} else if (!logMessageTimer[i]) {
-
-								if (logMessageTimer[i]) clearTimeout(logMessageTimer[i]);
-
-								console.log([i]);
-								logMessageTimer[i] = setTimeout(async () => {
-
-									logMessage[i] = false;
-
-									console.log(logMessage[i]);
-
-								}, 3600000);
-
-							}
-
-							this.setState(`device.${stateID}.isFullyAlive`, { val: false, ack: true });
-							continue;
-						}
-
-						if (apiResult.data.status !== 'Error') {
-
-
-							const objects = apiResult.data;
-
-							this.log.debug(`[result]: ${JSON.stringify(objects)}`);
-
-							for (const obj in objects) {
-
-								switch (obj) {
-									case 'isInScreensaver':
-
-										isInScreensaver[i] = objects['isInScreensaver'];
-										this.setState(`device.${stateID}.device_info.isInScreensaver`, {val: await isInScreensaver[i], ack: true});
-										this.log.debug(`IP state for ${stateID} : ${isInScreensaver[i]}`);
-
-										break;
-
-									case 'currentFragment':
-
-										const currentFragment = objects['currentFragment'];
-										this.setState(`device.${stateID}.device_info.currentFragment`, {val: await currentFragment, ack: true});
-										this.log.debug(`currentFragment state for ${stateID} :  ${currentFragment}`);
-
-										break;
-
-									case 'topFragmentTag':
-										// new form App Version 1.40.3
-										const topFragmentTag = objects['topFragmentTag'];
-										this.setState(`device.${stateID}.device_info.currentFragment`, {val: await topFragmentTag, ack: true});
-										this.log.debug(`currentFragment state for ${stateID} :  ${topFragmentTag}`);
-
-										break;
-
-									case 'deviceModel':
-
-										const deviceModel = objects['deviceModel'];
-										this.setState(`device.${stateID}.device_info.deviceModel`, {val: await deviceModel, ack: true});
-										this.log.debug(`deviceModel state for ${stateID} :  ${deviceModel}`);
-
-										break;
-
-									case 'deviceName':
-
-										const deviceName = objects['deviceName'];
-										this.setState(`device.${stateID}.device_info.deviceName`, {val: await deviceName, ack: true});
-										this.log.debug(`deviceName state for ${stateID} : ${deviceName}`);
-
-
-										break;
-
-									case 'wifiSignalLevel':
-
-										const wifiSignalLevel = objects['wifiSignalLevel'];
-										this.setState(`device.${stateID}.device_info.wifiSignalLevel`, {val: await wifiSignalLevel, ack: true});
-										this.log.debug(`wifiSignalLevel state for ${stateID} : ${wifiSignalLevel}`);
-
-										break;
-
-									case 'kioskMode':
-
-										const kioskMode = objects['kioskMode'];
-										this.setState(`device.${stateID}.device_info.kioskMode`, {val: await kioskMode, ack: true});
-										this.log.debug(`kioskMode state for ${stateID} : ${kioskMode}`);
-
-										break;
-
-									case 'displayHeightPixels':
-
-										const displayHeightPixels = objects['displayHeightPixels'];
-										this.setState(`device.${stateID}.device_info.displayHeightPixels`, {val: await displayHeightPixels, ack: true});
-										this.log.debug(`displayHeightPixels state for ${stateID} : ${displayHeightPixels}`);
-
-										break;
-
-									case 'appVersionName':
-
-										const appVersionName = objects['appVersionName'];
-										this.setState(`device.${stateID}.device_info.appVersionName`, {val: await appVersionName, ack: true});
-										this.log.debug(`appVersionName state for ${stateID} : ${appVersionName}`);
-
-										break;
+    /**
+     * @param {Partial<utils.AdapterOptions>} [options={}]
+     */
+    constructor(options) {
+
+        super({
+            ...options,
+            name: 'fully-tablet-control',
+        });
+        this.on('ready', this.onReady.bind(this));
+        this.on('stateChange', this.onStateChange.bind(this));
+        this.on('message', this.onMessage.bind(this));
+        this.on('unload', this.onUnload.bind(this));
+
+    }
+
+    /**
+     * Is called when databases are connected and adapter received configuration.
+     */
+    async onReady() {
+        // Initialize your adapter here
+        // Reset the connection indicator during startup
+        this.setState('info.connection', false, true);
+
+        await this.initialization();
+        await this.stateRequest();
+        await this.astroTime();
+        await this.automatic_bri();
+        await this.checkView();
+
+
+    }
+
+    async initialization() {
+        try {
+
+            this.log.debug(`prepare adapter for initialization`);
+            this.log.debug(`Adapter config is read out`);
+
+            // Interval init
+            try {
+                // polling min 5 sec.
+                interval = this.config.interval * 1000;
+                if (interval < 10000) {
+                    interval = 10000;
+                    this.log.warn(`the request interval time falls below the permitted limit of 5 sec ==> ${interval} ms => ${interval * 1000} sec`);
+                }
+                this.log.debug(`Adapter config for request interval readout --> ${interval} ms`);
+
+
+                // polling min 1 min.
+                checkInterval = this.config['checkInterval'] * 60000;
+                if (checkInterval < 60000) {
+                    checkInterval = 60000;
+                    this.log.warn(`the brightness interval time falls below the permitted limit of 1 min ==> ${checkInterval} ms => ${checkInterval * 60000} min`);
+                }
+                this.log.debug(`Adapter config for brightness interval readout --> ${checkInterval} ms`);
+
+
+                // polling min 1 min.
+                fireTabletInterval = this.config['fireTablet'] * 60000;
+                if (fireTabletInterval < 60000) {
+                    fireTabletInterval = 60000;
+                    this.log.warn(`the fire Tablet Interval time falls below the permitted limit of 5 sec ==> ${fireTabletInterval} ms => ${fireTabletInterval * 60000} min`);
+                }
+                this.log.debug(`Adapter config for request interval readout --> ${interval} ms`);
+
+                this.log.debug(`Interval initialization has been fully initialized`);
+            }
+            catch (error) {
+                this.log.error(`Interval initialization funktion has a problem: ${error.message}, stack: ${error.stack}`);
+            }
+
+
+            // Login init
+            try {
+                //read devices and created httpLink
+                const login = this.config.devices;
+
+                if (!login && login['length'] !== 0 || login !== [] && login['length'] !== 0) {
+                    for (const i in login) {
+
+                        ip[i] = login[i].ip;
+                        port[i] = login[i].port;
+                        password[i] = login[i].password;
+                        deviceEnabled[i] = login[i].enabled;
+                        tabletName[i] = login[i].name;
+
+                        deviceInfo[i] = `http://${ip[i]}:${port[i]}/?cmd=deviceInfo&type=json&password=${password[i]}`;
+
+                        this.log.debug(`the initialization Ip for ${tabletName[i]} was Successfully: ${ip[i]}`);
+                        this.log.debug(`the initialization port for ${tabletName[i]} was Successfully: ${port[i]}`);
+                        this.log.debug(`the initialization password for ${tabletName[i]} was Successfully: ${password[i]}`);
+                        this.log.debug(`the initialization deviceInfoUrl for ${tabletName[i]} was Successfully: ${deviceInfo[i]}`);
+                        this.log.debug(`Check whether the IP address is available for the ${tabletName[i]}`);
+
+                        deviceEnabled[i] = ip[i] !== '' && deviceEnabled[i];
+                        if (ip[i] === '') this.log.warn(`${tabletName[i]} has no ip address device is not queried`);
+
+                        if (deviceEnabled[i]) this.log.debug(`the initialization for ${tabletName[i]} was Successfully`);
+
 
-									case 'maintenanceMode':
+                        this.log.debug(`it is checked whether the name of the device is entered`);
+                        // Prepare tablet name
+                        if (tabletName[i] !== '') {
 
-										const maintenanceMode = objects['maintenanceMode'];
-										this.setState(`device.${stateID}.device_info.maintenanceMode`, {val: await maintenanceMode, ack: true});
-										this.log.debug(`maintenanceMode state for ${stateID} : ${maintenanceMode}`);
+                            this.log.debug(`the name of the device is entered and is used --> ${tabletName[i]}`);
+                            tabletName[i] = await this.replaceFunction(tabletName[i]);
 
+                        }
+                        else if (deviceEnabled[i]) {
 
-										break;
+                            this.log.debug(`The name of the device is not entered; the IP address is used for the name --> ${ip[i]}`);
+                            tabletName[i] = await this.replaceFunction(ip[i]);
 
-									case 'mac':
+                        }
+                        this.log.debug(`Tablet name is being prepared: ${tabletName[i]}`);
+                        this.log.debug(`${tabletName[i]} login has been fully initialized`);
+                    }
 
-										const mac = objects.mac;
-										this.setState(`device.${stateID}.device_info.mac`, {val: mac, ack: true});
-										this.log.debug(`mac state for ${stateID} : ${mac}`);
+                }
+                else {
+                    deviceEnabled[1] = false;
+                }
 
-										break;
+            }
+            catch (error) {
+                this.log.error(`login initialization funktion has a problem: ${error.message}, stack: ${error.stack}`);
+            }
 
-									case 'Mac':
-										// new form App Version 1.40.3
-										const Mac = objects.Mac;
-										this.setState(`device.${stateID}.device_info.mac`, {val: Mac, ack: true});
-										this.log.debug(`mac state for ${stateID} : ${Mac}`);
+            // Telegram User init
+            try {
+                //read telegram user
+                this.log.debug(`read out the adapter config for Telegram users`);
 
-										break;
+                const telegramOn = this.config['telegram_enabled'];
+                const telegramUser = this.config.telegram;
 
-									case 'startUrl':
+                if (telegramOn) {
 
-										const startUrl = objects['startUrl'];
-										this.setState(`device.${stateID}.device_info.startUrl`, {val: await startUrl, ack: true});
-										this.log.debug(`startUrl state for ${stateID} : ${startUrl}`);
+                    if (!telegramUser && telegramUser.length !== 0 || telegramUser !== [] && telegramUser.length !== 0) {
+                        for (const u in telegramUser) {
 
+                            User[u] = telegramUser[u].telegramUser;
 
-										break;
+                        }
+                        this.log.debug(`Telegram users were read out ==> ${JSON.stringify(User)}`);
+                    }
+                    if (telegramOn) this.log.debug(`Telegram messages are switched on`);
+                    if (!telegramOn) this.log.debug(`Telegram messages are switched off`);
+                }
+                this.log.debug(`TelegramUser initialization has been fully initialized`);
+            }
+            catch (error) {
+                this.log.error(`Telegram initialization funktion has a problem: ${error.message}, stack: ${error.stack}`);
+            }
 
-									case 'screenOrientation':
+            //SendStatus init
+            try {
+                this.log.debug(`send status is now set to false for all devices`);
 
-										const screenOrientation = objects['screenOrientation'];
-										this.setState(`device.${stateID}.device_info.screenOrientation`, {val: await screenOrientation, ack: true});
-										this.log.debug(`screenOrientation state for ${stateID} : ${screenOrientation}`);
+                for (const s in deviceEnabled) {
 
-										break;
+                    telegramStatus[s] = false;
+                    this.log.debug(`telegramSendStatus set for ${tabletName[s]} to: ${telegramStatus[s]}`);
 
-									case 'isInDaydream':
+                    messageSend[s] = true;
+                    this.log.debug(`message Send status set for ${tabletName[s]} to: ${messageSend[s]}`);
 
-										const isInDaydream = objects['isInDaydream'];
-										this.setState(`device.${stateID}.device_info.isInDaydream`, {val: await isInDaydream, ack: true});
-										this.log.debug(`isInDaydream state for ${stateID} : ${isInDaydream}`);
+                    AlertMessageSend[s] = false;
+                    this.log.debug(`AlertMessage Send status set for ${tabletName[s]} to: ${AlertMessageSend[s]}`);
 
+                    logMessage[s] = false;
+                    this.log.debug(`logMessage status set for ${tabletName[s]} to: ${logMessage[s]}`);
 
-										break;
+                    messageCharging[s] = false;
+                    this.log.debug(`messageCharging status set for ${tabletName[s]} to: ${messageCharging[s]}`);
 
-									case 'isLicensed':
+                    versionCheck[s] = false;
+                    this.log.debug(`versionCheck status set for ${tabletName[s]} to: ${versionCheck[s]}`);
 
-										const isLicensed = objects['isLicensed'];
-										this.setState(`device.${stateID}.device_info.isLicensed`, {val: await isLicensed, ack: true});
-										this.log.debug(`isLicensed state for ${stateID} : ${isLicensed}`);
+                }
+                this.log.debug(`SendStatus initialization has been fully initialized`);
+            }
+            catch (error) {
+                this.log.error(`SendStatus funktion has a problem: ${error.message}, stack: ${error.stack}`);
+            }
 
-										break;
+            // foregroundStatus init
+            try {
+                this.log.debug(`foregroundStatus is now set to false for all devices`);
 
-									case 'deviceManufacturer':
+                for (const f in deviceEnabled) {
+                    if (deviceEnabled[f]) {
 
-										const deviceManufacturer = objects['deviceManufacturer'];
-										this.setState(`device.${stateID}.device_info.deviceManufacturer`, {val: await deviceManufacturer, ack: true});
-										this.log.debug(`deviceManufacturer state for ${stateID} : ${deviceManufacturer}`);
+                        foregroundStart[f] = false;
+                        this.log.debug(`foregroundStart status set for ${tabletName[f]} to: ${JSON.stringify(telegramStatus)}`);
 
-										break;
+                    }
+                }
+                this.log.debug(`foregroundStatus initialization has been fully initialized`);
+            }
+            catch (error) {
+                this.log.error(`foregroundStatus funktion has a problem: ${error.message}, stack: ${error.stack}`);
+            }
 
-									case 'keyguardLocked':
+            // BrightnessControl init
+            try {
+                this.log.debug(`Check whether the brightness control is activated`);
+                brightnessControlEnabled = JSON.parse(this.config['brightness_on']);
 
-										const keyguardLocked = objects['keyguardLocked'];
-										this.setState(`device.${stateID}.device_info.keyguardLocked`, {val: await keyguardLocked, ack: true});
-										this.log.debug(`keyguardLocked state for ${stateID} : ${keyguardLocked}`);
+                const brightnessObject = this.config.brightness;
 
-										break;
+                if (brightnessControlEnabled) {
 
-									case 'isDeviceAdmin':
+                    if (!brightnessObject && brightnessObject.length !== 0 || brightnessObject !== [] && brightnessObject.length !== 0) {
 
-										const isDeviceAdmin = objects['isDeviceAdmin'];
-										this.setState(`device.${stateID}.device_info.isDeviceAdmin`, {val: await isDeviceAdmin, ack: true});
-										this.log.debug(`isDeviceAdmin state for ${stateID} : ${isDeviceAdmin}`);
+                        for (const b in deviceEnabled) {
 
-										break;
+                            this.log.debug(`Check whether the brightness control is activated for ${tabletName[b]}`);
 
-									case 'kioskLocked':
+                            enabledBrightness[b] = brightnessObject[b]['enabledBrightness']
+
+                            manualBrightnessMode[b] = await this.getStateAsync(`device.${tabletName[b]}.brightness_control_mode`)
 
-										const kioskLocked = objects['kioskLocked'];
-										this.setState(`device.${stateID}.device_info.kioskLocked`, {val: await kioskLocked, ack: true});
-										this.log.debug(`kioskLocked state for ${stateID} : ${kioskLocked}`);
+                            if (manualBrightnessMode[b] === null) {
+
+                                manualBrightnessMode[b] = false
 
-										break;
+                            }
+                            else {
+
+                                manualBrightnessMode[b] = manualBrightnessMode[b].val
+                            }
 
-									case 'isDeviceOwner':
+                            this.log.debug(`Check whether the brightness control for ${tabletName[b]} is set correctly`);
+                            if (enabledBrightness[b] === undefined) {
+
+                                this.log.warn(`Attention the brightness control of ${tabletName[b]} is not activated correctly ==> undefined`);
+                                enabledBrightness[b] = false;
+                                this.log.warn(`it is switched off temporarily, please deactivate it or activate it correctly`);
+
+                            }
+
+                            if (enabledBrightness[b]) {
+
+                                this.log.debug(`automatic brightness control for ${tabletName[b]} is switched on the manual control is now switched off`);
+                                await this.setStateAsync(`device.${tabletName[b]}.brightness_control_mode`, false, true);
+
+                            }
+                        }
+                    }
+                    else {
+                        for (const b in deviceEnabled) {
+                            this.log.debug(`The brightness settings for the devices are not defined. The manual mode is now switched on`);
+                            enabledBrightness[b] = false;
+                            await this.setStateAsync(`device.${await this.replaceFunction(tabletName[b])}.brightness_control_mode`, true, true);
+                        }
+                    }
+                }
+                else {
+                    for (const b in deviceEnabled) {
+                        this.log.debug(`automatic brightness control for ${tabletName[b]} is switched off the manual control is now switched on`);
+                        enabledBrightness[b] = false;
+                        await this.setStateAsync(`device.${await this.replaceFunction(tabletName[b])}.brightness_control_mode`, true, true);
+                    }
+                }
+                this.log.debug(`BrightnessControl initialization has been fully initialized`);
+            }
+            catch (error) {
+                this.log.error(`BrightnessControl init funktion has a problem: ${error.message}, stack: ${error.stack}`);
+            }
+
+            // motion Detector ID
+            try {
+
+                this.log.debug(`motion detector ID is read from the config and subscribed to`);
+                //read motion ID from Admin and subscribe
+                const motion = this.config.motion;
+                if (!motion && motion.length !== 0 || motion !== [] && motion.length !== 0) {
+                    for (const sensor in motion) {
 
-										const isDeviceOwner = objects['isDeviceOwner'];
-										this.setState(`device.${stateID}.device_info.isDeviceOwner`, {val: await isDeviceOwner, ack: true});
-										this.log.debug(`isDeviceOwner state for ${stateID} : ${isDeviceOwner}`);
+                        this.log.debug(`Check if the sensor is activated`);
+                        if (motion[sensor]['enabled']) {
 
-										break;
+                            this.log.debug(`Check whether the sensor has an ID entry`);
+                            if (motion[sensor]['motionid'] !== '') {
 
-									case 'ip6':
+                                this.log.debug(`read out all Motion ID's on the config`);
 
-										const ip6 = objects['ip6'];
-										this.setState(`device.${stateID}.device_info.ip6`, {val: await ip6, ack: true});
-										this.log.debug(`ip6 state for ${stateID} : ${ip6}`);
+                                motionID[sensor] = motion[sensor]['motionid'];
+                                motionVal[sensor] = false
+                                this.log.debug(`subscribe all Motion ID's`);
+                                this.subscribeForeignStates(motion[sensor]['motionid']);
 
-										break;
+                            }
+                            else {
+                                this.log.warn(`Attention there is no motion detector ID entered`);
 
-									case 'displayWidthPixels':
+                            }
+                        }
+                        else {
 
-										const displayWidthPixels = objects['displayWidthPixels'];
-										this.setState(`device.${stateID}.device_info.displayWidthPixels`, {val: await displayWidthPixels, ack: true});
-										this.log.debug(`displayWidthPixels state for ${stateID} : ${displayWidthPixels}`);
+                            this.log.debug(`the motion detector with the id: ${motion[sensor]['motionid']} is deactivated !!`);
+                            console.log('test')
+                        }
+                    }
+                    this.log.debug(`motion Detector ID initialization has been fully initialized`);
+                }
+                else {
+                    this.log.warn(`Motion detector is not defined, please define at least one or switch off the motion detector control!`);
+                }
+            }
+            catch (error) {
+                this.log.error(`motionDetectorID funktion has a problem: ${error.message}, stack: ${error.stack}`);
+            }
 
-										break;
+            // Screensaver init
+            try {
+                // read screensaverTimer and screenSaverSelect
+                this.log.debug(`The screensaver config is now read out`);
+                const screenSaverON = JSON.parse(this.config['screenSaverON']);
+                const screenSaverObj = this.config.screenSaver;
 
-									case 'androidVersion':
+                this.log.debug(`It is checked whether the screensaver control is switched on`);
+                if (screenSaverON) {
+                    this.log.debug(`Screensaver control is switched on`);
 
-										const androidVersion = objects['androidVersion'];
-										this.setState(`device.${stateID}.device_info.androidVersion`, {val: await androidVersion, ack: true});
-										this.log.debug(`androidVersion state for ${stateID} : ${androidVersion}`);
+                    if (!screenSaverObj && screenSaverObj.length !== 0 || screenSaverObj !== [] && screenSaverObj.length !== 0) {
+                        for (const s in deviceEnabled) {
+                            if (deviceEnabled[s]) {
 
-										break;
+                                if (screenSaverObj[s] !== undefined) {
 
-									case 'ip4': {
+                                    this.log.debug(`Screensaver time is now read out`);
+                                    screenSaverTime[s] = JSON.parse(screenSaverObj[s]['minute']) * 60000;
+                                    this.log.debug(`Screensaver time was successfully read out for ${tabletName[s]} ==> ${screenSaverTime[s]}`);
 
-										const ip4 = objects['ip4'];
-										this.setState(`device.${stateID}.device_info.device_ip`, {val: await ip4, ack: true});
-										this.log.debug(`ip4 state for ${stateID} : ${ip4}`);
+                                    screensaverOnURL[s] = `http://${ip[s]}:${port[s]}/?cmd=startScreensaver&password=${password[s]}`;
+                                    screensaverOffURL[s] = `http://${ip[s]}:${port[s]}/?cmd=stopScreensaver&password=${password[s]}`;
+                                    // manuel_screenSaver[s] = false;
+                                    this.log.debug(`the screensaver mode is read from the config`);
+                                    const screensaverMode = JSON.parse(screenSaverObj[s]['screensaverMode']);
+                                    this.log.debug(`the screensaver mode was successfully read from the config`);
 
-										break;
-									}
+                                    this.log.debug(`Url for the screensaver is now requested for ${tabletName[s]} from the config`);
+                                    const screenSaverUrl = screenSaverObj[s].url;
+                                    this.log.debug(`Url for ${tabletName[s]} was successfully obtained from the config`);
 
-									case 'plugged':
+                                    this.log.debug(`It is now checked whether the screensaver brightness synchronization is switched on for the ${tabletName[s]}`);
+                                    enableScreenSaverBrightness[s] = screenSaverObj[s]['enabled'];
+                                    this.log.debug(`For the ${tabletName[s]} the screensaver brightness synchronization switched on`);
 
-										const plugged = objects['plugged'];
-										this.setState(`device.${stateID}.device_info.plugged`, {val: await plugged, ack: true});
-										this.log.debug(`plugged state for ${stateID} : ${plugged}`);
+                                    this.log.debug(`Check for ${tabletName[s]} whether the screensaver brightness synchronization has been correctly initialized`);
+                                    if (enableScreenSaverBrightness[s] === undefined) {
+                                        enableScreenSaverBrightness[s] = false;
+                                        this.log.error(`[ATTENTION] the brightness synchronization for ${tabletName[s]} was not initialized, please check the box and save it.`);
+                                    }
+                                    else {
+                                        enableScreenSaverBrightness[s] = screenSaverObj[s]['enabled'];
+                                        this.log.debug(`the screensaver brightness synchronization for ${tabletName[s]} was correctly initialized`);
+                                    }
 
-										break;
+                                    if (screensaverMode) {
 
-									case 'isPlugged':
-										// new form App Version 1.40.3
-										const isPlugged = objects['isPlugged'];
-										this.setState(`device.${stateID}.device_info.plugged`, {val: await isPlugged, ack: true});
-										this.log.debug(`plugged state for ${stateID} : ${isPlugged}`);
+                                        if (screenSaverUrl === '') {
 
-										break;
+                                            const playlistUrl = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverPlaylist&value=&password=${password[s]}`;
+                                            const wallpaperURL = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverWallpaperURL&value=fully://color black&password=${password[s]}`;
+                                            this.log.debug(`The screensaver url for ${tabletName[s]} is not set the screensaver is set to a black image`);
 
-									case 'batteryLevel': {
+                                            await axios.get(playlistUrl)
+                                                .then(async result => {
 
-										bat[i] = objects['batteryLevel'];
-										let plugged = objects['plugged'] ? objects['plugged'] : objects['isPlugged']
+                                                    this.log.debug(`${tabletName[s]} send status for playlistUrl = status Code: ${result.status} => status Message: ${result.statusText}`);
 
-										this.setState(`device.${stateID}.battery`, {val: bat[i], ack: true});
-										this.log.debug(`batteryLevel state for ${stateID} : ${bat[i]}`);
+                                                }).catch(async error => {
 
+                                                    this.log.error(`${tabletName[s]} send status for playlistUrl has a problem => ${error.message}, stack: ${error.stack}`);
 
-										this.log.debug(`The battery level is now determined for ${stateID} `);
-										let visBattery = null;
+                                                });
 
-										if (plugged && bat[i] <= 100) visBattery = 20; 	// 100 %
-										if (!plugged && bat[i] <= 100) visBattery = 19; // 100 %
-										if (plugged && bat[i] <= 90) visBattery = 18; 	// 100 %
-										if (!plugged && bat[i] <= 90) visBattery = 17; 	// 90 %
-										if (plugged && bat[i] <= 80) visBattery = 16; 	// 90 %
-										if (!plugged && bat[i] <= 80) visBattery = 15; 	// 80 %
-										if (plugged && bat[i] <= 70) visBattery = 14; 	// 80 %
-										if (!plugged && bat[i] <= 70) visBattery = 13; 	// 70 %
-										if (plugged && bat[i] <= 60) visBattery = 12; 	// 70 %
-										if (!plugged && bat[i] <= 60) visBattery = 11; 	// 60 %
-										if (plugged && bat[i] <= 50) visBattery = 10; 	// 60 %
-										if (!plugged && bat[i] <= 50) visBattery = 9; 	// 50 %
-										if (plugged && bat[i] <= 40) visBattery = 8; 	// 50 %
-										if (!plugged && bat[i] <= 40) visBattery = 7; 	// 40 %
-										if (plugged && bat[i] <= 30) visBattery = 6; 	// 40 %
-										if (!plugged && bat[i] <= 30) visBattery = 5; 	// 30 %
-										if (plugged && bat[i] <= 20) visBattery = 4; 	// 30 %
-										if (!plugged && bat[i] <= 20) visBattery = 3; 	// 20 %
-										if (plugged && bat[i] <= 10) visBattery = 2; 	// 10 %
-										if (!plugged && bat[i] <= 10) visBattery = 1; 	// 10 %
-										if (bat[i] <= 0) visBattery = 0; 	// empty
+                                            await axios.get(wallpaperURL)
+                                                .then(async result => {
 
-										this.log.debug(`Battery level has been determined is now written for ${stateID} `);
-										this.setState(`device.${stateID}.state_of_charge_vis`, {val: visBattery, ack: true});
-										this.log.debug(`visBattery state for ${stateID} : bat: ${bat[i]} visBat: ${visBattery}`);
+                                                    this.log.debug(`${tabletName[s]} send status for wallpaperURL = status Code: ${result.status} => status Message: ${result.statusText}`);
 
-										break;
-									}
+                                                }).catch(async error => {
 
-									case 'isScreenOn':
+                                                    this.log.error(`${tabletName[s]} send status for wallpaperURL  could not be sent => ${error.message}, stack: ${error.stack}`);
 
+                                                });
 
-										const isScreenOn = objects['isScreenOn'];
+                                        }
+                                        else {
 
-										this.setState(`device.${stateID}.device_info.isScreenOn`, {val: await isScreenOn, ack: true});
-										this.log.debug(`isScreenOn state for ${stateID} : ${isScreenOn}`);
+                                            const screenUrl = [
+                                                {
+                                                    'type': 4,
+                                                    'url': screenSaverUrl,
+                                                    'loopItem': true,
+                                                    'loopFile': false,
+                                                    'fileOrder': 0,
+                                                    'nextItemOnTouch': false,
+                                                    'nextFileOnTouch': false,
+                                                    'nextItemTimer': 0,
+                                                    'nextFileTimer': 0
+                                                }
+                                            ];
 
-										this.log.debug(`It is checked whether the screen is switched on at ${stateID}`);
-										if (isScreenOn) this.log.debug(`The screen is switched on for the ${stateID}`);
-										if (!isScreenOn) {
-											await this.screenOn();
-										}
+                                            const playlistUrl = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverPlaylist&value=${JSON.stringify(screenUrl)}&password=${password[s]}`;
 
-										break;
+                                            this.log.debug(`YouTube Screensaver Url => ${screenSaverUrl} is set for ${tabletName[s]}`);
 
-									case 'screenOn':
 
-										// new form App Version 1.40.3
-										const screenOn = objects['screenOn'];
+                                            await axios.get(playlistUrl)
+                                                .then(async result => {
 
-										this.setState(`device.${stateID}.device_info.isScreenOn`, {val: screenOn, ack: true});
-										this.log.debug(`isScreenOn state for ${stateID} : ${screenOn}`);
+                                                    this.log.debug(`${tabletName[s]} send status for playlistUrl = status Code: ${result.status} => status Message: ${result.statusText}`);
 
-										this.log.debug(`It is checked whether the screen is switched on at ${stateID}`);
-										if (screenOn) this.log.debug(`The screen is switched on for the ${stateID}`);
-										if (!screenOn) {
-											await this.screenOn();
-										}
+                                                }).catch(async error => {
 
-										break;
+                                                    this.log.error(`${tabletName[s]} send status for playlistUrl  could not be sent => ${error.message}, stack: ${error.stack}`);
 
-									case 'screenBrightness':
+                                                });
+                                        }
 
-										brightness[i] = objects['screenBrightness'];
-										this.setState(`device.${stateID}.brightness`, {val: await brightness[i], ack: true});
-										this.log.debug(`screenBrightness state for ${stateID} : ${brightness[i]}`);
+                                    }
+                                    else if (!screensaverMode) {
+                                        if (screenSaverUrl === '') {
+                                            const playlistUrl = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverPlaylist&value=&password=${password[s]}`;
+                                            const wallpaperURL = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverWallpaperURL&value=fully://color black&password=${password[s]}`;
+                                            this.log.debug(`The screensaver url for ${tabletName[s]} is not set the screensaver is set to a black image`);
 
-										break;
+                                            await axios.get(playlistUrl)
+                                                .then(async result => {
 
-									case 'lastAppStart':
+                                                    this.log.debug(`${tabletName[s]} send status for playlistUrl = status Code: ${result.status} => status Message: ${result.statusText}`);
 
-										const lastAppStart = objects['lastAppStart'];
-										this.setState(`device.${stateID}.device_info.LastAppStart`, {val: await lastAppStart, ack: true});
-										this.log.debug(`lastAppStart state for ${stateID} : ${lastAppStart}`);
+                                                }).catch(async error => {
 
-										break;
+                                                    this.log.error(`${tabletName[s]} send status for playlistUrl has a problem => ${error.message}, stack: ${error.stack}`);
 
-									case 'ssid':
+                                                });
 
-										const ssid = objects['ssid'].replace(/"/gi, '');
+                                            await axios.get(wallpaperURL)
+                                                .then(async result => {
 
+                                                    this.log.debug(`${tabletName[s]} send status for wallpaperURL = status Code: ${result.status} => status Message: ${result.statusText}`);
 
-										this.log.debug(`ssid ROW state for ${stateID} : ${ssid}`);
+                                                }).catch(async error => {
 
-										if (ssid === '<unknown ssid>') {
-											this.setState(`device.${stateID}.device_info.ssid`, {val: 'is not supported', ack: true});
-											this.log.debug(`ssid state for ${stateID} : ${ssid}`);
-										}
-										else if (ssid === '') {
-											this.setState(`device.${stateID}.device_info.ssid`, {val: 'is not supported', ack: true});
-											this.log.debug(`ssid state for ${stateID} : ${ssid}`);
-										}
-										else {
-											this.setState(`device.${stateID}.device_info.ssid`, {val: ssid, ack: true});
-											this.log.debug(`ssid state for ${stateID} : ${ssid}`);
-										}
+                                                    this.log.error(`${tabletName[s]} send status for wallpaperURL  could not be sent => ${error.message}, stack: ${error.stack}`);
 
-										break;
+                                                });
+                                        }
+                                        else {
+                                            const playlistUrl = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverPlaylist&value=&password=${password[s]}`;
+                                            const wallpaperURL = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverWallpaperURL&value=${screenSaverUrl}&password=${password[s]}`;
+                                            this.log.debug(`${tabletName[s]} screensaver is switched on for wallpaper the playlist is now deleted and WallpaperUrl is set`);
 
-									case 'SSID':
-										// new from App version 1.40.3
-										const SSID = objects['SSID'].replace(/"/gi, '');
+                                            await axios.get(playlistUrl)
+                                                .then(async result => {
 
+                                                    this.log.debug(`${tabletName[s]} send status for playlistUrl = status Code: ${result.status} => status Message: ${result.statusText}`);
 
-										this.log.debug(`SSID ROW state for ${stateID} : ${SSID}`);
+                                                }).catch(async error => {
 
-										if (SSID === '<unknown ssid>') {
-											this.setState(`device.${stateID}.device_info.ssid`, {val: 'is not supported', ack: true});
-											this.log.debug(`SSID state for ${stateID} : ${SSID}`);
-										}
-										else if (SSID === '') {
-											this.setState(`device.${stateID}.device_info.ssid`, {val: 'is not supported', ack: true});
-											this.log.debug(`SSID state for ${stateID} : ${SSID}`);
-										}
-										else {
-											this.setState(`device.${stateID}.device_info.ssid`, {val: SSID, ack: true});
-											this.log.debug(`SSID state for ${stateID} : ${SSID}`);
-										}
+                                                    this.log.error(`${tabletName[s]} send status for playlistUrl has a problem => ${error.message}, stack: ${error.stack}`);
 
-										break;
+                                                });
 
-									case 'foregroundApp':
+                                            this.log.debug(`Wallpaper Screensaver Url => ${screenSaverUrl} is set for ${tabletName[s]}`);
+                                            await axios.get(wallpaperURL)
+                                                .then(async result => {
 
-										foreground[i] = objects.foregroundApp;
-										this.setState(`device.${stateID}.device_info.foregroundApp`, {val: foreground[i], ack: true});
-										this.log.debug(`foregroundApp state for ${stateID} : ${foreground[i]}`);
+                                                    this.log.debug(`${tabletName[s]} send status for wallpaperURL = status Code: ${result.status} => status Message: ${result.statusText}`);
 
-										this.log.debug(`It is checked whether the FullyBrowser is in the foreground at ${stateID}`);
-										if (await foreground[i] !== 'de.ozerov.fully' && await foregroundStart[i] === false) {
-											foregroundStart[i] = true;
+                                                }).catch(async error => {
 
-											this.log.debug(`FullyBrowser is not in the foreground with ${stateID}`);
-											await this.foregroundApp();
-											this.log.debug(`${await tabletName[i]} foregroundStart true: ${await foreground[i]}`);
+                                                    this.log.error(`${tabletName[s]} send status for wallpaperURL  could not be sent => ${error.message}, stack: ${error.stack}`);
 
-										}
-										else {
-											foregroundStart[i] = false;
-											this.log.debug(`${await tabletName[i]} foreground is Fully: ${await foreground[i]}`);
-										}
+                                                });
+                                        }
+                                    }
+                                }
+                                else {
+                                    this.log.warn(`There is no screensaver config set for ${tabletName[s]}`);
+                                    this.log.warn(`Please add a screensaver configuration or switch off the screensaver control.`);
+                                }
+                            }
+                        }
+                    }
+                }
+                this.log.debug(`Screensaver initialization has been fully initialized`);
+            }
+            catch (error) {
+                this.log.error(`Screensaver init funktion has a problem: ${error.message}, stack: ${error.stack}`);
+            }
 
-										break;
+            // visView init
+            try {
+                this.log.debug(`Vis View control is now initialized`);
+                const viewName = [];
+                this.log.debug(`Check whether the visView control is switched on`);
+                const view_enabled = JSON.parse(this.config['viewChange_enabled']);
+                if (view_enabled) {
+                    this.log.debug(`the visView control is switched on `);
 
-									case 'internalStorageFreeSpace':
+                    this.log.debug(`visView config is now read out`);
+                    const visView = this.config.visView;
+                    this.log.debug(`the visView config was read out successfully`);
 
-										const internalStorageFreeSpace = objects['internalStorageFreeSpace'];
-										this.setState(`device.${stateID}.device_info.memory.internalStorageFreeSpace`, {val: await this.bytesToSize(internalStorageFreeSpace), ack: true});
-										this.log.debug(`internalStorageFreeSpace state for ${stateID} : ${internalStorageFreeSpace}`);
+                    this.log.debug(`now visProjekt / viewName / view Number the homeView / wishView and the time are read out from the config and chamfered together`);
+                    for (const view in visView) {
 
-										break;
+                        const visProjekt = visView[view]['visProjekt'];
 
-									case 'appTotalMemory':
+                        viewName[view] = visView[view]['viewName'];
 
-										const appTotalMemory = objects['appTotalMemory'];
-										this.setState(`device.${stateID}.device_info.memory.appTotalMemory`, {val: await this.bytesToSize(appTotalMemory), ack: true});
-										this.log.debug(`appTotalMemory state for ${stateID} : ${appTotalMemory}`);
+                        if (visView[view]['viewNumber'] !== '') {
 
-										break;
+                            viewNumber[view] = JSON.parse(visView[view]['viewNumber']);
+                        }
 
-									case 'ramFreeMemory':
+                        const tempTime = visView[view].time;
+                        homeView = `${visProjekt}/${viewName[0]}`;
+                        wishView[view] = `${visProjekt}/${viewName[view]}`;
+                        if (tempTime === '0' || tempTime === '00') {
+                            time[view] = 0;
+                        }
+                        else {
 
-										const ramFreeMemory = objects['ramFreeMemory'];
-										this.setState(`device.${stateID}.device_info.memory.ramFreeMemory`, {val: await this.bytesToSize(ramFreeMemory), ack: true});
-										this.log.debug(`ramFreeMemory state for ${stateID} : ${ramFreeMemory}`);
+                            time[view] = JSON.parse(visView[view].time);
+                        }
 
-										break;
+                    }
+                    this.log.debug(`the homeView was created successfully => ${homeView}`);
+                    this.log.debug(`the wishView was created successfully => ${wishView}`);
+                    this.log.debug(`the viewNumber was created successfully => ${viewNumber}`);
+                    this.log.debug(`the viewTime was created successfully => ${time}`);
 
-									case 'appFreeMemory':
+                }
+                this.log.debug(`visView initialization has been fully initialized`);
+            }
+            catch (error) {
+                this.log.error(`Screensaver init funktion has a problem: ${error.message}, stack: ${error.stack}`);
+            }
 
-										const appFreeMemory = objects['appFreeMemory'];
-										this.setState(`device.${stateID}.device_info.memory.appFreeMemory`, {val: await this.bytesToSize(appFreeMemory), ack: true});
-										this.log.debug(`appFreeMemory state for ${stateID} : ${appFreeMemory}`);
+            // AstroTime restart
+            try {
 
-										break;
+                const astroTimeCron = new schedule(`0 2 * * * `, async () => {
+                    await this.astroTime();
+                });
 
-									case 'internalStorageTotalSpace':
+                astroTimeCron.start();
+                this.log.debug(`AstroTime restart is set to 2 o'clock in the morning`);
 
-										const internalStorageTotalSpace = objects['internalStorageTotalSpace'];
-										this.setState(`device.${stateID}.device_info.memory.internalStorageTotalSpace`, {val: await this.bytesToSize(internalStorageTotalSpace), ack: true});
-										this.log.debug(`internalStorageTotalSpace state for ${stateID} : ${internalStorageTotalSpace}`);
+            }
+            catch (error) {
+                this.log.error(`AstroTime restart init funktion has a problem: ${error.message}, stack: ${error.stack}`);
+            }
 
-										break;
 
-									case 'ramUsedMemory':
+        }
+        catch (error) {
+            this.log.error(`[initialization] funktion : ${error.message}, stack: ${error.stack}`);
+        }
+    }
 
-										const ramUsedMemory = objects['ramUsedMemory'];
-										this.setState(`device.${stateID}.device_info.memory.ramUsedMemory`, {val: await this.bytesToSize(ramUsedMemory), ack: true});
-										this.log.debug(`ramUsedMemory state for ${stateID} : ${ramUsedMemory}`);
+    async stateRequest() {
+        try {
 
-										break;
+            if (requestTimeout) clearTimeout(requestTimeout);
+            if (!deviceInfo || deviceInfo !== []) {
 
-									case 'appUsedMemory':
+                for (const i in deviceInfo) {
+                    if (deviceEnabled[i]) {
 
-										const appUsedMemory = objects['appUsedMemory'];
-										this.setState(`device.${stateID}.device_info.memory.appUsedMemory`, {val: await this.bytesToSize(appUsedMemory), ack: true});
-										this.log.debug(`appUsedMemory state for ${stateID} : ${appUsedMemory}`);
+                        this.log.debug(`device: ${tabletName[i]} enabled`);
 
-										break;
+                        const deviceID = await this.replaceFunction(tabletName[i]);
 
-									case 'ramTotalMemory':
+                        this.log.debug(`API request started ...`);
 
-										const ramTotalMemory = objects['ramTotalMemory'];
-										this.setState(`device.${stateID}.device_info.memory.ramTotalMemory`, {val: await this.bytesToSize(ramTotalMemory), ack: true});
-										this.log.debug(`ramTotalMemory state for ${stateID} : ${ramTotalMemory}`);
+                        await axios.get(deviceInfo[i])
+                            .then(async apiResult => {
 
-										break;
+                                if (apiResult['status'] === 200) {
 
-								}
+                                    if (apiResult['data']['status'] !== 'Error') {
+                                        this.log.debug(`API request ended successfully --> result from api Request: ${JSON.stringify(apiResult['data'])}`);
 
-							}
+                                        this.log.debug(`State Create is now running ...`);
+                                        await this.create_state(apiResult, i);
+                                        this.log.debug(`State Create was carried out`);
 
-						}
-						else {
-							this.log.error(`${apiResult.data.statustext}`);
-						}
-						// last Info Update
-						this.setState(`device.${await stateID}.lastInfoUpdate`, { val: Date.now(), ack: true });
-						this.log.debug(`lastInfoUpdate: ${Date.now()}`);
-					}
-					else {
-						console.log(`device ${tabletName[i]} deactivated`);
-						this.log.debug(`device ${tabletName[i]} deactivated`);
-					}
-				}
-			}
-			await this.charger();
+                                        this.log.debug(`States are now written`);
 
-			requestTimeout = setTimeout(async () => {
+                                        await this.state_write(apiResult, i, deviceID);
 
-				await this.stateRequest();
-			}, interval);
-		} catch (error) {
-			this.log.error(`[stateRequest] : ${error.message}, stack: ${error.stack}`);
-		}
-	}
+                                        //set is Wallpanel Alive to true if the request was successful
+                                        this.setState(`device.${deviceID}.isFullyAlive`, {val: true, ack: true});
+                                        this.log.debug(`states were written`);
 
+                                        // clear log message timer
+                                        if (logMessageTimer[i]) clearTimeout(logMessageTimer[i]);
+                                        this.log.debug(`logMessageTimer for ${tabletName[i]} will be deleted`);
 
-	async sendFullyCommand(id, state) {
-		try {
-			let comm;
-			let dp;
-			let name;
-			const tmp = id.split('.');
+                                        logMessage[i] = false;
 
-			if (tmp.length > 4) {
-				dp = tmp.pop();
-				comm = tmp.pop();
-				name = tmp.pop();
-			} else {
-				dp = tmp.pop();
-			}
+                                        this.log.debug(`logMessage set to ${logMessage[i]} for ${tabletName[i]}`);
 
+                                        // await this.charger();
 
-			if (state.ack != null) {
-				if (state && !state.ack) {
+                                    }
+                                    else {
+                                        this.log.error(`${apiResult['data']['statustext']}`);
+                                    }
+                                }
 
-					for (const s in tabletName) {
+                            }).catch(async error => {
 
-						if (deviceEnabled[s] && !logMessage[s]) {
-							if (dp !== 'reloadAll') {
+                                if (!logMessage[i]) {
 
-								if (name.replace(/_/gi, ' ') == tabletName[s].toLowerCase()) {
+                                    logMessage[i] = true;
+                                    this.log.debug(`logMessage set to ${logMessage[i]} for ${tabletName[i]}`);
 
-									switch (dp) {
-										case 'setStringSetting':
-											// eslint-disable-next-line no-case-declarations
-											const txtKey = state.val;
-											if (txtKey.length > 1) {
+                                    this.log.error(`[Request] ${tabletName[i]} Unable to contact: ${error} | ${error}`);
+                                }
+                                else if (!logMessageTimer[i]) {
 
-												const textToSpeechURL = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=${txtKey}&password=${password[s]}`;
-												try {
-													await axios.get(textToSpeechURL);
-												} catch (error) {
-													this.log.error(`[send textToSpeechURL] Unable to contact: ${error} | ${error}`);
-												}
-											}
-											break;
-										case 'mediaVolumen':
-											// eslint-disable-next-line no-case-declarations
-											const volume = state.val;
-
-											if (volume >= 0 && volume <= 100) {
-												
-												const mediaVolumeURL = `http://${ip[s]}:${port[s]}/?cmd=setAudioVolume&level=${volume}&stream=3&password=${password[s]}`;
-												try {
-													await axios.get(mediaVolumeURL);
-												} catch (error) {
-													this.log.error(`[send mediaVolumeURL] Unable to contact: ${error} | ${error}`);
-												}
-											}
-											break;
-										case 'textToSpeech':
-											// eslint-disable-next-line no-case-declarations
-											let txtSp = state.val;
-											txtSp = encodeURIComponent(txtSp.replace(/ +/g, ' ')); // Remove multiple spaces
-											if (txtSp.length > 1) {
-
-												const textToSpeechURL = `http://${ip[s]}:${port[s]}/?cmd=textToSpeech&text=${txtSp}&password=${password[s]}`;
-												try {
-													await axios.get(textToSpeechURL);
-												} catch (error) {
-													this.log.error(`[send textToSpeechURL] Unable to contact: ${error} | ${error}`);
-												}
-											}
-											break;
-										case 'loadURL':
-											// eslint-disable-next-line no-case-declarations
-											let strUrl = state.val;
-											strUrl = strUrl.replace(/ /g, ''); // Remove Spaces
-
-											// eslint-disable-next-line no-case-declarations
-											const encodeUrl = encodeURIComponent(strUrl);
-
-											if (strUrl.length > 10) {
-
-												const loadURL = `http://${ip[s]}:${port[s]}/?cmd=loadURL&url=${encodeUrl}&password=${password[s]}`;
-												try {
-													await axios.get(loadURL);
-												} catch (error) {
-													this.log.error(`[send loadURL] Unable to contact: ${error} | ${error}`);
-												}
-											}
-											break;
-										case 'startApplication':
-											// eslint-disable-next-line no-case-declarations
-											let strApp = state.val;
-											strApp = strApp.replace(/ /g, ''); // Remove Spaces
-
-											if (strApp.length > 2) {
-												const startApplicationURL = `http://${ip[s]}:${port[s]}/?cmd=startApplication&package=${strApp}&password=${password[s]}`;
-												try {
-													await axios.get(startApplicationURL);
-												} catch (error) {
-													this.log.error(`[send startApplicationURL] Unable to contact: ${error} | ${error}`);
-												}
-
-											}
-											break;
-										default:
-											if (comm === commandsStr) {
-
-												const commandsURL = `http://${ip[s]}:${port[s]}/?cmd=${dp}&password=${password[s]}`;
-												try {
-													await axios.get(commandsURL);
-												} catch (error) {
-													this.log.error(`[send commandsURL] Unable to contact: ${error} | ${error}`);
-												}
-											}
-									}
-								}
-							} else {
-								const reloadAllURL = `http://${ip[s]}:${port[s]}/?cmd=loadStartURL&password=${password[s]}`;
-								try {
-									await axios.get(reloadAllURL);
-								} catch (error) {
-									this.log.error(`[send reloadAll] Unable to contact: ${error} | ${error}`);
-								}
-
-							}
-						}
-
-					}
-				}
-			}
-		} catch (error) {
-			this.log.error(`[sendFullyCommand] : ${error.message}, stack: ${error.stack}`);
-		}
-	}
-
-	async foregroundApp() {
-		try {
-			for (const c in ip) {
-				if (deviceEnabled[c] && !logMessage[c]) {
-					for (const app in foreground) {
-						if (foregroundAppTimer[app]) clearTimeout(foregroundAppTimer[app]);
-						console.log(`${await tabletName[app]} foreground: ${await foreground[app]}`);
-						this.log.debug(`${await tabletName[app]} foreground: ${await foreground[app]}`);
-
-						const foregroundAppUrl = `http://${await ip[app]}:${await port[app]}/?cmd=toForeground&password=${await password[app]}`;
-						console.log(`${await tabletName[app]} foreground: ${foregroundAppUrl}`);
-						foregroundAppTimer[app] = setTimeout(async () => {
-
-							try {
-								await axios.get(foregroundAppUrl);
-							} catch (error) {
-								this.log.error(`${await tabletName[app]} [foregroundApp] could not be sent: ${error.message}, stack: ${error.stack}`);
-							}
-						}, fireTabletInterval);
-					}
-				}
-			}
-		} catch (error) {
-			this.log.error(`[foregroundApp] : ${error.message}, stack: ${error.stack}`);
-		}
-	}
-
-	async charger() {
-		try {
-			const charger = this.config.charger;
-			const telegram_enabled = JSON.parse(this.config.telegram_enabled);
-
-
-			if (JSON.parse(this.config.chargerON)) {
-				if (!charger || charger !== []) {
-					for (const i in ip) {
-						if (deviceEnabled[i] && !logMessage[i]) {
-							if (charger[i]) {
-
-								const chargerid = charger[i].chargerid;
-								const power_mode = charger[i].power_mode;
-								const loadStart = JSON.parse(charger[i].loadStart);
-								const loadStop = JSON.parse(charger[i].loadStop);
-
-								if (chargerid) {
-									const chargeDevice = await this.getForeignStateAsync(chargerid);
-
-									chargeDeviceValue[i] = chargeDevice == null ? false : chargeDevice.val;
-									this.log.debug(`chargerid: ` + chargerid + ` val: ` + chargeDeviceValue[i]);
-								}
-								else {
-									if (power_mode != 'off') {
-										console.log(`${await tabletName[i]} Charger ID not specified`);
-										this.log.warn(`${await tabletName[i]} Charger ID not specified`);
-									}
-								}
-
-
-
-								if (await power_mode == 'true') {
-									if (chargerid) {
-										messageCharging[i] = false;
-										if (await bat[i] <= loadStart && !chargeDeviceValue[i]) {
-
-											await this.setForeignStateAsync(await chargerid, true, false);
-											this.log.info(`${await tabletName[i]} Loading started`);
-											// this.manualStates();
-
-										}
-										else if (await bat[i] >= loadStop && chargeDeviceValue[i]) {
-											messageSend[i] = false;
-											await this.setForeignStateAsync(await chargerid, false, false);
-											this.log.info(`${await tabletName[i]} Charging cycle ended`);
-
-										}
-									}
-									else {
-										console.log(`${await tabletName[i]} Charger ID for Charging cycle not specified`);
-										this.log.warn(`${await tabletName[i]} Charger ID for Charging cycle not specified`);
-									}
-
-								}
-								else if (await power_mode == 'false') {
-									if (chargerid) {
-										messageCharging[i] = false;
-										if (!chargeDeviceValue[i]) this.setForeignStateAsync(await chargerid, true, false);
-										if (!chargeDeviceValue[i]) this.log.debug(`${await tabletName[i]} Continuous current`);
-										// this.manualStates();
-									}
-									else {
-										console.log(`${await tabletName[i]} Charger ID for Continuous current not specified`);
-										this.log.warn(`${await tabletName[i]} Charger ID for Continuous current not specified`);
-									}
-								}
-								else if (await power_mode == 'off') {
-									if (!messageCharging[i]) {
-										this.log.info(`${await tabletName[i]} Charging Off`);
-										messageCharging[i] = true;
-									}
-								}
-
-
-								if (power_mode != 'off') {
-									if (telegram_enabled === true) {
-
-										if (await bat[i] <= 18 && !chargeDeviceValue[i] && !telegramStatus[i] || bat[i] <= 18 && chargeDeviceValue[i] && !telegramStatus[i]) {
-											telegramStatus[i] = true;
-											this.onMessage(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${await tabletName[i]} Tablet charging function has detected a malfunction, the tablet is not charging, please check it !!!`, User);
-											this.log.warn(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + `  ${await tabletName[i]} Tablet charging function has detected a malfunction, the tablet is not charging, please check it !!!`);
-											this.setForeignStateAsync(await chargerid[i], true, false);
-											this.setState(`device.${await tabletName[i]}.charging_warning`, { val: true, ack: true });
-
-										}
-										else if (await bat[i] > 18 && chargeDeviceValue[i] && telegramStatus[i]) {
-											telegramStatus[i] = false;
-											this.onMessage(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${await tabletName[i]} Tablet is charging the problem has been fixed.`, User);
-											this.log.warn(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${await tabletName[i]} Tablet is charging the problem has been fixed.`);
-											this.setState(`device.${await tabletName[i]}.charging_warning`, { val: false, ack: true });
-										}
-
-									}
-									else {
-										if (await bat[i] >= 20 && !messageSend[i]) {
-											messageSend[i] = false;
-
-										}
-										if (await bat[i] <= 18 && !chargeDeviceValue[i] && !AlertMessageSend[i] || bat[i] <= 18 && chargeDeviceValue[i] && !AlertMessageSend[i]) {
-											AlertMessageSend[i] = true;
-											messageSend[i] = false;
-											this.log.warn(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${await tabletName[i]} Tablet charging function has detected a malfunction, the tablet is not charging, please check it !!!`);
-											this.setForeignStateAsync(await chargerid[i], true, false);
-											this.setState(`device.${await tabletName[i]}.charging_warning`, { val: true, ack: true });
-
-										} else if (await bat[i] > 18 && bat[i] < 20 && chargeDeviceValue[i] && !messageSend[i]) {
-
-											messageSend[i] = true;
-											AlertMessageSend[i] = false;
-											this.log.info(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${await tabletName[i]} Tablet is charging the problem has been fixed.`);
-											this.setState(`device.${await tabletName[i]}.charging_warning`, { val: false, ack: true });
-										}
-									}
-								}
-							}
-							else {
-								console.log(`${await tabletName[i]} charger not specified`);
-								this.log.warn(`${await tabletName[i]} charger not specified`);
-							}
-						}
-					}
-				}
-			}
-		} catch (error) {
-			this.log.error(`[charger] : ${error.message}, stack: ${error.stack}`);
-		}
-	}
-
-	async astroTime() {
-		try {
-			this.getObjectList({ include_docs: true }, (err, res) => {
-				// @ts-ignore
-				res = res.rows;
-				const objects = {};
-				// @ts-ignore
-				for (let i = 0; i < res.length; i++) {
-					// @ts-ignore
-					if (!res[i].doc) {
-						// @ts-ignore
-						this.log.debug('Got empty object for index ' + i + ' (' + res[i].id + ')');
-						continue;
-					}
-					// @ts-ignore
-					objects[res[i].doc._id] = res[i].doc;
-				}
-				const systemConfig = objects['system.config'];
-
-				const iobrokerLatitude = systemConfig.common.latitude;
-				const iobrokerLongitude = systemConfig.common.longitude;
-				// console.log('test' + systemConfig.common);
-
-				const ts = SunCalc.getTimes(new Date, iobrokerLatitude, iobrokerLongitude);
-				// const sunriseStr = ts.sunrise.getHours() + ':' + ts.sunrise.getMinutes();
-				const astroSelectDay = this.config.astroSelectDay;
-				const astroSelectNight = this.config.astroSelectNight;
-
-				AstroDayHours = ts[astroSelectDay].getHours();
-				AstroDayMinutes = ts[astroSelectDay].getMinutes();
-				AstroDayMilis = ts[astroSelectDay].getTime();
-
-
-				AstroNightHours = ts[astroSelectNight].getHours();
-				AstroNightMinutes = ts[astroSelectNight].getMinutes();
-				AstroNightMilis = ts[astroSelectNight].getTime();
-
-				this.brightnessCron();
-			});
-
-		} catch (error) {
-			this.log.error(`[astroTime] : ${error.message}, stack: ${error.stack}`);
-		}
-	}
-
-	async brightnessCron() {
-		try {
-			const timeMode = JSON.parse(this.config.timeMode);
-			if (brightnessControlEnabled) {
-				for (const c in tabletName) {
-					if (enabledBrightness[c] && !logMessage[c]) {
-
-						if (timeMode) {
-
-							console.log(`night cron: ${AstroNightMinutes} ${AstroNightHours} * * * `);
-							this.log.debug(`night cron: ${AstroNightMinutes} ${AstroNightHours} * * * `);
-							const astroNightBriCron = new schedule(`${AstroNightMinutes} ${AstroNightHours} * * * `, async () => {
-								this.log.debug(`nacht bri`);
-
-								nightBriMode = true;
-								dayBriMode = false;
-								if (dayBriTimeout) clearTimeout(dayBriTimeout);
-								if (nightBriTimeout) clearTimeout(nightBriTimeout);
-								this.nightBri();
-							});
-
-							console.log(`${AstroDayMinutes} ${AstroDayHours} * * * `);
-							this.log.debug(`day cron: ${AstroDayMinutes} ${AstroDayHours} * * * `);
-							const astroDayBriCron = new schedule(`${AstroDayMinutes} ${AstroDayHours} * * * `, async () => {
-								this.log.debug(`day bri`);
-
-								nightBriMode = false;
-								dayBriMode = true;
-								if (dayBriTimeout) clearTimeout(dayBriTimeout);
-								if (nightBriTimeout) clearTimeout(nightBriTimeout);
-								this.dayBri();
-							});
-
-
-
-							astroNightBriCron.start();
-							astroDayBriCron.start();
-
-						}
-						else {
-							const dayTime = this.config.dayTime;
-							const nightTime = this.config.nightTime;
-							this.log.debug('checkInterval ' + checkInterval);
-							this.log.debug('dayTime ' + dayTime);
-							this.log.debug('nightTime ' + nightTime);
-
-							console.log(`night [ 0 ${nightTime} * * * ]`);
-							this.log.debug(`night [ 0 ${nightTime} * * * ]`);
-							const nightBriCron = new schedule(`0 ${nightTime} * * * `, async () => {
-
-								nightBriMode = true;
-								dayBriMode = false;
-								if (dayBriTimeout) clearTimeout(dayBriTimeout);
-								if (nightBriTimeout) clearTimeout(nightBriTimeout);
-								this.nightBri();
-
-							});
-
-							console.log(`day [ 0 ${dayTime} * * *  ]`);
-							this.log.debug(`day [ 0 ${dayTime} * * *  ]`);
-							const dayBriCron = new schedule(`0 ${dayTime} * * * `, async () => {
-
-								nightBriMode = false;
-								dayBriMode = true;
-								if (dayBriTimeout) clearTimeout(dayBriTimeout);
-								if (nightBriTimeout) clearTimeout(nightBriTimeout);
-								this.dayBri();
-
-							});
-
-							nightBriCron.start();
-							dayBriCron.start();
-						}
-					}
-				}
-			}
-		} catch (error) {
-			this.log.error(`[brightnessCron] : ${error.message}, stack: ${error.stack}`);
-		}
-	}
-
-	async nightBri() {
-		try {
-			const brightnessN = this.config.brightness;
-			const screenSaverON = JSON.parse(this.config.screenSaverON);
-			if (!brightnessN || brightnessN !== []) {
-
-				for (const d in ip) {
-					if (deviceEnabled[d] && !logMessage[d]) {
-						if (brightnessControlEnabled) {
-							if (enabledBrightness[d]) {
-								if (brightnessN[d]) {
-
-									let nightTimeBrightnessURL = null;
-									let ScreensaverOnBri = null;
-									let newBrightnessNight = 0;
-									if (chargeDeviceValue[d]) {
-
-										let brightnessNightPuffer;
-										if (await manualBrightnessMode[d]) {
-											brightnessNightPuffer = Math.round(await this.convert_percent(await manualBrightness[d] - brightnessN[d].loadingLowering));
-
-										}
-										else {
-											brightnessNightPuffer = Math.round(await this.convert_percent(brightnessN[d].nightBrightness - brightnessN[d].loadingLowering));
-
-										}
-										if (brightnessNightPuffer <= 0) {
-											newBrightnessNight = 0;
-											this.log.debug(`brightness from ${await tabletName[d]} is less than 0 brightness is set to`);
-										} else {
-											newBrightnessNight = brightnessNightPuffer;
-											this.log.debug(`new brightness from ${await tabletName[d]}: ` + newBrightnessNight + `[` + (brightnessN[d].nightBrightness - brightnessN[d].loadingLowering) + `%]`);
-										}
-									} else {
-										if (await manualBrightnessMode[d]) {
-											newBrightnessNight = Math.round(await this.convert_percent(await manualBrightness[d]));
-											this.log.debug(`${await tabletName[d]} brightness set on: ` + newBrightnessNight + `[` + manualBrightness[d] + `%]`);
-										}
-										else {
-											newBrightnessNight = Math.round(await this.convert_percent(brightnessN[d].nightBrightness));
-											this.log.debug(`${await tabletName[d]} brightness set on: ` + newBrightnessNight + `[` + brightnessN[d].nightBrightness + `%]`);
-										}
-									}
-									nightTimeBrightnessURL = `http://${ip[d]}:${port[d]}/?cmd=setStringSetting&key=screenBrightness&value=${newBrightnessNight}&password=${password[d]}`;
-									ScreensaverOnBri = `http://${ip[d]}:${port[d]}/?cmd=setStringSetting&key=screensaverBrightness&value=${newBrightnessNight}&password=${password[d]}`;
-									if (await brightness[d] != newBrightnessNight) {
-
-										try {
-
-											//checks whether the screen saver is on and then sends the command
-											if (enableScreenSaverBrightness[d] && screenSaverON) {
-												await axios.get(ScreensaverOnBri);
-												await axios.get(nightTimeBrightnessURL);
-												await this.stateRequest();
-											}
-											else if (isInScreensaver[d] == false) {
-
-												await axios.get(nightTimeBrightnessURL);
-												await this.stateRequest();
-											}
-
-
-										} catch (error) {
-											if (!logMessage[d]) this.log.error(`${await tabletName[d]} [nightBri] could not be sent: ${error.message}, stack: ${error.stack}`);
-											if (!logMessage[d]) this.log.error(`${await tabletName[d]} [ScreensaverOnBri] could not be sent: ${error.message}, stack: ${error.stack}`);
-										}
-										this.log.debug(`${await tabletName[d]} send Command: ${nightTimeBrightnessURL}`);
-										this.log.debug(`${await tabletName[d]} send Command: ${ScreensaverOnBri}`);
-									}
-								}
-								else {
-									console.log(`${await tabletName[d]} dayBri not specified`);
-									this.log.warn(`${await tabletName[d]} dayBri not specified`);
-								}
-
-							}
-							else {
-
-								let nightTimeBrightnessURL = null;
-								let ScreensaverOnBri = null;
-								let newBrightnessNight = 0;
-
-								if (await manualBrightnessMode[d]) {
-									newBrightnessNight = Math.round(await this.convert_percent(await manualBrightness[d]));
-									this.log.debug(`${await tabletName[d]} brightness set on: ` + newBrightnessNight + `[` + manualBrightness[d] + `%]`);
-								}
-								else {
-									newBrightnessNight = Math.round(await this.convert_percent(brightnessN[d].nightBrightness));
-									this.log.debug(`${await tabletName[d]} brightness set on: ` + newBrightnessNight + `[` + brightnessN[d].nightBrightness + `%]`);
-								}
-
-								nightTimeBrightnessURL = `http://${ip[d]}:${port[d]}/?cmd=setStringSetting&key=screenBrightness&value=${newBrightnessNight}&password=${password[d]}`;
-								ScreensaverOnBri = `http://${ip[d]}:${port[d]}/?cmd=setStringSetting&key=screensaverBrightness&value=${newBrightnessNight}&password=${password[d]}`;
-								if (await brightness[d] !== newBrightnessNight) {
-
-									try {
-
-										//checks whether the screen saver is on and then sends the command
-										if (enableScreenSaverBrightness[d] && screenSaverON) {
-											await axios.get(ScreensaverOnBri);
-											await axios.get(nightTimeBrightnessURL);
-											await this.stateRequest();
-										}
-										else if (isInScreensaver[d] == false) {
-
-											await axios.get(nightTimeBrightnessURL);
-											await this.stateRequest();
-										}
-
-									} catch (error) {
-										if (!logMessage[d]) this.log.error(`${await tabletName[d]} [nightBri] could not be sent: ${error.message}, stack: ${error.stack}`);
-										if (!logMessage[d]) this.log.error(`${await tabletName[d]} [ScreensaverOnBri] could not be sent: ${error.message}, stack: ${error.stack}`);
-									}
-									this.log.debug(`${await tabletName[d]} send Command: ${nightTimeBrightnessURL}`);
-									this.log.debug(`${await tabletName[d]} send Command: ${ScreensaverOnBri}`);
-								}
-
-							}
-						}
-						else {
-
-							let nightTimeBrightnessURL = null;
-							let ScreensaverOnBri = null;
-							let newBrightnessNight = 0;
-							if (deviceEnabled) {
-								if (await manualBrightnessMode[d]) {
-									newBrightnessNight = Math.round(await this.convert_percent(await manualBrightness[d]));
-									this.log.debug(`${await tabletName[d]} brightness set on: ` + newBrightnessNight + `[` + manualBrightness[d] + `%]`);
-								}
-								else {
-									newBrightnessNight = Math.round(await this.convert_percent(brightnessN[d].nightBrightness));
-									this.log.debug(`${await tabletName[d]} brightness set on: ` + newBrightnessNight + `[` + brightnessN[d].nightBrightness + `%]`);
-								}
-
-								nightTimeBrightnessURL = `http://${ip[d]}:${port[d]}/?cmd=setStringSetting&key=screenBrightness&value=${newBrightnessNight}&password=${password[d]}`;
-								ScreensaverOnBri = `http://${ip[d]}:${port[d]}/?cmd=setStringSetting&key=screensaverBrightness&value=${newBrightnessNight}&password=${password[d]}`;
-								if (await brightness[d] !== newBrightnessNight) {
-
-									try {
-
-										//checks whether the screen saver is on and then sends the command
-										if (enableScreenSaverBrightness[d] && screenSaverON) {
-											await axios.get(ScreensaverOnBri);
-											await axios.get(nightTimeBrightnessURL);
-											await this.stateRequest();
-										}
-										else if (isInScreensaver[d] == false) {
-
-											await axios.get(nightTimeBrightnessURL);
-											await this.stateRequest();
-										}
-
-									} catch (error) {
-										if (!logMessage[d]) this.log.error(`${await tabletName[d]} [nightBri] could not be sent: ${error.message}, stack: ${error.stack}`);
-										if (!logMessage[d]) this.log.error(`${await tabletName[d]} [ScreensaverOnBri] could not be sent: ${error.message}, stack: ${error.stack}`);
-									}
-									this.log.debug(`${await tabletName[d]} send Command: ${nightTimeBrightnessURL}`);
-									this.log.debug(`${await tabletName[d]} send Command: ${ScreensaverOnBri}`);
-								}
-							}
-						}
-					}
-				}
-			}
-
-			if (nightBriMode && !dayBriMode) {
-
-				const newDate = new Date();
-				const nowTimeMilis = newDate.getTime();
-
-				if (AstroDayMilis <= nowTimeMilis && AstroNightMilis >= nowTimeMilis) {
-
-					nightBriMode = false;
-					dayBriMode = true;
-					if (dayBriTimeout) clearTimeout(dayBriTimeout);
-					if (nightBriTimeout) clearTimeout(nightBriTimeout);
-					this.dayBri();
-
-				}
-				else {
-
-					nightBriMode = true;
-					dayBriMode = false;
-					if (dayBriTimeout) clearTimeout(dayBriTimeout);
-					if (nightBriTimeout) clearTimeout(nightBriTimeout);
-
-					nightBriTimeout = setTimeout(async () => {
-
-						this.nightBri();
-						this.log.debug(`nightBri loop restart: in ${checkInterval} ms`);
-					}, checkInterval);
-				}
-
-			}
-		} catch (error) {
-			this.log.error(`[nightBri] : ${error.message}, stack: ${error.stack}`);
-		}
-	}
-
-	//read manualStates
-	async manualStates() {
-		try {
-			for (const name in ip) {
-				if (deviceEnabled[name] && !logMessage[name]) {
-
-					const stateID = await this.replaceFunction(tabletName[name]);
-					const manual = await this.getStateAsync(`device.${stateID}.manualBrightness`);
-					if (manual && manual.val) {
-						manualBrightness[name] = manual.val;
-						// @ts-ignore
-						await this.setStateAsync(`device.${stateID}.manualBrightness`, manual.val, true);
-					}
-					else {
-						await this.setStateAsync(`device.${stateID}.manualBrightness`, 0, true);
-						manualBrightness[name] = 0;
-					}
-
-					const manualMode = await this.getStateAsync(`device.${stateID}.brightness_control_mode`);
-					if (manualMode && (manualMode.val || !manualMode.val)) {
-						manualBrightnessMode[name] = manualMode.val;
-						// @ts-ignore
-						await this.setStateAsync(`device.${stateID}.brightness_control_mode`, manualMode.val, true);
-					}
-					else {
-						await this.setStateAsync(`device.${stateID}.brightness_control_mode`, false, true);
-						manualBrightnessMode[name] = false;
-					}
-
-					this.log.debug(`[manualBrightness] name: ${tabletName[name]} val: ${await manualBrightness[name]}`);
-					this.log.debug(`[manualBrightnessMode] name: ${tabletName[name]} val: ${await manualBrightnessMode[name]}`);
-
-					const newDate = new Date();
-					const nowTimeMilis = newDate.getTime();
-
-					if (AstroDayMilis <= nowTimeMilis && AstroNightMilis >= nowTimeMilis) {
-
-						nightBriMode = false;
-						dayBriMode = true;
-						if (dayBriTimeout) clearTimeout(dayBriTimeout);
-						if (nightBriTimeout) clearTimeout(nightBriTimeout);
-						this.dayBri();
-
-					}
-					else {
-
-						nightBriMode = true;
-						dayBriMode = false;
-						if (dayBriTimeout) clearTimeout(dayBriTimeout);
-						if (nightBriTimeout) clearTimeout(nightBriTimeout);
-						this.nightBri();
-
-					}
-				}
-
-
-			}
-		} catch (error) {
-			this.log.error(`[manualStates] : ${error.message}, stack: ${error.stack}`);
-		}
-	}
-
-
-	async dayBri() {
-		try {
-			const brightnessD = this.config.brightness;
-			const screenSaverON = JSON.parse(this.config.screenSaverON);
-			if (!brightnessD || brightnessD !== []) {
-
-				for (const d in ip) {
-					if (deviceEnabled[d] && !logMessage[d]) {
-						if (brightnessControlEnabled) {
-							if (enabledBrightness[d]) {
-
-								if (brightnessD[d]) {
-									let daytimeBrightnessURL = null;
-									let ScreensaverOnBri = null;
-									let newBrightnessDay = 0;
-									if (chargeDeviceValue[d]) {
-
-										let brightnessDayPuffer;
-										if (await manualBrightnessMode[d]) {
-											brightnessDayPuffer = Math.round(await this.convert_percent(await manualBrightness[d] - brightnessD[d].loadingLowering));
-										}
-										else {
-											brightnessDayPuffer = Math.round(await this.convert_percent(brightnessD[d].dayBrightness - brightnessD[d].loadingLowering));
-										}
-										if (brightnessDayPuffer <= 0) {
-											newBrightnessDay = 0;
-											this.log.debug(`brightness from ${await tabletName[d]} is less than 0 brightness is set to`);
-										} else {
-											newBrightnessDay = brightnessDayPuffer;
-											this.log.debug(`new brightness from ${await tabletName[d]}: ` + newBrightnessDay + `[` + (brightnessD[d].dayBrightness - brightnessD[d].loadingLowering) + `%]`);
-										}
-									} else {
-										if (await manualBrightnessMode[d]) {
-											newBrightnessDay = Math.round(await this.convert_percent(await manualBrightness[d]));
-											this.log.debug(`${await tabletName[d]} brightness set on: ` + newBrightnessDay + `[` + manualBrightness[d] + `%]`);
-										}
-										else {
-											newBrightnessDay = Math.round(await this.convert_percent(brightnessD[d].dayBrightness));
-											this.log.debug(`${await tabletName[d]} brightness set on: ` + newBrightnessDay + `[` + brightnessD[d].dayBrightness + `%]`);
-										}
-									}
-									daytimeBrightnessURL = `http://${ip[d]}:${port[d]}/?cmd=setStringSetting&key=screenBrightness&value=${newBrightnessDay}&password=${password[d]}`;
-									ScreensaverOnBri = `http://${ip[d]}:${port[d]}/?cmd=setStringSetting&key=screensaverBrightness&value=${newBrightnessDay}&password=${password[d]}`;
-									if (await brightness[d] != newBrightnessDay) {
-
-										try {
-											//checks whether the screen saver is on and then sends the command
-
-											if (enableScreenSaverBrightness[d] && screenSaverON) {
-												await axios.get(ScreensaverOnBri);
-												await axios.get(daytimeBrightnessURL);
-												await this.stateRequest();
-											}
-											else if (isInScreensaver[d] == false) {
-
-												await axios.get(daytimeBrightnessURL);
-												await this.stateRequest();
-											}
-
-										} catch (error) {
-											if (!logMessage[d]) this.log.error(`${await tabletName[d]} [dayBri] could not be sent: ${error.message}, stack: ${error.stack}`);
-											if (!logMessage[d]) this.log.error(`${await tabletName[d]} [ScreensaverOnBri] could not be sent: ${error.message}, stack: ${error.stack}`);
-											continue;
-										}
-										this.log.debug(`${await tabletName[d]} send Command: ${daytimeBrightnessURL}`);
-										this.log.debug(`${await tabletName[d]} send Command: ${ScreensaverOnBri}`);
-									}
-								}
-								else {
-									console.log(`${await tabletName[d]} dayBri not specified`);
-									this.log.warn(`${await tabletName[d]} dayBri not specified`);
-								}
-
-							}
-							else {
-
-								let daytimeBrightnessURL = null;
-								let ScreensaverOnBri = null;
-								let newBrightnessDay = 0;
-
-								if (await manualBrightnessMode[d]) {
-									newBrightnessDay = Math.round(await this.convert_percent(await manualBrightness[d]));
-									this.log.debug(`${await tabletName[d]} brightness set on: ` + newBrightnessDay + `[` + manualBrightness[d] + `%]`);
-								}
-								else {
-									newBrightnessDay = Math.round(await this.convert_percent(brightnessD[d].dayBrightness));
-									this.log.debug(`${await tabletName[d]} brightness set on: ` + newBrightnessDay + `[` + brightnessD[d].dayBrightness + `%]`);
-								}
-
-								daytimeBrightnessURL = `http://${ip[d]}:${port[d]}/?cmd=setStringSetting&key=screenBrightness&value=${newBrightnessDay}&password=${password[d]}`;
-								ScreensaverOnBri = `http://${ip[d]}:${port[d]}/?cmd=setStringSetting&key=screensaverBrightness&value=${newBrightnessDay}&password=${password[d]}`;
-								if (await brightness[d] !== newBrightnessDay) {
-
-									try {
-										//checks whether the screen saver is on and then sends the command
-										if (enableScreenSaverBrightness[d] && screenSaverON) {
-											await axios.get(ScreensaverOnBri);
-											await axios.get(daytimeBrightnessURL);
-											await this.stateRequest();
-										}
-										else if (isInScreensaver[d] == false) {
-
-											await axios.get(daytimeBrightnessURL);
-											await this.stateRequest();
-										}
-
-									} catch (error) {
-										if (!logMessage[d]) this.log.error(`${await tabletName[d]} [dayBri] could not be sent: ${error.message}, stack: ${error.stack}`);
-										if (!logMessage[d]) this.log.error(`${await tabletName[d]} [ScreensaverOnBri] could not be sent: ${error.message}, stack: ${error.stack}`);
-										continue;
-									}
-									this.log.debug(`${await tabletName[d]} send Command: ${daytimeBrightnessURL}`);
-									this.log.debug(`${await tabletName[d]} send Command: ${ScreensaverOnBri}`);
-								}
-
-							}
-						}
-						else {
-
-							let daytimeBrightnessURL = null;
-							let ScreensaverOnBri = null;
-							let newBrightnessDay = 0;
-							if (deviceEnabled) {
-								if (await manualBrightnessMode[d]) {
-									newBrightnessDay = Math.round(await this.convert_percent(await manualBrightness[d]));
-									this.log.debug(`${await tabletName[d]} brightness set on: ` + newBrightnessDay + `[` + manualBrightness[d] + `%]`);
-								}
-								else {
-									newBrightnessDay = Math.round(await this.convert_percent(brightnessD[d].dayBrightness));
-									this.log.debug(`${await tabletName[d]} brightness set on: ` + newBrightnessDay + `[` + brightnessD[d].dayBrightness + `%]`);
-								}
-
-								daytimeBrightnessURL = `http://${ip[d]}:${port[d]}/?cmd=setStringSetting&key=screenBrightness&value=${newBrightnessDay}&password=${password[d]}`;
-								ScreensaverOnBri = `http://${ip[d]}:${port[d]}/?cmd=setStringSetting&key=screensaverBrightness&value=${newBrightnessDay}&password=${password[d]}`;
-								if (await brightness[d] !== newBrightnessDay) {
-
-									try {
-										//checks whether the screen saver is on and then sends the command
-										if (enableScreenSaverBrightness[d] && screenSaverON) {
-											await axios.get(ScreensaverOnBri);
-											await axios.get(daytimeBrightnessURL);
-											await this.stateRequest();
-										}
-										else if (isInScreensaver[d] == false) {
-
-											await axios.get(daytimeBrightnessURL);
-											await this.stateRequest();
-										}
-
-									} catch (error) {
-										if (!logMessage[d]) this.log.error(`${await tabletName[d]} [dayBri] could not be sent: ${error.message}, stack: ${error.stack}`);
-										if (!logMessage[d]) this.log.error(`${await tabletName[d]} [ScreensaverOnBri] could not be sent: ${error.message}, stack: ${error.stack}`);
-										continue;
-									}
-									this.log.debug(`${await tabletName[d]} send Command: ${daytimeBrightnessURL}`);
-									this.log.debug(`${await tabletName[d]} send Command: ${ScreensaverOnBri}`);
-								}
-							}
-						}
-					}
-				}
-			}
-			if (!nightBriMode && dayBriMode && brightnessControlEnabled) {
-
-				const newDate = new Date();
-				const nowTimeMilis = newDate.getTime();
-
-				if (AstroDayMilis <= nowTimeMilis && AstroNightMilis >= nowTimeMilis) {
-
-					nightBriMode = false;
-					dayBriMode = true;
-					if (dayBriTimeout) clearTimeout(dayBriTimeout);
-					if (nightBriTimeout) clearTimeout(nightBriTimeout);
-
-					dayBriTimeout = setTimeout(async () => {
-
-						this.dayBri();
-						this.log.debug(`dayBri loop restart: in ${checkInterval} ms`);
-					}, checkInterval);
-
-				}
-				else {
-
-					nightBriMode = true;
-					dayBriMode = false;
-					if (dayBriTimeout) clearTimeout(dayBriTimeout);
-					if (nightBriTimeout) clearTimeout(nightBriTimeout);
-					this.nightBri();
-
-				}
-
-
-			}
-			else if (!nightBriMode && dayBriMode && !brightnessControlEnabled) {
-
-				const newDate = new Date();
-				const nowTimeMilis = newDate.getTime();
-
-				if (AstroDayMilis <= nowTimeMilis && AstroNightMilis >= nowTimeMilis) {
-
-					nightBriMode = false;
-					dayBriMode = true;
-					if (dayBriTimeout) clearTimeout(dayBriTimeout);
-					if (nightBriTimeout) clearTimeout(nightBriTimeout);
-
-					dayBriTimeout = setTimeout(async () => {
-
-						this.dayBri();
-						this.log.debug(`dayBri loop restart: in ${checkInterval} ms`);
-					}, checkInterval);
-
-				}
-
-			}
-
-		} catch (error) {
-			this.log.error(`[dayBri] : ${error.message}, stack: ${error.stack}`);
-		}
-	}
-
-	async motionSensor() {
-		try {
-			const motion = this.config.motion;
-			const motionSensor_enabled = JSON.parse(this.config.motionSensor_enabled);
-			this.log.debug(`motion obj val: ${motion}`);
-			this.log.debug(`motionSensor_enabled val: ${motionSensor_enabled}`);
-
-			if (motionSensor_enabled && motion.length !== 0) {
-				if (!motion || motion !== []) {
-					for (const sensor in motion) {
-						console.log(`motion Sensor val: ${motion[sensor].enabled}`);
-						if (motion[sensor].enabled && motionID[sensor] !== '') {
-							console.log(`motion Sensor ID: ${motionID[sensor]}`);
-							const motionObj = await this.getForeignStateAsync(motionID[sensor]);
-							if (motionID.length < 2) {
-								for (const one in tabletName) {
-									if (motionObj && (motionObj.val || !motionObj.val)) {
-										motionVal[one] = motionObj.val;
-										console.log(`motionVal val: ${motionVal}`);
-										this.log.debug(`motionVal val: ${motionVal}`);
-									}
-									else {
-										motionVal[one] = false;
-									}
-								}
-							}
-							else {
-								if (motionObj && (motionObj.val || !motionObj.val)) {
-									motionVal[sensor] = motionObj.val;
-									console.log(`motionVal val: ${motionVal}`);
-									this.log.debug(`motionVal val: ${motionVal}`);
-								}
-								else {
-									motionVal[sensor] = false;
-								}
-							}
-						}
-						else {
-							this.log.warn(`no motion Sensor ID entered`);
-							console.log(`no motion Sensor ID entered`);
-						}
-					}
-					this.screenSaver();
-				}
-			}
-			else {
-				this.log.debug(`Deactivate motion sensors `);
-				console.log(`Deactivate motion sensors `);
-			}
-		} catch (error) {
-			this.log.error(`[motionSensor] : ${error.message}, stack: ${error.stack}`);
-		}
-	}
-
-	async screenSaver() {
-		try {
-			const motionSensor_enabled = JSON.parse(this.config.motionSensor_enabled);
-			const screenSaverOn = JSON.parse(this.config.screenSaverON);
-			console.log(`screenSaverOn val: ${screenSaverOn}`);
-			if (screenSaverOn) {
-				if (!tabletName || tabletName !== []) {
-					for (const on in ip) {
-						if (ScreensaverTimer[on]) clearTimeout(ScreensaverTimer[on]);
-						if (deviceEnabled[on] && !logMessage[on]) {
-							if (motionSensor_enabled) {
-								this.log.debug(`Motion Sensor is On`);
-								console.log(`Motion Sensor is On: ${motionSensor_enabled}`);
-								if (!motionVal[on]) {
-
-									console.log(`motionVal == false: ${motionVal[on]}`);
-									if (!isInScreensaver[on]) {
-										const ScreensaverOnURL = `http://${ip[on]}:${port[on]}/?cmd=startScreensaver&password=${password[on]}`;
-
-										this.log.debug(`${await tabletName[on]} Screensaver starts in ${await screenSaverTimer[on]} ms`);
-										console.log(`isInScreensaver: ${isInScreensaver[on]}`);
-
-										ScreensaverTimer[on] = setTimeout(async () => {
-
-											try {
-												await axios.get(ScreensaverOnURL);
-											} catch (error) {
-												if (!logMessage[on]) this.log.error(`${await tabletName[on]} [screenSaver On] could not be sent: ${error.message}, stack: ${error.stack}`);
-											}
-
-											this.log.debug(`${await tabletName[on]} send Command: screenSaver On ${ScreensaverOnURL}`);
-											console.log(`send Command: screenSaver On ${ScreensaverOnURL}`);
-											this.stateRequest();
-										}, screenSaverTimer[on]);
-
-										console.log(`screenSaverTimer[on] ${await screenSaverTimer[on]}`);
-									} else if (isInScreensaver[on]) {
-										this.log.debug(`${await tabletName[on]} Screensaver already on`);
-										console.log(`isInScreensaver': ${isInScreensaver[on]}`);
-									}
-								} else {
-									console.log(`motionVal == true: ${motionVal[on]}`);
-									this.log.debug(`${await tabletName[on]} Movement was detected. Screen saver is switched off`);
-									const ScreensaverOffURL = `http://${ip[on]}:${port[on]}/?cmd=stopScreensaver&password=${password[on]}`;
-									if (!isInScreensaver[on]) {
-										console.log(`isInScreensaver: ${isInScreensaver[on]}`);
-										this.log.debug('no screensaver switched on');
-									} else if (isInScreensaver[on]) {
-										console.log(`isInScreensaver: ${isInScreensaver[on]}`);
-
-										try {
-											await axios.get(ScreensaverOffURL);
-										} catch (error) {
-											if (!logMessage[on]) this.log.error(`${await tabletName[on]} [screenSaver Off] could not be sent: ${error.message}, stack: ${error.stack}`);
-										}
-
-										this.log.debug(`${await tabletName[on]} send Command: screenSaver Off ${ScreensaverOffURL} `);
-									}
-								}
-							} else {
-								const ScreensaverOn = `http://${ip[on]}:${port[on]}/?cmd=startScreensaver&password=${password[on]}`;
-								console.log(`motionSensor_enabled Off: ${motionSensor_enabled}`);
-								if (!isInScreensaver[on]) {
-									this.log.debug(`${await tabletName[on]} Screensaver starts in ${await screenSaverTimer[on]} ms`);
-									console.log(`isInScreensaver[on]: ${isInScreensaver[on]}`);
-
-									ScreensaverTimer[on] = setTimeout(async () => {
-										if (ScreensaverReturn) clearTimeout(ScreensaverReturn);
-										console.log(`[screenSaver On] ${await tabletName[on]}`);
-
-										try {
-											await axios.get(ScreensaverOn);
-										} catch (error) {
-											if (!logMessage[on]) this.log.error(`${await tabletName[on]} [screenSaver On] could not be sent: ${error.message}, stack: ${error.stack}`);
-
-										}
-
-										this.log.debug(`${await tabletName[on]} send Command: screenSaver On ${ScreensaverOn}`);
-										ScreensaverReturn = setTimeout(async () => {
-											this.screenSaver();
-											console.log(`[screenSaver restart]`);
-										}, 500);
-									}, screenSaverTimer[on]);
-
-									console.log(`screenSaverTimer[on] ${await screenSaverTimer[on]}`);
-								}
-
-							}
-						}
-					}
-				}
-			}
-		} catch (error) {
-			this.log.error(`[screenSaver] : ${error.message}, stack: ${error.stack}`);
-		}
-	}
-
-	async screenOn() {
-		try {
-			const screen_on = JSON.parse(this.config.screen_on);
-
-			if (screen_on) {
-
-				for (const s in isScreenOn) {
-					if (deviceEnabled[s] && !logMessage[s]) {
-						if (isScreenOn[s] == false) {
-
-							this.log.warn(`[ATTENTION] Screen from ${await tabletName[s]} has been switched off Screen is being switched on again`);
-							try {
-								await axios.get(Screen[s]);
-							} catch (error) {
-								if (!logMessage[s]) this.log.warn(`${await tabletName[s]} [screenON] could not be sent: ${error.message}, stack: ${error.stack}`);
-
-							}
-
-						}
-					}
-				}
-			}
-		} catch (error) {
-			this.log.error(`[screenOn] : ${error.message}, stack: ${error.stack}`);
-		}
-	}
-
-	async convert_percent(str) {
-		if (Number.isNaN(str)) {
-			return 0;
-		}
-		return str / 100 * 255;
-	}
-
-	async bytesToSize(bytes) {
-		const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-		if (bytes == 0) return '0 Byte';
-		// @ts-ignore
-		const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
-		// @ts-ignore
-		return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
-	}
-
-	async replaceFunction(str) {
-		if (str) {
-			str = str.replace(/ü/g, 'ue');
-			str = str.replace(/Ü/g, 'Ue');
-			str = str.replace(/ö/g, 'oe');
-			str = str.replace(/Ö/g, 'Oe');
-			str = str.replace(/Ä/g, 'Ae');
-			str = str.replace(/ä/g, 'ae');
-			str = str.replace(/\.*\./gi, '_');
-			str = str.replace(/ /gi, '_');
-			str = str.toLowerCase();
-			return str;
-		}
-	}
-
-	/*
-	Vis function
-	*/
-	async switchToHomeView() {
-		try {
-			// check whether switch To Home View is switched on
-			if (view_enabled) {
-				// check whether which mode is set
-				if (!mode) {
-					// build vis command string
-					const visCmd = '{"instance": "FFFFFFFF", "command": "changeView", "data": "' + homeView + '"}';
-
-					// Set the timer to 1 sec
-					viewTimer = setTimeout(async () => {
-
-						// Check the state Timer_View_Switch for the set time
-						let timer = await this.getStateAsync(`vis_View.Timer_View_Switch`);
-
-						if (timer && timer.val) {
-
-							// @ts-ignore
-							timer = parseInt(timer.val);
-							// @ts-ignore
-							// check whether the timer is greater than 1 if so then count down otherwise for action
-							if (timer > 1) {
-
-								// @ts-ignore
-								// Count down the timer
-								await this.setStateChangedAsync(`vis_View.Timer_View_Switch`, timer - 1, true);
-								this.switchToHomeView();
-							}
-							else {
-
-								if (viewTimer) clearTimeout(viewTimer);
-								await this.setStateAsync(`vis_View.Timer_View_Switch`, 0, true);
-								await this.setForeignStateAsync('vis.0.control.command', visCmd);
-								console.log(visCmd);
-							}
-						}
-					}, 1000);
-				}
-				else {
-					// Set the timer to 1 sec
-					viewTimer = setTimeout(async () => {
-						// Check the state Timer_View_Switch for the set time
-						let timer = await this.getStateAsync(`vis_View.Timer_View_Switch`);
-
-						if (timer && timer.val) {
-
-							// @ts-ignore
-							timer = parseInt(timer.val);
-
-							// @ts-ignore
-							// check whether the timer is greater than 1 if so then count down otherwise for action
-							if (timer > 1) {
-
-								// @ts-ignore
-								// Count down the timer
-								await this.setStateChangedAsync(`vis_View.Timer_View_Switch`, timer - 1, true);
-								this.switchToHomeView();
-							}
-							else {
-								// the command is executed and the timer is deleted
-								if (viewTimer) clearTimeout(viewTimer);
-								await this.setStateAsync(`vis_View.Timer_View_Switch`, 0, true);
-								await this.setStateAsync('vis_View.widget_8_view', 0, true);
-
-							}
-						}
-					}, 1000);
-				}
-			}
-		} catch (error) {
-			this.log.error(`[switchToHomeView] : ${error.message}, stack: ${error.stack}`);
-		}
-	}
-
-	async checkView() {
-		try {
-			// check whether switch To Home View is switched on
-			if (view_enabled) {
-				// check whether which mode is set
-				if (!mode) {
-					//Check the state 'vis.0.control.data' for the current view
-					const currentView = await this.getForeignStateAsync(`vis.0.control.data`);
-
-					//for (let i = 0; i < Object.keys(visView).length; i++) {
-					//perform a loop through the 'visView'
-					for (const i in visView) {
-
-						if (currentView && currentView.val) {
-							//check whether the currentView == wishView is if not start timer
-							if (wishView[i] == currentView.val) {
-
-								if (viewTimer) clearTimeout(viewTimer);
-								this.setState(`vis_View.Timer_View_Switch`, 0, true);
-
-								if (visView[i].time !== 0) {
-
-									this.setState(`vis_View.Timer_View_Switch`, time[i]);
-									this.switchToHomeView();
-									break;
-								}
-							}
-						}
-					}
-				}
-				else {
-
-					// Check the state 'vis_View.widget_8_view' for the current view
-					const currentView = await this.getStateAsync(`vis_View.widget_8_view`);
-
-					// @ts-ignore
-					if (currentView == null || currentView == null && currentView.val == 0) {
-						this.setState(`vis_View.Timer_View_Switch`, 0, true);
-					}
-					//for (let i = -1; i <= Object.keys(visView).length; i++) {
-					//perform a loop through the 'visView'
-					for (const i in visView) {
-						if (currentView) {
-
-							//check whether the currentView == wishView is if not start timer
-							if (viewNumber[i] == currentView.val) {
-
-								if (viewTimer) clearTimeout(viewTimer);
-								this.setState(`vis_View.Timer_View_Switch`, 0, true);
-
-								if (visView[i].time !== 0) {
-
-									this.setState(`vis_View.Timer_View_Switch`, time[i]);
-									this.switchToHomeView();
-									break;
-								}
-							}
-						}
-					}
-				}
-			}
-		} catch (error) {
-			this.log.error(`[checkView] : ${error.message}, stack: ${error.stack}`);
-		}
-	}
-
-	async create_state() {
-
-		try {
-
-			this.log.debug(`create_state start`);
-			// const tablet = this.config.screen;
-			const tablet = this.config.devices;
-			if (!tablet || tablet !== []) {
-				for (const i in tablet) {
-					if (tablet[i].name !== '') {
-						tabletName[i] = tablet[i].name;
-					} else {
-						tabletName[i] = tablet[i].ip;
-					}
-				}
-
-			}
-
-			this.log.debug('tabletName: ' + JSON.stringify(tabletName));
-
-
-			for (const name in tabletName) {
-
-				const stateID = await this.replaceFunction(tabletName[name]);
-				const stateName = await tabletName[name];
-				const boolenArray = ['isInScreensaver', 'isScreenOn', 'kioskMode', 'maintenanceMode', 'isInDaydream', 'isLicensed', 'plugged', 'keyguardLocked', 'isDeviceAdmin',
-					'kioskLocked', 'isDeviceOwner'];
-
-				const memoryArray = ['internalStorageFreeSpace', 'appTotalMemory', 'ramFreeMemory', 'appFreeMemory',
-					'internalStorageTotalSpace', 'ramUsedMemory', 'appUsedMemory', 'ramTotalMemory'];
-
-				const commandArray = ['loadStartURL', 'clearCache', 'clearWebstorage', 'clearCookies', 'restartApp', 'exitApp', 'screenOn', 'screenOff', 'forceSleep', 'triggerMotion', 'startScreensaver',
-					'stopScreensaver', 'startDaydream', 'stopDaydream', 'toForeground', 'popFragment', 'enableLockedMode', 'disableLockedMode'];
-
-
-				for (const d in boolenArray) {
-					await this.extendObjectAsync(`device.${stateID}.device_info.${boolenArray[d]}`, {
-						type: 'state',
-						common: {
-							name: `${stateName} ${boolenArray[d]}`,
-							type: 'boolean',
-							role: 'indicator',
-							def: false,
-							read: true,
-							write: false
-						},
-						native: {},
-					});
-				}
-
-				for (const m in memoryArray) {
-					await this.extendObjectAsync(`device.${stateID}.device_info.memory.${memoryArray[m]}`, {
-						type: 'state',
-						common: {
-							name: `${stateName} ${memoryArray[m]}`,
-							type: 'string',
-							role: 'state',
-							def: '0',
-							read: true,
-							write: false
-						},
-						native: {},
-					});
-				}
-
-				for (const c in commandArray) {
-					await this.extendObjectAsync(`device.${stateID}.commands.${commandArray[c]}`, {
-						type: 'state',
-						common: {
-							name: `${stateName} ${commandArray[c]}`,
-							type: 'boolean',
-							role: 'button',
-							def: true,
-							read: true,
-							write: true
-						},
-						native: {},
-					});
-
-					this.subscribeStates(`device.${stateID}.commands.${commandArray[c]}`);
-					commandsID.push(`.device.${stateID}.commands.${commandArray[c]}`);
-				}
-
-				await this.extendObjectAsync(`device.reloadAll`, {
-					type: 'state',
-					common: {
-						name: `reload All Tablet view`,
-						type: 'boolean',
-						role: 'button',
-						def: true,
-						read: true,
-						write: true
-					},
-					native: {},
-				});
-
-
-				await this.extendObjectAsync(`device.${stateID}.device_info.device_ip`, {
-					type: 'state',
-					common: {
-						name: `${stateName} device ip`,
-						type: 'string',
-						def: '',
-						role: 'info.ip',
-						read: true,
-						write: false
-					},
-					native: {},
-				});
-
-				await this.extendObjectAsync(`device.${stateID}.device_info.deviceModel`, {
-					type: 'state',
-					common: {
-						name: `${stateName} device Model`,
-						type: 'string',
-						role: 'text',
-						def: '',
-						read: true,
-						write: false
-					},
-					native: {},
-				});
-
-				await this.extendObjectAsync(`device.${stateID}.device_info.ssid`, {
-					type: 'state',
-					common: {
-						name: `${stateName} Wlan ssid`,
-						type: 'string',
-						def: '',
-						role: 'info',
-						read: true,
-						write: false
-					},
-					native: {},
-				});
-
-				await this.extendObjectAsync(`device.${stateID}.battery`, {
-					type: 'state',
-					common: {
-						name: `${stateName} battery in percent`,
-						type: 'number',
-						role: 'battery.percent',
-						max: 100,
-						min: 0,
-						def: 0,
-						unit: '%',
-						read: true,
-						write: false
-					},
-					native: {},
-				});
-
-				await this.extendObjectAsync(`device.${stateID}.brightness`, {
-					type: 'state',
-					common: {
-						name: `${stateName} brightness`,
-						type: 'number',
-						role: 'level.dimmer',
-						max: 255,
-						min: 0,
-						def: 0,
-						read: true,
-						write: false
-					},
-					native: {},
-				});
-
-				await this.extendObjectAsync(`device.${stateID}.device_info.currentFragment`, {
-					type: 'state',
-					common: {
-						name: `${stateName} currentFragment`,
-						type: 'string',
-						role: 'info',
-						def: '',
-						read: true,
-						write: false
-					},
-					native: {},
-				});
-
-				await this.extendObjectAsync(`device.${stateID}.lastInfoUpdate`, {
-					type: 'state',
-					common: {
-						name: `${stateName} Date/Time of last information update from Fully Browser`,
-						type: 'number',
-						role: 'value.time',
-						read: true,
-						write: false
-					},
-					native: {},
-				});
-
-				await this.extendObjectAsync(`device.${stateID}.device_info.LastAppStart`, {
-					type: 'state',
-					common: {
-						name: `${stateName} Last App Start`,
-						type: 'string',
-						role: 'info',
-						def: '',
-						read: true,
-						write: false
-					},
-					native: {},
-				});
-
-				await this.extendObjectAsync(`device.${stateID}.state_of_charge_vis`, {
-					type: 'state',
-					common: {
-						name: `${stateName} State of charge for the Vis`,
-						type: 'number',
-						role: 'value.battery',
-						max: 100,
-						min: 0,
-						def: 0,
-						read: true,
-						write: false,
-						states: {
-							0: 'leer',
-							1: '10 %',
-							2: 'charge 10 %',
-							3: '20 %',
-							4: 'charge 20 %',
-							5: '30 %',
-							6: 'charge 30 %',
-							7: '40 %',
-							8: 'charge 40 %',
-							9: '50 %',
-							10: 'charge 50 %',
-							11: '60 %',
-							12: 'charge 60 %',
-							13: '70 %',
-							14: 'charge 70 %',
-							15: '80 %',
-							16: 'charge 80 %',
-							17: '90 %',
-							18: 'charge 90 %',
-							19: '100 %',
-							20: 'charge 100 %'
-						}
-					},
-					native: {},
-				});
-
-				await this.extendObjectAsync(`device.${stateID}.manualBrightness`, {
-					type: 'state',
-					common: {
-						name: `${stateName} manual Brightness in percent`,
-						type: 'number',
-						role: 'level.dimmer',
-						unit: '%',
-						max: 100,
-						min: 0,
-						def: 0,
-						read: true,
-						write: true
-					},
-					native: {},
-				});
-
-				await this.extendObjectAsync(`device.${stateID}.brightness_control_mode`, {
-					type: 'state',
-					common: {
-						name: `${stateName} brightness control mode`,
-						type: 'boolean',
-						role: 'switch',
-						def: false,
-						read: true,
-						write: true,
-						states: {
-							false: 'Admin',
-							true: 'User'
-						}
-					},
-					native: {},
-				});
-
-				await this.extendObjectAsync(`device.${stateID}.charging_warning`, {
-					type: 'state',
-					common: {
-						name: `${stateName} charging warning`,
-						type: 'boolean',
-						role: 'info',
-						def: false,
-						read: true,
-						write: false
-
-					},
-					native: {},
-				});
-				await this.extendObjectAsync(`device.${stateID}.isFullyAlive`, {
-					type: 'state',
-					common: {
-						name: `${stateName} Is Fully Browser Alive?`,
-						type: 'boolean',
-						role: 'info',
-						def: false,
-						read: true,
-						write: false
-
-					},
-					native: {},
-				});
-				await this.extendObjectAsync(`vis_View.Timer_View_Switch`, {
-					type: 'state',
-					common: {
-						name: `Timer View Switch`,
-						type: 'number',
-						role: 'value',
-						read: true,
-						write: false
-
-					},
-					native: {},
-				});
-
-				await this.extendObjectAsync(`vis_View.widget_8_view`, {
-					type: 'state',
-					common: {
-						name: `widget 8 view`,
-						type: 'number',
-						role: 'value',
-						read: true,
-						write: true
-
-					},
-					native: {},
-				});
-
-				await this.extendObjectAsync(`device.${stateID}.device_info.wifiSignalLevel`, {
-					type: 'state',
-					common: {
-						name: `${stateName} wifiSignalLevel`,
-						type: 'number',
-						role: 'value',
-						def: 0,
-						read: true,
-						write: true
-
-					},
-					native: {},
-				});
-
-				await this.extendObjectAsync(`device.${stateID}.device_info.deviceName`, {
-					type: 'state',
-					common: {
-						name: `${stateName} deviceName`,
-						type: 'string',
-						role: 'info.name',
-						def: '',
-						read: true,
-						write: false
-					},
-					native: {},
-				});
-
-				await this.extendObjectAsync(`device.${stateID}.device_info.displayHeightPixels`, {
-					type: 'state',
-					common: {
-						name: `${stateName} displayHeightPixels`,
-						type: 'string',
-						role: 'info.display',
-						def: '',
-						unit: 'px',
-						read: true,
-						write: false
-					},
-					native: {},
-				});
-
-				await this.extendObjectAsync(`device.${stateID}.device_info.displayWidthPixels`, {
-					type: 'state',
-					common: {
-						name: `${stateName} displayWidthPixels`,
-						type: 'string',
-						role: 'info.display',
-						def: '',
-						unit: 'px',
-						read: true,
-						write: false
-					},
-					native: {},
-				});
-
-				await this.extendObjectAsync(`device.${stateID}.device_info.screenOrientation`, {
-					type: 'state',
-					common: {
-						name: `${stateName} screenOrientation`,
-						type: 'number',
-						role: 'info.display',
-						def: 0,
-						read: true,
-						write: false
-					},
-					native: {},
-				});
-
-				await this.extendObjectAsync(`device.${stateID}.device_info.ip6`, {
-					type: 'state',
-					common: {
-						name: `${stateName} ip6`,
-						type: 'string',
-						role: 'info.ip',
-						def: '',
-						read: true,
-						write: false
-					},
-					native: {},
-				});
-
-				await this.extendObjectAsync(`device.${stateID}.device_info.mac`, {
-					type: 'state',
-					common: {
-						name: `${stateName} mac`,
-						type: 'string',
-						role: 'info.mac',
-						def: '',
-						read: true,
-						write: false
-					},
-					native: {},
-				});
-
-				await this.extendObjectAsync(`device.${stateID}.device_info.appVersionName`, {
-					type: 'state',
-					common: {
-						name: `${stateName} appVersionName`,
-						type: 'string',
-						role: 'text',
-						def: '',
-						read: true,
-						write: false
-					},
-					native: {},
-				});
-
-				await this.extendObjectAsync(`device.${stateID}.device_info.startUrl`, {
-					type: 'state',
-					common: {
-						name: `${stateName} startUrl`,
-						type: 'string',
-						role: 'url',
-						def: '',
-						read: true,
-						write: false
-					},
-					native: {},
-				});
-
-				await this.extendObjectAsync(`device.${stateID}.device_info.deviceManufacturer`, {
-					type: 'state',
-					common: {
-						name: `${stateName} deviceManufacturer`,
-						type: 'string',
-						role: 'text',
-						def: '',
-						read: true,
-						write: false
-					},
-					native: {},
-				});
-
-				await this.extendObjectAsync(`device.${stateID}.device_info.androidVersion`, {
-					type: 'state',
-					common: {
-						name: `${stateName} androidVersion`,
-						type: 'string',
-						role: 'text',
-						def: '',
-						read: true,
-						write: false
-					},
-					native: {},
-				});
-
-				await this.extendObjectAsync(`device.${stateID}.device_info.foregroundApp`, {
-					type: 'state',
-					common: {
-						name: `${stateName} foregroundApp`,
-						type: 'string',
-						role: 'text',
-						def: '',
-						read: true,
-						write: false
-					},
-					native: {},
-				});
-
-
-				await this.extendObjectAsync(`device.${stateID}.commands.startApplication`, {
-					type: 'state',
-					common: {
-						name: `${stateName} startApplication`,
-						type: 'string',
-						role: 'text',
-						def: '',
-						read: true,
-						write: true
-					},
-					native: {},
-				});
-
-				await this.extendObjectAsync(`device.${stateID}.commands.loadURL`, {
-					type: 'state',
-					common: {
-						name: `${stateName} loadURL`,
-						type: 'string',
-						role: 'text',
-						def: '',
-						read: true,
-						write: true
-					},
-					native: {},
-				});
-
-				await this.extendObjectAsync(`device.${stateID}.commands.textToSpeech`, {
-					type: 'state',
-					common: {
-						name: `${stateName} textToSpeech`,
-						type: 'string',
-						role: 'text',
-						def: '',
-						read: true,
-						write: true
-					},
-					native: {},
-				});
-
-				await this.extendObjectAsync(`device.${stateID}.commands.setStringSetting`, {
-					type: 'state',
-					common: {
-						name: `${stateName} setStringSetting`,
-						type: 'string',
-						role: 'text',
-						def: '',
-						read: true,
-						write: true
-					},
-					native: {},
-				});
-
-				await this.extendObjectAsync(`device.${stateID}.commands.mediaVolumen`, {
-					type: 'state',
-					common: {
-						name: `${stateName} media Volumen`,
-						type: 'number',
-						role: 'level.volume',
-						unit: '%',
-						max: 100,
-						min: 0,
-						def: 0,
-						read: true,
-						write: true
-					},
-					native: {},
-				});
-
-				this.subscribeStates(`vis_View.widget_8_view`);
-				this.subscribeForeignStates(`vis.0.control.data`);
-				this.subscribeStates(`device.${stateID}.manualBrightness`);
-				this.subscribeStates(`device.${stateID}.brightness_control_mode`);
-				this.subscribeStates(`device.${stateID}.commands.setStringSetting`);
-				this.subscribeStates(`device.${stateID}.commands.textToSpeech`);
-				this.subscribeStates(`device.${stateID}.commands.loadURL`);
-				this.subscribeStates(`device.${stateID}.commands.mediaVolumen`);
-				this.subscribeStates(`device.${stateID}.commands.startApplication`);
-				this.subscribeStates(`device.reloadAll`);
-
-				manualBrightnessID[name] = `.device.${stateID}.manualBrightness`;
-				brightnessControlModeID[name] = `.device.${stateID}.brightness_control_mode`;
-				reloadAllID = `.device.reloadAll`;
-				startApplicationID[name] = `.device.${stateID}.commands.startApplication`;
-				loadURLID[name] = `.device.${stateID}.commands.loadURL`;
-				textToSpeechID[name] = `.device.${stateID}.commands.textToSpeech`;
-				setStringSettingID[name] = `.device.${stateID}.commands.setStringSetting`;
-				mediaVolumenID[name] = `.device.${stateID}.commands.mediaVolumen`;
-
-				if (!deviceEnabled[name] && !logMessage[name]) {
-					this.setState(`device.${tabletName[name]}.isFullyAlive`, { val: false, ack: true });
-				}
-
-			}
-
-			this.setState('info.connection', true, true);
-
-		} catch (error) {
-			this.log.error(`[create_state] : ${error.message}, stack: ${error.stack}`);
-
-		}
-
-	}
-
-	/**
-	 * Is called when adapter shuts down - callback has to be called under any circumstances!
-	 * @param {() => void} callback
-	 */
-	onUnload(callback) {
-		try {
-
-			if (dayBriTimeout) clearTimeout(dayBriTimeout);
-			if (nightBriTimeout) clearTimeout(nightBriTimeout);
-			if (viewTimer) clearTimeout(viewTimer);
-			if (requestTimeout) clearTimeout(requestTimeout);
-			if (ScreensaverReturn) clearTimeout(ScreensaverReturn);
-			for (const Unl in tabletName) {
-				if (logMessageTimer[Unl]) clearTimeout(logMessageTimer[Unl]);
-				if (ScreensaverTimer[Unl]) clearTimeout(ScreensaverTimer[Unl]);
-				if (foregroundAppTimer[Unl]) clearTimeout(foregroundAppTimer[Unl]);
-
-			}
-			this.log.info('Adapter Tablet Control stopped...');
-			this.setState('info.connection', false, true);
-
-			callback();
-		} catch (e) {
-			callback();
-		}
-	}
-
-	/**
-	 * Is called if a subscribed object changes
-	 * @param {string} id
-	 * @param {ioBroker.Object | null | undefined} obj
-	 */
-	onObjectChange(id, obj) {
-		if (obj) {
-			// The object was changed
-			this.log.debug(`object ${id} changed: ${JSON.stringify(obj)}`);
-		} else {
-			// The object was deleted
-			this.log.debug(`object ${id} deleted`);
-		}
-	}
-
-	/**
-	 * Is called if a subscribed state changes
-	 * @param {string} id
-	 * @param {ioBroker.State | null | undefined} state
-	 */
-	onStateChange(id, state) {
-		try {
-			if (state) {
-				// The state was changed
-				this.log.debug(`stateID ${id} changed: ${state.val} (ack = ${state.ack})`);
-
-				// manual brightness States change
-				for (const change in tabletName) {
-					if (deviceEnabled[change]) {
-						if (!state.ack) {
-							// console.log(id == `${this.namespace}${brightnessControlModeID[change]}` || id == `${this.namespace}${manualBrightnessID[change]}`);
-							if (id == `${this.namespace}${brightnessControlModeID[change]}` || id == `${this.namespace}${manualBrightnessID[change]}` && state.from !== `system.adapter.${this.namespace}`) {
-								this.log.debug(`state ${id} changed: ${state.val} from: ${this.namespace}`);
-								this.manualStates();
-								console.log(`onStateChange: ${id} val: ${state.val}`);
-								break;
-							}
-						}
-					}
-				}
-
-				for (const change in tabletName) {
-					if (deviceEnabled[change]) {
-						if (!state.ack) {
-							// console.log(id == `${this.namespace}${brightnessControlModeID[change]}` || id == `${this.namespace}${manualBrightnessID[change]}`);
-							if (id == `${this.namespace}${startApplicationID[change]}` || id == `${this.namespace}${loadURLID[change]}` || id == `${this.namespace}${textToSpeechID[change]}` || id == `${this.namespace}${setStringSettingID[change]}` || id == `${this.namespace}${mediaVolumenID[change]}`) {
-								this.log.debug(`state ${id} changed: ${state.val} from: ${this.namespace}`);
-								this.sendFullyCommand(id, state);
-								console.log(`onStateChange: ${id} val: ${state.val}`);
-								break;
-							}
-						}
-					}
-				}
-
-				for (const change in tabletName) {
-					if (deviceEnabled[change]) {
-						if (!state.ack) {
-							// console.log(id == `${this.namespace}${brightnessControlModeID[change]}` || id == `${this.namespace}${manualBrightnessID[change]}`);
-							for (const b in commandsID) {
-								if (id == `${this.namespace}${commandsID[b]}`) {
-									this.log.debug(`state ${id} changed: ${state.val} from: ${this.namespace}`);
-									this.sendFullyCommand(id, state);
-									console.log(`onStateChange: ${id} val: ${state.val}`);
-									break;
-								}
-							}
-						}
-					}
-				}
-
-				for (const change in tabletName) {
-					if (deviceEnabled[change]) {
-						if (!state.ack) {
-
-							if (id == `${this.namespace}${reloadAllID}`) {
-								this.log.debug(`state ${id} changed: ${state.val} from: ${this.namespace}`);
-								this.sendFullyCommand(id, state);
-								console.log(`onStateChange: ${id} val: ${state.val}`);
-							}
-						}
-					}
-				}
-
-
-				// Motion Sensor State Change
-				for (const change in motionID) {
-					// console.log(id == `${motionID[change]}`);
-					if (id == `${motionID[change]}`) {
-						this.log.debug(`state ${id} changed: ${state.val}`);
-						this.motionSensor();
-						console.log(`onStateChange: ${id} val: ${state.val}`);
-					}
-
-				}
-				if (view_enabled) {
-					if (!mode) {
-						if (id == `vis.0.control.data`) {
-							this.log.debug(`state ${id} changed: ${state.val}`);
-							this.checkView();
-							console.log(`onStateChange: ${id} val: ${state.val}`);
-						}
-					}
-					else {
-						if (!state.ack) {
-							if (id == `${this.namespace}.vis_View.widget_8_view`) {
-								this.log.debug(`state ${id} changed: ${state.val}`);
-								this.checkView();
-								console.log(`onStateChange: ${id} val: ${state.val}`);
-							}
-						}
-					}
-				}
-
-
-
-			}
-		} catch (error) {
-			this.log.error(`[onStateChane ${id}] error: ${error.message}, stack: ${error.stack}`);
-		}
-	}
-
-
-	// /**
-	//  * Some message was sent to this instance over message box. Used by email, pushover, text2speech, ...
-	//  * Using this method requires "common.message" property to be set to true in io-package.json
-	//  * @param {ioBroker.Message} obj
-	//  */
-
-	onMessage(msg, user) {
-		// e.g. send email or pushover or whatever
-		this.log.debug('send command');
-
-		this.sendTo('telegram.0', 'send', {
-			text: msg,
-			user: user
-		});
-	}
+                                    if (logMessageTimer[i]) clearTimeout(logMessageTimer[i]);
+                                    this.log.debug(`logMessageTimer for ${tabletName[i]} will be deleted`);
+
+                                    this.log.debug(`set logMessageTimer for ${tabletName[i]} to ${3600000 / 60000} min`);
+                                    logMessageTimer[i] = setTimeout(async () => {
+
+                                        logMessage[i] = false;
+                                        this.log.debug(`logMessage set to ${logMessage[i]} for ${tabletName[i]}`);
+
+                                    }, 3600000);
+                                }
+
+                                this.setState(`device.${deviceID}.isFullyAlive`, {val: false, ack: true});
+                                this.log.debug(`set isFullyAlive to false for ${tabletName[i]}`);
+                            });
+                    }
+                }
+            }
+            requestTimeout = setTimeout(async () => {
+
+                this.log.debug(`start devices to query for new values`);
+                await this.stateRequest();
+            }, interval);
+        }
+        catch (error) {
+            this.log.error(`Request function has a problem : ${error.message}, stack: ${error.stack}`);
+        }
+    }
+
+    /**
+     * Check on number.
+     * @param {Object} apiResult
+     * @param {string|number} index
+     * @param {string} deviceID
+     */
+    async state_write(apiResult, index, deviceID) {
+        try {
+
+            this.log.debug(`prepare state write`);
+            const objects = apiResult['data'];
+            this.log.debug(`[result]: ${JSON.stringify(objects)}`);
+
+            for (const obj in objects) {
+
+                switch (obj) {
+                    case 'isInScreensaver':
+
+                        isInScreensaver[index] = objects['isInScreensaver'];
+                        this.setState(`device.${deviceID}.device_info.isInScreensaver`, {val: isInScreensaver[index], ack: true});
+                        this.log.debug(`IP state for ${deviceID} : ${isInScreensaver[index]}`);
+
+                        if (!JSON.parse(this.config['motionSensor_enabled']) && !isInScreensaver[index] && !manuel_screenSaver[index]) {
+                            manuel_screenSaver[index] = true;
+                            await this.screensaverManuel(index);
+                        }
+
+
+                        break;
+
+                    case 'currentFragment':
+
+                        const currentFragment = objects['currentFragment'];
+                        this.setState(`device.${deviceID}.device_info.currentFragment`, {val: currentFragment, ack: true});
+                        this.log.debug(`currentFragment state for ${deviceID} :  ${currentFragment}`);
+
+                        break;
+
+                    case 'topFragmentTag':
+                        // new form App Version 1.40.3
+                        const topFragmentTag = objects['topFragmentTag'];
+                        this.setState(`device.${deviceID}.device_info.currentFragment`, {val: topFragmentTag, ack: true});
+                        this.log.debug(`currentFragment state for ${deviceID} :  ${topFragmentTag}`);
+
+                        break;
+
+                    case 'deviceModel':
+
+                        const deviceModel = objects['deviceModel'];
+                        this.setState(`device.${deviceID}.device_info.deviceModel`, {val: deviceModel, ack: true});
+                        this.log.debug(`deviceModel state for ${deviceID} :  ${deviceModel}`);
+
+                        break;
+
+                    case 'deviceName':
+
+                        const deviceName = objects['deviceName'];
+                        this.setState(`device.${deviceID}.device_info.deviceName`, {val: deviceName, ack: true});
+                        this.log.debug(`deviceName state for ${deviceID} : ${deviceName}`);
+
+
+                        break;
+
+                    case 'wifiSignalLevel':
+
+                        const wifiSignalLevel = objects['wifiSignalLevel'];
+                        this.setState(`device.${deviceID}.device_info.wifiSignalLevel`, {val: wifiSignalLevel, ack: true});
+                        this.log.debug(`wifiSignalLevel state for ${deviceID} : ${wifiSignalLevel}`);
+
+                        break;
+
+                    case 'kioskMode':
+
+                        const kioskMode = objects['kioskMode'];
+                        this.setState(`device.${deviceID}.device_info.kioskMode`, {val: kioskMode, ack: true});
+                        this.log.debug(`kioskMode state for ${deviceID} : ${kioskMode}`);
+
+                        break;
+
+                    case 'displayHeightPixels':
+
+                        const displayHeightPixels = objects['displayHeightPixels'];
+                        this.setState(`device.${deviceID}.device_info.displayHeightPixels`, {val: displayHeightPixels, ack: true});
+                        this.log.debug(`displayHeightPixels state for ${deviceID} : ${displayHeightPixels}`);
+
+                        break;
+
+                    case 'appVersionName':
+
+                        const appVersionName = objects['appVersionName'];
+                        this.setState(`device.${deviceID}.device_info.appVersionName`, {val: appVersionName, ack: true});
+                        this.log.debug(`appVersionName state for ${deviceID} : ${appVersionName}`);
+
+                        break;
+
+                    case 'maintenanceMode':
+
+                        const maintenanceMode = objects['maintenanceMode'];
+                        this.setState(`device.${deviceID}.device_info.maintenanceMode`, {val: maintenanceMode, ack: true});
+                        this.log.debug(`maintenanceMode state for ${deviceID} : ${maintenanceMode}`);
+
+
+                        break;
+
+                    case 'mac':
+
+                        const mac = objects.mac;
+                        this.setState(`device.${deviceID}.device_info.mac`, {val: mac, ack: true});
+                        this.log.debug(`mac state for ${deviceID} : ${mac}`);
+
+                        break;
+
+                    case 'Mac':
+                        // new form App Version 1.40.3
+                        const Mac = objects[`Mac`];
+                        this.setState(`device.${deviceID}.device_info.mac`, {val: Mac, ack: true});
+                        this.log.debug(`mac state for ${deviceID} : ${Mac}`);
+
+                        break;
+
+                    case 'startUrl':
+
+                        const startUrl = objects['startUrl'];
+                        this.setState(`device.${deviceID}.device_info.startUrl`, {val: startUrl, ack: true});
+                        this.log.debug(`startUrl state for ${deviceID} : ${startUrl}`);
+
+
+                        break;
+
+                    case 'screenOrientation':
+
+                        const screenOrientation = objects['screenOrientation'];
+                        this.setState(`device.${deviceID}.device_info.screenOrientation`, {val: screenOrientation, ack: true});
+                        this.log.debug(`screenOrientation state for ${deviceID} : ${screenOrientation}`);
+
+                        break;
+
+                    case 'isInDaydream':
+
+                        const isInDaydream = objects['isInDaydream'];
+                        this.setState(`device.${deviceID}.device_info.isInDaydream`, {val: isInDaydream, ack: true});
+                        this.log.debug(`isInDaydream state for ${deviceID} : ${isInDaydream}`);
+
+
+                        break;
+
+                    case 'isLicensed':
+
+                        const isLicensed = objects['isLicensed'];
+                        this.setState(`device.${deviceID}.device_info.isLicensed`, {val: isLicensed, ack: true});
+                        this.log.debug(`isLicensed state for ${deviceID} : ${isLicensed}`);
+
+                        break;
+
+                    case 'deviceManufacturer':
+
+                        const deviceManufacturer = objects['deviceManufacturer'];
+                        this.setState(`device.${deviceID}.device_info.deviceManufacturer`, {val: deviceManufacturer, ack: true});
+                        this.log.debug(`deviceManufacturer state for ${deviceID} : ${deviceManufacturer}`);
+
+                        break;
+
+                    case 'keyguardLocked':
+
+                        const keyguardLocked = objects['keyguardLocked'];
+                        this.setState(`device.${deviceID}.device_info.keyguardLocked`, {val: keyguardLocked, ack: true});
+                        this.log.debug(`keyguardLocked state for ${deviceID} : ${keyguardLocked}`);
+
+                        break;
+
+                    case 'isDeviceAdmin':
+
+                        const isDeviceAdmin = objects['isDeviceAdmin'];
+                        this.setState(`device.${deviceID}.device_info.isDeviceAdmin`, {val: isDeviceAdmin, ack: true});
+                        this.log.debug(`isDeviceAdmin state for ${deviceID} : ${isDeviceAdmin}`);
+
+                        break;
+
+                    case 'kioskLocked':
+
+                        const kioskLocked = objects['kioskLocked'];
+                        this.setState(`device.${deviceID}.device_info.kioskLocked`, {val: kioskLocked, ack: true});
+                        this.log.debug(`kioskLocked state for ${deviceID} : ${kioskLocked}`);
+
+                        break;
+
+                    case 'isDeviceOwner':
+
+                        const isDeviceOwner = objects['isDeviceOwner'];
+                        this.setState(`device.${deviceID}.device_info.isDeviceOwner`, {val: isDeviceOwner, ack: true});
+                        this.log.debug(`isDeviceOwner state for ${deviceID} : ${isDeviceOwner}`);
+
+                        break;
+
+                    case 'ip6':
+
+                        const ip6 = objects['ip6'];
+                        this.setState(`device.${deviceID}.device_info.ip6`, {val: ip6, ack: true});
+                        this.log.debug(`ip6 state for ${deviceID} : ${ip6}`);
+
+                        break;
+
+                    case 'displayWidthPixels':
+
+                        const displayWidthPixels = objects['displayWidthPixels'];
+                        this.setState(`device.${deviceID}.device_info.displayWidthPixels`, {val: displayWidthPixels, ack: true});
+                        this.log.debug(`displayWidthPixels state for ${deviceID} : ${displayWidthPixels}`);
+
+                        break;
+
+                    case 'androidVersion':
+
+                        const androidVersion = objects['androidVersion'];
+                        this.setState(`device.${deviceID}.device_info.androidVersion`, {val: androidVersion, ack: true});
+                        this.log.debug(`androidVersion state for ${deviceID} : ${androidVersion}`);
+
+                        break;
+
+                    case 'ip4': {
+
+                        const ip4 = objects['ip4'];
+                        this.setState(`device.${deviceID}.device_info.device_ip`, {val: ip4, ack: true});
+                        this.log.debug(`ip4 state for ${deviceID} : ${ip4}`);
+
+                        break;
+                    }
+
+                    case 'plugged':
+
+                        const plugged = objects['plugged'];
+                        this.setState(`device.${deviceID}.device_info.plugged`, {val: plugged, ack: true});
+                        this.log.debug(`plugged state for ${deviceID} : ${plugged}`);
+
+                        break;
+
+                    case 'isPlugged':
+                        // new form App Version 1.40.3
+                        const isPlugged = objects['isPlugged'];
+                        this.setState(`device.${deviceID}.device_info.plugged`, {val: isPlugged, ack: true});
+                        this.log.debug(`plugged state for ${deviceID} : ${isPlugged}`);
+
+                        break;
+
+                    case 'batteryLevel': {
+
+                        const bat = objects['batteryLevel'];
+                        let plugged = objects['plugged'] ? objects['plugged'] : objects['isPlugged'];
+
+                        this.setState(`device.${deviceID}.battery`, {val: bat, ack: true});
+                        this.log.debug(`batteryLevel state for ${deviceID} : ${bat}`);
+
+
+                        this.log.debug(`The battery level is now determined for ${deviceID} `);
+                        let visBattery = null;
+
+                        if (plugged && bat <= 100) visBattery = 20; 	// 100 %
+                        if (!plugged && bat <= 100) visBattery = 19; // 100 %
+                        if (plugged && bat <= 90) visBattery = 18; 	// 100 %
+                        if (!plugged && bat <= 90) visBattery = 17; 	// 90 %
+                        if (plugged && bat <= 80) visBattery = 16; 	// 90 %
+                        if (!plugged && bat <= 80) visBattery = 15; 	// 80 %
+                        if (plugged && bat <= 70) visBattery = 14; 	// 80 %
+                        if (!plugged && bat <= 70) visBattery = 13; 	// 70 %
+                        if (plugged && bat <= 60) visBattery = 12; 	// 70 %
+                        if (!plugged && bat <= 60) visBattery = 11; 	// 60 %
+                        if (plugged && bat <= 50) visBattery = 10; 	// 60 %
+                        if (!plugged && bat <= 50) visBattery = 9; 	// 50 %
+                        if (plugged && bat <= 40) visBattery = 8; 	// 50 %
+                        if (!plugged && bat <= 40) visBattery = 7; 	// 40 %
+                        if (plugged && bat <= 30) visBattery = 6; 	// 40 %
+                        if (!plugged && bat <= 30) visBattery = 5; 	// 30 %
+                        if (plugged && bat <= 20) visBattery = 4; 	// 30 %
+                        if (!plugged && bat <= 20) visBattery = 3; 	// 20 %
+                        if (plugged && bat <= 10) visBattery = 2; 	// 10 %
+                        if (!plugged && bat <= 10) visBattery = 1; 	// 10 %
+                        if (bat <= 0) visBattery = 0; 	// empty
+
+                        this.log.debug(`Battery level has been determined is now written for ${deviceID} `);
+                        this.setState(`device.${deviceID}.state_of_charge_vis`, {val: visBattery, ack: true});
+                        this.log.debug(`visBattery state for ${deviceID} : bat: ${bat} visBat: ${visBattery}`);
+
+                        this.log.debug(`Now start the charging control`);
+                        await this.charger(index, bat);
+
+
+                        break;
+                    }
+
+                    case 'isScreenOn':
+
+
+                        const isScreenOn = objects['isScreenOn'];
+
+                        this.setState(`device.${deviceID}.device_info.isScreenOn`, {val: isScreenOn, ack: true});
+                        this.log.debug(`isScreenOn state for ${deviceID} : ${isScreenOn}`);
+
+                        this.log.debug(`It is checked whether the screen is switched on at ${deviceID}`);
+                        if (isScreenOn) this.log.debug(`The screen is switched on for the ${deviceID}`);
+                        if (!isScreenOn) {
+                            await this.screenOn(index);
+                        }
+
+                        break;
+
+                    case 'screenOn':
+
+                        // new form App Version 1.40.3
+                        const screenOn = objects['screenOn'];
+
+                        this.setState(`device.${deviceID}.device_info.isScreenOn`, {val: screenOn, ack: true});
+                        this.log.debug(`isScreenOn state for ${deviceID} : ${screenOn}`);
+
+                        this.log.debug(`It is checked whether the screen is switched on at ${deviceID}`);
+                        if (screenOn) this.log.debug(`The screen is switched on for the ${deviceID}`);
+                        if (!screenOn) {
+                            await this.screenOn(index);
+                        }
+
+                        break;
+
+                    case 'screenBrightness':
+
+                        brightness[index] = objects['screenBrightness'];
+                        this.setState(`device.${deviceID}.brightness`, {val: brightness[index], ack: true});
+                        this.log.debug(`screenBrightness state for ${deviceID} : ${brightness[index]}`);
+
+                        break;
+
+                    case 'lastAppStart':
+
+                        const lastAppStart = objects['lastAppStart'];
+                        this.setState(`device.${deviceID}.device_info.LastAppStart`, {val: lastAppStart, ack: true});
+                        this.log.debug(`lastAppStart state for ${deviceID} : ${lastAppStart}`);
+
+                        break;
+
+                    case 'ssid':
+
+                        const ssid = objects['ssid'].replace(/"/gi, '');
+
+                        // const ssid = objects['SSID'].replace(/"/gi, '')
+                        this.log.debug(`ssid ROW state for ${deviceID} : ${ssid}`);
+
+                        if (ssid === '<unknown ssid>') {
+                            this.setState(`device.${deviceID}.device_info.ssid`, {val: 'is not supported', ack: true});
+                            this.log.debug(`ssid state for ${deviceID} : ${ssid}`);
+                        }
+                        else if (ssid === '') {
+                            this.setState(`device.${deviceID}.device_info.ssid`, {val: 'is not supported', ack: true});
+                            this.log.debug(`ssid state for ${deviceID} : ${ssid}`);
+                        }
+                        else {
+                            this.setState(`device.${deviceID}.device_info.ssid`, {val: ssid, ack: true});
+                            this.log.debug(`ssid state for ${deviceID} : ${ssid}`);
+                        }
+
+                        break;
+
+                    case 'SSID':
+                        // new from App version 1.40.3
+                        const SSID = objects['SSID'].replace(/"/gi, '');
+
+
+                        this.log.debug(`SSID ROW state for ${deviceID} : ${SSID}`);
+
+                        if (SSID === '<unknown ssid>') {
+                            this.setState(`device.${deviceID}.device_info.ssid`, {val: 'is not supported', ack: true});
+                            this.log.debug(`SSID state for ${deviceID} : ${SSID}`);
+                        }
+                        else if (SSID === '') {
+                            this.setState(`device.${deviceID}.device_info.ssid`, {val: 'is not supported', ack: true});
+                            this.log.debug(`SSID state for ${deviceID} : ${SSID}`);
+                        }
+                        else {
+                            this.setState(`device.${deviceID}.device_info.ssid`, {val: SSID, ack: true});
+                            this.log.debug(`SSID state for ${deviceID} : ${SSID}`);
+                        }
+
+                        break;
+
+                    case 'foregroundApp':
+
+                        foreground[index] = objects.foregroundApp;
+                        this.setState(`device.${deviceID}.device_info.foregroundApp`, {val: foreground[index], ack: true});
+                        this.log.debug(`foregroundApp state for ${deviceID} : ${foreground[index]}`);
+
+                        this.log.debug(`It is checked whether the FullyBrowser is in the foreground at ${deviceID}`);
+                        if (await foreground[index] !== 'de.ozerov.fully' && await foregroundStart[index] === false) {
+                            foregroundStart[index] = true;
+
+                            this.log.debug(`FullyBrowser is not in the foreground with ${deviceID}`);
+                            await this.foregroundApp(index, foreground[index]);
+                            this.log.debug(`${await tabletName[index]} foregroundStart true: ${foreground[index]}`);
+
+                        }
+                        else {
+                            foregroundStart[index] = false;
+                            this.log.debug(`${await tabletName[index]} foreground is Fully: ${foreground[index]}`);
+                        }
+
+                        break;
+
+                    case 'internalStorageFreeSpace':
+
+                        const internalStorageFreeSpace = objects['internalStorageFreeSpace'];
+                        this.setState(`device.${deviceID}.device_info.memory.internalStorageFreeSpace`, {val: await this.bytesToSize(internalStorageFreeSpace), ack: true});
+                        this.log.debug(`internalStorageFreeSpace state for ${deviceID} : ${internalStorageFreeSpace}`);
+
+                        break;
+
+                    case 'appTotalMemory':
+
+                        const appTotalMemory = objects['appTotalMemory'];
+                        this.setState(`device.${deviceID}.device_info.memory.appTotalMemory`, {val: await this.bytesToSize(appTotalMemory), ack: true});
+                        this.log.debug(`appTotalMemory state for ${deviceID} : ${appTotalMemory}`);
+
+                        break;
+
+                    case 'ramFreeMemory':
+
+                        const ramFreeMemory = objects['ramFreeMemory'];
+                        this.setState(`device.${deviceID}.device_info.memory.ramFreeMemory`, {val: await this.bytesToSize(ramFreeMemory), ack: true});
+                        this.log.debug(`ramFreeMemory state for ${deviceID} : ${ramFreeMemory}`);
+
+                        break;
+
+                    case 'appFreeMemory':
+
+                        const appFreeMemory = objects['appFreeMemory'];
+                        this.setState(`device.${deviceID}.device_info.memory.appFreeMemory`, {val: await this.bytesToSize(appFreeMemory), ack: true});
+                        this.log.debug(`appFreeMemory state for ${deviceID} : ${appFreeMemory}`);
+
+                        break;
+
+                    case 'internalStorageTotalSpace':
+
+                        const internalStorageTotalSpace = objects['internalStorageTotalSpace'];
+                        this.setState(`device.${deviceID}.device_info.memory.internalStorageTotalSpace`, {val: await this.bytesToSize(internalStorageTotalSpace), ack: true});
+                        this.log.debug(`internalStorageTotalSpace state for ${deviceID} : ${internalStorageTotalSpace}`);
+
+                        break;
+
+                    case 'ramUsedMemory':
+
+                        const ramUsedMemory = objects['ramUsedMemory'];
+                        this.setState(`device.${deviceID}.device_info.memory.ramUsedMemory`, {val: await this.bytesToSize(ramUsedMemory), ack: true});
+                        this.log.debug(`ramUsedMemory state for ${deviceID} : ${ramUsedMemory}`);
+
+                        break;
+
+                    case 'appUsedMemory':
+
+                        const appUsedMemory = objects['appUsedMemory'];
+                        this.setState(`device.${deviceID}.device_info.memory.appUsedMemory`, {val: await this.bytesToSize(appUsedMemory), ack: true});
+                        this.log.debug(`appUsedMemory state for ${deviceID} : ${appUsedMemory}`);
+
+                        break;
+
+                    case 'ramTotalMemory':
+
+                        const ramTotalMemory = objects['ramTotalMemory'];
+                        this.setState(`device.${deviceID}.device_info.memory.ramTotalMemory`, {val: await this.bytesToSize(ramTotalMemory), ack: true});
+                        this.log.debug(`ramTotalMemory state for ${deviceID} : ${ramTotalMemory}`);
+
+                        break;
+
+                    case 'batteryTemperature':
+
+                        const batteryTemperature = objects['batteryTemperature'];
+                        this.setState(`device.${deviceID}.device_info.batteryTemperature`, {val: batteryTemperature, ack: true});
+                        this.log.debug(`batteryTemperature state for ${deviceID} : ${batteryTemperature} `);
+                        break;
+                }
+
+            }
+
+            // last Info Update
+            this.setState(`device.${deviceID}.lastInfoUpdate`, {val: Date.now(), ack: true});
+            this.log.debug(`lastInfoUpdate is now being updated for ${deviceID} : ${Date.now()}`);
+
+        }
+        catch (error) {
+
+            this.log.error(`state_write for ${deviceID} has a problem: ${error.message}, stack: ${error.stack}`);
+        }
+    }
+
+    /**
+     * command Send
+     * @param {string} id
+     * @param {object} state
+     * @param {string|number} index
+     * @param {string} cmd
+     */
+    async sendFullyCommand(id, state, index, cmd) {
+        try {
+
+            switch (cmd) {
+                case 'reloadAll':
+                    let reloadAllURL = null;
+                    reloadAllURL = `http://${ip[index]}:${port[index]}/?cmd=loadStartURL&password=${password[index]}`;
+                    await axios.get(reloadAllURL)
+                        .then(async result => {
+
+                            this.log.debug(`${tabletName[index]} send status for reloadAll = status Code: ${result.status} => status Message: ${result.statusText}`);
+                            console.log(`${tabletName[index]} send status for reloadAll = status Code: ${result.status} => status Message: ${result.statusText}`);
+                        }).catch(async error => {
+
+                            this.log.error(`${tabletName[index]} send status for reloadAll could not be sent => ${error.message}, stack: ${error.stack}`);
+                            console.log(`${tabletName[index]} send status for reloadAll could not be sent [ command: ${cmd} val: ${state.val} ] => ${error.message}, stack: ${error.stack}`);
+                        });
+                    break;
+
+                case 'setStringSetting':
+                    const txtKey = state.val;
+                    if (txtKey.length > 1) {
+
+                        const setStringSetting = `http://${ip[index]}:${port[index]}/?cmd=setStringSetting&key=${txtKey}&password=${password[index]}`;
+
+                        await axios.get(setStringSetting)
+                            .then(async result => {
+                                this.setState(id, {val: '', ack: true});
+                                this.log.debug(`${tabletName[index]} send status for setStringSetting = status Code: ${result.status} => status Message: ${result.statusText}`);
+                                console.log(`${tabletName[index]} send status for setStringSetting = status Code: ${result.status} => status Message: ${result.statusText}`);
+                            }).catch(async error => {
+
+                                this.log.error(`${tabletName[index]} send status for setStringSetting could not be sent => ${error.message}, stack: ${error.stack}`);
+                                console.log(`${tabletName[index]} send status for setStringSetting could not be sent [ command: ${cmd} val: ${state.val} ] => ${error.message}, stack: ${error.stack}`);
+                            });
+                    }
+                    break;
+
+                case 'mediaVolumen':
+
+                    const volume = state.val;
+
+                    if (volume >= 0 && volume <= 100) {
+
+                        const mediaVolumeURL = `http://${ip[index]}:${port[index]}/?cmd=setAudioVolume&level=${volume}&stream=3&password=${password[index]}`;
+
+                        await axios.get(mediaVolumeURL)
+                            .then(async result => {
+                                this.setState(id, {val: state.val, ack: true});
+                                this.log.debug(`${tabletName[index]} send status for mediaVolume = status Code: ${result.status} => status Message: ${result.statusText}`);
+                                console.log(`${tabletName[index]} send status for mediaVolume = status Code: ${result.status} => status Message: ${result.statusText}`);
+                            }).catch(async error => {
+
+                                this.log.error(`${tabletName[index]} send status for mediaVolume could not be sent => ${error.message}, stack: ${error.stack}`);
+                                console.log(`${tabletName[index]} send status for mediaVolumen could not be sent [ command: ${cmd} val: ${state.val} ] => ${error.message}, stack: ${error.stack}`);
+                            });
+
+                    }
+                    break;
+
+                case 'textToSpeech':
+
+                    let txtSp = state.val;
+                    txtSp = encodeURIComponent(txtSp.replace(/ +/g, ' ')); // Remove multiple spaces
+                    if (txtSp.length > 1) {
+
+                        const textToSpeechURL = `http://${ip[index]}:${port[index]}/?cmd=textToSpeech&text=${txtSp}&password=${password[index]}`;
+
+                        await axios.get(textToSpeechURL)
+                            .then(async result => {
+                                this.setState(id, {val: '', ack: true});
+                                this.log.debug(`${tabletName[index]} send status for textToSpeech = status Code: ${result.status} => status Message: ${result.statusText}`);
+                                console.log(`${tabletName[index]} send status for textToSpeech = status Code: ${result.status} => status Message: ${result.statusText}`);
+                            }).catch(async error => {
+
+                                this.log.error(`${tabletName[index]} send status for textToSpeech could not be sent => ${error.message}, stack: ${error.stack}`);
+                                console.log(`${tabletName[index]} send status for textToSpeech could not be sent [ command: ${cmd} val: ${state.val} ] => ${error.message}, stack: ${error.stack}`);
+                            });
+
+                    }
+                    break;
+
+                case 'startURL':
+
+                    let startURL = state.val;
+                    startURL = startURL.replace(/ /g, ''); // Remove Spaces
+
+                    this.log.debug(`check if http is specified in the url if not replace the url with http://`);
+                    let result = startURL.match('http');
+                    if (!result) {
+                        startURL = `https://${startURL}`;
+                    }
+
+                    const encodeStartURL = encodeURIComponent(startURL);
+
+                    if (startURL.length > 5) {
+
+                        // const loadURL = `http://${ip[index]}:${port[index]}/?cmd=startURL&url=${encodeStartURL}&password=${password[index]}`;
+                        const loadURL = `http://${ip[index]}:${port[index]}/?cmd=setStringSetting&key=startURL&value=${encodeStartURL}&password=${password[index]}`;
+                        // /?cmd=setStringSetting&key=[key]&value=[value]
+                        await axios.get(loadURL)
+                            .then(async result => {
+                                this.setState(id, {val: startURL, ack: true});
+                                this.log.debug(`${tabletName[index]} send status for startURL = status Code: ${result.status} => status Message: ${result.statusText}`);
+                                console.log(`${tabletName[index]} send status for startURL = status Code: ${result.status} => status Message: ${result.statusText}`);
+                            }).catch(async error => {
+
+                                this.log.error(`${tabletName[index]} send status for startURL could not be sent => ${error.message}, stack: ${error.stack}`);
+                                console.log(`${tabletName[index]} send status for startURL could not be sent [ command: ${cmd} val: ${state.val} ] => ${error.message}, stack: ${error.stack}`);
+                            });
+                    }
+                    break;
+
+                case 'loadURL':
+
+                    let strUrl = state.val;
+                    strUrl = strUrl.replace(/ /g, ''); // Remove Spaces
+
+                    const encodeUrl = encodeURIComponent(strUrl);
+
+                    if (strUrl.length > 5) {
+
+                        const loadURL = `http://${ip[index]}:${port[index]}/?cmd=loadURL&url=${encodeUrl}&password=${password[index]}`;
+
+                        await axios.get(loadURL)
+                            .then(async result => {
+                                this.setState(id, {val: '', ack: true});
+                                this.log.debug(`${tabletName[index]} send status for loadURL = status Code: ${result.status} => status Message: ${result.statusText}`);
+                                console.log(`${tabletName[index]} send status for loadURL = status Code: ${result.status} => status Message: ${result.statusText}`);
+                            }).catch(async error => {
+
+                                this.log.error(`${tabletName[index]} send status for loadURL could not be sent => ${error.message}, stack: ${error.stack}`);
+                                console.log(`${tabletName[index]} send status for loadURL could not be sent [ command: ${cmd} val: ${state.val} ] => ${error.message}, stack: ${error.stack}`);
+                            });
+                    }
+                    break;
+
+                case 'startApplication':
+                    // eslint-disable-next-line no-case-declarations
+                    let strApp = state.val;
+                    strApp = strApp.replace(/ /g, ''); // Remove Spaces
+
+                    if (strApp.length > 2) {
+                        const startApplicationURL = `http://${ip[index]}:${port[index]}/?cmd=startApplication&package=${strApp}&password=${password[index]}`;
+
+                        await axios.get(startApplicationURL)
+                            .then(async result => {
+                                this.setState(id, {val: '', ack: true});
+                                this.log.debug(`${tabletName[index]} send status for startApplication = status Code: ${result.status} => status Message: ${result.statusText}`);
+                                console.log(`${tabletName[index]} send status for startApplication = status Code: ${result.status} => status Message: ${result.statusText}`);
+                            }).catch(async error => {
+
+                                this.log.error(`${tabletName[index]} send status for startApplication could not be sent => ${error.message}, stack: ${error.stack}`);
+                                console.log(`${tabletName[index]} send status for startApplication could not be sent [ command: ${cmd} val: ${state.val} ] => ${error.message}, stack: ${error.stack}`);
+                            });
+
+
+                    }
+                    break;
+
+                case 'motionDetection':
+
+                    let motionD = state.val;
+
+                    const motionDetectionURL = `http://${ip[index]}:${port[index]}/?cmd=setBooleanSetting&key=motionDetection&value=${motionD}&password=${password[index]}`;
+
+                    await axios.get(motionDetectionURL)
+                        .then(async result => {
+
+                            this.setState(id, {val: motionD, ack: true});
+                            this.log.debug(`${tabletName[index]} send status for motionDetection = status Code: ${result.status} => status Message: ${result.statusText}`);
+                            console.log(`${tabletName[index]} send status for motionDetection = status Code: ${result.status} => status Message: ${result.statusText}`);
+
+                        }).catch(async error => {
+
+                            this.log.error(`${tabletName[index]} send status for motionDetection could not be sent => ${error.message}, stack: ${error.stack}`);
+                            console.log(`${tabletName[index]} send status for motionDetection could not be sent [ command: ${cmd} val: ${state.val} ] => ${error.message}, stack: ${error.stack}`);
+                        });
+
+                    break;
+
+                case 'camshot':
+                    let motionDetection = await this.getStateAsync(`device.${tabletName[index]}.commands.motionDetection`);
+                    motionDetection = motionDetection.val;
+
+                    if (motionDetection) {
+                        const base64 = await axios
+                            .get(`http://${ip[index]}:${port[index]}/?cmd=getCamshot&password=${password[index]}`, {
+                                responseType: 'arraybuffer'
+                            })
+                            .then(response => new Buffer(response.data, 'binary').toString('base64'))
+
+                            .catch(async error => {
+
+                                this.log.error(` send status for camshot could not be sent => ${error.message}, stack: ${error.stack}`);
+                                console.log(` send status for camshot could not be sent val: ${state.val} ] => ${error.message}, stack: ${error.stack}`);
+                            });
+
+                        console.log(`<img src="data:image/png;base64,${base64}" style="width: auto ;height: 100%;"  alt='no Image' />`)
+
+                        const htmlBase64 = `<img src="data:image/png;base64,${base64}" style="width: auto ;height: 100%;"  alt='no Image'/>`
+
+                        await this.setStateAsync(`device.${tabletName[index]}.device_info.camshot64`, {val: htmlBase64, ack: true})
+                        let base64String = Buffer.from(base64, 'base64')
+                        this.writeFile(`wallpanel.admin`, `media/camshot_${tabletName[index]}_${this.instance}.png`, base64String, function (err) {
+                            if (err) this.log.error(err)
+                            console.log('File created');
+                        });
+                        this.w
+                        await this.setState(`device.${tabletName[index]}.device_info.camshotUrl`, {val: `/wallpanel.admin.media/camshot_${tabletName[index]}_${this.instance}.png`, ack: true});
+                    }
+                    else {
+                        this.log.warn(`Attention the motion detection is not activated it is not possible to take camshot if motion detection is deactivated !!`)
+                    }
+                    break;
+
+                case 'kioskPin_confirm':
+                    const pin = (await this.getStateAsync(`${this.namespace}.device.${tabletName[index]}.commands.kiosk.kioskPin`)).val;
+                    const pinConfirm = state.val;
+                    if (kioskPinTimeout[index]) clearTimeout(kioskPinTimeout[index]);
+                    if (!isNaN(pin) && !isNaN(pinConfirm)) {
+                        console.log(isNaN(pin))
+                        console.log(isNaN(pinConfirm))
+                        if (pinConfirm === pin) {
+
+                            const kioskPinURL = `http://${ip[index]}:${port[index]}/?cmd=setStringSetting&key=kioskPin&value=${pin}&password=${password[index]}`;
+                            await axios.get(kioskPinURL)
+                                .then(async result => {
+
+                                    this.setState(`${this.namespace}.device.${tabletName[index]}.commands.kiosk.kioskPin`, {val: 'OK', ack: true});
+                                    this.setState(id, {val: 'OK', ack: true});
+
+                                    kioskPinTimeout[index] = setTimeout(async () => {
+                                        this.setState(`${this.namespace}.device.${tabletName[index]}.commands.kiosk.kioskPin`, {val: '', ack: true});
+                                        this.setState(id, {val: '', ack: true});
+                                    }, 2000)
+
+                                    this.log.debug(`${tabletName[index]} send status for kioskPin = status Code: ${result.status} => status Message: ${result.statusText}`);
+                                    console.log(`${tabletName[index]} send status for kioskPin = status Code: ${result.status} => status Message: ${result.statusText}`);
+
+                                }).catch(async error => {
+
+                                    this.log.error(`${tabletName[index]} send status for kioskPin could not be sent => ${error.message}, stack: ${error.stack}`);
+                                    console.log(`${tabletName[index]} send status for kioskPin could not be sent [ command: ${cmd} val: ${state.val} ] => ${error.message}, stack: ${error.stack}`);
+                                });
+                        }
+                        else {
+
+                            this.log.warn(`pin input does not match try again`);
+                            this.setState(id, {val: 'pin does not match try again', ack: true});
+                        }
+                    }
+                    else if (isNaN(pin)) {
+                        this.setState(`${this.namespace}.device.${tabletName[index]}.commands.kiosk.kioskPin`, {val: 'Attention kiosk pin may only contain numbers (1234567890) do not contain any special characters or letters', ack: true});
+                        this.log.warn(`Attention kiosk pin may only contain numbers (1234567890) do not contain any special characters or letters`);
+
+                    }
+                    else if (isNaN(pinConfirm)) {
+                        this.setState(id, {val: 'Attention kiosk pin Confirm may only contain numbers (1234567890) do not contain any special characters or letters', ack: true});
+                        this.log.warn(`Attention kiosk pin Confirm may only contain numbers (1234567890) do not contain any special characters or letters`);
+
+                    }
+
+                    break;
+
+                case 'kioskExitGesture':
+                    const kioskExitGesture = state.val;
+
+                    const kioskExitGestureURL = `http://${ip[index]}:${port[index]}/?cmd=setStringSetting&key=kioskExitGesture&value=${kioskExitGesture}&password=${password[index]}`;
+                    await axios.get(kioskExitGestureURL)
+                        .then(async result => {
+
+                            this.setState(id, {val: kioskExitGesture, ack: true});
+                            this.log.debug(`${tabletName[index]} send status for kioskPin = status Code: ${result.status} => status Message: ${result.statusText}`);
+                            console.log(`${tabletName[index]} send status for kioskPin = status Code: ${result.status} => status Message: ${result.statusText}`);
+
+                        }).catch(async error => {
+
+                            this.log.error(`${tabletName[index]} send status for kioskPin could not be sent => ${error.message}, stack: ${error.stack}`);
+                            console.log(`${tabletName[index]} send status for kioskPin could not be sent [ command: ${cmd} val: ${state.val} ] => ${error.message}, stack: ${error.stack}`);
+                        });
+
+                    break;
+
+                case 'disableStatusBar':
+                    const disableStatusBar = state.val;
+
+                    const disableStatusBarURL = `http://${ip[index]}:${port[index]}/?cmd=setBooleanSetting&key=disableStatusBar&value=${disableStatusBar}&password=${password[index]}`;
+                    await axios.get(disableStatusBarURL)
+                        .then(async result => {
+
+                            this.setState(id, {val: disableStatusBar, ack: true});
+                            this.log.debug(`${tabletName[index]} send status for disableStatusBar = status Code: ${result.status} => status Message: ${result.statusText}`);
+                            console.log(`${tabletName[index]} send status for disableStatusBar = status Code: ${result.status} => status Message: ${result.statusText}`);
+
+                        }).catch(async error => {
+
+                            this.log.error(`${tabletName[index]} send status for disableStatusBar could not be sent => ${error.message}, stack: ${error.stack}`);
+                            console.log(`${tabletName[index]} send status for disableStatusBar could not be sent [ command: ${cmd} val: ${state.val} ] => ${error.message}, stack: ${error.stack}`);
+                        });
+
+                    break;
+
+                case 'disableHomeButton':
+                    const disableHomeButton = state.val;
+
+                    const disableHomeButtonURL = `http://${ip[index]}:${port[index]}/?cmd=setBooleanSetting&key=disableHomeButton&value=${disableHomeButton}&password=${password[index]}`;
+                    await axios.get(disableHomeButtonURL)
+                        .then(async result => {
+
+                            this.setState(id, {val: disableHomeButton, ack: true});
+                            this.log.debug(`${tabletName[index]} send status for disableHomeButton = status Code: ${result.status} => status Message: ${result.statusText}`);
+                            console.log(`${tabletName[index]} send status for disableHomeButton = status Code: ${result.status} => status Message: ${result.statusText}`);
+
+                        }).catch(async error => {
+
+                            this.log.error(`${tabletName[index]} send status for disableHomeButton could not be sent => ${error.message}, stack: ${error.stack}`);
+                            console.log(`${tabletName[index]} send status for disableHomeButton could not be sent [ command: ${cmd} val: ${state.val} ] => ${error.message}, stack: ${error.stack}`);
+                        });
+
+                    break;
+
+                case 'disablePowerButton':
+                    const disablePowerButton = state.val;
+
+                    const disablePowerButtonURL = `http://${ip[index]}:${port[index]}/?cmd=setBooleanSetting&key=disablePowerButton&value=${disablePowerButton}&password=${password[index]}`;
+                    await axios.get(disablePowerButtonURL)
+                        .then(async result => {
+
+                            this.setState(id, {val: disablePowerButton, ack: true});
+                            this.log.debug(`${tabletName[index]} send status for disablePowerButton = status Code: ${result.status} => status Message: ${result.statusText}`);
+                            console.log(`${tabletName[index]} send status for disablePowerButton = status Code: ${result.status} => status Message: ${result.statusText}`);
+
+                        }).catch(async error => {
+
+                            this.log.error(`${tabletName[index]} send status for disablePowerButton could not be sent => ${error.message}, stack: ${error.stack}`);
+                            console.log(`${tabletName[index]} send status for disablePowerButton could not be sent [ command: ${cmd} val: ${state.val} ] => ${error.message}, stack: ${error.stack}`);
+                        });
+
+                    break;
+
+                case 'disableVolumeButtons':
+                    const disableVolumeButtons = state.val;
+
+                    const disableVolumeButtonsURL = `http://${ip[index]}:${port[index]}/?cmd=setBooleanSetting&key=disableVolumeButtons&value=${disableVolumeButtons}&password=${password[index]}`;
+                    await axios.get(disableVolumeButtonsURL)
+                        .then(async result => {
+
+                            this.setState(id, {val: disableVolumeButtons, ack: true});
+                            this.log.debug(`${tabletName[index]} send status for disableVolumeButtons = status Code: ${result.status} => status Message: ${result.statusText}`);
+                            console.log(`${tabletName[index]} send status for disableVolumeButtons = status Code: ${result.status} => status Message: ${result.statusText}`);
+
+                        }).catch(async error => {
+
+                            this.log.error(`${tabletName[index]} send status for disableVolumeButtons could not be sent => ${error.message}, stack: ${error.stack}`);
+                            console.log(`${tabletName[index]} send status for disableVolumeButtons could not be sent [ command: ${cmd} val: ${state.val} ] => ${error.message}, stack: ${error.stack}`);
+                        });
+
+                    break;
+
+                case 'kioskMode':
+                    const setKioskMode = state.val;
+
+                    const kioskModeURL = `http://${ip[index]}:${port[index]}/?cmd=setBooleanSetting&key=kioskMode&value=${setKioskMode}&password=${password[index]}`;
+                    await axios.get(kioskModeURL)
+                        .then(async result => {
+
+                            this.setState(id, {val: setKioskMode, ack: true});
+                            this.log.debug(`${tabletName[index]} send status for setKioskMode = status Code: ${result.status} => status Message: ${result.statusText}`);
+                            console.log(`${tabletName[index]} send status for setKioskMode = status Code: ${result.status} => status Message: ${result.statusText}`);
+
+                        }).catch(async error => {
+
+                            this.log.error(`${tabletName[index]} send status for setKioskMode could not be sent => ${error.message}, stack: ${error.stack}`);
+                            console.log(`${tabletName[index]} send status for setKioskMode could not be sent [ command: ${cmd} val: ${state.val} ] => ${error.message}, stack: ${error.stack}`);
+                        });
+
+                    break;
+
+                case 'lockKiosk':
+                    const lockKiosk = state.val;
+                    let lockKioskURL;
+
+                    if (lockKiosk) {
+                        lockKioskURL = `http://${ip[index]}:${port[index]}/?cmd=lockKiosk&password=${password[index]}`;
+                    }
+                    else {
+                        lockKioskURL = `http://${ip[index]}:${port[index]}/?cmd=unlockKiosk&password=${password[index]}`;
+                    }
+
+                    await axios.get(lockKioskURL)
+                        .then(async result => {
+
+                            this.setState(id, {val: lockKiosk, ack: true});
+                            this.log.debug(`${tabletName[index]} send status for lockKiosk = status Code: ${result.status} => status Message: ${result.statusText}`);
+                            console.log(`${tabletName[index]} send status for lockKiosk = status Code: ${result.status} => status Message: ${result.statusText}`);
+
+                        }).catch(async error => {
+
+                            this.log.error(`${tabletName[index]} send status for lockKiosk could not be sent => ${error.message}, stack: ${error.stack}`);
+                            console.log(`${tabletName[index]} send status for lockKiosk could not be sent [ command: ${cmd} val: ${state.val} ] => ${error.message}, stack: ${error.stack}`);
+                        });
+
+                    break;
+
+                default:
+                    if (state.val === true) {
+
+                        const commandsURL = `http://${ip[index]}:${port[index]}/?cmd=${cmd}&password=${password[index]}`;
+
+                        await axios.get(commandsURL)
+                            .then(async result => {
+
+                                this.log.debug(`${tabletName[index]} send status for ${cmd} = status Code: ${result.status} => status Message: ${result.statusText}`);
+                                console.log(`${tabletName[index]} send status for ${cmd} = status Code: ${result.status} => status Message: ${result.statusText}`);
+                            }).catch(async error => {
+
+                                this.log.error(`${tabletName[index]} send status for ${cmd} could not be sent => ${error.message}, stack: ${error.stack}`);
+                                console.log(`${tabletName[index]} send status for ${cmd} could not be sent [ command: ${cmd} val: ${state.val} ] => ${error.message}, stack: ${error.stack}`);
+                            });
+
+                    }
+                    break;
+            }
+        }
+        catch
+            (error) {
+            this.log.error(`[sendFullyCommand] : ${error.message}, stack: ${error.stack}`);
+        }
+    }
+
+    /**
+     * Check whether the FullyBrowser is switched on
+     * @param {string|number} index
+     * @param {string} value
+     */
+    async foregroundApp(index, value) {
+        try {
+
+            this.log.debug(`Timer for toForeground at ${tabletName[index]} is now deleted`);
+            if (foregroundAppTimer[index]) clearTimeout(foregroundAppTimer[index]);
+
+            const foregroundAppUrl = `http://${ip[index]}:${port[index]}/?cmd=toForeground&password=${password[index]}`;
+            this.log.debug(`URL is now built for ${tabletName[index]} ==> foregroundAppUrl: ${foregroundAppUrl}`);
+
+            this.log.debug(`timer is set to ${fireTabletInterval} for ${tabletName[index]}`);
+            foregroundAppTimer[index] = setTimeout(async () => {
+
+                this.log.debug(`Axios request is executed for ${tabletName[index]} with the URL => ${foregroundAppUrl}`);
+                await axios.get(foregroundAppUrl)
+                    .then(async result => {
+
+                        this.log.debug(`${tabletName[index]} send status for toForeground = status Code: ${result.status} => status Message: ${result.statusText}`);
+                        console.log(`${tabletName[index]} send status for toForeground = status Code: ${result.status} => status Message: ${result.statusText}`);
+
+                    }).catch(async error => {
+
+                        this.log.error(`${tabletName[index]} send status for toForeground could not be sent => ${error.message}, stack: ${error.stack}`);
+                        console.log(`${tabletName[index]} send status for reloadAll could not be sent [ val: ${value} ] => ${error.message}, stack: ${error.stack}`);
+
+                    });
+            }, fireTabletInterval);
+        }
+        catch (error) {
+            this.log.error(`foregroundApp for ${tabletName[index]} has a problem: ${error.message}, stack: ${error.stack}`);
+        }
+    }
+
+    async astroTime() {
+        try {
+
+            this.log.debug(`Astro time is now being initialized...`);
+
+            this.log.debug(`Adapter now reads the ioBroker config for the latitude and longitude`);
+            const config = await this.getForeignObjectAsync('system.config');
+
+            timeMode = JSON.parse(this.config['timeMode']);
+            let dayH;
+            let dayM;
+            let dayS;
+            let nightH;
+            let nightM;
+            let nightS;
+
+            const iobrokerLatitude = config.common.latitude;
+            const iobrokerLongitude = config.common.longitude;
+
+            if (iobrokerLatitude !== '' && iobrokerLongitude !== '') {
+
+                this.log.debug(`The latitude and longitude were read from the config. => latitude: ${iobrokerLatitude} | longitude: ${iobrokerLongitude}`);
+
+                const ts = SunCalc.getTimes(new Date, iobrokerLatitude, iobrokerLongitude);
+
+                const astroSelectDay = this.config['astroSelectDay'];
+                const astroSelectNight = this.config['astroSelectNight'];
+
+                dayH = await this.zeroPad(ts[astroSelectDay].getHours(), 2);
+                dayM = await this.zeroPad(ts[astroSelectDay].getMinutes(), 2);
+                dayS = await this.zeroPad(ts[astroSelectDay].getSeconds(), 2);
+
+                nightH = await this.zeroPad(ts[astroSelectNight].getHours(), 2);
+                nightM = await this.zeroPad(ts[astroSelectNight].getMinutes(), 2);
+                nightS = await this.zeroPad(ts[astroSelectNight].getSeconds(), 2);
+
+            }
+            else {
+                this.log.warn(`The coordinates are not stored in the admin. Astro time is not switched on. Manuel mode is now active`);
+                timeMode = false;
+
+            }
+
+            const dayTime = await this.zeroPad(this.config['dayTime'], 2);
+            const midTime = await this.zeroPad(this.config['midTime'], 2);
+            const nightTime = await this.zeroPad(this.config['nightTime'], 2);
+
+            this.log.debug(`The time of day is now determined`);
+            if (timeMode) {
+
+                this.log.debug(`The current time is now checked whether it is in the time range from ${dayH}:${dayM}:${dayS} to ${nightH}:${nightM}:${nightS}`);
+                let astro_Time = await this.time_range(`${dayH}:${dayM}:${dayS}`, ``, `${nightH}:${nightM}:${nightS}`);
+                console.log(`${dayH}:${dayM}:${dayS}`)
+                this.log.debug(`Time of day is now set to day or night`);
+                day_Time = astro_Time;
+
+                if (day_Time) this.log.debug(`It is day`);
+                if (!day_Time) this.log.debug(`It's night`);
+
+                if (day_Time) console.log(`It is day: ${day_Time}`);
+                if (!day_Time) console.log(`It's night: ${day_Time}`);
+            }
+            else {
+                this.log.debug(`The current time is now checked whether it is in the time range from ${dayTime}:00:00 to ${midTime}:00:00 and ${nightTime}:00:00`);
+                let manuel_Time = await this.time_range(`${dayTime}:00:00`, `${midTime}:00:00`, `${nightTime}:00:00`);
+
+                this.log.debug(`Time of day is now set to day or night`);
+                day_Time = manuel_Time;
+
+                if (day_Time === 1) this.log.debug(`It is Morning`);
+                if (day_Time === 2) this.log.debug(`It is afternoon`);
+                if (day_Time === 3) this.log.debug(`It's night`);
+
+                if (day_Time === 1) console.log(`It is day: ${day_Time}`);
+                if (day_Time === 2) console.log(`It is afternoon: ${day_Time}`);
+                if (day_Time === 3) console.log(`It's night: ${day_Time}`);
+
+            }
+
+            this.log.debug(`Time initialization is complete. Now start the cron`);
+            await this.brightnessCron(dayH, dayM, nightH, nightM);
+
+        }
+        catch (error) {
+            this.log.error(`[astroTime] : ${error.message}, stack: ${error.stack}`);
+        }
+    }
+
+    /**
+     * @param {string} dayH
+     * @param {string} dayM
+     * @param {string} nightH
+     *  @param {string} nightM
+     */
+    async brightnessCron(dayH, dayM, nightH, nightM) {
+        try {
+            this.log.debug(`Cron job is now being initialized`);
+
+            this.log.debug(`Check whether the brightness control is active`);
+            if (brightnessControlEnabled) {
+
+                for (const c in deviceEnabled) {
+
+                    if (enabledBrightness[c] && !logMessage[c]) {
+
+                        if (timeMode) {
+
+                            this.log.debug(`night cron: ${nightM} ${nightH} * * * `);
+
+                            const astroNightBriCron = new schedule(`${nightM} ${nightH} * * * `, async () => {
+                                this.log.debug(`the night brightness is now activated`);
+                                console.log(`the night brightness is now activated`);
+
+                                this.log.debug(`Time of day is now set to day or night`);
+                                day_Time = 3;
+                                this.log.debug(`It's night`);
+
+                                this.log.debug(`night and day timeout are reset`);
+                                if (automatic_briTimeout) clearTimeout(automatic_briTimeout);
+                                await this.automatic_bri();
+
+                            });
+
+                            this.log.debug(`day cron: ${dayM} ${dayH} * * * `);
+
+                            const astroDayBriCron = new schedule(`${dayM} ${dayH} * * * `, async () => {
+                                this.log.debug(`the day brightness is now activated`);
+                                console.log(`the day brightness is now activated`);
+
+                                this.log.debug(`Time of day is now set to day or night`);
+                                day_Time = 1;
+                                this.log.debug(`It is day`);
+
+                                this.log.debug(`night and day timeout are reset`);
+                                if (automatic_briTimeout) clearTimeout(automatic_briTimeout);
+                                await this.automatic_bri();
+
+                            });
+
+                            this.log.debug(`start cron jobs`);
+                            astroNightBriCron.start();
+                            astroDayBriCron.start();
+
+                        }
+                        else {
+                            const dayTime = this.config['dayTime'];
+                            const midTime = this.config['midTime'];
+                            const nightTime = this.config['nightTime'];
+                            this.log.debug('checkInterval ' + checkInterval);
+                            this.log.debug('dayTime ' + dayTime);
+                            this.log.debug('nightTime ' + nightTime);
+
+                            this.log.debug(`day cron: [ 0 ${dayTime} * * *  ]`);
+                            const dayBriCron = new schedule(`0 ${dayTime} * * * `, async () => {
+                                this.log.debug(`the day brightness is now activated`);
+                                console.log(`the day brightness is now activated`);
+
+                                this.log.debug(`Time of day is now set to day or night`);
+                                day_Time = 1;
+                                this.log.debug(`It is day`);
+
+                                this.log.debug(`night and day timeout are reset`);
+                                if (automatic_briTimeout) clearTimeout(automatic_briTimeout);
+                                await this.automatic_bri();
+
+                            });
+
+                            this.log.debug(`day cron: [ 0 ${midTime} * * *  ]`);
+                            const midBriCron = new schedule(`0 ${midTime} * * * `, async () => {
+                                this.log.debug(`the day brightness is now activated`);
+                                console.log(`the day brightness is now activated`);
+
+                                this.log.debug(`Time of day is now set to day or night`);
+                                day_Time = 2;
+                                this.log.debug(`It is afternoon`);
+
+                                this.log.debug(`night and day timeout are reset`);
+                                if (automatic_briTimeout) clearTimeout(automatic_briTimeout);
+                                await this.automatic_bri();
+
+                            });
+
+                            this.log.debug(`night cron: [ 0 ${nightTime} * * * ]`);
+                            const nightBriCron = new schedule(`0 ${nightTime} * * * `, async () => {
+                                this.log.debug(`the night brightness is now activated`);
+                                console.log(`the night brightness is now activated`);
+
+                                this.log.debug(`Time of day is now set to day or night`);
+                                day_Time = 3;
+                                this.log.debug(`It's night`);
+
+                                this.log.debug(`night and day timeout are reset`);
+                                if (automatic_briTimeout) clearTimeout(automatic_briTimeout);
+                                await this.automatic_bri();
+
+                            });
+
+
+                            this.log.debug(`start cron jobs`);
+                            dayBriCron.start();
+                            midBriCron.start();
+                            nightBriCron.start();
+
+                        }
+                    }
+                }
+            }
+        }
+        catch (error) {
+            this.log.error(`[brightnessCron] : ${error.message}, stack: ${error.stack}`);
+        }
+    }
+
+    /**
+     * @param {string} id
+     * @param {string|number} index
+     * @param {object} state
+     */
+    async manualStates(id, index, state) {
+        try {
+
+            let value = state.val;
+            this.log.debug(`Check whether value is in boolean or number`);
+            let typ = typeof (value);
+            let controlMode = await this.getStateAsync(`device.${tabletName[index]}.brightness_control_mode`);
+            controlMode = controlMode['val'];
+
+
+            switch (typ) {
+                case 'boolean': {
+                    let stateValue = await this.getStateAsync(`device.${tabletName[index]}.manualBrightness`);
+                    stateValue = stateValue.val;
+                    controlMode = value;
+                    if (day_Time === 1 || day_Time === 2) {
+
+                        if (controlMode) {
+
+                            this.log.debug(`night and day timeout are reset`);
+                            if (automatic_briTimeout) clearTimeout(automatic_briTimeout);
+
+                            this.log.debug(`start manuel brightness function`);
+                            await this.manuel_Bri(index, stateValue, controlMode);
+
+                        }
+                        else {
+
+                            this.log.debug(`night and day timeout are reset`);
+                            if (automatic_briTimeout) clearTimeout(automatic_briTimeout);
+
+                            this.log.debug(`start day brightness function`);
+                            await this.automatic_bri();
+
+                        }
+                    }
+                    else {
+
+                        if (controlMode) {
+
+                            this.log.debug(`night and day timeout are reset`);
+                            if (automatic_briTimeout) clearTimeout(automatic_briTimeout);
+
+                            this.log.debug(`start manuel brightness function`);
+                            await this.manuel_Bri(index, stateValue, controlMode);
+
+                        }
+                        else {
+
+                            this.log.debug(`night and day timeout are reset`);
+                            if (automatic_briTimeout) clearTimeout(automatic_briTimeout);
+
+                            this.log.debug(`start night brightness function`);
+                            await this.automatic_bri();
+
+                        }
+                    }
+
+                    await this.setStateAsync(id, value.val, true);
+                    this.log.debug(`Manuel mode now active`);
+                    break;
+                }
+
+                case 'number': {
+
+                    if (controlMode) {
+                        this.log.debug(`Check whether value is less than 0 or greater than 100`);
+                        if (value <= 0) {
+                            this.log.debug(`value ist kleiner 0 => ${value} wird jetzt ersetzt mir 0`);
+                            value = 0;
+                        }
+                        else if (state.val >= 100) {
+                            this.log.debug(`value is greater than 100 => ${value} is now replaced with 100`);
+                            value = 100;
+                        }
+
+                        this.log.debug(`night and day timeout are reset`);
+                        if (automatic_briTimeout) clearTimeout(automatic_briTimeout);
+                        this.log.debug(`start manuel brightness function`);
+                        await this.manuel_Bri(index, value, controlMode);
+
+
+                        await this.setStateAsync(id, value, true);
+                        this.log.debug(`brightness was set to => ${value}`);
+                    }
+                    break;
+                }
+            }
+        }
+        catch (error) {
+            this.log.error(`[manualStates] : ${error.message}, stack: ${error.stack}`);
+        }
+    }
+
+    /**
+     * @param {string|number} index
+     * @param {number} value
+     * @param {boolean} mode
+     */
+    async manuel_Bri(index, value, mode) {
+        try {
+
+            this.log.debug(`Manual brightness for ${tabletName[index]} is now carried out. Initialization operated .....`);
+
+            this.log.debug(`start reading the configuration of ${tabletName[index]} ...`);
+            const brightnessN = this.config.brightness;
+            const screenSaverON = JSON.parse(this.config['screenSaverON']);
+            const screenSaverBriSync = enableScreenSaverBrightness[index];
+
+            this.log.debug(`Check whether the ${tabletName[index]} device is charging`);
+            if (chargeDeviceValue[index]) {
+
+                this.log.debug(`The ${tabletName[index]} device is charging, now carry out other actions ..`);
+                this.log.debug(`Charging brightness for ${tabletName[index]} is now calculated....`);
+                let chargingBri = Math.round(await this.convert_percent(value - brightnessN[index]['loadingLowering']));
+                this.log.debug(`Charging brightness for ${tabletName[index]} has been calculated => ${chargingBri} and in percent => ${value - brightnessN[index]['loadingLowering']} `);
+                if (chargingBri <= 0) {
+
+                    this.log.debug(`The brightness for ${tabletName[index]} is less than 0 => ${chargingBri} is now replaced with 0`);
+                    chargingBri = 0;
+
+                    console.log(`return brightness => ${chargingBri}`)
+                }
+                this.log.debug(`Create the url for the screen brightness and the screen saver brightness....`);
+                const BrightnessURL = `http://${ip[index]}:${port[index]}/?cmd=setStringSetting&key=screenBrightness&value=${chargingBri}&password=${password[index]}`;
+                const ScreensaverOnBri = `http://${ip[index]}:${port[index]}/?cmd=setStringSetting&key=screensaverBrightness&value=${chargingBri}&password=${password[index]}`;
+
+                this.log.debug(`Check whether the screen saver and the brightness synchronization is switched on`);
+                if (screenSaverBriSync && screenSaverON) {
+
+                    this.log.debug(`Check whether the current brightness is the same as the one you want to adjust`);
+                    if (chargingBri !== brightness[index]) {
+
+                        this.log.debug(`send the screen saver brightness to the device =>${tabletName[index]}`);
+                        await axios.get(ScreensaverOnBri)
+                            .then(async result => {
+
+                                this.log.debug(`${tabletName[index]} send status for ScreensaverOnBri = status Code: ${result.status} => status Message: ${result.statusText}`);
+                                console.log(`${tabletName[index]} send status for ScreensaverOnBri = status Code: ${result.status} => status Message: ${result.statusText}`);
+
+                            })
+                            .catch(async error => {
+
+                                this.log.error(`${tabletName[index]} send status for ScreensaverOnBri name could not be sent => ${error.message}, stack: ${error.stack}`);
+                                console.log(`${tabletName[index]} send status for ScreensaverOnBri name could not be sent val: ${value} ] => ${error.message}, stack: ${error.stack}`);
+
+                            });
+
+                        this.log.debug(`send the screen brightness to the device =>${tabletName[index]}`);
+                        await axios.get(BrightnessURL)
+                            .then(async result => {
+
+                                this.log.debug(`${tabletName[index]} send status for BrightnessURL = status Code: ${result.status} => status Message: ${result.statusText}`);
+                                console.log(`${tabletName[index]} send status for BrightnessURL = status Code: ${result.status} => status Message: ${result.statusText}`);
+
+                            })
+                            .catch(async error => {
+
+                                this.log.error(`${tabletName[index]} send status for BrightnessURL could not be sent => ${error.message}, stack: ${error.stack}`);
+                                console.log(`${tabletName[index]} send status for BrightnessURL could not be sent val: ${value} ] => ${error.message}, stack: ${error.stack}`);
+                            });
+
+                        this.log.debug(`Start the stateRequest in 300 ms to get the current values of the ${tabletName[index]} device`);
+                        if (BriRequestTimeout) clearTimeout(BriRequestTimeout);
+                        BriRequestTimeout = setTimeout(async () => {
+
+                            this.log.debug(`start devices to query for new values`);
+                            await this.stateRequest();
+
+                        }, 300);
+
+
+                    }
+
+                }
+                else if (!isInScreensaver[index]) {
+
+                    this.log.debug(`send the screen brightness to the device =>${tabletName[index]}`);
+                    await axios.get(BrightnessURL)
+                        .then(async result => {
+
+                            this.log.debug(`${tabletName[index]} send status for BrightnessURL = status Code: ${result.status} => status Message: ${result.statusText}`);
+                            console.log(`${tabletName[index]} send status for BrightnessURL = status Code: ${result.status} => status Message: ${result.statusText}`);
+
+                        })
+                        .catch(async error => {
+
+                            this.log.error(`${tabletName[index]} send status for BrightnessURL could not be sent => ${error.message}, stack: ${error.stack}`);
+                            console.log(`${tabletName[index]} send status for BrightnessURL could not be sent val: ${value} ] => ${error.message}, stack: ${error.stack}`);
+                        });
+
+                    this.log.debug(`Start the stateRequest in 300 ms to get the current values of the ${tabletName[index]} device`);
+                    if (BriRequestTimeout) clearTimeout(BriRequestTimeout);
+                    BriRequestTimeout = setTimeout(async () => {
+
+                        this.log.debug(`start devices to query for new values`);
+                        await this.stateRequest();
+
+                    }, 300);
+                }
+            }
+            else {
+                this.log.debug(`The ${tabletName[index]} device is not charging ..`);
+
+                this.log.debug(`now calculate the brightness for ${tabletName[index]} from the percentages ....`);
+                const brightnessValue = Math.round(await this.convert_percent(value));
+                this.log.debug(`The brightness for ${tabletName[index]} has now been calculated => ${brightnessValue} and in percent => ${value}`);
+
+                this.log.debug(`Create the url for the screen brightness and the screen saver brightness....`);
+                const BrightnessURL = `http://${ip[index]}:${port[index]}/?cmd=setStringSetting&key=screenBrightness&value=${brightnessValue}&password=${password[index]}`;
+                const ScreensaverOnBri = `http://${ip[index]}:${port[index]}/?cmd=setStringSetting&key=screensaverBrightness&value=${brightnessValue}&password=${password[index]}`;
+
+                this.log.debug(`Check whether the screen saver and the brightness synchronization is switched on`);
+                if (screenSaverBriSync && screenSaverON) {
+
+                    this.log.debug(`Check whether the current brightness is the same as the one you want to adjust`);
+                    if (brightnessValue !== brightness[index]) {
+
+                        this.log.debug(`send the screen saver brightness to the device =>${tabletName[index]}`);
+                        await axios.get(ScreensaverOnBri)
+                            .then(async result => {
+
+                                this.log.debug(`${tabletName[index]} send status for ScreensaverOnBri = status Code: ${result.status} => status Message: ${result.statusText}`);
+                                console.log(`${tabletName[index]} send status for ScreensaverOnBri = status Code: ${result.status} => status Message: ${result.statusText}`);
+
+                            })
+                            .catch(async error => {
+
+                                this.log.error(`${tabletName[index]} send status for ScreensaverOnBri name could not be sent => ${error.message}, stack: ${error.stack}`);
+                                console.log(`${tabletName[index]} send status for ScreensaverOnBri name could not be sent val: ${value} ] => ${error.message}, stack: ${error.stack}`);
+
+                            });
+
+                        this.log.debug(`send the screen brightness to the device =>${tabletName[index]}`);
+                        await axios.get(BrightnessURL)
+                            .then(async result => {
+
+                                this.log.debug(`${tabletName[index]} send status for BrightnessURL = status Code: ${result.status} => status Message: ${result.statusText}`);
+                                console.log(`${tabletName[index]} send status for BrightnessURL = status Code: ${result.status} => status Message: ${result.statusText}`);
+
+                            })
+                            .catch(async error => {
+
+                                this.log.error(`${tabletName[index]} send status for BrightnessURL could not be sent => ${error.message}, stack: ${error.stack}`);
+                                console.log(`${tabletName[index]} send status for BrightnessURL could not be sent val: ${value} ] => ${error.message}, stack: ${error.stack}`);
+                            });
+
+                        this.log.debug(`Start the stateRequest in 300 ms to get the current values of the ${tabletName[index]} device`);
+                        if (BriRequestTimeout) clearTimeout(BriRequestTimeout);
+                        BriRequestTimeout = setTimeout(async () => {
+
+                            this.log.debug(`start devices to query for new values`);
+                            await this.stateRequest();
+
+                        }, 300);
+                    }
+                }
+                else {
+
+                    this.log.debug(`send the screen brightness to the device => ${tabletName[index]}`);
+                    await axios.get(BrightnessURL)
+                        .then(async result => {
+
+                            this.log.debug(`${tabletName[index]} send status for BrightnessURL = status Code: ${result.status} => status Message: ${result.statusText}`);
+                            console.log(`${tabletName[index]} send status for BrightnessURL = status Code: ${result.status} => status Message: ${result.statusText}`);
+
+                        })
+                        .catch(async error => {
+
+                            this.log.error(`${tabletName[index]} send status for BrightnessURL could not be sent => ${error.message}, stack: ${error.stack}`);
+                            console.log(`${tabletName[index]} send status for BrightnessURL could not be sent val: ${value} ] => ${error.message}, stack: ${error.stack}`);
+                        });
+
+                    this.log.debug(`Start the stateRequest in 300 ms to get the current values of the ${tabletName[index]} device`);
+                    if (BriRequestTimeout) clearTimeout(BriRequestTimeout);
+                    BriRequestTimeout = setTimeout(async () => {
+
+                        this.log.debug(`start devices to query for new values`);
+                        await this.stateRequest();
+
+                    }, 300);
+                }
+            }
+        }
+        catch (error) {
+            this.log.error(`[manuel_Bri] : ${error.message}, stack: ${error.stack}`);
+
+        }
+    }
+
+    async automatic_bri() {
+
+        if (automatic_briTimeout) clearTimeout(automatic_briTimeout);
+        if (day_Time === 1) {
+            try {
+                const brightnessD = this.config.brightness;
+                const screenSaverON = JSON.parse(this.config['screenSaverON']);
+                if (!brightnessD && brightnessD.length !== 0 || brightnessD !== [] && brightnessD.length !== 0) {
+
+                    for (const d in deviceEnabled) {
+
+                        if (deviceEnabled[d] && !logMessage[d]) {
+
+                            if (enabledBrightness[d]) {
+
+                                if (brightnessD[d]) {
+
+                                    let newBrightnessD = 0;
+                                    if (chargeDeviceValue[d]) {
+
+
+                                        newBrightnessD = Math.round(await this.convert_percent(brightnessD[d]['dayBrightness'] - brightnessD[d]['loadingLowering']));
+
+                                        if (newBrightnessD <= 0) {
+                                            newBrightnessD = 0;
+                                            this.log.debug(`brightness from ${tabletName[d]} is less than 0 brightness is set to`);
+                                        }
+                                    }
+                                    else {
+
+                                        newBrightnessD = Math.round(await this.convert_percent(brightnessD[d]['dayBrightness']));
+                                        this.log.debug(`${tabletName[d]} brightness set on: ${newBrightnessD}[${brightnessD[d]['dayBrightness']}%]`);
+
+                                    }
+
+                                    const BrightnessURL = `http://${ip[d]}:${port[d]}/?cmd=setStringSetting&key=screenBrightness&value=${newBrightnessD}&password=${password[d]}`;
+                                    const ScreensaverOnBri = `http://${ip[d]}:${port[d]}/?cmd=setStringSetting&key=screensaverBrightness&value=${newBrightnessD}&password=${password[d]}`;
+
+                                    this.log.debug(`Check whether the screen saver and the brightness synchronization is switched on`);
+                                    if (enableScreenSaverBrightness[d] && screenSaverON) {
+
+                                        this.log.debug(`Check whether the current brightness is the same as the one you want to adjust`);
+                                        if (newBrightnessD !== brightness[d]) {
+
+                                            this.log.debug(`send the screen saver brightness to the device =>${tabletName[d]}`);
+                                            await axios.get(ScreensaverOnBri)
+                                                .then(async result => {
+
+                                                    this.log.debug(`${tabletName[d]} send status for ScreensaverOnBri = status Code: ${result.status} => status Message: ${result.statusText}`);
+                                                    console.log(`${tabletName[d]} send status for ScreensaverOnBri = status Code: ${result.status} => status Message: ${result.statusText}`);
+
+                                                })
+                                                .catch(async error => {
+
+                                                    this.log.error(`${tabletName[d]} send status for ScreensaverOnBri name could not be sent => ${error.message}, stack: ${error.stack}`);
+                                                    console.log(`${tabletName[d]} send status for ScreensaverOnBri name could not be sent val: ${value} ] => ${error.message}, stack: ${error.stack}`);
+
+                                                });
+
+                                            this.log.debug(`send the screen brightness to the device =>${tabletName[d]}`);
+                                            await axios.get(BrightnessURL)
+                                                .then(async result => {
+
+                                                    this.log.debug(`${tabletName[d]} send status for BrightnessURL = status Code: ${result.status} => status Message: ${result.statusText}`);
+                                                    console.log(`${tabletName[d]} send status for BrightnessURL = status Code: ${result.status} => status Message: ${result.statusText}`);
+
+                                                })
+                                                .catch(async error => {
+
+                                                    this.log.error(`${tabletName[d]} send status for BrightnessURL could not be sent => ${error.message}, stack: ${error.stack}`);
+                                                    console.log(`${tabletName[d]} send status for BrightnessURL could not be sent val: ${value} ] => ${error.message}, stack: ${error.stack}`);
+                                                });
+
+                                            this.log.debug(`Start the stateRequest in 300 ms to get the current values of the ${tabletName[d]} device`);
+                                            if (BriRequestTimeout) clearTimeout(BriRequestTimeout);
+                                            BriRequestTimeout = setTimeout(async () => {
+
+                                                await this.stateRequest();
+
+                                            }, 300);
+                                        }
+                                    }
+                                    else if (!isInScreensaver[d]) {
+
+                                        this.log.debug(`send the screen brightness to the device =>${tabletName[d]}`);
+                                        await axios.get(BrightnessURL)
+                                            .then(async result => {
+
+                                                this.log.debug(`${tabletName[d]} send status for BrightnessURL = status Code: ${result.status} => status Message: ${result.statusText}`);
+                                                console.log(`${tabletName[d]} send status for BrightnessURL = status Code: ${result.status} => status Message: ${result.statusText}`);
+
+                                            })
+                                            .catch(async error => {
+
+                                                this.log.error(`${tabletName[d]} send status for BrightnessURL could not be sent => ${error.message}, stack: ${error.stack}`);
+                                                console.log(`${tabletName[d]} send status for BrightnessURL could not be sent val: ${value} ] => ${error.message}, stack: ${error.stack}`);
+                                            });
+
+                                        this.log.debug(`Start the stateRequest in 300 ms to get the current values of the ${tabletName[d]} device`);
+                                        if (BriRequestTimeout) clearTimeout(BriRequestTimeout);
+                                        BriRequestTimeout = setTimeout(async () => {
+
+                                            this.log.debug(`start devices to query for new values`);
+                                            await this.stateRequest();
+
+                                        }, 300);
+                                    }
+                                }
+                                else {
+                                    this.log.warn(`${tabletName[d]} morningtime brightness not specified`);
+                                }
+                            }
+                            else {
+                                this.log.debug(`Automatic brightness has been deactivated for ${tabletName[d]} and is now switched to manual control`);
+                                await this.setStateAsync(`device.${tabletName[d]}.brightness_control_mode`, true, true);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (error) {
+                this.log.error(`[dayBri] : ${error.message}, stack: ${error.stack}`);
+            }
+        }
+        else if (day_Time === 2) {
+            try {
+                const brightnessD = this.config.brightness;
+                const screenSaverON = JSON.parse(this.config['screenSaverON']);
+                if (!brightnessD && brightnessD.length !== 0 || brightnessD !== [] && brightnessD.length !== 0) {
+
+                    for (const d in deviceEnabled) {
+
+                        if (deviceEnabled[d] && !logMessage[d]) {
+
+                            if (enabledBrightness[d]) {
+
+                                if (brightnessD[d]) {
+
+                                    let newBrightnessM = 0;
+                                    if (chargeDeviceValue[d]) {
+
+
+                                        newBrightnessM = Math.round(await this.convert_percent(brightnessD[d]['midTimeBrightness'] - brightnessD[d]['loadingLowering']));
+
+                                        if (newBrightnessM <= 0) {
+                                            newBrightnessM = 0;
+                                            this.log.debug(`brightness from ${tabletName[d]} is less than 0 brightness is set to`);
+                                        }
+                                    }
+                                    else {
+
+                                        newBrightnessM = Math.round(await this.convert_percent(brightnessD[d]['midTimeBrightness']));
+                                        this.log.debug(`${tabletName[d]} brightness set on: ${newBrightnessM}[${brightnessD[d]['midTimeBrightness']}%]`);
+
+                                    }
+
+                                    const BrightnessURL = `http://${ip[d]}:${port[d]}/?cmd=setStringSetting&key=screenBrightness&value=${newBrightnessM}&password=${password[d]}`;
+                                    const ScreensaverOnBri = `http://${ip[d]}:${port[d]}/?cmd=setStringSetting&key=screensaverBrightness&value=${newBrightnessM}&password=${password[d]}`;
+
+                                    this.log.debug(`Check whether the screen saver and the brightness synchronization is switched on`);
+                                    if (enableScreenSaverBrightness[d] && screenSaverON) {
+
+                                        this.log.debug(`Check whether the current brightness is the same as the one you want to adjust`);
+                                        if (newBrightnessM !== brightness[d]) {
+
+                                            this.log.debug(`send the screen saver brightness to the device =>${tabletName[d]}`);
+                                            await axios.get(ScreensaverOnBri)
+                                                .then(async result => {
+
+                                                    this.log.debug(`${tabletName[d]} send status for ScreensaverOnBri = status Code: ${result.status} => status Message: ${result.statusText}`);
+                                                    console.log(`${tabletName[d]} send status for ScreensaverOnBri = status Code: ${result.status} => status Message: ${result.statusText}`);
+
+                                                })
+                                                .catch(async error => {
+
+                                                    this.log.error(`${tabletName[d]} send status for ScreensaverOnBri name could not be sent => ${error.message}, stack: ${error.stack}`);
+                                                    console.log(`${tabletName[d]} send status for ScreensaverOnBri name could not be sent val: ${value} ] => ${error.message}, stack: ${error.stack}`);
+
+                                                });
+
+                                            this.log.debug(`send the screen brightness to the device =>${tabletName[d]}`);
+                                            await axios.get(BrightnessURL)
+                                                .then(async result => {
+
+                                                    this.log.debug(`${tabletName[d]} send status for BrightnessURL = status Code: ${result.status} => status Message: ${result.statusText}`);
+                                                    console.log(`${tabletName[d]} send status for BrightnessURL = status Code: ${result.status} => status Message: ${result.statusText}`);
+
+                                                })
+                                                .catch(async error => {
+
+                                                    this.log.error(`${tabletName[d]} send status for BrightnessURL could not be sent => ${error.message}, stack: ${error.stack}`);
+                                                    console.log(`${tabletName[d]} send status for BrightnessURL could not be sent val: ${value} ] => ${error.message}, stack: ${error.stack}`);
+                                                });
+
+                                            this.log.debug(`Start the stateRequest in 300 ms to get the current values of the ${tabletName[d]} device`);
+                                            if (BriRequestTimeout) clearTimeout(BriRequestTimeout);
+                                            BriRequestTimeout = setTimeout(async () => {
+
+                                                await this.stateRequest();
+
+                                            }, 300);
+                                        }
+                                    }
+                                    else if (!isInScreensaver[d]) {
+
+                                        this.log.debug(`send the screen brightness to the device =>${tabletName[d]}`);
+                                        await axios.get(BrightnessURL)
+                                            .then(async result => {
+
+                                                this.log.debug(`${tabletName[d]} send status for BrightnessURL = status Code: ${result.status} => status Message: ${result.statusText}`);
+                                                console.log(`${tabletName[d]} send status for BrightnessURL = status Code: ${result.status} => status Message: ${result.statusText}`);
+
+                                            })
+                                            .catch(async error => {
+
+                                                this.log.error(`${tabletName[d]} send status for BrightnessURL could not be sent => ${error.message}, stack: ${error.stack}`);
+                                                console.log(`${tabletName[d]} send status for BrightnessURL could not be sent val: ${value} ] => ${error.message}, stack: ${error.stack}`);
+                                            });
+
+                                        this.log.debug(`Start the stateRequest in 300 ms to get the current values of the ${tabletName[d]} device`);
+                                        if (BriRequestTimeout) clearTimeout(BriRequestTimeout);
+                                        BriRequestTimeout = setTimeout(async () => {
+
+                                            this.log.debug(`start devices to query for new values`);
+                                            await this.stateRequest();
+
+                                        }, 300);
+                                    }
+                                }
+                                else {
+                                    this.log.warn(`${tabletName[d]} midTime brightness not specified`);
+                                }
+                            }
+                            else {
+                                this.log.debug(`Automatic brightness has been deactivated for ${tabletName[d]} and is now switched to manual control`);
+                                await this.setStateAsync(`device.${tabletName[d]}.brightness_control_mode`, true, true);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (error) {
+                this.log.error(`[dayBri] : ${error.message}, stack: ${error.stack}`);
+            }
+
+        }
+        else {
+
+            try {
+                const brightnessN = this.config.brightness;
+                const screenSaverON = JSON.parse(this.config['screenSaverON']);
+
+                if (!brightnessN && brightnessN.length !== 0 || brightnessN !== [] && brightnessN.length !== 0) {
+
+                    for (const d in deviceEnabled) {
+
+                        if (deviceEnabled[d] && !logMessage[d]) {
+
+                            if (enabledBrightness[d]) {
+
+                                if (brightnessN[d]) {
+
+                                    let newBrightnessN = 0;
+                                    if (chargeDeviceValue[d]) {
+
+
+                                        newBrightnessN = Math.round(await this.convert_percent(brightnessN[d]['nightBrightness'] - brightnessN[d]['loadingLowering']));
+
+                                        if (newBrightnessN <= 0) {
+                                            newBrightnessN = 0;
+                                            this.log.debug(`brightness from ${tabletName[d]} is less than 0 brightness is set to`);
+                                        }
+                                    }
+                                    else {
+
+                                        newBrightnessN = Math.round(await this.convert_percent(brightnessN[d]['nightBrightness']));
+                                        this.log.debug(`${tabletName[d]} brightness set on: ${newBrightnessN}[${brightnessN[d]['nightBrightness']}%]`);
+
+                                    }
+
+                                    const BrightnessURL = `http://${ip[d]}:${port[d]}/?cmd=setStringSetting&key=screenBrightness&value=${newBrightnessN}&password=${password[d]}`;
+                                    const ScreensaverOnBri = `http://${ip[d]}:${port[d]}/?cmd=setStringSetting&key=screensaverBrightness&value=${newBrightnessN}&password=${password[d]}`;
+
+                                    this.log.debug(`Check whether the screen saver and the brightness synchronization is switched on`);
+                                    if (enableScreenSaverBrightness[d] && screenSaverON) {
+
+                                        this.log.debug(`Check whether the current brightness is the same as the one you want to adjust`);
+                                        if (newBrightnessN !== brightness[d]) {
+
+                                            this.log.debug(`send the screen saver brightness to the device =>${tabletName[d]}`);
+                                            await axios.get(ScreensaverOnBri)
+                                                .then(async result => {
+
+                                                    this.log.debug(`${tabletName[d]} send status for ScreensaverOnBri = status Code: ${result.status} => status Message: ${result.statusText}`);
+                                                    console.log(`${tabletName[d]} send status for ScreensaverOnBri = status Code: ${result.status} => status Message: ${result.statusText}`);
+
+                                                })
+                                                .catch(async error => {
+
+                                                    this.log.error(`${tabletName[d]} send status for ScreensaverOnBri name could not be sent => ${error.message}, stack: ${error.stack}`);
+                                                    console.log(`${tabletName[d]} send status for ScreensaverOnBri name could not be sent val: ${value} ] => ${error.message}, stack: ${error.stack}`);
+
+                                                });
+
+                                            this.log.debug(`send the screen brightness to the device =>${tabletName[d]}`);
+                                            await axios.get(BrightnessURL)
+                                                .then(async result => {
+
+                                                    this.log.debug(`${tabletName[d]} send status for BrightnessURL = status Code: ${result.status} => status Message: ${result.statusText}`);
+                                                    console.log(`${tabletName[d]} send status for BrightnessURL = status Code: ${result.status} => status Message: ${result.statusText}`);
+
+                                                })
+                                                .catch(async error => {
+
+                                                    this.log.error(`${tabletName[d]} send status for BrightnessURL could not be sent => ${error.message}, stack: ${error.stack}`);
+                                                    console.log(`${tabletName[d]} send status for BrightnessURL could not be sent val: ${value} ] => ${error.message}, stack: ${error.stack}`);
+                                                });
+
+                                            this.log.debug(`Start the stateRequest in 300 ms to get the current values of the ${tabletName[d]} device`);
+                                            if (BriRequestTimeout) clearTimeout(BriRequestTimeout);
+                                            BriRequestTimeout = setTimeout(async () => {
+
+                                                this.log.debug(`start devices to query for new values`);
+                                                await this.stateRequest();
+
+                                            }, 300);
+                                        }
+                                    }
+                                    else if (!isInScreensaver[d]) {
+
+                                        this.log.debug(`send the screen brightness to the device =>${tabletName[d]}`);
+                                        await axios.get(BrightnessURL)
+                                            .then(async result => {
+
+                                                this.log.debug(`${tabletName[d]} send status for BrightnessURL = status Code: ${result.status} => status Message: ${result.statusText}`);
+                                                console.log(`${tabletName[d]} send status for BrightnessURL = status Code: ${result.status} => status Message: ${result.statusText}`);
+
+                                            })
+                                            .catch(async error => {
+
+                                                this.log.error(`${tabletName[d]} send status for BrightnessURL could not be sent => ${error.message}, stack: ${error.stack}`);
+                                                console.log(`${tabletName[d]} send status for BrightnessURL could not be sent val: ${value} ] => ${error.message}, stack: ${error.stack}`);
+                                            });
+
+                                        this.log.debug(`Start the stateRequest in 300 ms to get the current values of the ${tabletName[d]} device`);
+                                        if (BriRequestTimeout) clearTimeout(BriRequestTimeout);
+                                        BriRequestTimeout = setTimeout(async () => {
+
+                                            this.log.debug(`start devices to query for new values`);
+                                            await this.stateRequest();
+
+                                        }, 300);
+                                    }
+                                }
+                                else {
+                                    this.log.warn(`${tabletName[d]} Night brightness not specified`);
+                                }
+                            }
+                            else {
+                                this.log.debug(`Automatic brightness has been deactivated for ${tabletName[d]} and is now switched to manual control`);
+                                await this.setStateAsync(`device.${tabletName[d]}.brightness_control_mode`, true, true);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (error) {
+                this.log.error(`[nightBri] : ${error.message}, stack: ${error.stack}`);
+            }
+        }
+        requestTimeout = setTimeout(async () => {
+
+            this.log.debug(`start devices to query for new values`);
+            await this.stateRequest();
+        }, checkInterval);
+    }
+
+    /**
+     * automatically turns the screen back on if it was turned off.
+     * @param {string|number} index
+     */
+    async screenOn(index) {
+        try {
+
+            const screen_on = JSON.parse(this.config['screen_on']);
+            const Screen = `http://${ip[index]}:${port[index]}/?cmd=screenOn&password=${password[index]}`;
+            if (screen_on) {
+
+                this.log.warn(`Attention the screen on ${tabletName[index]} has been switched off, an attempt is made to switch it on again`);
+                await axios.get(Screen)
+                    .then(async result => {
+
+                        this.log.debug(`${tabletName[index]} send status for screenOn = status Code: ${result.status} => status Message: ${result.statusText}`);
+                        console.log(`${tabletName[index]} send status for screenOn = status Code: ${result.status} => status Message: ${result.statusText}`);
+
+                    }).catch(async error => {
+
+                        this.log.error(`${tabletName[index]} send status for screenOn could not be sent => ${error.message}, stack: ${error.stack}`);
+                        console.log(`${tabletName[index]} send status for screenOn could not be sent => ${error.message}, stack: ${error.stack}`);
+
+                    });
+            }
+        }
+        catch (error) {
+            this.log.error(`screenOn for ${tabletName[index]} has a problem: ${error.message}, stack: ${error.stack}`);
+        }
+    }
+
+    /**
+     *
+     * @param {string|number} index
+     * @param {object} state
+     */
+    async motionSensor(index, state) {
+        try {
+
+            const motion = this.config.motion;
+            const motionSensor_enabled = JSON.parse(this.config['motionSensor_enabled']);
+            this.log.debug(`read motion obj val: ${motion}`);
+            this.log.debug(`read motionSensor_enabled val: ${motionSensor_enabled}`);
+
+            if (motionSensor_enabled) {
+                if (!motion && motion.length !== 0 || motion !== [] && motion.length !== 0) {
+
+                    this.log.debug(`Check if the sensor is activated`);
+                    if (motion[index]['enabled']) {
+
+                        this.log.debug(`Check whether the sensor has an ID entry`);
+                        if (motion[index]['motionid'] !== '') {
+
+                            this.log.debug(`check whether a sensor or several are entered`);
+                            if (motionID.length >= 2) {
+
+                                motionVal[index] = state;
+                                console.log('test')
+                            }
+                            else {
+
+                                for (const i in ip) {
+
+                                    motionVal[i] = state;
+                                    console.log('test')
+                                }
+                            }
+                        }
+                        else {
+                            this.log.warn(`Attention there is no motion detector ID entered`);
+                        }
+                    }
+                    else {
+                        this.log.debug(`the motion detector with the id: ${motion[index]['motionid']} is deactivated !!`);
+
+                    }
+                    this.log.debug(`start screensaver function`);
+                    await this.screenSaver();
+
+                }
+            }
+            else {
+                this.log.debug(`Deactivate motion sensors `);
+            }
+        }
+        catch (error) {
+            this.log.error(`[motionSensor] : ${error.message}, stack: ${error.stack}`);
+        }
+    }
+
+    async screenSaver() {
+        try {
+
+            const motionSensor_enabled = JSON.parse(this.config['motionSensor_enabled']);
+            const screenSaverOn = JSON.parse(this.config['screenSaverON']);
+
+            this.log.debug(`Check whether the screen saver control is activated`);
+            if (screenSaverOn) {
+
+                if (!tabletName && tabletName.length !== 0 || tabletName !== [] && tabletName.length !== 0) {
+
+                    for (const on in ip) {
+
+                        this.log.debug(`clear all screensaverTimer `);
+                        if (screensaverTimer[on]) clearTimeout(screensaverTimer[on]);
+
+                        this.log.debug(`check if the ${tabletName[on]} is active`);
+                        if (deviceEnabled[on] && !logMessage[on]) {
+
+                            this.log.debug(`Check whether the motion detector control is active`);
+                            if (motionSensor_enabled) {
+                                this.log.debug(`Motion Sensor is On`);
+
+                                if (!motionVal[on]) {
+
+                                    this.log.debug(`Check whether the screen saver is switched on on the ${tabletName[on]}`);
+                                    if (!isInScreensaver[on]) {
+                                        this.log.debug(`build url for ${tabletName[on]}`);
+
+                                        this.log.debug(`${tabletName[on]} Screensaver starts in ${screenSaverTime[on]} ms ==> ${screenSaverTime[on] / 60000}`);
+
+                                        screensaverTimer[on] = setTimeout(async () => {
+
+                                            if (ScreensaverReturn) clearTimeout(ScreensaverReturn);
+
+                                            await axios.get(screensaverOnURL[on])
+                                                .then(async result => {
+                                                    this.log.debug(`${tabletName[on]} send status for ScreensaverOn = status Code: ${result.status} => status Message: ${result.statusText}`);
+                                                    console.log(`${tabletName[on]} send status for ScreensaverOn = status Code: ${result.status} => status Message: ${result.statusText}`);
+
+                                                })
+                                                .catch(async error => {
+
+                                                    if (!logMessage[on]) this.log.error(`${tabletName[on]} send status for ScreensaverOn could not be sent => ${error.message}, stack: ${error.stack}`);
+                                                });
+
+                                            this.log.debug(`Start the stateRequest in 300 ms to get the current values of the ${tabletName[on]} device`);
+                                            ScreensaverReturn = setTimeout(async () => {
+                                                await this.stateRequest();
+                                            }, 300);
+
+                                        }, screenSaverTime[on]);
+                                    }
+                                    else if (isInScreensaver[on]) {
+                                        this.log.debug(`The screen saver for ${tabletName[on]} is switched on.`);
+                                    }
+                                }
+                                else {
+                                    this.log.debug(`Movement was detected the screen saver is switched off for ${tabletName[on]}`);
+
+                                    this.log.debug(`build url for ${tabletName[on]}`);
+
+                                    this.log.debug(`Check whether the ${tabletName[on]} screen saver is already switched off`);
+                                    if (!isInScreensaver[on]) {
+                                        this.log.debug(`${tabletName[on]} screensaver is already off`);
+                                    }
+                                    else if (isInScreensaver[on]) {
+
+                                        await axios.get(screensaverOffURL[on])
+                                            .then(async result => {
+                                                this.log.debug(`${tabletName[on]} send status for ScreensaverOff = status Code: ${result.status} => status Message: ${result.statusText}`);
+                                                console.log(`${tabletName[on]} send status for ScreensaverOff = status Code: ${result.status} => status Message: ${result.statusText}`);
+
+                                            })
+                                            .catch(async error => {
+
+                                                if (!logMessage[on]) this.log.error(`${tabletName[on]} send status for ScreensaverOff could not be sent => ${error.message}, stack: ${error.stack}`);
+                                            });
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            else {
+                this.log.debug(`Screen saver control is switched off`);
+            }
+        }
+        catch (error) {
+            this.log.error(`[screenSaver] : ${error.message}, stack: ${error.stack}`);
+        }
+    }
+
+    /**
+     * screenSaver Time-based switch on and manual switch off
+     * @param {string|number} index
+     */
+    async screensaverManuel(index) {
+
+        const screenSaverOn = JSON.parse(this.config['screenSaverON']);
+
+        if (screenSaverOn) {
+
+            this.log.debug(`clear all screensaverTimer `);
+            if (screensaverTimer[index] && isInScreensaver[index]) clearTimeout(screensaverTimer[index]);
+
+            this.log.debug(`Motion detector is switched off Time-based switch on and manual switch off is now active`);
+
+            this.log.debug(`build url for ${tabletName[index]}`);
+
+            this.log.debug(`Check whether the screen saver is switched on on the ${tabletName[index]}`);
+
+            this.log.debug(`${tabletName[index]} Screensaver starts in ${screenSaverTime[index]} ms ==> ${screenSaverTime[index] / 60000}`);
+
+            screensaverTimer[index] = setTimeout(async () => {
+                if (ScreensaverReturn) clearTimeout(ScreensaverReturn);
+                if (!isInScreensaver[index]) {
+                    await axios.get(screensaverOnURL[index])
+                        .then(async result => {
+                            this.log.debug(`${tabletName[index]} send status for ScreensaverOn = status Code: ${result.status} => status Message: ${result.statusText}`);
+                            console.log(`${tabletName[index]} send status for ScreensaverOn = status Code: ${result.status} => status Message: ${result.statusText}`);
+
+                        })
+                        .catch(async error => {
+
+                            if (!logMessage[index]) this.log.error(`${tabletName[index]} send status for ScreensaverOn could not be sent => ${error.message}, stack: ${error.stack}`);
+                        });
+                }
+                manuel_screenSaver[index] = false;
+
+            }, screenSaverTime[index]);
+        }
+    }
+
+    /**
+     *
+     * @param {string|number} index
+     * @param {number} bat
+     */
+    async charger(index, bat) {
+        try {
+            this.log.debug(`Load charge control config`);
+            const charger = this.config.charger;
+            const telegram_enabled = JSON.parse(this.config['telegram_enabled']);
+
+            this.log.debug(`Check whether the charge control is activated`);
+            if (JSON.parse(this.config['chargerON'])) {
+                this.log.debug(`Charge control is activated`);
+
+                if (!charger && charger.length !== 0 || charger !== [] && charger.length !== 0) {
+                    if (charger[index]) {
+
+                        const chargerid = charger[index]['chargerid'];
+                        const power_mode = charger[index].power_mode;
+                        const loadStart = JSON.parse(charger[index]['loadStart']);
+                        const loadStop = JSON.parse(charger[index]['loadStop']);
+
+                        // state Object from chargerid
+                        if (chargerid) {
+
+                            this.log.debug(`load object data from ${chargerid}`);
+                            const chargeDevice = await this.getForeignStateAsync(chargerid);
+                            chargeDeviceValue[index] = chargeDevice == null ? false : chargeDevice.val;
+                            this.log.debug(`chargerid: ` + chargerid + ` val: ` + chargeDeviceValue[index]);
+                        }
+                        else {
+                            if (power_mode !== 'off') {
+                                this.log.warn(`${tabletName[index]} Charger ID not specified`);
+                            }
+                        }
+
+                        this.log.debug(`Check which mode is switched on`);
+                        if (power_mode === 'true') {
+                            this.log.debug(`Charging cycle is switched on`);
+
+                            if (chargerid) {
+
+                                messageCharging[index] = false;
+                                this.log.debug(`Check whether the battery level is lower than the set start limit`);
+                                if (bat <= loadStart && !chargeDeviceValue[index]) {
+                                    this.log.debug(`Battery is at the start of charging limit start charging`);
+                                    await this.setForeignStateAsync(chargerid, true, false);
+                                    this.log.info(`${tabletName[index]} charging started`);
+
+
+                                }
+                                else if (bat >= loadStop && chargeDeviceValue[index]) {
+                                    this.log.debug(`Battery level has reached the set charging stop, stop charging`);
+                                    messageSend[index] = false;
+                                    await this.setForeignStateAsync(chargerid, false, false);
+                                    this.log.info(`${tabletName[index]} Charging cycle ended`);
+
+                                }
+                            }
+                            else {
+                                this.log.warn(`${tabletName[index]} Charger ID for Charging cycle not specified`);
+                            }
+
+                        }
+                        else if (power_mode === 'false') {
+                            this.log.debug(`Continuous current mode is activated`);
+
+                            if (chargerid) {
+                                messageCharging[index] = false;
+                                if (!chargeDeviceValue[index]) this.log.debug(`The adapter now switches on the socket`);
+                                if (!chargeDeviceValue[index]) await this.setForeignStateAsync(chargerid, true, false);
+                                if (!chargeDeviceValue[index]) this.log.debug(`${tabletName[index]} Continuous current`);
+
+                            }
+                            else {
+                                this.log.warn(`${tabletName[index]} Charger ID for Continuous current not specified`);
+                            }
+                        }
+                        else if (power_mode === 'off') {
+                            if (!messageCharging[index]) {
+                                this.log.info(`${tabletName[index]} Charging Off`);
+                                messageCharging[index] = true;
+                            }
+                        }
+
+
+                        if (power_mode !== 'off') {
+                            if (telegram_enabled === true) {
+
+                                if (bat <= 18 && !chargeDeviceValue[index] && !telegramStatus[index] || bat <= 18 && chargeDeviceValue[index] && !telegramStatus[index]) {
+                                    telegramStatus[index] = true;
+                                    this.onMessage(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${tabletName[index]} Tablet charging function has detected a malfunction, the tablet is not charging, please check it !!!`, User);
+                                    this.log.warn(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + `  ${tabletName[index]} Tablet charging function has detected a malfunction, the tablet is not charging, please check it !!!`);
+                                    await this.setForeignStateAsync(chargerid[index], true, false);
+                                    this.setState(`device.${tabletName[index]}.charging_warning`, {val: true, ack: true});
+
+                                }
+                                else if (bat > 18 && chargeDeviceValue[index] && telegramStatus[index]) {
+                                    telegramStatus[index] = false;
+                                    this.onMessage(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${tabletName[index]} Tablet is charging the problem has been fixed.`, User);
+                                    this.log.warn(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${tabletName[index]} Tablet is charging the problem has been fixed.`);
+                                    this.setState(`device.${tabletName[index]}.charging_warning`, {val: false, ack: true});
+                                }
+
+                            }
+                            else {
+                                if (bat >= 20 && !messageSend[index]) {
+                                    messageSend[index] = false;
+
+                                }
+                                if (bat <= 18 && !chargeDeviceValue[index] && !AlertMessageSend[index] || bat <= 18 && chargeDeviceValue[index] && !AlertMessageSend[index]) {
+                                    AlertMessageSend[index] = true;
+                                    messageSend[index] = false;
+                                    this.log.warn(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${tabletName[index]} Tablet charging function has detected a malfunction, the tablet is not charging, please check it !!!`);
+                                    await this.setForeignStateAsync(chargerid[index], true, false);
+                                    this.setState(`device.${tabletName[index]}.charging_warning`, {val: true, ack: true});
+
+                                }
+                                else if (bat > 18 && bat < 20 && chargeDeviceValue[index] && !messageSend[index]) {
+
+                                    messageSend[index] = true;
+                                    AlertMessageSend[index] = false;
+                                    this.log.info(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${tabletName[index]} Tablet is charging the problem has been fixed.`);
+                                    this.setState(`device.${tabletName[index]}.charging_warning`, {val: false, ack: true});
+                                }
+                            }
+                        }
+                    }
+                    else {
+                        this.log.warn(`${tabletName[index]} charger not specified`);
+                    }
+                }
+            }
+        }
+        catch (error) {
+            this.log.error(`[charger] : ${error.message}, stack: ${error.stack}`);
+        }
+    }
+
+    /**
+     *
+     * @param {boolean} view_enabled
+     * @param {boolean} mode
+     */
+    async switchToHomeView(view_enabled, mode) {
+        try {
+            // check whether switch To Home View is switched on
+            this.log.debug(`check whether switch To Home View is switched on`);
+            if (view_enabled) {
+
+                // check whether which mode is set
+                this.log.debug(`check whether which mode is set`);
+                if (!mode) {
+                    // build vis command string
+                    const visCmd = `{"instance": "FFFFFFFF", "command": "changeView", "date": "${homeView}"}`;
+                    this.log.debug(`build vis command string: ${visCmd}`);
+
+                    // Set the timer to 1 sec
+                    this.log.debug(`Set the timer to 1 sec`);
+                    viewTimer = setTimeout(async () => {
+
+                        // Check the state Timer_View_Switch for the set time
+                        this.log.debug(`Check the state Timer_View_Switch for the set time`);
+                        let timer = await this.getStateAsync(`vis_View.Timer_View_Switch`);
+
+                        if (timer && timer.val) {
+
+                            timer = parseInt(timer.val);
+                            this.log.debug(`parse timer.val string => ${timer.val} to number => ${timer}`);
+
+                            // check whether the timer is greater than 1 if so then count down otherwise for action
+                            this.log.debug(`check whether the timer is greater than 1 if so then count down otherwise for action`);
+                            if (timer > 1) {
+
+                                // Count down the timer
+                                await this.setStateChangedAsync(`vis_View.Timer_View_Switch`, timer - 1, true);
+                                this.log.debug(`Count down the timer`);
+                                await this.switchToHomeView(view_enabled, mode);
+                            }
+                            else {
+
+
+                                if (viewTimer) clearTimeout(viewTimer);
+                                await this.setStateAsync(`vis_View.Timer_View_Switch`, 0, true);
+                                await this.setForeignStateAsync('vis.0.control.command', visCmd);
+                                this.log.debug(`the command is executed and the timer is deleted`);
+                            }
+                        }
+                    }, 1000);
+                }
+                else {
+                    // Set the timer to 1 sec
+                    this.log.debug(`Set the timer to 1 sec`);
+                    viewTimer = setTimeout(async () => {
+
+                        // Check the state Timer_View_Switch for the set time
+                        this.log.debug(`Check the state Timer_View_Switch for the set time`);
+                        let timer = await this.getStateAsync(`vis_View.Timer_View_Switch`);
+
+                        if (timer && timer.val) {
+
+
+                            timer = parseInt(timer.val);
+                            this.log.debug(`parse timer.val string => ${timer.val} to number => ${timer}`);
+
+                            // check whether the timer is greater than 1 if so then count down otherwise for action
+                            this.log.debug(`check whether the timer is greater than 1 if so then count down otherwise for action`);
+                            if (timer > 1) {
+
+                                // Count down the timer
+                                await this.setStateChangedAsync(`vis_View.Timer_View_Switch`, timer - 1, true);
+                                this.log.debug(`Count down the timer`);
+                                await this.switchToHomeView(view_enabled, mode);
+                            }
+                            else {
+                                // the command is executed and the timer is deleted
+
+                                if (viewTimer) clearTimeout(viewTimer);
+                                await this.setStateAsync(`vis_View.Timer_View_Switch`, 0, true);
+                                await this.setStateAsync('vis_View.widget_8_view', 0, true);
+                                this.log.debug(`the command is executed and the timer is deleted`);
+
+                            }
+                        }
+                    }, 1000);
+                }
+            }
+        }
+        catch (error) {
+            this.log.error(`[switchToHomeView] : ${error.message}, stack: ${error.stack}`);
+        }
+    }
+
+    /**
+     *
+     * @param {boolean} view_enabled
+     * @param {boolean} mode
+     */
+    async checkView(view_enabled, mode) {
+        try {
+            // check whether switch To Home View is switched on
+            this.log.debug(`check whether switch To Home View is switched on`);
+            if (view_enabled) {
+
+                const visView = this.config.visView;
+                this.log.debug(`read visView config`);
+                // check whether which mode is set
+                this.log.debug(`check whether which mode is set`);
+                if (!mode) {
+                    this.log.debug(`Vis control mode is activated`);
+
+                    //Check the state 'vis.0.control.data' for the current view
+                    this.log.debug(`Check the state 'vis.0.control.data' for the current view`);
+                    const currentView = await this.getForeignStateAsync(`vis.0.control.data`);
+
+                    if (currentView !== undefined && currentView !== null && currentView.val) {
+
+                        //perform a loop through the 'visView'
+                        for (const i in visView) {
+
+                            //check whether the currentView == wishView is if not start timer
+                            this.log.debug(`check whether the currentView == wishView is if not start timer`);
+                            if (wishView[i] === currentView.val) {
+
+                                this.log.debug(`delete current viewTimer`);
+                                if (viewTimer) clearTimeout(viewTimer);
+                                this.log.debug(`set the Timer_View_Switch state to 0`);
+                                this.setState(`vis_View.Timer_View_Switch`, 0, true);
+
+                                this.log.debug(`Check whether visView time is not 0`);
+                                if (visView[i].time !== 0) {
+
+                                    this.setState(`vis_View.Timer_View_Switch`, time[i]);
+                                    this.log.debug(`set the Timer_View_Switch state to ${time[i]}`);
+
+                                    this.log.debug(`start switchToHomeView function`);
+                                    await this.switchToHomeView(view_enabled, mode);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    else {
+                        this.log.error(`vis is either not installed or the state vis.0.control.data is empty`);
+                    }
+                }
+                else {
+                    this.log.debug(`View in Widget 8 mode is activated`);
+                    // Check the state 'vis_View.widget_8_view' for the current view
+                    this.log.debug(`Check the state 'vis_View.widget_8_view' for the current view`);
+                    const currentView = await this.getStateAsync(`vis_View.widget_8_view`);
+
+                    this.log.debug(`check if currentView is a null`);
+                    if (currentView === null) {
+                        this.log.debug(`currentView ist null set Timer_View_Switch to 0 `);
+                        this.setState(`vis_View.Timer_View_Switch`, 0, true);
+                    }
+
+                    //perform a loop through the 'visView'
+                    for (const i in visView) {
+                        if (currentView) {
+
+                            //check whether the currentView == wishView is if not start timer
+                            this.log.debug(`check whether the currentView == wishView is if not start timer`);
+                            if (viewNumber[i] === currentView.val) {
+
+                                this.log.debug(`delete current viewTimer`);
+                                if (viewTimer) clearTimeout(viewTimer);
+                                this.setState(`vis_View.Timer_View_Switch`, 0, true);
+                                this.log.debug(`set the Timer_View_Switch state to 0`);
+
+                                this.log.debug(`Check whether visView time is not 0`);
+                                if (visView[i].time !== 0) {
+
+                                    this.setState(`vis_View.Timer_View_Switch`, time[i]);
+                                    this.log.debug(`set the Timer_View_Switch state to ${time[i]}`);
+
+                                    this.log.debug(`start switchToHomeView function`);
+                                    await this.switchToHomeView(view_enabled, mode);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        catch (error) {
+            this.log.error(`[checkView] : ${error.message}, stack: ${error.stack}`);
+        }
+    }
+
+    /**
+     * Adds leading zeros to a number, e.g. makes from 7 a "007".
+     * Accepts both data type number and string as input.
+     * zeroPad(5, 4);    // becomes "0005"
+     * zeroPad('5', 6);  // becomes "000005"
+     * zeroPad(1234, 2); // becomes "1234" :)
+     * @param  {string|number} num      Number that should have leading zeros
+     * @param  {number} places          number of digits
+     * @return {string} Number          with leading zeros as desired.
+     */
+    async zeroPad(num, places) {
+        try {
+
+            let zero = places - num.toString().length + 1;
+            return Array(+(zero > 0 && zero)).join('0') + num;
+
+        }
+        catch (error) {
+            this.log.error(`zeroPad has a problem: ${error.message}, stack: ${error.stack} `);
+        }
+    }
+
+    /**
+     * checks whether the current time is in the range of a time span.
+     * @param   {string|number}    startTime                example: 06:15:00
+     * @param   {string|number}    midTime                  example: 13:45:00
+     * @param   {string|number}    endTime                  example: 23:21:00
+     * @return  {number}   valid_time_frame       example: 1 (morning) / 2 (midday) / 3 (night)
+     */
+    async time_range(startTime, midTime, endTime) {
+        // Get the current date
+        let currentDate = new Date();
+//
+// const test = `20:00:00`
+//         currentDate.setHours(test.split(':')[0]);
+//         currentDate.setMinutes(test.split(':')[1]);
+//         currentDate.setSeconds(test.split(':')[2]);
+//
+
+        // Format the start date
+        let startDate = new Date(currentDate.getTime());
+        startDate.setHours(startTime.split(':')[0]);
+        startDate.setMinutes(startTime.split(':')[1]);
+        startDate.setSeconds(startTime.split(':')[2]);
+
+        // Format the end date
+        let midDate = new Date(currentDate.getTime());
+        midDate.setHours(midTime.split(':')[0]);
+        midDate.setMinutes(midTime.split(':')[1]);
+        midDate.setSeconds(midTime.split(':')[2]);
+
+        // Format the end date
+
+        let endDate = new Date(currentDate.getTime());
+        endDate.setHours(endTime.split(':')[0]);
+        endDate.setMinutes(endTime.split(':')[1]);
+        endDate.setSeconds(endTime.split(':')[2]);
+
+
+        // Reset time range
+        let valid_time_frame;
+        let valid_time_astro;
+
+        if (timeMode) {
+            if (endTime > startTime) {
+
+                // Time range is in the same day
+                valid_time_astro = (currentDate >= startDate && currentDate <= endDate);
+                valid_time_frame = valid_time_astro ? 1 : 3
+            }
+        }
+        else {
+            // Time range is in the same day
+            if (currentDate >= startDate && currentDate < midDate) {
+                valid_time_frame = 1;
+            }
+            else if (currentDate >= midDate && currentDate < endDate) {
+                valid_time_frame = 2;
+            }
+            else {
+                valid_time_frame = 3;
+            }
+        }
+        return valid_time_frame;
+    }
+
+    /**
+     * Check on number.
+     * @param {number} str
+     * @return {number} str
+     */
+    async convert_percent(str) {
+        if (Number.isNaN(str)) {
+            return 0;
+        }
+        return str / 100 * 255;
+    }
+
+    /**
+     * Calculate memory size and add the ending.
+     * @param {number} bytes
+     * @return {string}
+     */
+    async bytesToSize(bytes) {
+        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+        if (bytes === 0) return '0 Byte';
+
+        const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+
+        return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
+    }
+
+    /**
+     * Replaces text in a string, using an object that supports replacement within a string.
+     * @param {string} str
+     * @return {string}
+     */
+    async replaceFunction(str) {
+        if (str) {
+            str = str.replace(/ü/g, 'ue');
+            str = str.replace(/Ü/g, 'Ue');
+            str = str.replace(/ö/g, 'oe');
+            str = str.replace(/Ö/g, 'Oe');
+            str = str.replace(/Ä/g, 'Ae');
+            str = str.replace(/ä/g, 'ae');
+            str = str.replace(/\.*\./gi, '_');
+            str = str.replace(/ /gi, '_');
+            str = str.toLowerCase();
+            return str;
+        }
+    }
+
+    /**
+     *
+     * @param {object} result
+     * @param {string|number} index
+     */
+    async create_state(result, index) {
+
+        try {
+
+            this.log.debug(`create_state start`);
+
+            this.log.debug('tabletName: ' + JSON.stringify(tabletName));
+
+            const deviceID = await this.replaceFunction(tabletName[index]);
+
+            await this.setObjectNotExistsAsync(`device`, {
+                type: 'device',
+                common: {
+                    name: ''
+                },
+                native: {}
+            });
+
+            await this.setObjectNotExistsAsync(`vis_View`, {
+                type: 'device',
+                common: {
+                    name: 'Automatic switch to Home View'
+                },
+                native: {}
+            });
+
+            await this.setObjectNotExistsAsync(`device.${deviceID}`, {
+                type: 'device',
+                common: {
+                    name: ip[index]
+                },
+                native: {
+                    ip: ip[index]
+                }
+            });
+
+            for (const channelFolderKey in channelFolder) {
+
+                await this.setObjectNotExistsAsync(`device.${deviceID}.${channelFolder[channelFolderKey]}`, {
+                    type: 'channel',
+                    common: {
+                        name: `${channelFolder[channelFolderKey]}`
+                    },
+                    native: {}
+                });
+            }
+
+            await this.setObjectNotExistsAsync(`device.${deviceID}.commands.kiosk`, {
+                type: 'channel',
+                common: {
+                    name: `kiosk commands`
+                },
+                native: {}
+            });
+
+            await this.setObjectNotExistsAsync(`device.${deviceID}.device_info.memory`, {
+                type: 'channel',
+                common: {
+                    name: `memory info`
+                },
+                native: {}
+            });
+
+            for (const obj in device_Folder_Object) {
+                await this.setObjectNotExistsAsync(`device.${obj}`, device_Folder_Object[obj]);
+
+            }
+            this.subscribeStates(`device.reloadAll`);
+
+            for (const obj in main_Object) {
+                await this.setObjectNotExistsAsync(`device.${deviceID}.${obj}`, main_Object[obj]);
+            }
+            this.subscribeStates(`device.${deviceID}.manualBrightness`);
+            this.subscribeStates(`device.${deviceID}.brightness_control_mode`);
+
+            for (const obj in command_Object) {
+                await this.setObjectNotExistsAsync(`device.${deviceID}.commands.${obj}`, command_Object[obj]);
+                this.subscribeStates(`device.${deviceID}.commands.${obj}`);
+                commandsID.push(`.device.${deviceID}.commands.${obj}`);
+            }
+
+
+            for (const obj in kiosk_Object) {
+                await this.setObjectNotExistsAsync(`device.${deviceID}.commands.kiosk.${obj}`, kiosk_Object[obj]);
+                if (obj !== 'kioskPin') this.subscribeStates(`device.${deviceID}.commands.kiosk.${obj}`);
+
+
+            }
+
+
+            for (const obj in device_info_Object) {
+                await this.setObjectNotExistsAsync(`device.${deviceID}.device_info.${obj}`, device_info_Object[obj]);
+            }
+
+
+            for (const obj in memory_Object) {
+                await this.setObjectNotExistsAsync(`device.${deviceID}.device_info.memory.${obj}`, memory_Object[obj]);
+            }
+
+
+            for (const obj in vis_View_object) {
+                await this.setObjectNotExistsAsync(`vis_View.${obj}`, vis_View_object[obj]);
+            }
+            this.subscribeStates(`vis_View.widget_8_view`);
+            this.subscribeForeignStates(`vis.0.control.data`);
+
+
+            if (!deviceEnabled[index] && !logMessage[index]) {
+                this.setState(`device.${tabletName[index]}.isFullyAlive`, {val: false, ack: true});
+            }
+
+            this.setState('info.connection', true, true);
+
+        }
+        catch (error) {
+            this.log.error(`[create_state] : ${error.message}, stack: ${error.stack}`);
+
+        }
+
+    }
+
+    /**
+     * Is called when adapter shuts down - callback has to be called under any circumstances!
+     * @param {() => void} callback
+     */
+    onUnload(callback) {
+        try {
+
+
+            if (automatic_briTimeout) clearTimeout(automatic_briTimeout);
+            if (viewTimer) clearTimeout(viewTimer);
+            if (requestTimeout) clearTimeout(requestTimeout);
+            if (ScreensaverReturn) clearTimeout(ScreensaverReturn);
+            if (BriRequestTimeout) clearTimeout(BriRequestTimeout);
+
+            for (const Unl in tabletName) {
+                if (logMessageTimer[Unl]) clearTimeout(logMessageTimer[Unl]);
+                if (screensaverTimer[Unl]) clearTimeout(screensaverTimer[Unl]);
+                if (foregroundAppTimer[Unl]) clearTimeout(foregroundAppTimer[Unl]);
+                if (kioskPinTimeout[Unl]) clearTimeout(kioskPinTimeout[Unl]);
+
+            }
+            this.log.info('Adapter Fully Tablet Control stopped...');
+            this.setState('info.connection', false, true);
+
+            callback();
+        }
+        catch (e) {
+            callback();
+        }
+    }
+
+    /**
+     * Is called if a subscribed state changes
+     * @param {string} id
+     * @param {ioBroker.State | null | undefined} state
+     */
+    onStateChange(id, state) {
+        try {
+            if (state) {
+                this.log.debug(`stateID ${id} changed: ${state.val} (ack = ${state.ack})`);
+
+                // manual brightness States change
+                for (const index in tabletName) {
+                    if (deviceEnabled[index] && !state.ack && !logMessage[index] && state.from !== `system.adapter.${this.namespace}`) {
+
+                        if (id === `${this.namespace}.device.${tabletName[index]}.manualBrightness` || id === `${this.namespace}.device.${tabletName[index]}.brightness_control_mode`) {
+
+                            this.log.debug(`state ${id} changed: ${state.val} from: ${this.namespace}`);
+                            this.manualStates(id, index, state);
+                            break;
+                        }
+
+                    }
+                }
+
+                //sendFullyCommand command folder
+                for (const change in tabletName) {
+                    if (deviceEnabled[change] && !state.ack && !logMessage[change]) {
+                        for (const obj in command_Object) {
+
+                            if (id === `${this.namespace}.device.${tabletName[change]}.commands.${obj}`) {
+
+                                this.log.debug(`state ${id} changed: ${state.val} from: ${this.namespace}`);
+
+                                this.sendFullyCommand(id, state, change, obj);
+
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                //sendFullyCommand commands.kiosk folder
+                for (const change in tabletName) {
+                    if (deviceEnabled[change] && !state.ack && !logMessage[change]) {
+                        for (const obj in kiosk_Object) {
+
+                            if (id === `${this.namespace}.device.${tabletName[change]}.commands.kiosk.${obj}`) {
+
+                                this.log.debug(`state ${id} changed: ${state.val} from: ${this.namespace}`);
+
+                                this.sendFullyCommand(id, state, change, obj);
+
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                //sendFullyCommand main folder
+                for (const change in tabletName) {
+                    if (deviceEnabled[change] && !state.ack && !logMessage[change]) {
+
+                        for (const obj in device_Folder_Object) {
+
+                            if (id === `${this.namespace}.device.${obj}`) {
+
+                                if (state.val === false) {
+                                    state.val = true;
+                                }
+                                this.log.debug(`state ${id} changed: ${state.val} from: ${this.namespace}`);
+
+                                this.sendFullyCommand(id, state, change, obj);
+
+                                break;
+                            }
+                        }
+                    }
+                }
+
+
+                // Motion Sensor State Change
+                for (const index in motionID) {
+                    if (id === `${motionID[index]}`) {
+                        if (typeof state.val === 'boolean') {
+
+                            this.log.debug(`motion Sensor state ${id} changed: ${state.val}`);
+                            this.motionSensor(index, state.val);
+
+                        }
+                    }
+                }
+
+                const view_enabled = JSON.parse(this.config['viewChange_enabled']);
+                if (view_enabled) {
+                    const mode = JSON.parse(this.config[`viewMode`]);
+                    if (!mode) {
+                        if (id === `vis.0.control.data`) {
+                            this.log.debug(`state ${id} changed: ${state.val}`);
+                            this.checkView(view_enabled, mode);
+                        }
+                    }
+                    else {
+                        if (!state.ack) {
+                            if (id === `${this.namespace}.vis_View.widget_8_view`) {
+                                this.log.debug(`state ${id} changed: ${state.val}`);
+                                this.checkView(view_enabled, mode);
+                            }
+                        }
+                    }
+                }
+
+
+            }
+        }
+        catch (error) {
+            this.log.error(`[onStateChane ${id}] error: ${error.message}, stack: ${error.stack}`);
+        }
+    }
+
+    /**
+     * Some message was sent to this instance over message box. Used by email, pushover, text2speech, ...
+     * Using this method requires "common.message" property to be set to true in io-package.json
+     * @param msg
+     * @param user
+     */
+    onMessage(msg, user) {
+        // e.g. send email or pushover or whatever
+        this.log.debug(`send msg to ${user} with message: ${msg}`);
+
+        this.sendTo('telegram.0', 'send', {
+            text: msg,
+            user: user
+        });
+    }
 }
 
-// @ts-ignore parent is a valid property on module
 if (module.parent) {
-	// Export the constructor in compact mode
-	/**
-	 * @param {Partial<utils.AdapterOptions>} [options={}]
-	 */
-	module.exports = (options) => new FullyTabletControl(options);
-} else {
-	// otherwise start the instance directly
-	new FullyTabletControl();
+    // Export the constructor in compact mode
+    /**
+     * @param {Partial<utils.AdapterOptions>} [options={}]
+     */
+    module.exports = (options) => new FullyTabletControl(options);
+}
+else {
+    // otherwise start the instance directly
+    new FullyTabletControl();
 }

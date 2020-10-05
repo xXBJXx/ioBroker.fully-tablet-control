@@ -4,6 +4,78 @@
 
 // @ts-ignore
 systemDictionary = {
+	"The Vis adapter is not installed. Please install the Vis adapter before activating the function.": {
+		"en": "The Vis adapter is not installed. Please install the Vis adapter before activating the function.",
+		"de": "Der Vis-Adapter ist nicht installiert. Bitte installieren Sie den Vis-Adapter, bevor Sie die Funktion aktivieren.",
+		"ru": "Адаптер Vis не установлен. Перед активацией функции установите адаптер Vis.",
+		"pt": "O adaptador Vis não está instalado. Instale o adaptador Vis antes de ativar a função.",
+		"nl": "De Vis-adapter is niet geïnstalleerd. Installeer de Vis-adapter voordat u de functie activeert.",
+		"fr": "L'adaptateur Vis n'est pas installé. Veuillez installer l'adaptateur Vis avant d'activer la fonction.",
+		"it": "L'adattatore Vis non è installato. Si prega di installare l'adattatore Vis prima di attivare la funzione.",
+		"es": "El adaptador Vis no está instalado. Instale el adaptador Vis antes de activar la función.",
+		"pl": "Karta Vis nie jest zainstalowana. Zainstaluj adapter Vis przed aktywacją funkcji.",
+		"zh-cn": "未安装Vis适配器。在激活功能之前，请先安装Vis适配器。"
+	},
+	"Telegram adapter is not installed please install the Telegram adapter before activating the function.": {
+		"en": "Telegram adapter is not installed please install the Telegram adapter before activating the function.",
+		"de": "Der Telegram adapter ist nicht installiert. Bitte installieren Sie den Telegram adapter, bevor Sie die Funktion aktivieren.",
+		"ru": "Адаптер Telegram не установлен, пожалуйста, установите адаптер Telegram перед активацией функции.",
+		"pt": "O adaptador Telegram não está instalado, instale o adaptador Telegram antes de ativar a função.",
+		"nl": "Telegram-adapter is niet geïnstalleerd, installeer de Telegram-adapter voordat u de functie activeert.",
+		"fr": "L'adaptateur Telegram n'est pas installé, veuillez installer l'adaptateur Telegram avant d'activer la fonction.",
+		"it": "L'adattatore di Telegram non è installato, installare l'adattatore di Telegram prima di attivare la funzione.",
+		"es": "El adaptador de Telegram no está instalado, instale el adaptador de Telegram antes de activar la función.",
+		"pl": "Adapter Telegram nie jest zainstalowany. Zainstaluj adapter Telegram przed aktywacją funkcji.",
+		"zh-cn": "未安装电报适配器，请在激活功能之前安装电报适配器。"
+	},
+	"There are no Telegram users available": {
+		"en": "There are no Telegram users available",
+		"de": "Es sind keine Telegram benutzer verfügbar",
+		"ru": "Нет доступных пользователей Telegram",
+		"pt": "Não há usuários do Telegram disponíveis",
+		"nl": "Er zijn geen Telegram-gebruikers beschikbaar",
+		"fr": "Il n'y a pas d'utilisateurs Telegram disponibles",
+		"it": "Non ci sono utenti Telegram disponibili",
+		"es": "No hay usuarios de Telegram disponibles",
+		"pl": "Brak dostępnych użytkowników Telegrama",
+		"zh-cn": "没有可用的电报用户"
+	},
+	"Check interval": {
+		"en": "Check interval",
+		"de": "Intervall prüfen",
+		"ru": "Интервал проверки",
+		"pt": "Intervalo de verificação",
+		"nl": "Controleer interval",
+		"fr": "Vérifier l'intervalle",
+		"it": "Controllare l'intervallo",
+		"es": "Verificar intervalo",
+		"pl": "Okres sprawdzania",
+		"zh-cn": "检查间隔"
+	},
+	"Select": {
+		"en": "Select",
+		"de": "Wählen",
+		"ru": "Выбрать",
+		"pt": "Selecione",
+		"nl": "Selecteer",
+		"fr": "Sélectionner",
+		"it": "Selezionare",
+		"es": "Seleccione",
+		"pl": "Wybierz",
+		"zh-cn": "选择"
+	},
+	"Cancel": {
+		"en": "Cancel",
+		"de": "Stornieren",
+		"ru": "Отмена",
+		"pt": "Cancelar",
+		"nl": "Annuleer",
+		"fr": "Annuler",
+		"it": "Annulla",
+		"es": "Cancelar",
+		"pl": "Anuluj",
+		"zh-cn": "取消"
+	},
 	'enableBrightnessSync': {
 		'en': 'enable Brightness Sync',
 		'de': 'Aktiviere die Helligkeits Synchronisierung',
@@ -147,6 +219,18 @@ systemDictionary = {
 		'es': 'noche',
 		'pl': 'noc',
 		'zh-cn': '晚'
+	},
+	"At night": {
+		"en": "At night",
+		"de": "Nachts",
+		"ru": "Ночью",
+		"pt": "À noite",
+		"nl": "'S nachts",
+		"fr": "La nuit",
+		"it": "Di notte",
+		"es": "Por la noche",
+		"pl": "W nocy",
+		"zh-cn": "在晚上"
 	},
 	'nauticalDusk': {
 		'en': 'nautical Dusk',
@@ -412,6 +496,30 @@ systemDictionary = {
 		'pl': 'Automatyczna zmiana widoku Vis',
 		'zh-cn': '自动Vis视图更改'
 	},
+	"midTime brightness": {
+		"en": "midTime brightness",
+		"de": "Helligkeit zur Mittagszeit",
+		"ru": "средняя яркость",
+		"pt": "brilho midTime",
+		"nl": "midTime helderheid",
+		"fr": "luminosité de mi-temps",
+		"it": "luminosità a metà tempo",
+		"es": "brillo a medio tiempo",
+		"pl": "jasność midTime",
+		"zh-cn": "中等亮度"
+	},
+	"afternoon": {
+		"en": "afternoon",
+		"de": "Nachmittag",
+		"ru": "после полудня",
+		"pt": "tarde",
+		"nl": "namiddag",
+		"fr": "après midi",
+		"it": "pomeriggio",
+		"es": "tarde",
+		"pl": "popołudnie",
+		"zh-cn": "下午"
+	},
 	'18Clock': {
 		'en': '18 Clock',
 		'de': '18 Uhr',
@@ -556,6 +664,126 @@ systemDictionary = {
 		'pl': '9 Zegar',
 		'zh-cn': '9时钟'
 	},
+	"10Clock": {
+		"en": "10 Clock",
+		"de": "10 Uhr",
+		"ru": "10 Часы",
+		"pt": "10 relógio",
+		"nl": "10 klok",
+		"fr": "10 Horloge",
+		"it": "10 Orologio",
+		"es": "10 reloj",
+		"pl": "10 Zegar",
+		"zh-cn": "10钟"
+	},
+	"11Clock": {
+		"en": "11 Clock",
+		"de": "11 Uhr",
+		"ru": "11 Часы",
+		"pt": "11 relógio",
+		"nl": "11 Klok",
+		"fr": "11 Horloge",
+		"it": "11 Orologio",
+		"es": "11 reloj",
+		"pl": "11 Clock",
+		"zh-cn": "11座钟"
+	},
+	"12Clock": {
+		"en": "12 Clock",
+		"de": "12 Uhr",
+		"ru": "12 Часы",
+		"pt": "12 relógio",
+		"nl": "12 klok",
+		"fr": "12 Horloge",
+		"it": "12 Orologio",
+		"es": "12 reloj",
+		"pl": "12 Clock",
+		"zh-cn": "12时钟"
+	},
+	"13Clock": {
+		"en": "13 Clock",
+		"de": "13 Uhr",
+		"ru": "13 Часы",
+		"pt": "13 relógio",
+		"nl": "13 Klok",
+		"fr": "13 Horloge",
+		"it": "13 Orologio",
+		"es": "13 reloj",
+		"pl": "13 Clock",
+		"zh-cn": "13时钟"
+	},
+	"14Clock": {
+		"en": "14 Clock",
+		"de": "14 Uhr",
+		"ru": "14 Часы",
+		"pt": "14 relógio",
+		"nl": "14 Klok",
+		"fr": "14 Horloge",
+		"it": "14 Orologio",
+		"es": "14 reloj",
+		"pl": "14 Clock",
+		"zh-cn": "14时钟"
+	},
+	"15Clock": {
+		"en": "15 Clock",
+		"de": "15 Uhr",
+		"ru": "15 Часы",
+		"pt": "15 relógio",
+		"nl": "15 Klok",
+		"fr": "15 Horloge",
+		"it": "15 Orologio",
+		"es": "15 reloj",
+		"pl": "15 Clock",
+		"zh-cn": "15时钟"
+	},
+	"16Clock": {
+		"en": "16 Clock",
+		"de": "16 Uhr",
+		"ru": "16 Часы",
+		"pt": "16 relógio",
+		"nl": "16 klok",
+		"fr": "16 Horloge",
+		"it": "16 Orologio",
+		"es": "16 reloj",
+		"pl": "16 Clock",
+		"zh-cn": "16时钟"
+	},
+	"17 Clock": {
+		"en": "17 Clock",
+		"de": "17 Uhr",
+		"ru": "17 Часы",
+		"pt": "17 relógio",
+		"nl": "17 Klok",
+		"fr": "17 Horloge",
+		"it": "17 Orologio",
+		"es": "17 Reloj",
+		"pl": "17 Clock",
+		"zh-cn": "17时钟"
+	},
+	"TimeControl": {
+		"en": "Time Control",
+		"de": "Zeitsteuerung",
+		"ru": "Контроль времени",
+		"pt": "Controle do tempo",
+		"nl": "Tijdscontrole",
+		"fr": "Contrôle du temps",
+		"it": "Controllo del tempo",
+		"es": "Control del tiempo",
+		"pl": "Kontrola czasu",
+		"zh-cn": "时间控制"
+	},
+	"table": {
+		"en": "table",
+		"de": "Tabelle",
+		"ru": "стол",
+		"pt": "tabela",
+		"nl": "tafel",
+		"fr": "table",
+		"it": "tavolo",
+		"es": "mesa",
+		"pl": "stół",
+		"zh-cn": "表"
+	},
 	'Activate motion sensors': {
 		'en': 'Activate motion sensors',
 		'de': 'Bewegungssensoren aktivieren',
@@ -569,16 +797,16 @@ systemDictionary = {
 		'zh-cn': '激活运动传感器'
 	},
 	'Brings the browser back to the foreground': {
-		'en': 'Brings the FullyBrowser back to the foreground (recommended for Amazon Fire Tablet with Alexa)',
-		'de': 'Bringt den FullyBrowser wieder in den Vordergrund (empfohlen für Amazon Fire Tablet mit Alexa)',
-		'ru': 'Возвращает FullyBrowser обратно на передний план (рекомендуется для Amazon Fire Tablet с Alexa)',
-		'pt': 'Retorna o FullyBrowser de volta ao primeiro plano (recomendado para Amazon Fire Tablet com Alexa)',
-		'nl': 'Brengt de FullyBrowser terug naar de voorgrond (aanbevolen voor Amazon Fire Tablet met Alexa)',
-		'fr': 'Ramène le FullyBrowser au premier plan (recommandé pour Amazon Fire Tablet avec Alexa)',
-		'it': 'Riporta in primo piano il browser completo (consigliato per Amazon Fire Tablet con Alexa)',
-		'es': 'Trae el FullyBrowser a primer plano (recomendado para Amazon Fire Tablet con Alexa)',
-		'pl': 'Przywraca FullyBrowser z powrotem na pierwszy plan (zalecane dla Amazon Fire Tablet z Alexą)',
-		'zh-cn': '将FullyBrowser带回前台（建议使用Alexa的Amazon Fire Tablet）'
+		"en": "Brings the FullyBrowser back to the foreground (e.g. if Alexa is used on the Amazon Fire Tablet)",
+		"de": "Bringt den FullyBrowser wieder in den Vordergrund (z. B. wenn Alexa auf dem Amazon Fire Tablet verwendet wird)",
+		"ru": "Возвращает FullyBrowser на передний план (например, если Alexa используется на планшете Amazon Fire)",
+		"pt": "Traz o FullyBrowser de volta ao primeiro plano (por exemplo, se Alexa for usada no Amazon Fire Tablet)",
+		"nl": "Brengt de FullyBrowser terug naar de voorgrond (bijvoorbeeld als Alexa wordt gebruikt op de Amazon Fire-tablet)",
+		"fr": "Ramène le FullyBrowser au premier plan (par exemple, si Alexa est utilisée sur la tablette Amazon Fire)",
+		"it": "Riporta il FullyBrowser in primo piano (ad es. Se Alexa è utilizzato sul tablet Amazon Fire)",
+		"es": "Devuelve FullyBrowser al primer plano (p. Ej., Si se utiliza Alexa en la tableta Amazon Fire)",
+		"pl": "Przywraca FullyBrowser na pierwszy plan (np. Jeśli Alexa jest używana na tablecie Amazon Fire)",
+		"zh-cn": "将FullyBrowser带回到前台（例如，如果Amazon Fire Tablet上使用了Alexa）"
 	},
 	'Charge cycle': {
 		'en': 'Charge cycle',
@@ -616,17 +844,17 @@ systemDictionary = {
 		'pl': 'Prąd ciągły',
 		'zh-cn': '持续电流'
 	},
-	'Daytime brightness': {
-		'en': 'Daytime brightness',
-		'de': 'Tageshelligkeit',
-		'ru': 'Дневная яркость',
-		'pt': 'Brilho diurno',
-		'nl': 'Helderheid overdag',
-		'fr': 'Luminosité diurne',
-		'it': 'Luminosità diurna',
-		'es': 'Brillo diurno',
-		'pl': 'Jasność w ciągu dnia',
-		'zh-cn': '白天亮度'
+	"morningtime brightness": {
+		"en": "morningtime brightness",
+		"de": "Helligkeit am Morgen",
+		"ru": "утренняя яркость",
+		"pt": "brilho matinal",
+		"nl": "ochtendhelderheid",
+		"fr": "luminosité du matin",
+		"it": "luminosità mattutina",
+		"es": "brillo matutino",
+		"pl": "jasność poranna",
+		"zh-cn": "早晨的亮度"
 	},
 	'Deactivate motion sensors': {
 		'en': 'Deactivate motion sensors',
@@ -844,17 +1072,17 @@ systemDictionary = {
 		'pl': 'Identyfikator punktu danych z ładowarki',
 		'zh-cn': '来自充电器的数据点ID'
 	},
-	'dayTime': {
-		'en': 'day Time',
-		'de': 'Tageszeit',
-		'ru': 'Дневное время',
-		'pt': 'dia Hora',
-		'nl': 'dag Tijd',
-		'fr': 'heure du jour',
-		'it': 'giorno',
-		'es': 'día hora',
-		'pl': 'czas dnia',
-		'zh-cn': '一天时间'
+	"In the morning": {
+		"en": "In the morning",
+		"de": "Morgens",
+		"ru": "Утром",
+		"pt": "De manhã",
+		"nl": "In de ochtend",
+		"fr": "Le matin",
+		"it": "Di mattina",
+		"es": "Por la mañana",
+		"pl": "Rankiem",
+		"zh-cn": "在早上"
 	},
 	'delete': {
 		'en': 'delete',
@@ -988,18 +1216,6 @@ systemDictionary = {
 		'pl': 'Nazwa tabletu',
 		'zh-cn': '平板电脑名称'
 	},
-	'nightTime': {
-		'en': 'night Time',
-		'de': 'Nachtzeit',
-		'ru': 'ночное время',
-		'pt': 'período noturno',
-		'nl': 'nachttijd',
-		'fr': 'la nuit',
-		'it': 'notte',
-		'es': 'Noche',
-		'pl': 'pora nocna',
-		'zh-cn': '夜间'
-	},
 	'password': {
 		'en': 'password',
 		'de': 'Passwort',
@@ -1073,7 +1289,7 @@ systemDictionary = {
 	},
 	'telegramUser': {
 		'en': 'Telegram user',
-		'de': 'Telegrambenutzer',
+		'de': 'Telegram Benutzer',
 		'ru': 'Пользователь Telegram',
 		'pt': 'Usuário de telegrama',
 		'nl': 'Telegram-gebruiker',

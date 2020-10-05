@@ -12,10 +12,5 @@ Thumbs.db
 # i18n intermediate files
 admin/i18n/flat.txt
 admin/i18n/*/flat.txt
-
-
-.vs/
-
-.vscode/launch.json
-
-request.http
+/.run/
+/API Request.http

@@ -198,7 +198,7 @@
       }
     },
     "dependencies": [{
-      "js-controller": ">=1.4.2"
+      "js-controller": ">=2.0.0"
     }],
     "installedFrom": "https://github.com/xXBJXx/ioBroker.fully-tablet-control/tarball/1cfffc99638af4b529abf1720a9bb308361aa525"
   },
@@ -215,14 +215,15 @@
     "motionSensor_enabled": "false",
     "screen_on": "true",
     "checkInterval": 5,
-    "dayTime": 7,
+    "morningTime": 7,
+    "midTime": 13,
     "nightTime": 22,
     "fireTablet": 3,
     "viewChange_enabled": "false",
     "viewMode": "false",
     "visView": [],
-    "chargerON": "true",
-    "brightness_on": "true",
+    "chargerON": "false",
+    "brightness_on": "false",
     "astroSelectNight": "sunset",
     "astroSelectDay": "sunrise",
     "timeMode": "true"
