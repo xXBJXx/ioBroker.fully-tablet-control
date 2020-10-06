@@ -693,7 +693,6 @@ class FullyTabletControl extends utils.Adapter {
 
                                         }
 
-
                                         //set is Wallpanel Alive to true if the request was successful
                                         this.setState(`device.${deviceID}.isFullyAlive`, {val: true, ack: true});
                                         this.log.debug(`states were written`);
