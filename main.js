@@ -669,9 +669,30 @@ class FullyTabletControl extends utils.Adapter {
                                         await this.create_state(apiResult, i);
                                         this.log.debug(`State Create was carried out`);
 
-                                        this.log.debug(`States are now written`);
+                                      this.log.debug(`check if battery level is> = 0 if yes then restart app`)
+                                        if (apiResult['data']['batteryLevel'] >= 0) {
 
-                                        await this.state_write(apiResult, i, deviceID);
+                                            this.log.debug(`States are now written`);
+                                            await this.state_write(apiResult, i, deviceID);
+
+                                        }
+                                        else {
+                                            const restartAppURL = `http://${ip[i]}:${port[i]}/?cmd=restartApp&password=${password[i]}`;
+
+                                            await axios.get(restartAppURL)
+                                                .then(async result => {
+
+                                                    this.log.debug(`${tabletName[i]} send status for restartApp = status Code: ${result.status} => status Message: ${result.statusText}`);
+                                                    console.log(`${tabletName[i]} send status for restartApp = status Code: ${result.status} => status Message: ${result.statusText}`);
+                                                })
+                                                .catch(async error => {
+
+                                                    this.log.error(`${tabletName[i]} send status for restartApp could not be sent => ${error.message}, stack: ${error.stack}`);
+                                                    console.log(`${tabletName[i]} send status for restartApp could not be sent => ${error.message}, stack: ${error.stack}`);
+                                                });
+
+                                        }
+
 
                                         //set is Wallpanel Alive to true if the request was successful
                                         this.setState(`device.${deviceID}.isFullyAlive`, {val: true, ack: true});
@@ -693,7 +714,8 @@ class FullyTabletControl extends utils.Adapter {
                                     }
                                 }
 
-                            }).catch(async error => {
+                            })
+                            .catch(async error => {
 
                                 if (!logMessage[i]) {
 
