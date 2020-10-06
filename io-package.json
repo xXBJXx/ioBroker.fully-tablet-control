@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "fully-tablet-control",
-        "version": "0.3.0-beta.1",
+        "version": "0.3.0-beta.2",
         "news": {
+            "0.3.0-beta.2": {
+                "en": "Check for invalid batteryLevel added",
+                "de": "Überprüfen Sie, ob ein ungültiger Batterielevel hinzugefügt wurde",
+                "ru": "Проверьте, не добавлен ли недопустимый уровень заряда батареи",
+                "pt": "Verifique se o nível de bateria inválido foi adicionado",
+                "nl": "Controleer op ongeldig batterijniveau toegevoegd",
+                "fr": "Vérifiez que le niveau de batterie n'est pas valide ajouté",
+                "it": "Verificare la presenza di batteryLevel non validi aggiunti",
+                "es": "Compruebe el nivel de batería no válido agregado",
+                "pl": "Sprawdź, czy dodano nieprawidłowy poziom baterii",
+                "zh-cn": "检查是否添加了无效的BatteryLevel"
+            },
             "0.3.0-beta.1": {
                 "en": "Check for invalid batteryLevel added",
                 "de": "Überprüfen Sie, ob ein ungültiger Batterielevel hinzugefügt wurde",
