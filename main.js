@@ -1457,7 +1457,7 @@ class FullyTabletControl extends utils.Adapter {
                             console.log('File created');
                         });
                         this.w
-                        await this.setState(`device.${tabletName[index]}.device_info.camshotUrl`, {val: `/fully-tablet-control.admin.media/camshot_${tabletName[index]}_${this.instance}.png`, ack: true});
+                        await this.setState(`device.${tabletName[index]}.device_info.camshotUrl`, {val: `/fully-tablet-control.admin/media/camshot_${tabletName[index]}_${this.instance}.png`, ack: true});
                     }
                     else {
                         this.log.warn(`Attention the motion detection is not activated it is not possible to take camshot if motion detection is deactivated !!`)
