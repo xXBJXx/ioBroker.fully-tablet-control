@@ -249,6 +249,11 @@ _______________________________
  Placeholder for the next version (at the beginning of the line):
  ### __WORK IN PROGRESS__ ( - falls nicht benötigt löschen sonst klammern entfernen und nach dem - dein text schreiben )
 -->
+
+
+### __WORK IN PROGRESS__
+* (xXBJXx) Motion detector is not defined warning message fixed
+ 
 ### 0.3.0-beta.3 (2020-10-08)
 * (xXBJXx) fix camshotUrl folder
 
