@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "fully-tablet-control",
-        "version": "0.3.0-beta.2",
+        "version": "0.3.0-beta.3",
         "news": {
+            "0.3.0-beta.3": {
+                "en": "fix camshotUrl folder",
+                "de": "CamshotUrl-Ordner korrigieren",
+                "ru": "исправить папку camshotUrl",
+                "pt": "corrigir pasta camshotUrl",
+                "nl": "fix camshotUrl map",
+                "fr": "réparer le dossier camshotUrl",
+                "it": "correggere la cartella camshotUrl",
+                "es": "arreglar la carpeta camshotUrl",
+                "pl": "napraw folder camshotUrl",
+                "zh-cn": "修复camshotUrl文件夹"
+            },
             "0.3.0-beta.2": {
                 "en": "Check for invalid batteryLevel added",
                 "de": "Überprüfen Sie, ob ein ungültiger Batterielevel hinzugefügt wurde",

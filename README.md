@@ -249,7 +249,7 @@ _______________________________
  Placeholder for the next version (at the beginning of the line):
  ### __WORK IN PROGRESS__ ( - falls nicht benötigt löschen sonst klammern entfernen und nach dem - dein text schreiben )
 -->
-### __WORK IN PROGRESS__
+### 0.3.0-beta.3 (2020-10-08)
 * (xXBJXx) fix camshotUrl folder
 
 ### 0.3.0-beta.2 (2020-10-06)
