@@ -10,7 +10,7 @@
 
 [![NPM](https://nodei.co/npm/iobroker.fully-tablet-control.png?downloads=true)](https://nodei.co/npm/iobroker.fully-tablet-control/)
 
-**Tests:** ![Test and Release](https://github.com/xXBJXx/ioBroker.test-adapter/workflows/Test%20and%20Release/badge.svg)
+**Tests:** ![Test and Release](https://github.com/xXBJXx/iobroker.fully-tablet-control/workflows/Test%20and%20Release/badge.svg)
 
 # Fully Tablet Control Adapter für ioBroker
 
@@ -249,6 +249,9 @@ _______________________________
  Placeholder for the next version (at the beginning of the line):
  ### __WORK IN PROGRESS__ ( - falls nicht benötigt löschen sonst klammern entfernen und nach dem - dein text schreiben )
 -->
+### __WORK IN PROGRESS__
+* (xXBJXx) fix camshotUrl folder
+
 ### 0.3.0-beta.2 (2020-10-06)
 * (xXBJXx) Check for invalid batteryLevel added
  
