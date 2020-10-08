@@ -350,38 +350,38 @@ class FullyTabletControl extends utils.Adapter {
                 this.log.debug(`motion detector ID is read from the config and subscribed to`);
                 //read motion ID from Admin and subscribe
                 const motion = this.config.motion;
-                if (!motion && motion.length !== 0 || motion !== [] && motion.length !== 0) {
-                    for (const sensor in motion) {
+                const motionSensor_enabled = JSON.parse(this.config.motionSensor_enabled)
+                if (motionSensor_enabled) {
+                    if (!motion && motion.length !== 0 || motion !== [] && motion.length !== 0) {
+                        for (const sensor in motion) {
 
-                        this.log.debug(`Check if the sensor is activated`);
-                        if (motion[sensor]['enabled']) {
+                            this.log.debug(`Check if the sensor is activated`);
+                            if (motion[sensor]['enabled']) {
 
-                            this.log.debug(`Check whether the sensor has an ID entry`);
-                            if (motion[sensor]['motionid'] !== '') {
+                                this.log.debug(`Check whether the sensor has an ID entry`);
+                                if (motion[sensor]['motionid'] !== '') {
 
-                                this.log.debug(`read out all Motion ID's on the config`);
+                                    this.log.debug(`read out all Motion ID's on the config`);
 
-                                motionID[sensor] = motion[sensor]['motionid'];
-                                motionVal[sensor] = false
-                                this.log.debug(`subscribe all Motion ID's`);
-                                this.subscribeForeignStates(motion[sensor]['motionid']);
+                                    motionID[sensor] = motion[sensor]['motionid'];
+                                    motionVal[sensor] = false
+                                    this.log.debug(`subscribe all Motion ID's`);
+                                    this.subscribeForeignStates(motion[sensor]['motionid']);
 
+                                }
+                                else {
+                                    this.log.warn(`Attention there is no motion detector ID entered`);
+                                }
                             }
                             else {
-                                this.log.warn(`Attention there is no motion detector ID entered`);
-
+                                this.log.debug(`the motion detector with the id: ${motion[sensor]['motionid']} is deactivated !!`);
                             }
                         }
-                        else {
-
-                            this.log.debug(`the motion detector with the id: ${motion[sensor]['motionid']} is deactivated !!`);
-                            console.log('test')
-                        }
+                        this.log.debug(`motion Detector ID initialization has been fully initialized`);
                     }
-                    this.log.debug(`motion Detector ID initialization has been fully initialized`);
-                }
-                else {
-                    this.log.warn(`Motion detector is not defined, please define at least one or switch off the motion detector control!`);
+                    else {
+                        this.log.warn(`Motion detector is not defined, please define at least one or switch off the motion detector control!`);
+                    }
                 }
             }
             catch (error) {
@@ -669,7 +669,7 @@ class FullyTabletControl extends utils.Adapter {
                                         await this.create_state(apiResult, i);
                                         this.log.debug(`State Create was carried out`);
 
-                                      this.log.debug(`check if battery level is> = 0 if yes then restart app`)
+                                        this.log.debug(`check if battery level is> = 0 if yes then restart app`)
                                         if (apiResult['data']['batteryLevel'] >= 0) {
 
                                             this.log.debug(`States are now written`);
