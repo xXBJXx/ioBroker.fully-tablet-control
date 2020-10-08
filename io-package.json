@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "fully-tablet-control",
-        "version": "0.3.0-beta.3",
+        "version": "0.3.0-beta.4",
         "news": {
+            "0.3.0-beta.4": {
+                "en": "Motion detector is not defined warning message fixed",
+                "de": "Bewegungsmelder ist nicht definiert Warnmeldung behoben",
+                "ru": "Детектор движения не определен, предупреждающее сообщение исправлено",
+                "pt": "O detector de movimento não está definido, mensagem de aviso corrigida",
+                "nl": "Bewegingsmelder is niet gedefinieerd waarschuwingsbericht vast",
+                "fr": "Le détecteur de mouvement n'est pas défini Message d'avertissement fixe",
+                "it": "Il rilevatore di movimento non è definito messaggio di avviso risolto",
+                "es": "El detector de movimiento no está definido mensaje de advertencia fijo",
+                "pl": "Detektor ruchu nie jest zdefiniowany poprawiono komunikat ostrzegawczy",
+                "zh-cn": "未定义运动探测器警告消息已修复"
+            },
             "0.3.0-beta.3": {
                 "en": "fix camshotUrl folder",
                 "de": "CamshotUrl-Ordner korrigieren",

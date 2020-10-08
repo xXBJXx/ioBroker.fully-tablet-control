@@ -251,7 +251,7 @@ _______________________________
 -->
 
 
-### __WORK IN PROGRESS__
+### 0.3.0-beta.4 (2020-10-08)
 * (xXBJXx) Motion detector is not defined warning message fixed
  
 ### 0.3.0-beta.3 (2020-10-08)
