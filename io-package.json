@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "fully-tablet-control",
-        "version": "0.3.0-beta.4",
+        "version": "0.3.0-beta.5",
         "news": {
+            "0.3.0-beta.5": {
+                "en": "reading of the user from telegram adapter instance 0-10 added\nCurrent page added to Device Info",
+                "de": "Lesen des Benutzers von der Telegrammadapterinstanz 0-10 hinzugefügt\nAktuelle Seite zu Geräteinfo hinzugefügt",
+                "ru": "добавлено чтение пользователя из экземпляра адаптера телеграммы 0-10\nТекущая страница добавлена в информацию об устройстве",
+                "pt": "leitura do usuário da instância do adaptador de telegrama 0-10 adicionado\nPágina atual adicionada às informações do dispositivo",
+                "nl": "lezen van de gebruiker vanaf telegramadapterinstantie 0-10 toegevoegd\nHuidige pagina toegevoegd aan Device Info",
+                "fr": "lecture de l'utilisateur à partir de l'instance d'adaptateur de télégramme 0-10 ajoutée\nPage actuelle ajoutée aux informations sur l'appareil",
+                "it": "aggiunta la lettura dell'utente dall'istanza dell'adattatore telegram 0-10\nPagina corrente aggiunta a Informazioni dispositivo",
+                "es": "lectura del usuario de la instancia del adaptador de telegramas 0-10 agregada\nPágina actual agregada a Información del dispositivo",
+                "pl": "dodany odczyt użytkownika z instancji adaptera telegramu 0-10\nBieżąca strona została dodana do informacji o urządzeniu",
+                "zh-cn": "从电报适配器实例0-10中读取用户\n当前页面已添加到设备信息"
+            },
             "0.3.0-beta.4": {
                 "en": "Motion detector is not defined warning message fixed",
                 "de": "Bewegungsmelder ist nicht definiert Warnmeldung behoben",

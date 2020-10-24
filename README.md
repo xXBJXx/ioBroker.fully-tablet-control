@@ -250,7 +250,7 @@ _______________________________
  ### __WORK IN PROGRESS__ ( - falls nicht benötigt löschen sonst klammern entfernen und nach dem - dein text schreiben )
 -->
 
-### __WORK IN PROGRESS__
+### 0.3.0-beta.5 (2020-10-24)
 * (xXBJXx) reading of the user from telegram adapter instance 0-10 added
 * (xXBJXx) Current page added to Device Info
 
