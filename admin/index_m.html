@@ -6,8 +6,9 @@
     <link rel="stylesheet" type="text/css" href="../../css/adapter.css"/>
     <link rel="stylesheet" type="text/css" href="../../lib/css/materialize.css">
     <!--    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">-->
+    
     <!--    For menu to select states styles-->
-     <link type="text/css" rel="stylesheet" href="../../lib/css/themes/jquery-ui/default/jquery-ui.min.css">
+    <link type="text/css" rel="stylesheet" href="../../lib/css/themes/jquery-ui/default/jquery-ui.min.css">
     <link type="text/css" rel="stylesheet" href="../../lib/css/fancytree/ui.fancytree.min.css"/>
     <link rel="stylesheet" type="text/css" href="../../lib/css/iob/selectID.css"/>
     
@@ -17,6 +18,7 @@
     <script type="text/javascript" src="../../js/translate.js"></script>
     <script type="text/javascript" src="../../lib/js/materialize.js"></script>
     <script type="text/javascript" src="../../js/adapter-settings.js"></script>
+    
     <!--    For menu to select states scripts-->
     <script type="text/javascript" src="../../lib/js/jquery-ui-1.10.3.full.min.js"></script>
     <script type="text/javascript" src="../../lib/js/jquery.fancytree-all.min.js"></script>
@@ -40,71 +42,86 @@
             let telegramAdapter = false;
             let visAdapter = false;
 
-            // $(document).ready( () =>{
-            //
-            // });
-      
-           function getObjectView() {
-               
+            function getObjectView() {
     
                 socket.emit('getObjectView', 'system', 'instance', {startkey: 'system.adapter.', endkey: 'system.adapter.\u9999'}, (err, state) => {
-                    if (err) {
-                        console.error(err);
-                    }
-                    else {
+                    if (!err) {
                         var result = [];
+                        const arrTemp = [];
                         $.each(state.rows, (index, element) => {
                             result.push(element.value);
                         });
                         $.each(result, (index, element) => {
-                            if (element._id === 'system.adapter.telegram.0'){
-                                telegramAdapter = true;
-                                readUser()
+                
+                            for (let i = 0; i < 10; i++) {
+                    
+                                if (element._id === `system.adapter.telegram.${i}`) {
+                                    telegramAdapter = true;
+                                    arrTemp.push(`telegram.${i}.communicate.users`)
+                                }
+                    
                             }
-                            if (element._id === 'system.adapter.vis.0'){
+                
+                            if (element._id === 'system.adapter.vis.0') {
                                 visAdapter = true;
-                                readUser()
+                                showHideSettings()
                             }
-                            
+                
                         });
-                        
+            
+                        if (arrTemp.length > 0) readUser(arrTemp)
+            
+                    }
+                    else {
+                        console.error(err);
                     }
                 });
             }
 
-            function readUser() {
+            function readUser(adapterList) {
     
-                socket.emit('getState', 'telegram.0.communicate.users', (err, state) => {
-    
-                    if (state !== null || state !== undefined) {
-                        if (state.val !== '') {
-                           
-                            $.each(JSON.parse(state.val), (index, element) => {
-                          
-                                if (element.firstName !== undefined) {
-                                    
-                                    firstName.push(`${element.firstName}/${element.firstName}`);
-                                    
-                                } else if ( element.userName !== undefined) {
-                                    
-                                    firstName.push(`${element.userName}/${element.userName}`);
-                                    
-                                } else {
-                                    firstName.push('');
+                for (const listKey in adapterList) {
+        
+                    socket.emit('getState', adapterList[listKey], (err, state) => {
+                        if (!err) {
+                            if (state !== null || state !== undefined) {
+                                if (state.val !== '') {
+                        
+                                    $.each(JSON.parse(state.val), (index, element) => {
+                            
+                                        if (element.firstName !== undefined) {
+                                
+                                            firstName.push(`${element.firstName}/${element.firstName}`);
+                                
+                                        }
+                                        else if (element.userName !== undefined) {
+                                
+                                            firstName.push(`${element.userName}/${element.userName}`);
+                                
+                                        }
+                                        else {
+                                            firstName.push('');
+                                        }
+                            
+                                    });
+                        
+                                    $('#User').attr('data-options', firstName.join(';'));
+                        
                                 }
-                               
-                            });
-
-                            $('#User').attr("data-options", firstName.join(';'));
+                                else {
+                        
+                                    showHideSettings();
+                        
+                                }
+                            }
                 
                         }
                         else {
-                            
-                            showHideSettings()
-                            
+                            console.error(err);
                         }
-                    }
-                });
+                    });
+                }
+    
             }
 
             function showHideSettings() {
@@ -115,7 +132,7 @@
                 let screenSaverON = JSON.parse($('#screenSaverON').val());
                 let brightness_on = JSON.parse($('#brightness_on').val());
                 let timeMode = JSON.parse($('#timeMode').val());
-           
+    
                 //charger Table show/hide
                 if (chargerON) {
                     $('#charger').show();
@@ -123,16 +140,16 @@
                 else {
                     $('#charger').hide();
                 }
-                
+    
                 //Brightness Table show/hide
                 if (brightness_on) {
-                    
+        
                     $('#brightness').show();
                     $('.sub-title-table').show();
                     $('.sub-title-TimeControl').show();
-                    
+        
                     // Time Mode ( Astro or Manuel )
-                    if (timeMode){
+                    if (timeMode) {
                         $('.selectBrightness_time').hide();
                         $('.selectAstroBrightness').show();
                         $('.selectBrightness_checkInterval').show();
@@ -154,7 +171,7 @@
                     $('.sub-title-TimeControl').hide();
                     $('.sub-title-table').hide();
                 }
-                
+    
                 //screenSaver Table show/hide
                 if (screenSaverON) {
                     $('#screenSaver').show();
@@ -162,7 +179,7 @@
                 else {
                     $('#screenSaver').hide();
                 }
-                
+    
                 //motionSensor Table show/hide
                 if (motionSensor_enabled) {
                     $('#motion').show();
@@ -170,11 +187,11 @@
                 else {
                     $('#motion').hide();
                 }
-                
+    
                 // VisView mode and Table show/hide
                 if (visAdapter) {
                     $('.visAdapter').hide();
-                    
+        
                     if (viewChange_enabled) {
                         $('.viewMode').show();
                         $('#visView').show();
@@ -183,25 +200,28 @@
                         $('.viewMode').hide();
                         $('#visView').hide();
                     }
-                    
-                } else {
+        
+                }
+                else {
                     $('.visAdapter').show();
                 }
-                
+    
                 // telegram Tabel show/hide
                 if (telegram_enabled) {
-                    if (telegramAdapter ) {
-                        
+                    if (telegramAdapter) {
+            
                         $('.TelegramAdapter').hide();
-                        
-                        if (firstName.length !== 0){
+            
+                        if (firstName.length !== 0) {
                             $('.telegram').show();
                             $('.TelegramUser').hide();
-                        } else {
+                        }
+                        else {
                             $('.telegram').hide();
                             $('.TelegramUser').show();
                         }
-                    } else {
+                    }
+                    else {
                         $('.TelegramAdapter').show();
                     }
                 }
@@ -211,15 +231,14 @@
                     $('.TelegramUser').hide();
                 }
             }
-            
-           
-            
-            
+
+
             getObjectView();
+
             //the function loadSettings has to exist ...
             function load(settings, onChange) {
                 if (!settings) return;
-                
+    
                 devices = settings.devices || [];
                 brightness = settings.brightness || [];
                 screenSaver = settings.screenSaver || [];
@@ -250,8 +269,8 @@
                     }
         
                 }
-                
-                
+    
+    
                 $('.value').each(function () {
                     const $key = $(this);
                     const id = $key.attr('id');
@@ -274,13 +293,13 @@
                     }
                 });
     
-                
+    
                 onChange(false);
                 // reinitialize all the Materialize labels on the page if you are dynamically adding inputs:
                 showHideSettings();
                 if (M) M.updateTextFields();
-              
-                
+    
+    
                 values2table('brightness', brightness, onChange);
                 values2table('screenSaver', screenSaver, onChange);
                 values2table('devices', devices, onChange);
@@ -289,7 +308,7 @@
                 values2table('telegram', telegram, onChange);
                 values2table('visView', visView, onChange);
             }
-            
+
             //######  END LOAD  #######
 
             //###########  SAVE  #########
@@ -661,7 +680,7 @@
                 </div>
             </div>
             <!-- end screen table -->
-  
+    
             <!-- Tab with id "tab-tables" -->
             <div id="tab-telegram" class="col s12">
                 <div class="row">
@@ -682,9 +701,9 @@
                                  <table class="table-values">
                                      <thead>
                                          <tr>
-                                             <th id="User" data-name="telegramUser"  class="header translate" data-type="select" data-default="" data-options="auswahl">telegramUser</th>
-<!--                                             multi User select-->
-<!--                                             <th id="User" data-name="telegramUser"  class="header translate" data-type="select multiple" data-default="" data-options="auswahl">telegramUser</th>-->
+                                             <th id="User" data-name="telegramUser" class="header translate" data-type="select" data-default="" data-options="auswahl">telegramUser</th>
+                                             <!--  multi User select-->
+                                             <!-- <th id="User" data-name="telegramUser"  class="header translate" data-type="select multiple" data-default="" data-options="auswahl">telegramUser</th>-->
                                              <th class="header translate" data-buttons="delete">delete</th>
                                          </tr>
                                      </thead>

@@ -250,6 +250,9 @@ _______________________________
  ### __WORK IN PROGRESS__ ( - falls nicht benötigt löschen sonst klammern entfernen und nach dem - dein text schreiben )
 -->
 
+### __WORK IN PROGRESS__
+* (xXBJXx) reading of the user from telegram adapter instance 0-10 added
+* (xXBJXx) Current page added to Device Info
 
 ### 0.3.0-beta.4 (2020-10-08)
 * (xXBJXx) Motion detector is not defined warning message fixed

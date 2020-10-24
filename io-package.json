@@ -277,7 +277,7 @@
         "motionSensor_enabled": "false",
         "screen_on": "true",
         "checkInterval": 5,
-        "morningTime": 7,
+        "dayTime": 7,
         "midTime": 13,
         "nightTime": 22,
         "fireTablet": 3,

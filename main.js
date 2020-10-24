@@ -883,6 +883,15 @@ class FullyTabletControl extends utils.Adapter {
 
                         break;
 
+                    case 'currentPage':
+
+                        const currentPage = objects['currentPage'];
+                        this.setState(`device.${deviceID}.device_info.currentPage`, {val: currentPage, ack: true});
+                        this.log.debug(`currentPage state for ${deviceID} : ${currentPage}`);
+
+
+                        break;
+
                     case 'screenOrientation':
 
                         const screenOrientation = objects['screenOrientation'];
