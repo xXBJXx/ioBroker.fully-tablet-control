@@ -1952,7 +1952,6 @@ class FullyTabletControl extends utils.Adapter {
             let controlMode = await this.getStateAsync(`device.${tabletName[index]}.brightness_control_mode`);
             controlMode = controlMode['val'];
 
-
             switch (typ) {
                 case 'boolean': {
                     let stateValue = await this.getStateAsync(`device.${tabletName[index]}.manualBrightness`);
@@ -2845,6 +2844,7 @@ class FullyTabletControl extends utils.Adapter {
             this.log.debug(`Load charge control config`);
             const charger = this.config.charger;
             const telegram_enabled = JSON.parse(this.config['telegram_enabled']);
+            let chargeDevice
 
             this.log.debug(`Check whether the charge control is activated`);
             if (JSON.parse(this.config['chargerON'])) {
@@ -2862,8 +2862,29 @@ class FullyTabletControl extends utils.Adapter {
                         if (chargerid) {
 
                             this.log.debug(`load object data from ${chargerid}`);
-                            const chargeDevice = await this.getForeignStateAsync(chargerid);
-                            chargeDeviceValue[index] = chargeDevice == null ? false : chargeDevice.val;
+                            chargeDevice = await this.getForeignStateAsync(chargerid);
+
+                            if (chargeDevice !== null) {
+
+                                switch (typeof (chargeDevice.val)) {
+                                    case 'number':
+                                        if (chargeDevice.val === 0) {
+                                            chargeDeviceValue[index] = false;
+                                        }
+                                        else if (chargeDevice.val === 1) {
+                                            chargeDeviceValue[index] = true;
+                                        }
+                                        break;
+
+                                    case 'boolean':
+                                        chargeDeviceValue[index] = chargeDevice.val;
+                                        break;
+                                }
+                            }
+                            else {
+                                chargeDeviceValue[index] = false;
+                            }
+
                             this.log.debug(`chargerid: ` + chargerid + ` val: ` + chargeDeviceValue[index]);
                         }
                         else {
@@ -2873,6 +2894,7 @@ class FullyTabletControl extends utils.Adapter {
                         }
 
                         this.log.debug(`Check which mode is switched on`);
+                        if (chargeDevice !== null) {
                         if (power_mode === 'true') {
                             this.log.debug(`Charging cycle is switched on`);
 
@@ -2881,33 +2903,76 @@ class FullyTabletControl extends utils.Adapter {
                                 messageCharging[index] = false;
                                 this.log.debug(`Check whether the battery level is lower than the set start limit`);
                                 if (bat <= loadStart && !chargeDeviceValue[index]) {
-                                    this.log.debug(`Battery is at the start of charging limit start charging`);
-                                    await this.setForeignStateAsync(chargerid, true, false);
-                                    this.log.info(`${tabletName[index]} charging started`);
 
+                                    switch (typeof (chargeDevice.val)) {
+                                        case 'number':
 
+                                            this.log.debug(`Battery is at the start of charging limit start charging`);
+                                            await this.setForeignStateAsync(chargerid, 1, false);
+                                            this.log.info(`${tabletName[index]} charging started`);
+
+                                            break;
+
+                                        case 'boolean':
+
+                                            this.log.debug(`Battery is at the start of charging limit start charging`);
+                                            await this.setForeignStateAsync(chargerid, true, false);
+                                            this.log.info(`${tabletName[index]} charging started`);
+
+                                            break;
+                                    }
                                 }
                                 else if (bat >= loadStop && chargeDeviceValue[index]) {
-                                    this.log.debug(`Battery level has reached the set charging stop, stop charging`);
-                                    messageSend[index] = false;
-                                    await this.setForeignStateAsync(chargerid, false, false);
-                                    this.log.info(`${tabletName[index]} Charging cycle ended`);
+                                    switch (typeof (chargeDevice.val)) {
+                                        case 'number':
 
+                                            this.log.debug(`Battery level has reached the set charging stop, stop charging`);
+                                            messageSend[index] = false;
+                                            await this.setForeignStateAsync(chargerid, 0, false);
+                                            this.log.info(`${tabletName[index]} Charging cycle ended`);
+
+                                            break;
+
+                                        case 'boolean':
+
+                                            this.log.debug(`Battery level has reached the set charging stop, stop charging`);
+                                            messageSend[index] = false;
+                                            await this.setForeignStateAsync(chargerid, false, false);
+                                            this.log.info(`${tabletName[index]} Charging cycle ended`);
+
+                                            break;
+                                    }
                                 }
                             }
                             else {
                                 this.log.warn(`${tabletName[index]} Charger ID for Charging cycle not specified`);
                             }
-
                         }
                         else if (power_mode === 'false') {
                             this.log.debug(`Continuous current mode is activated`);
 
                             if (chargerid) {
-                                messageCharging[index] = false;
-                                if (!chargeDeviceValue[index]) this.log.debug(`The adapter now switches on the socket`);
-                                if (!chargeDeviceValue[index]) await this.setForeignStateAsync(chargerid, true, false);
-                                if (!chargeDeviceValue[index]) this.log.debug(`${tabletName[index]} Continuous current`);
+
+                                switch (typeof (chargeDevice.val)) {
+                                    case 'number':
+
+                                        messageCharging[index] = false;
+                                        if (!chargeDeviceValue[index]) this.log.debug(`The adapter now switches on the socket`);
+                                        if (!chargeDeviceValue[index]) await this.setForeignStateAsync(chargerid, 1, false);
+                                        if (!chargeDeviceValue[index]) this.log.debug(`${tabletName[index]} Continuous current`);
+
+                                        break;
+
+                                    case 'boolean':
+
+                                        messageCharging[index] = false;
+                                        if (!chargeDeviceValue[index]) this.log.debug(`The adapter now switches on the socket`);
+                                        if (!chargeDeviceValue[index]) await this.setForeignStateAsync(chargerid, true, false);
+                                        if (!chargeDeviceValue[index]) this.log.debug(`${tabletName[index]} Continuous current`);
+
+                                        break;
+                                }
+
 
                             }
                             else {
@@ -2920,46 +2985,81 @@ class FullyTabletControl extends utils.Adapter {
                                 messageCharging[index] = true;
                             }
                         }
-
+                    }
 
                         if (power_mode !== 'off') {
-                            if (telegram_enabled === true) {
+                            if (chargeDevice !== null) {
+                                if (telegram_enabled === true) {
 
-                                if (bat <= 18 && !chargeDeviceValue[index] && !telegramStatus[index] || bat <= 18 && chargeDeviceValue[index] && !telegramStatus[index]) {
-                                    telegramStatus[index] = true;
-                                    this.onMessage(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${tabletName[index]} Tablet charging function has detected a malfunction, the tablet is not charging, please check it !!!`, User);
-                                    this.log.warn(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + `  ${tabletName[index]} Tablet charging function has detected a malfunction, the tablet is not charging, please check it !!!`);
-                                    await this.setForeignStateAsync(chargerid[index], true, false);
-                                    this.setState(`device.${tabletName[index]}.charging_warning`, {val: true, ack: true});
+                                    if (bat <= 18 && !chargeDeviceValue[index] && !telegramStatus[index] || bat <= 18 && chargeDeviceValue[index] && !telegramStatus[index]) {
+
+                                        switch (typeof (chargeDevice.val)) {
+                                            case 'number':
+
+                                                telegramStatus[index] = true;
+                                                this.onMessage(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${tabletName[index]} Tablet charging function has detected a malfunction, the tablet is not charging, please check it !!!`, User);
+                                                this.log.warn(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + `  ${tabletName[index]} Tablet charging function has detected a malfunction, the tablet is not charging, please check it !!!`);
+                                                await this.setForeignStateAsync(chargerid[index], 1, false);
+                                                this.setState(`device.${tabletName[index]}.charging_warning`, {val: true, ack: true});
+
+                                                break;
+
+                                            case 'boolean':
+
+                                                telegramStatus[index] = true;
+                                                this.onMessage(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${tabletName[index]} Tablet charging function has detected a malfunction, the tablet is not charging, please check it !!!`, User);
+                                                this.log.warn(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + `  ${tabletName[index]} Tablet charging function has detected a malfunction, the tablet is not charging, please check it !!!`);
+                                                await this.setForeignStateAsync(chargerid[index], true, false);
+                                                this.setState(`device.${tabletName[index]}.charging_warning`, {val: true, ack: true});
+
+                                                break;
+                                        }
+
+                                    }
+                                    else if (bat > 18 && chargeDeviceValue[index] && telegramStatus[index]) {
+                                        telegramStatus[index] = false;
+                                        this.onMessage(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${tabletName[index]} Tablet is charging the problem has been fixed.`, User);
+                                        this.log.warn(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${tabletName[index]} Tablet is charging the problem has been fixed.`);
+                                        this.setState(`device.${tabletName[index]}.charging_warning`, {val: false, ack: true});
+                                    }
 
                                 }
-                                else if (bat > 18 && chargeDeviceValue[index] && telegramStatus[index]) {
-                                    telegramStatus[index] = false;
-                                    this.onMessage(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${tabletName[index]} Tablet is charging the problem has been fixed.`, User);
-                                    this.log.warn(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${tabletName[index]} Tablet is charging the problem has been fixed.`);
-                                    this.setState(`device.${tabletName[index]}.charging_warning`, {val: false, ack: true});
-                                }
+                                else {
+                                    if (bat >= 20 && !messageSend[index]) {
+                                        messageSend[index] = false;
 
-                            }
-                            else {
-                                if (bat >= 20 && !messageSend[index]) {
-                                    messageSend[index] = false;
+                                    }
+                                    if (bat <= 18 && !chargeDeviceValue[index] && !AlertMessageSend[index] || bat <= 18 && chargeDeviceValue[index] && !AlertMessageSend[index]) {
 
-                                }
-                                if (bat <= 18 && !chargeDeviceValue[index] && !AlertMessageSend[index] || bat <= 18 && chargeDeviceValue[index] && !AlertMessageSend[index]) {
-                                    AlertMessageSend[index] = true;
-                                    messageSend[index] = false;
-                                    this.log.warn(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${tabletName[index]} Tablet charging function has detected a malfunction, the tablet is not charging, please check it !!!`);
-                                    await this.setForeignStateAsync(chargerid[index], true, false);
-                                    this.setState(`device.${tabletName[index]}.charging_warning`, {val: true, ack: true});
+                                        switch (typeof (chargeDevice.val)) {
+                                            case 'number':
 
-                                }
-                                else if (bat > 18 && bat < 20 && chargeDeviceValue[index] && !messageSend[index]) {
+                                                AlertMessageSend[index] = true;
+                                                messageSend[index] = false;
+                                                this.log.warn(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${tabletName[index]} Tablet charging function has detected a malfunction, the tablet is not charging, please check it !!!`);
+                                                await this.setForeignStateAsync(chargerid[index], 1, false);
+                                                this.setState(`device.${tabletName[index]}.charging_warning`, {val: true, ack: true});
 
-                                    messageSend[index] = true;
-                                    AlertMessageSend[index] = false;
-                                    this.log.info(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${tabletName[index]} Tablet is charging the problem has been fixed.`);
-                                    this.setState(`device.${tabletName[index]}.charging_warning`, {val: false, ack: true});
+                                                break;
+
+                                            case 'boolean':
+
+                                                AlertMessageSend[index] = true;
+                                                messageSend[index] = false;
+                                                this.log.warn(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${tabletName[index]} Tablet charging function has detected a malfunction, the tablet is not charging, please check it !!!`);
+                                                await this.setForeignStateAsync(chargerid[index], true, false);
+                                                this.setState(`device.${tabletName[index]}.charging_warning`, {val: true, ack: true});
+
+                                                break;
+                                        }
+                                    }
+                                    else if (bat > 18 && bat < 20 && chargeDeviceValue[index] && !messageSend[index]) {
+
+                                        messageSend[index] = true;
+                                        AlertMessageSend[index] = false;
+                                        this.log.info(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${tabletName[index]} Tablet is charging the problem has been fixed.`);
+                                        this.setState(`device.${tabletName[index]}.charging_warning`, {val: false, ack: true});
+                                    }
                                 }
                             }
                         }
