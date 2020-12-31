@@ -19,7 +19,6 @@
   },
   "dependencies": {
     "@iobroker/adapter-core": "^2.4.0",
-    "@sentry/node": "^5.27.6",
     "axios": "^0.21.1",
     "cron": "^1.8.2",
     "suncalc2": "^1.8.1",
