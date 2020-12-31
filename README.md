@@ -260,8 +260,8 @@ _______________________________
 -->
 ### __WORK IN PROGRESS__
 * (xXBJXx) test-and-release.yml update
-* (xXBJXx) admin Seite Überarbeitet
-* (xXBJXx) prüfung auf 0/1 für Steckdosen implementiert
+* (xXBJXx) admin Page Revised
+* (xXBJXx) check for 0/1 implemented for sockets (issue #66)
 
 ### 0.3.0-beta.5 (2020-10-24)
 * (xXBJXx) reading of the user from telegram adapter instance 0-10 added
