@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "fully-tablet-control",
-        "version": "0.3.0-beta.5",
+        "version": "0.3.1-beta.0",
         "news": {
+            "0.3.1-beta.0": {
+                "en": "test-and-release.yml update\nadmin Page Revised\ncheck for 0/1 implemented for sockets (issue #66)",
+                "de": "test-and-release.yml update\nadmin Seite überarbeitet\nÜberprüfen Sie, ob 0/1 für Sockets implementiert ist (Problem Nr. 66).",
+                "ru": "test-and-release.yml обновить\nСтраница администратора изменена\nпроверка на 0/1 реализована для сокетов (проблема # 66)",
+                "pt": "atualização test-and-release.yml\npágina do administrador revisada\nverificar 0/1 implementado para soquetes (problema # 66)",
+                "nl": "test-and-release.yml update\nadmin Pagina herzien\ncontroleer op 0/1 geïmplementeerd voor sockets (probleem # 66)",
+                "fr": "mise à jour test-and-release.yml\nPage d'administration révisée\nvérifier 0/1 implémenté pour les sockets (problème # 66)",
+                "it": "aggiornamento test-and-release.yml\nPagina admin rivista\ncontrolla per 0/1 implementato per i socket (problema # 66)",
+                "es": "actualización test-and-release.yml\nPágina de administración revisada\ncompruebe si hay 0/1 implementado para sockets (problema # 66)",
+                "pl": "Aktualizacja test-and-release.yml\nStrona administratora poprawiona\nsprawdź zaimplementowane 0/1 dla gniazd (problem # 66)",
+                "zh-cn": "test-and-release.yml更新\n管理员页面已修改\n检查为套接字实现的0/1（问题＃66）"
+            },
             "0.3.0-beta.5": {
                 "en": "reading of the user from telegram adapter instance 0-10 added\nCurrent page added to Device Info",
                 "de": "Lesen des Benutzers von der Telegrammadapterinstanz 0-10 hinzugefügt\nAktuelle Seite zu Geräteinfo hinzugefügt",

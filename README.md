@@ -258,7 +258,7 @@ _______________________________
  Placeholder for the next version (at the beginning of the line):
  ### __WORK IN PROGRESS__ ( - falls nicht benötigt löschen sonst klammern entfernen und nach dem - dein text schreiben )
 -->
-### __WORK IN PROGRESS__
+### 0.3.1-beta.0 (2020-12-31)
 * (xXBJXx) test-and-release.yml update
 * (xXBJXx) admin Page Revised
 * (xXBJXx) check for 0/1 implemented for sockets (issue #66)
