@@ -18,6 +18,9 @@
 
 # !!! ACHTUNG Beta Release !!!
 
+### !!! ACHTUNG !!! VOR DEM KONFIGURIREN MUSS DER ADAPTER GESTARTET SEIN DA SONST KEINE KONFGURATION MÖGLICH IST.
+![login](admin/media/Adapter_Offline.png)
+
 ## Browser Admin Login
 
 ![login](admin/media/browser-admin-login.png)
@@ -28,7 +31,7 @@
 
 2. Timer in Minuten, um den Fully Browser wieder in den Vordergrund zu holen (empfohlen für Amazon Fire Tablet mit Alexa da der Fully Browser in den Hintergrund gesetzt wird, wenn Alexa auf dem Tablet getriggert wird Z.B. "Alexa wie ist das Wetter heute").
 
-3. Tablet Name wird verwendet, um die verschiedenen Tablets in separaten Ordner zu erstellen, wenn kein Name angegeben wird wir die Ip Adresse als Name verwendet.
+3. Tablet Name wird verwendet, um die verschiedenen Tablets in separaten Ordner zu erstellen, wenn kein Name angegeben wurde wir die Ip Adresse als Name verwendet.
 
 4. Ip Adresse von deinem Tablet.
 
@@ -38,7 +41,13 @@
 
 7. Hier könne einzelne Tablets ausgeschaltet werden so das diese nicht mehr abgefragt werden.
 
+8. Mit diesem Button kann man eine vorab Prüfung starten, ob das Tablet erreichbar ist, dazu muss IP / Port und Passwort eingetragen sein.\
+   Wenn ein Tablet nicht sofort erreichbar ist oder die Antwort länger dauert wird ein Ladesymbol angezeigt dann bitte einfach warten, bis das Ergebnis angezeigt wird \
+   ![login](admin/media/Loading.png) \
+   Sobald das Ergebnis vorliegt wird ein Fenster aufpoppen, wo dann stecht welches Tablet Online oder offline ist.\
+   ![login](admin/media/Device_test.png)
 ## Für Jedes Tablet, das auf der ersten Seite angelegt wurde, muss auf den nächsten Seiten ein Eintrag in der Tabelle angelegt werden!
+
 
 ## Ladegerät
 
@@ -46,7 +55,7 @@
 
 Hier muss die ID von dem Ladegerät eingetragen werden damit das Tablet geladen werden kann.
 
-1. Ladesteuerung Einschalten oder ausschalten wenn ausgeschaltet ignoriert der Adapter alles was mit dem laden des Tablets zu tun hat es werden auch keine Warnungen bei schwacher Batterie ausgegeben.
+1. Ladesteuerung Einschalten oder ausschalten, wenn ausgeschaltet ignoriert der Adapter alles was mit dem laden des Tablets zu tun hat es werden auch keine Warnungen bei schwacher Batterie ausgegeben.
 
 2. Nicht Ausfüllen wird automatisch nach einem reload ausgefüllt.
 
@@ -238,7 +247,7 @@ Hier sind 2 Dp.
 
 ![objects_vis](admin/media/objects_vis.png)
 
-1. hier ist der Timer der die Rest Zeit anzeigt.
+1. hier ist der Timer der die Restzeit anzeigt.
 
 2. das ist der Dp für die Widget 8 View’s.
 
@@ -251,6 +260,9 @@ _______________________________
 -->
 ### __WORK IN PROGRESS__
 * (xXBJXx) test-and-release.yml update
+* (xXBJXx) admin Seite Überarbeitet
+* (xXBJXx) prüfung auf 0/1 für Steckdosen implementiert
+
 ### 0.3.0-beta.5 (2020-10-24)
 * (xXBJXx) reading of the user from telegram adapter instance 0-10 added
 * (xXBJXx) Current page added to Device Info
