@@ -1,11 +1,12 @@
+
 <html>
 
 <head>
     <!-- Load ioBroker scripts and styles-->
     <!-- Materialze style -->
     <link rel="stylesheet" type="text/css" href="../../css/adapter.css"/>
-    <link rel="stylesheet" type="text/css" href="../../lib/css/materialize.css">
-    <!--    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">-->
+    <!--        <link rel="stylesheet" type="text/css" href="../../lib/css/materialize.css">-->
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     
     <!--    For menu to select states styles-->
     <link type="text/css" rel="stylesheet" href="../../lib/css/themes/jquery-ui/default/jquery-ui.min.css">
@@ -25,402 +26,452 @@
     <script type="text/javascript" src="../../lib/js/selectID.js"></script>
     
     <!-- Load our own files -->
-  <link rel="stylesheet" type="text/css" href="style.css"/>
-  <script type="text/javascript" src="words.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css"/>
+    <link rel="stylesheet" type="text/css" href="materialize.css"/>
+    <script type="text/javascript" src="words.js"></script>
+    <script type="text/javascript">
+        
+          let brightness = [];
+          let screenSaver = [];
+          let devices = [];
+          let telegram = [];
+          let motion = [];
+          let charger = [];
+          let visView = [];
+          let TabletName = [];
+          let firstName = [];
+          let telegramAdapter = false;
+          let visAdapter = false;
+          let active = false;
 
-  <script type="text/javascript">
-
-            let brightness = [];
-            let screenSaver = [];
-            let devices = [];
-            let telegram = [];
-            let motion = [];
-            let charger = [];
-            let visView = [];
-            let TabletName = [];
-            let firstName = [];
-            let telegramAdapter = false;
-            let visAdapter = false;
-
-            function getObjectView() {
+          function showHideSettings() {
+              let telegram_enabled = JSON.parse($('#telegram_enabled').val());
+              let chargerON = JSON.parse($('#chargerON').val());
+              let viewChange_enabled = JSON.parse($('#viewChange_enabled').val());
+              let motionSensor_enabled = JSON.parse($('#motionSensor_enabled').val());
+              let screenSaverON = JSON.parse($('#screenSaverON').val());
+              let brightness_on = JSON.parse($('#brightness_on').val());
+              let timeMode = JSON.parse($('#timeMode').val());
     
-                socket.emit('getObjectView', 'system', 'instance', {startkey: 'system.adapter.', endkey: 'system.adapter.\u9999'}, (err, state) => {
-                    if (!err) {
-                        var result = [];
-                        const arrTemp = [];
-                        $.each(state.rows, (index, element) => {
-                            result.push(element.value);
-                        });
-                        $.each(result, (index, element) => {
+              //charger Table show/hide
+              if (chargerON) {
+                  $('#charger').show();
+              }
+              else {
+                  $('#charger').hide();
+              }
+    
+              //Brightness Table show/hide
+              if (brightness_on) {
+        
+                  $('#brightness').show();
+                  $('.sub-title-table').show();
+                  $('.sub-title-TimeControl').show();
+        
+                  // Time Mode ( Astro or Manuel )
+                  if (timeMode) {
+                      $('.selectBrightness_time').hide();
+                      $('.selectAstroBrightness').show();
+                      $('.selectBrightness_checkInterval').show();
+                      $('.AstroBrightness').show();
+                  }
+                  else {
+                      $('.AstroBrightness').hide();
+                      $('.selectAstroBrightness').show();
+                      $('.selectBrightness_checkInterval').show();
+                      $('.selectBrightness_time').show();
+                  }
+              }
+              else {
+                  $('#brightness').hide();
+                  $('.AstroBrightness').hide();
+                  $('.selectBrightness_time').hide();
+                  $('.selectAstroBrightness').hide();
+                  $('.selectBrightness_checkInterval').hide();
+                  $('.sub-title-TimeControl').hide();
+                  $('.sub-title-table').hide();
+              }
+    
+              //screenSaver Table show/hide
+              if (screenSaverON) {
+                  $('#screenSaver').show();
+              }
+              else {
+                  $('#screenSaver').hide();
+              }
+    
+              //motionSensor Table show/hide
+              if (motionSensor_enabled) {
+                  $('#motion').show();
+              }
+              else {
+                  $('#motion').hide();
+              }
+    
+              // VisView mode and Table show/hide
+              if (visAdapter) {
+                  $('.visAdapter').hide();
+        
+                  if (viewChange_enabled) {
+                      $('.viewMode').show();
+                      $('#visView').show();
+                  }
+                  else {
+                      $('.viewMode').hide();
+                      $('#visView').hide();
+                  }
+        
+              }
+              else {
+                  $('.visAdapter').show();
+              }
+    
+              // telegram Tabel show/hide
+              if (telegram_enabled) {
+                  if (telegramAdapter) {
+            
+                      $('.TelegramAdapter').hide();
+            
+                      if (firstName.length !== 0) {
+                          $('.telegram').show();
+                          $('.TelegramUser').hide();
+                      }
+                      else {
+                          $('.telegram').hide();
+                          $('.TelegramUser').show();
+                      }
+                  }
+                  else {
+                      $('.TelegramAdapter').show();
+                  }
+              }
+              else {
+                  $('.telegram').hide();
+                  $('.TelegramAdapter').hide();
+                  $('.TelegramUser').hide();
+              }
+          }
+
+          //the function loadSettings has to exist ...
+          function load(settings, onChange) {
+              if (!settings) return;
+              let namespace = `${adapter}.${instance}`;
+              socket.emit('getState', `system.adapter.${namespace}.alive`, function (err, state) {
+                  active = /*common.enabled ||*/ (state && state.val);
+                  if (!active) {
+                      console.log('Not_active');
+                      $('#divInterval').hide();
+                      $('#divFireTablet').hide();
+                      $('.devicesLogin').hide();
+                      $('#tabTrigger').addClass('disabled');
+                      $('#tabBrightness').addClass('disabled');
+                      $('#tabScreen').addClass('disabled');
+                      $('#tabTelegram').addClass('disabled');
+                      $('#tabMotion').addClass('disabled');
+                      $('#tabVis_view').addClass('disabled');
+                      $('.adapter_offline').show();
+            
+                  }
+                  else {
+                      $('.adapter_offline').hide();
+                      $('#divInterval').show();
+                      $('#divFireTablet').show();
+                      $('.devicesLogin').show();
+                      $('#tabTrigger').removeClass('disabled');
+                      $('#tabBrightness').removeClass('disabled');
+                      $('#tabScreen').removeClass('disabled');
+                      $('#tabTelegram').removeClass('disabled');
+                      $('#tabMotion').removeClass('disabled');
+                      $('#tabVis_view').removeClass('disabled');
+            
+                  }
+              });
+    
+              devices = settings.devices || [];
+              brightness = settings.brightness || [];
+              screenSaver = settings.screenSaver || [];
+              telegram = settings.telegram || [];
+              motion = settings.motion || [];
+              charger = settings.charger || [];
+              visView = settings.visView || [];
+    
+              $('.value').each(function () {
+                  const $key = $(this);
+                  const id = $key.attr('id');
+                  if ($key.attr('type') === 'checkbox') {
+                      // do not call onChange direct, because onChange could expect some arguments
+                      $key.prop('checked', settings[id])
+                              .on('change', () => {
+                                  showHideSettings();
+                                  onChange();
+                              });
+                  }
+                  else {
+                      // do not call onChange direct, because onChange could expect some arguments
+                      $key.val(settings[id])
+                              .on('change', () => {
+                                  showHideSettings();
+                                  onChange();
+                              })
+                              .on('keyup', () => onChange());
+                  }
+              });
+    
+              onChange(false);
+              // reinitialize all the Materialize labels on the page if you are dynamically adding inputs:
+    
+              showHideSettings();
+              $('#check').click(() => {
+                  let Tablet_Name = `</div>`;
+        
+                  //Große Massage Fenster muss noch getestet werden
+                  // showMessage('Hallo das ist ein Test', 'Test')
+        
+                  // if (!active) {
+                  //     console.log('Not_active');
+                  //     const toastHTML = `<i class="warn_icon material-icons left">warning</i><span class="warning_msg"> ${_(' Please activate instance ')} </span><i class="warn_icon material-icons right">warning</i>`;
+                  //     M.toast({html: toastHTML, displayLength: 5000, inDuration: 50, outDuration: 50, classes: 'orange'});
+                  //     return;
+                  // }
+                  $('.Load_ring').show();
+                  sendTo(namespace, 'pingTablet', devices, (result) => {
+            
+                      for (const n in devices) {
+                          if (devices[n].enabled) {
+                              if (result[n] && devices[n].enabled) {
+                                  Tablet_Name += `<i class="online_icon material-icons left">tablet</i><span class="online_msg"> ${devices[n].name}: Online  </span><i class="online_icon material-icons right">mobile_friendly</i>`;
+                                  Tablet_Name += `<div></div>`
+                              }
+                              else {
+                                  Tablet_Name += `<i class="warn_icon material-icons left">warning</i><span class="offline_msg"> ${devices[n].name}: Offline </span><i class="warn_icon material-icons right">mobile_off</i>`;
+                                  Tablet_Name += `<div></div>`
+                              }
+                          }
+                          else {
+                              Tablet_Name += `<i class="Disabled_icon material-icons left">mobile_off</i><span class="Disabled_msg"> ${devices[n].name} ${_('is Disabled')} </span><i class="Disabled_icon material-icons right">search_off</i>`;
+                              Tablet_Name += `<div></div>`
+                          }
+                      }
+                      Tablet_Name += `</div>`
+                      $('.Load_ring').hide();
+                      setTimeout(() => {
+                          M.toast({html: Tablet_Name, displayLength: 2000, inDuration: 50, outDuration: 50});
+                      }, 100)
+                  });
+              });
+              $('#bri_addDevice').click(() => {
+                  $(document).ready(function () {
+                      for (const n in devices) {
+                          TabletName[n] = devices[n].name;
                 
-                            for (let i = 0; i < 10; i++) {
-                    
-                                if (element._id === `system.adapter.telegram.${i}`) {
-                                    telegramAdapter = true;
-                                    arrTemp.push(`telegram.${i}.communicate.users`)
-                                }
-                    
-                            }
+                          for (let i = 0; i < brightness.length; i++) {
+                              brightness[i].TabletName = TabletName[i];
+                          }
+                      }
+                      setTimeout(function () {
+                          $('#brightness tr').each(function () {
+                              $(this).find('td:first .values-input').prop('disabled', true);
+                          });
+                      }, 130);
+                  });
+              });
+              $('#addScreensaver').click(() => {
+                  $(document).ready(function () {
+                      for (const n in devices) {
+                          TabletName[n] = devices[n].name;
                 
-                            if (element._id === 'system.adapter.vis.0') {
-                                visAdapter = true;
-                                showHideSettings()
-                            }
+                          for (let i = 0; i < screenSaver.length; i++) {
+                              screenSaver[i].TabletName = TabletName[i];
+                          }
+                      }
+                      setTimeout(function () {
+                          $('#screenSaver tr').each(function () {
+                              $(this).find('td:first .values-input').prop('disabled', true);
+                          });
+                      }, 130);
+                  });
+        
+              });
+              $('#chAddDevice').click(() => {
+                  $(document).ready(function () {
+                      for (const n in devices) {
+                          TabletName[n] = devices[n].name;
                 
-                        });
+                          for (let i = 0; i < charger.length; i++) {
+                              charger[i].TabletName = TabletName[i];
+                          }
+                      }
+                      setTimeout(function () {
+                          $('#charger tr').each(function () {
+                              $(this).find('td:first .values-input').prop('disabled', true);
+                          });
+                      }, 130);
+                  });
+              });
+    
+              sendTo(namespace, 'TelegramUser', 'TelegramUser', (result) => {
+                  console.log(result)
+        
+                  telegramAdapter = result.telegramAdapter;
+                  visAdapter = result.visAdapter;
+                  $(document).ready(function () {
             
-                        if (arrTemp.length > 0) readUser(arrTemp)
-            
-                    }
-                    else {
-                        console.error(err);
-                    }
-                });
-            }
+                      firstName = result.User;
+                      $('#User').attr('data-options', firstName.join(';'));
+                      console.log(firstName.join(';'))
+                      values2table('telegram', telegram, onChange);
+                      showHideSettings();
+                  });
+              });
+    
+    
+              values2table('brightness', brightness, onChange);
+              values2table('screenSaver', screenSaver, onChange);
+              values2table('devices', devices, onChange);
+              values2table('motion', motion, onChange);
+              values2table('charger', charger, onChange);
+              // values2table('telegram', telegram, onChange);
+              values2table('visView', visView, onChange);
+    
+              setTimeout(function () {
+        
+                  $('#charger tr').each(function () {
+                      $(this).find('td:first .values-input').prop('disabled', true);
+                  });
+                  $('#brightness tr').each(function () {
+                      $(this).find('td:first .values-input').prop('disabled', true);
+                  });
+                  $('#screenSaver tr').each(function () {
+                      $(this).find('td:first .values-input').prop('disabled', true);
+                  });
+        
+        
+              }, 130);
+    
+              if (M) M.updateTextFields();
+    
+          }
 
-            function readUser(adapterList) {
-    
-                for (const listKey in adapterList) {
-        
-                    socket.emit('getState', adapterList[listKey], (err, state) => {
-                        if (!err) {
-                            if (state !== null || state !== undefined) {
-                                if (state.val !== '') {
-                        
-                                    $.each(JSON.parse(state.val), (index, element) => {
-                            
-                                        if (element.firstName !== undefined) {
-                                
-                                            firstName.push(`${element.firstName}/${element.firstName}`);
-                                
-                                        }
-                                        else if (element.userName !== undefined) {
-                                
-                                            firstName.push(`${element.userName}/${element.userName}`);
-                                
-                                        }
-                                        else {
-                                            firstName.push('');
-                                        }
-                            
-                                    });
-                        
-                                    $('#User').attr('data-options', firstName.join(';'));
-                        
-                                }
-                                else {
-                        
-                                    showHideSettings();
-                        
-                                }
-                            }
-                
-                        }
-                        else {
-                            console.error(err);
-                        }
-                    });
-                }
-    
-            }
+          //######  END LOAD  #######
 
-            function showHideSettings() {
-                let telegram_enabled = JSON.parse($('#telegram_enabled').val());
-                let chargerON = JSON.parse($('#chargerON').val());
-                let viewChange_enabled = JSON.parse($('#viewChange_enabled').val());
-                let motionSensor_enabled = JSON.parse($('#motionSensor_enabled').val());
-                let screenSaverON = JSON.parse($('#screenSaverON').val());
-                let brightness_on = JSON.parse($('#brightness_on').val());
-                let timeMode = JSON.parse($('#timeMode').val());
-    
-                //charger Table show/hide
-                if (chargerON) {
-                    $('#charger').show();
-                }
-                else {
-                    $('#charger').hide();
-                }
-    
-                //Brightness Table show/hide
-                if (brightness_on) {
-        
-                    $('#brightness').show();
-                    $('.sub-title-table').show();
-                    $('.sub-title-TimeControl').show();
-        
-                    // Time Mode ( Astro or Manuel )
-                    if (timeMode) {
-                        $('.selectBrightness_time').hide();
-                        $('.selectAstroBrightness').show();
-                        $('.selectBrightness_checkInterval').show();
-                        $('.AstroBrightness').show();
-                    }
-                    else {
-                        $('.AstroBrightness').hide();
-                        $('.selectAstroBrightness').show();
-                        $('.selectBrightness_checkInterval').show();
-                        $('.selectBrightness_time').show();
-                    }
-                }
-                else {
-                    $('#brightness').hide();
-                    $('.AstroBrightness').hide();
-                    $('.selectBrightness_time').hide();
-                    $('.selectAstroBrightness').hide();
-                    $('.selectBrightness_checkInterval').hide();
-                    $('.sub-title-TimeControl').hide();
-                    $('.sub-title-table').hide();
-                }
-    
-                //screenSaver Table show/hide
-                if (screenSaverON) {
-                    $('#screenSaver').show();
-                }
-                else {
-                    $('#screenSaver').hide();
-                }
-    
-                //motionSensor Table show/hide
-                if (motionSensor_enabled) {
-                    $('#motion').show();
-                }
-                else {
-                    $('#motion').hide();
-                }
-    
-                // VisView mode and Table show/hide
-                if (visAdapter) {
-                    $('.visAdapter').hide();
-        
-                    if (viewChange_enabled) {
-                        $('.viewMode').show();
-                        $('#visView').show();
-                    }
-                    else {
-                        $('.viewMode').hide();
-                        $('#visView').hide();
-                    }
-        
-                }
-                else {
-                    $('.visAdapter').show();
-                }
-    
-                // telegram Tabel show/hide
-                if (telegram_enabled) {
-                    if (telegramAdapter) {
-            
-                        $('.TelegramAdapter').hide();
-            
-                        if (firstName.length !== 0) {
-                            $('.telegram').show();
-                            $('.TelegramUser').hide();
-                        }
-                        else {
-                            $('.telegram').hide();
-                            $('.TelegramUser').show();
-                        }
-                    }
-                    else {
-                        $('.TelegramAdapter').show();
-                    }
-                }
-                else {
-                    $('.telegram').hide();
-                    $('.TelegramAdapter').hide();
-                    $('.TelegramUser').hide();
-                }
-            }
+          //###########  SAVE  #########
+
+          // ... and the function save has to exist.
+          // you have to make sure the callback is called with the settings object as first param!
 
 
-            getObjectView();
+          function save(callback) {
+              // example: select elements with class=value and build settings object
+              const obj = {};
+              $('.value').each(function () {
+                  const $this = $(this);
+                  if ($this.attr('type') === 'checkbox') {
+                      obj[$this.attr('id')] = $this.prop('checked');
+                  }
+                  else {
+                      obj[$this.attr('id')] = $this.val();
+                  }
+              });
+    
+    
+              //save table2values
+              obj.brightness = table2values('brightness');
+              obj.screenSaver = table2values('screenSaver');
+              obj.devices = table2values('devices');
+              obj.telegram = table2values('telegram');
+              obj.motion = table2values('motion');
+              obj.charger = table2values('charger');
+              obj.visView = table2values('visView');
+    
+    
+              callback(obj);
+          }
 
-            //the function loadSettings has to exist ...
-            function load(settings, onChange) {
-                if (!settings) return;
-    
-                devices = settings.devices || [];
-                brightness = settings.brightness || [];
-                screenSaver = settings.screenSaver || [];
-                telegram = settings.telegram || [];
-                motion = settings.motion || [];
-                charger = settings.charger || [];
-                visView = settings.visView || [];
-    
-                for (const n in devices) {
-        
-                    TabletName[n] = devices[n].name;
-                    for (var i = 0; i < brightness.length; i++) {
-                        brightness[i].TabletName = TabletName[i];
-                        console.log('devices: ' + JSON.stringify(brightness));
-            
-                    }
-        
-                    for (var i = 0; i < charger.length; i++) {
-                        charger[i].TabletName = TabletName[i];
-                        console.log('devices: ' + JSON.stringify(charger));
-            
-                    }
-        
-                    for (var i = 0; i < screenSaver.length; i++) {
-                        screenSaver[i].TabletName = TabletName[i];
-                        console.log('devices: ' + JSON.stringify(screenSaver));
-            
-                    }
-        
-                }
-    
-    
-                $('.value').each(function () {
-                    const $key = $(this);
-                    const id = $key.attr('id');
-                    if ($key.attr('type') === 'checkbox') {
-                        // do not call onChange direct, because onChange could expect some arguments
-                        $key.prop('checked', settings[id])
-                                .on('change', () => {
-                                    showHideSettings();
-                                    onChange();
-                                });
-                    }
-                    else {
-                        // do not call onChange direct, because onChange could expect some arguments
-                        $key.val(settings[id])
-                                .on('change', () => {
-                                    showHideSettings();
-                                    onChange();
-                                })
-                                .on('keyup', () => onChange());
-                    }
-                });
-    
-    
-                onChange(false);
-                // reinitialize all the Materialize labels on the page if you are dynamically adding inputs:
-                showHideSettings();
-                if (M) M.updateTextFields();
-    
-    
-                values2table('brightness', brightness, onChange);
-                values2table('screenSaver', screenSaver, onChange);
-                values2table('devices', devices, onChange);
-                values2table('motion', motion, onChange);
-                values2table('charger', charger, onChange);
-                values2table('telegram', telegram, onChange);
-                values2table('visView', visView, onChange);
-            }
-
-            //######  END LOAD  #######
-
-            //###########  SAVE  #########
-
-            // ... and the function save has to exist.
-            // you have to make sure the callback is called with the settings object as first param!
-            function save(callback) {
-                // example: select elements with class=value and build settings object
-                const obj = {};
-                $('.value').each(function () {
-                    const $this = $(this);
-                    if ($this.attr('type') === 'checkbox') {
-                        obj[$this.attr('id')] = $this.prop('checked');
-                    }
-                    else {
-                        obj[$this.attr('id')] = $this.val();
-                    }
-                });
-    
-                obj.brightness = table2values('brightness');
-                obj.screenSaver = table2values('screenSaver');
-                obj.devices = table2values('devices');
-                obj.telegram = table2values('telegram');
-                obj.motion = table2values('motion');
-                obj.charger = table2values('charger');
-                obj.visView = table2values('visView');
-    
-                callback(obj);
-            }
-
-            //######  END SAVE  #######
+          //######  END SAVE  #######
 
     </script>
-
 </head>
 
 <body>
-    <!-- you have to put your config page in a div with id adapter-container -->
+<!-- you have to put your config page in a div with id adapter-container -->
     <div class="m adapter-container">
         <div class="row">
             <!-- Tabs: Menu -->
             <div class="col s12">
                 <ul class="tabs">
                     <!-- Single tab entry -->
-                    <li class="tab col s2"><a href="#tab-devices" class="translate">fully browser</a></li>
-                    <li class="tab col s1.7"><a href="#tab-charger" class="translate">charger</a></li>
-                    <li class="tab col s1.7"><a href="#tab-brightness" class="translate">brightness</a></li>
-                    <li class="tab col s1.7"><a href="#tab-screen" class="translate">screen</a></li>
-                    <li class="tab col s2"><a href="#tab-telegram" class="translate">telegram</a></li>
-                    <li class="tab col s1.7"><a href="#tab-motion" class="translate">motion detector</a></li>
-                    <li class="tab col s1.7"><a href="#tab-vis_view" class="translate">vis view</a></li>
+                    <li id='tabDevices' class="tab col s2"><a href="#tab-devices" class="translate">fully browser</a></li>
+                    <li id='tabTrigger' class="tab col s1.7"><a href="#tab-charger" class="translate">charger</a></li>
+                    <li id='tabBrightness' class="tab col s1.7"><a href="#tab-brightness" class="translate">brightness</a></li>
+                    <li id='tabScreen' class="tab col s1.7"><a href="#tab-screen" class="translate">screen</a></li>
+                    <li id='tabTelegram' class="tab col s2"><a href="#tab-telegram" class="translate">telegram</a></li>
+                    <li id='tabMotion' class="tab col s1.7"><a href="#tab-motion" class="translate">motion detector</a></li>
+                    <li id='tabVis_view' class="tab col s1.7"><a href="#tab-vis_view" class="translate">vis view</a></li>
                 </ul>
             </div>
-    
-            <!-- end Tabs: Menu -->
     
             <!-- Tab with id "tab-devices" -->
             <div id="tab-devices" class="col s12 " style="top: 20px">
             <!-- logo -->
                 <div class="row">
                     <div class="col s12 m4 l2">
-                        <img src="tablet-control.png"><img class="logo">
+                        <img src="tablet-control.png"><h3 class='adapter_offline translate' style='display: none'>The adapter is deactivated please activate the adapter to unlock all functions</h3><img class="logo">
                     </div>
                 </div>
                 <!-- end logo -->
     
                 <!-- polling interval -->
-                <div class="col s1.1 input-field ">
+                <div id='divInterval' class="col s1.1 input-field ">
                     <input type="number" class="value intervalField" id="interval" max="3600" min="0" value="30"/>
                     <label for="interval" class="translate">interval</label>
                 </div>
                 <!-- end polling interval -->
     
                 <!-- back to Fully Browser -->
-                <div class="col m4 l4 input-field">
+                <div id='divFireTablet' class="col m4 l4 input-field">
                   <input type="number" class="value intervalField" id="fireTablet" max="120" min="1" value="3">
                     <label class="translate" for="fireTablet">back to Fully Browser in (min)</label>
                     <div class="row"></div>
                     <span class="translate tabletMessage">Brings the browser back to the foreground</span>
                 </div>
                 <!-- end back to Fully Browser -->
+                
+                <div class="Load_ring">
+                    Loading
+                    <span id='Load_span' style='display: none'></span>
+                </div>
     
                 <!-- fully browser login table -->
-                    <div class="col s12 devicesLogin" id="devices">
-                        <div class="row center">
-                            <a class="waves-effect waves-light btn table-button-add button:hover translate">add Device</a>
-                        </div>
-                        <div class="table-values-div">
-                            <table class="table-values">
-                                <thead>
-                                    <tr>
-                                        <th class="header translate" data-name="_index">Nr.</th>
-                                        <th class="header name translate" data-name="name">name</th>
-                                        <th class="header translate" data-name="ip">ip</th>
-                                        <th class="header translate" data-type="number" data-default="2323" data-name="port">port</th>
-                                        <th class="header translate" data-name="password" data-type="password">password</th>
-                                        <th class="header translate" data-default="true" data-type="checkbox" data-name="enabled">enabled</th>
-                                        <th class="header translate" data-buttons="delete">delete</th>
-                                    </tr>
-                                </thead>
-                            </table>
-                        </div>
+                <div class="col s12 devicesLogin" id="devices">
+                    <div class="row center">
+                        <a id='addDevice' class="waves-effect waves-light btn table-button-add button:hover"><i class="material-icons left">tablet</i><span class='translate'> add Device</span></a>
+                        <a id='check' class="waves-effect waves-light btn button:hover"><i class="material-icons left">mobile_friendly</i><span class='translate'> Check connection</span></a>
                     </div>
+                    <div class="table-values-div">
+                        <table class="table-values ">
+                            <thead>
+                            <tr>
+                                <th class="header devicesIndex translate" data-name="_index">Nr.</th>
+                                <th class="header devicesName translate" data-name="name">name</th>
+                                <th class="header devicesIp translate" data-name="ip">ip</th>
+                                <th class="header devicesPort translate" data-type="number" data-default="2323" data-name="port">port</th>
+                                <th class="header devicesPw translate" data-name="password" data-type="password">password</th>
+                                <th class="header devicesEnabled translate" data-default="true" data-type="checkbox" data-name="enabled">enabled</th>
+                                <th class="header Delete translate" data-buttons="delete">delete</th>
+                            </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
                 <!-- end fully browser table -->
             </div>
             <!-- end Tab with id "tab-devices" -->
     
             <!-- Tab with id "tab-charger" -->
-                <div id="tab-charger" class="col s12">
-                    <div class="row"></div>
-                    <!-- charger table -->
-                    <div class="row">
+            <div id="tab-charger" class="col s12">
+                <div class="row"></div>
+                <!-- charger table -->
+                <div class="row">
                     <!-- select screen active -->
                     <div class="input-field col s3 selectCharger">
                         <select class="value" autofocus="autofocus" data-default="false" id="chargerON">
@@ -429,38 +480,36 @@
                         </select>
                         <label for="chargerON"></label>
                     </div>
-                        <!-- end select screen active -->
-
-                        <div class="col s12 charger" id="charger">
-                            <div class="row center add-btn">
-                                <a id='chAddDevice' class="waves-effect waves-light btn table-button-add translate">add Device</a>
-                            </div>
-                            <div class="table-values-div">
-                                <table class="table-values">
-                                    <thead>
-                                        <tr>
-                                            <th class="header translate" data-name="_index">Nr.</th>
-                                            <th class="header translate" data-name="TabletName">name</th>
-                                            <th class="header translate" data-type='OID' data-name="chargerid">chargerID</th>
-                                            <th class="header translate" data-default='true' data-type="select" data-name="power_mode" data-options="false/Continuous current;true/Charge cycle;off/Off">power_mode</th>
-                                            <th class="header translate" data-default="20" data-type="select" data-name="loadStart" data-options="20/20%;25/25%;30/30%;35/35%;40/40%;45/45%;50/50%">load start</th>
-                                            <th class="header translate" data-default="85" data-type="select" data-name="loadStop" data-options="55/55%;60/60%;65/65%;70/70%;75/75%;80/80%;85/85%;90/90%;95/95%;100/100%">load stop</th>
-                                            <th class="header translate" data-buttons="delete">delete</th>
-                                        </tr>
-                                    </thead>
-                                </table>
-                            </div>
+                    <!-- end select screen active -->
+                    <div class="col s12 charger" id="charger">
+                        <div class="row center add-btn">
+                            <a id='chAddDevice' class="waves-effect waves-light btn table-button-add"><i class="material-icons left">charging_station</i><span class='translate'> add charger Device</span></a>
+                        </div>
+                        <div class="table-values-div">
+                            <table class="table-values">
+                                <thead>
+                                <tr>
+                                    <th class="header chargerName translate" data-name="TabletName">name</th>
+                                    <th class="header chargerId translate" data-type='OID' data-name="chargerid">chargerID</th>
+                                    <th class="header chargerMode translate" data-type="select" data-name="power_mode" data-options="true/Charge cycle;false/Continuous current;off/Off">power_mode</th>
+                                    <th class="header chargerStart translate" data-default="20" data-type="select" data-name="loadStart" data-options="20/20%;25/25%;30/30%;35/35%;40/40%;45/45%;50/50%">load start</th>
+                                    <th class="header chargerStop translate" data-default="85" data-type="select" data-name="loadStop" data-options="55/55%;60/60%;65/65%;70/70%;75/75%;80/80%;85/85%;90/90%;95/95%;100/100%">load stop</th>
+                                    <th class="header Delete translate" data-buttons="delete">delete</th>
+                                </tr>
+                                </thead>
+                            </table>
                         </div>
                     </div>
-                    <!-- end charger table -->
                 </div>
+                <!-- end charger table -->
+            </div>
             <!-- end Tab with id "tab-charger" -->
     
             <!-- Tab with id "tab-brightness" -->
-                <div id="tab-brightness" class="col s12">
-                    <div class="row"></div>
-                    <!-- brightness table -->
-                    <div class="row">
+            <div id="tab-brightness" class="col s12">
+                <div class="row"></div>
+                <!-- brightness table -->
+                <div class="row">
                     <!-- select screen active -->
                     <div class="input-field col s3 selectScreenOn">
                         <select class="value" autofocus="autofocus" id="screen_on">
@@ -469,81 +518,78 @@
                         </select>
                         <label for="screen_on"></label>
                     </div>
-                        <!-- end select screen active -->
-                
+                    <!-- end select screen active -->
                     <div class="row"></div>
                     <p class="translate sub-title-brightness">brightness</p>
-                        <!-- select screen active -->
-                               <div class="input-field col s3 selectBrightness_on">
-                                <select class="value" autofocus="autofocus" id="brightness_on">
-                                    <option class="translate" value="true">Brightness control via config page</option>
-                                    <option class="translate" value="false" selected>Brightness control manually</option>
-                                </select>
-                            <label for="brightness_on"></label>
-                            </div>
-                        <!-- end select screen active -->
-    
-                        <!-- select screen active -->
-                            <div class="input-field col s3 selectAstroBrightness">
-                                <select class="value" autofocus="autofocus" id="timeMode">
-                                    <option class="translate" value="true" selected>astro time</option>
-                                    <option class="translate" value="false">Manual time</option>
-                                </select>
-                                <label for="timeMode"></label>
-                            </div>
-                        <!-- end select screen active -->
-                        <!-- check interval -->
+                    <!-- select screen active -->
+                    <div class="input-field col s3 selectBrightness_on">
+                        <select class="value" autofocus="autofocus" id="brightness_on">
+                            <option class="translate" value="true">Brightness control via config page</option>
+                            <option class="translate" value="false" selected>Brightness control manually</option>
+                        </select>
+                        <label for="brightness_on"></label>
+                    </div>
+                    <!-- end select screen active -->
+                    <!-- select screen active -->
+                    <div class="input-field col s3 selectAstroBrightness">
+                        <select class="value" autofocus="autofocus" id="timeMode">
+                            <option class="translate" value="true" selected>astro time</option>
+                            <option class="translate" value="false">Manual time</option>
+                        </select>
+                        <label for="timeMode"></label>
+                    </div>
+                    <!-- end select screen active -->
+                    <!-- check interval -->
                     <div class="col s3 input-field selectBrightness_checkInterval">
                         <input class="value" type="number" id="checkInterval" max="120" min="1" value="5"/>
                         <label class="selectBrightness_label translate" for="checkInterval">Check interval</label>
                     </div>
-    
-                        <!-- end check interval -->
-                        <div class="row"></div>
+                    <!-- end check interval -->
+                    <div class="row"></div>
                     <p class="translate sub-title-TimeControl">TimeControl</p>
-                        <!-- select screen active -->
-                         <div class="input-field col s3 AstroBrightness">
-                            <select class="value" autofocus="autofocus" id="astroSelectDay">
-                                <option class="translate" value="sunrise" selected>sunrise</option>
-                                <option class="translate" value="sunriseEnd">sunriseEnd</option>
-                                <option class="translate" value="goldenHourEnd">goldenHourEnd</option>
-                                <option class="translate" value="solarNoon">solarNoon</option>
-                                <option class="translate" value="goldenHour">goldenHour</option>
-                                <option class="translate" value="sunsetStart">sunsetStart</option>
-                                <option class="translate" value="sunset">sunset</option>
-                                <option class="translate" value="dusk">dusk</option>
-                                <option class="translate" value="nauticalDusk">nauticalDusk</option>
-                                <option class="translate" value="night">night</option>
-                                <option class="translate" value="nadir">nadir</option>
-                                <option class="translate" value="nightEnd">nightEnd</option>
-                                <option class="translate" value="nauticalDawn">nauticalDawn</option>
-                                <option class="translate" value="dawn">dawn</option>
-                            </select>
-                            <label class="selectBrightness_label translate" for="astroSelectDay">astro time day</label>
-                        </div>
-                        <!-- end select screen active -->
-                        <!-- select screen active -->
-                        <div class="input-field col s3 AstroBrightness">
-                            <select class="value" autofocus="autofocus" id="astroSelectNight">
-                                <option class="translate" value="sunrise">sunrise</option>
-                                <option class="translate" value="sunriseEnd">sunriseEnd</option>
-                                <option class="translate" value="goldenHourEnd">goldenHourEnd</option>
-                                <option class="translate" value="solarNoon">solarNoon</option>
-                                <option class="translate" value="goldenHour">goldenHour</option>
-                                <option class="translate" value="sunsetStart">sunsetStart</option>
-                                <option class="translate" value="sunset" selected>sunset</option>
-                                <option class="translate" value="dusk">dusk</option>
-                                <option class="translate" value="nauticalDusk">nauticalDusk</option>
-                                <option class="translate" value="night">night</option>
-                                <option class="translate" value="nadir">nadir</option>
-                                <option class="translate" value="nightEnd">nightEnd</option>
-                                <option class="translate" value="nauticalDawn">nauticalDawn</option>
-                                <option class="translate" value="dawn">dawn</option>
-                            </select>
-                            <label class="selectBrightness_label translate" for="astroSelectNight">astro time night</label>
-                        </div>
-                        <!-- end select screen active -->
-                        <!-- select dayTime active -->
+                    <!-- select screen active -->
+                    <div class="input-field col s3 AstroBrightness">
+                        <select class="value" autofocus="autofocus" id="astroSelectDay">
+                            <option class="translate" value="sunrise" selected>sunrise</option>
+                            <option class="translate" value="sunriseEnd">sunriseEnd</option>
+                            <option class="translate" value="goldenHourEnd">goldenHourEnd</option>
+                            <option class="translate" value="solarNoon">solarNoon</option>
+                            <option class="translate" value="goldenHour">goldenHour</option>
+                            <option class="translate" value="sunsetStart">sunsetStart</option>
+                            <option class="translate" value="sunset">sunset</option>
+                            <option class="translate" value="dusk">dusk</option>
+                            <option class="translate" value="nauticalDusk">nauticalDusk</option>
+                            <option class="translate" value="night">night</option>
+                            <option class="translate" value="nadir">nadir</option>
+                            <option class="translate" value="nightEnd">nightEnd</option>
+                            <option class="translate" value="nauticalDawn">nauticalDawn</option>
+                            <option class="translate" value="dawn">dawn</option>
+                        </select>
+                        <label class="selectBrightness_label translate" for="astroSelectDay">astro time day</label>
+                    </div>
+                    <!-- end select screen active -->
+                    <!-- select screen active -->
+                    <div class="input-field col s3 AstroBrightness">
+                        <select class="value" autofocus="autofocus" id="astroSelectNight">
+                            <option class="translate" value="sunrise">sunrise</option>
+                            <option class="translate" value="sunriseEnd">sunriseEnd</option>
+                            <option class="translate" value="goldenHourEnd">goldenHourEnd</option>
+                            <option class="translate" value="solarNoon">solarNoon</option>
+                            <option class="translate" value="goldenHour">goldenHour</option>
+                            <option class="translate" value="sunsetStart">sunsetStart</option>
+                            <option class="translate" value="sunset" selected>sunset</option>
+                            <option class="translate" value="dusk">dusk</option>
+                            <option class="translate" value="nauticalDusk">nauticalDusk</option>
+                            <option class="translate" value="night">night</option>
+                            <option class="translate" value="nadir">nadir</option>
+                            <option class="translate" value="nightEnd">nightEnd</option>
+                            <option class="translate" value="nauticalDawn">nauticalDawn</option>
+                            <option class="translate" value="dawn">dawn</option>
+                        </select>
+                        <label class="selectBrightness_label translate" for="astroSelectNight">astro time night</label>
+                    </div>
+                    <!-- end select screen active -->
+                    <!-- select dayTime active -->
                     <div class="input-field col s3 selectBrightness_time">
                         <select class="value" autofocus="autofocus" id="dayTime">
                             <option class="translate" value="4">4Clock</option>
@@ -556,9 +602,8 @@
                         </select>
                         <label class="selectBrightness_label translate" for="dayTime">In the morning</label>
                     </div>
-                        <!-- end select dayTime active -->
-    
-                        <!-- select midTime active -->
+                    <!-- end select dayTime active -->
+                    <!-- select midTime active -->
                     <div class="input-field col s3 selectBrightness_time">
                         <select class="value" autofocus="autofocus" id="midTime">
                             <option class="translate" value="11">11Clock</option>
@@ -571,9 +616,8 @@
                         </select>
                         <label class="selectBrightness_label translate" for="midTime">afternoon</label>
                     </div>
-                        <!-- end select midTime active -->
-    
-                        <!-- select nightTime active -->
+                    <!-- end select midTime active -->
+                    <!-- select nightTime active -->
                     <div class="input-field col s3 selectBrightness_time">
                         <select class="value" autofocus="autofocus" id="nightTime">
                             <option class="translate" value="18">18Clock</option>
@@ -585,59 +629,58 @@
                         </select>
                         <label class="selectBrightness_label translate" for="nightTime">At night</label>
                     </div>
-                        <!-- end select nightTime active -->
+                    <!-- end select nightTime active -->
     
-                        <!-- select brightness table -->
-                        <div class="row"></div>
-                         <p class="translate sub-title-table">table</p>
-                        
+                    <!-- select brightness table -->
+                    <div class="row"></div>
+                    <p class="translate sub-title-table">table</p>
                     <div class="col s12 briTables" id="brightness">
-                            <div class="row center">
-                                <a id='bri_addDevice' class="waves-effect waves-light btn table-button-add translate">add Device</a>
-                            </div>
-                            <div class="table-values-div">
-                                <table class="table-values">
-                                    <thead>
-                                        <tr>
-                                            <th class="header translate" data-name="_index">Nr.</th>
-                                            <th class="header translate" data-name="TabletName">name</th>
-                                                <th class="header day translate" data-name="dayBrightness" data-default="20" data-type="select" data-options="0/0%;1/1%;2/2%;3/3%;4/4%;5/5%;6/6%;7/7%;8/8%;9/9%;10/10%;11/11%;12/12%;13/13%;14/14%;15/15%;16/16%;17/17%;18/18%;19/19%;20/20%;
-                                                    ;21/21%;22/22%;23/23%;24/24%;25/25%;26/26%;27/27%;28/28%;29/29%;30/30%;31/31%;32/32%;33/33%;34/34%;35/35%;36/36%;37/37%;38/38%;39/39%;40/40%;
-                                                    ;41/41%;42/42%;43/43%;44/44%;45/45%;46/46%;47/47%;48/48%;49/49%;50/50%;51/51%;52/52%;53/53%;54/54%;55/55%;56/56%;57/57%;58/58%;59/59%;60/60%;
-                                                    ;61/61%;62/62%;63/63%;64/64%;65/65%;66/66%;67/67%;68/68%;69/69%;70/70%;71/71%;72/72%;73/73%;74/74%;75/75%;76/76%;77/77%;78/78%;79/79%;80/80%;
-                                                    ;81/81%;82/82%;83/83%;84/84%;85/85%;86/86%;87/87%;88/88%;89/89%;90/90%;91/91%;92/92%;93/93%;94/94%;95/95%;96/96%;97/97%;98/98%;100/100%">morningtime brightness</th>
-                                            
-                                                <th class="header midTime translate" data-name="midTimeBrightness" data-default="20" data-type="select" data-options="0/0%;1/1%;2/2%;3/3%;4/4%;5/5%;6/6%;7/7%;8/8%;9/9%;10/10%;11/11%;12/12%;13/13%;14/14%;15/15%;16/16%;17/17%;18/18%;19/19%;20/20%;
-                                                    ;21/21%;22/22%;23/23%;24/24%;25/25%;26/26%;27/27%;28/28%;29/29%;30/30%;31/31%;32/32%;33/33%;34/34%;35/35%;36/36%;37/37%;38/38%;39/39%;40/40%;
-                                                    ;41/41%;42/42%;43/43%;44/44%;45/45%;46/46%;47/47%;48/48%;49/49%;50/50%;51/51%;52/52%;53/53%;54/54%;55/55%;56/56%;57/57%;58/58%;59/59%;60/60%;
-                                                    ;61/61%;62/62%;63/63%;64/64%;65/65%;66/66%;67/67%;68/68%;69/69%;70/70%;71/71%;72/72%;73/73%;74/74%;75/75%;76/76%;77/77%;78/78%;79/79%;80/80%;
-                                                    ;81/81%;82/82%;83/83%;84/84%;85/85%;86/86%;87/87%;88/88%;89/89%;90/90%;91/91%;92/92%;93/93%;94/94%;95/95%;96/96%;97/97%;98/98%;100/100%">midTime brightness</th>
-                                            
-                                                <th class="header night translate" data-name="nightBrightness" data-default="0" data-type="select" data-options="0/0%;1/1%;2/2%;3/3%;4/4%;5/5%;6/6%;7/7%;8/8%;9/9%;10/10%;11/11%;12/12%;13/13%;14/14%;15/15%;16/16%;17/17%;18/18%;19/19%;20/20%;
-                                                    ;21/21%;22/22%;23/23%;24/24%;25/25%;26/26%;27/27%;28/28%;29/29%;30/30%;31/31%;32/32%;33/33%;34/34%;35/35%;36/36%;37/37%;38/38%;39/39%;40/40%;
-                                                    ;41/41%;42/42%;43/43%;44/44%;45/45%;46/46%;47/47%;48/48%;49/49%;50/50%;51/51%;52/52%;53/53%;54/54%;55/55%;56/56%;57/57%;58/58%;59/59%;60/60%;
-                                                    ;61/61%;62/62%;63/63%;64/64%;65/65%;66/66%;67/67%;68/68%;69/69%;70/70%;71/71%;72/72%;73/73%;74/74%;75/75%;76/76%;77/77%;78/78%;79/79%;80/80%;
-                                                    ;81/81%;82/82%;83/83%;84/84%;85/85%;86/86%;87/87%;88/88%;89/89%;90/90%;91/91%;92/92%;93/93%;94/94%;95/95%;96/96%;97/97%;98/98%;100/100%">Night brightness</th>
-                                                   
-                                                <th class="header loading translate" data-name="loadingLowering" data-default="10" data-type="select" data-options="0/0%;1/1%;2/2%;3/3%;4/4%;5/5%;6/6%;7/7%;8/8%;9/9%;10/10%;11/11%;12/12%;13/13%;14/14%;15/15%;16/16%;17/17%;18/18%;19/19%;20/20%;
-                                                    ;21/21%;22/22%;23/23%;24/24%;25/25%;26/26%;27/27%;28/28%;29/29%;30/30%;31/31%;32/32%;33/33%;34/34%;35/35%;36/36%;37/37%;38/38%;39/39%;40/40%;
-                                                    ;41/41%;42/42%;43/43%;44/44%;45/45%;46/46%;47/47%;48/48%;49/49%;50/50%;51/51%;52/52%;53/53%;54/54%;55/55%;56/56%;57/57%;58/58%;59/59%;60/60%;
-                                                    ;61/61%;62/62%;63/63%;64/64%;65/65%;66/66%;67/67%;68/68%;69/69%;70/70%;71/71%;72/72%;73/73%;74/74%;75/75%;76/76%;77/77%;78/78%;79/79%;80/80%;
-                                                    ;81/81%;82/82%;83/83%;84/84%;85/85%;86/86%;87/87%;88/88%;89/89%;90/90%;91/91%;92/92%;93/93%;94/94%;95/95%;96/96%;97/97%;98/98%;100/100%">lowering when loading</th>
-                                                <th class="header translate " data-default="true" data-type="checkbox" data-name="enabledBrightness">enabled</th>
-                                            <th class="header translate" data-buttons="delete">delete</th>
-                                        </tr>
-                                    </thead>
-                                </table>
-                            </div>
+                        <div class="row center">
+                            <a id='bri_addDevice' class="waves-effect waves-light btn table-button-add "><i class="material-icons left">brightness_medium</i><span class='translate'> add brightness control</span></a>
+                        </div>
+                        <div class="table-values-div">
+                            <table class="table-values">
+                                <thead>
+                                <tr>
+                                    <!--  <th class="header translate" data-name="_index">Nr.</th>-->
+                                    <th class="header brightnessName translate" data-name="TabletName">name</th>
+                                    <th class="header brightnessday translate" data-name="dayBrightness" data-default="20" data-type="select" data-options="0/0%;1/1%;2/2%;3/3%;4/4%;5/5%;6/6%;7/7%;8/8%;9/9%;10/10%;11/11%;12/12%;13/13%;14/14%;15/15%;16/16%;17/17%;18/18%;19/19%;20/20%;
+                                    ;21/21%;22/22%;23/23%;24/24%;25/25%;26/26%;27/27%;28/28%;29/29%;30/30%;31/31%;32/32%;33/33%;34/34%;35/35%;36/36%;37/37%;38/38%;39/39%;40/40%;
+                                    ;41/41%;42/42%;43/43%;44/44%;45/45%;46/46%;47/47%;48/48%;49/49%;50/50%;51/51%;52/52%;53/53%;54/54%;55/55%;56/56%;57/57%;58/58%;59/59%;60/60%;
+                                    ;61/61%;62/62%;63/63%;64/64%;65/65%;66/66%;67/67%;68/68%;69/69%;70/70%;71/71%;72/72%;73/73%;74/74%;75/75%;76/76%;77/77%;78/78%;79/79%;80/80%;
+                                    ;81/81%;82/82%;83/83%;84/84%;85/85%;86/86%;87/87%;88/88%;89/89%;90/90%;91/91%;92/92%;93/93%;94/94%;95/95%;96/96%;97/97%;98/98%;100/100%">morningtime brightness</th>
+                                    
+                                    <th class="header brightnessMidTime translate" data-name="midTimeBrightness" data-default="20" data-type="select" data-options="0/0%;1/1%;2/2%;3/3%;4/4%;5/5%;6/6%;7/7%;8/8%;9/9%;10/10%;11/11%;12/12%;13/13%;14/14%;15/15%;16/16%;17/17%;18/18%;19/19%;20/20%;
+                                    ;21/21%;22/22%;23/23%;24/24%;25/25%;26/26%;27/27%;28/28%;29/29%;30/30%;31/31%;32/32%;33/33%;34/34%;35/35%;36/36%;37/37%;38/38%;39/39%;40/40%;
+                                    ;41/41%;42/42%;43/43%;44/44%;45/45%;46/46%;47/47%;48/48%;49/49%;50/50%;51/51%;52/52%;53/53%;54/54%;55/55%;56/56%;57/57%;58/58%;59/59%;60/60%;
+                                    ;61/61%;62/62%;63/63%;64/64%;65/65%;66/66%;67/67%;68/68%;69/69%;70/70%;71/71%;72/72%;73/73%;74/74%;75/75%;76/76%;77/77%;78/78%;79/79%;80/80%;
+                                    ;81/81%;82/82%;83/83%;84/84%;85/85%;86/86%;87/87%;88/88%;89/89%;90/90%;91/91%;92/92%;93/93%;94/94%;95/95%;96/96%;97/97%;98/98%;100/100%">midTime brightness</th>
+                                    
+                                    <th class="header brightnessNight translate" data-name="nightBrightness" data-default="0" data-type="select" data-options="0/0%;1/1%;2/2%;3/3%;4/4%;5/5%;6/6%;7/7%;8/8%;9/9%;10/10%;11/11%;12/12%;13/13%;14/14%;15/15%;16/16%;17/17%;18/18%;19/19%;20/20%;
+                                    ;21/21%;22/22%;23/23%;24/24%;25/25%;26/26%;27/27%;28/28%;29/29%;30/30%;31/31%;32/32%;33/33%;34/34%;35/35%;36/36%;37/37%;38/38%;39/39%;40/40%;
+                                    ;41/41%;42/42%;43/43%;44/44%;45/45%;46/46%;47/47%;48/48%;49/49%;50/50%;51/51%;52/52%;53/53%;54/54%;55/55%;56/56%;57/57%;58/58%;59/59%;60/60%;
+                                    ;61/61%;62/62%;63/63%;64/64%;65/65%;66/66%;67/67%;68/68%;69/69%;70/70%;71/71%;72/72%;73/73%;74/74%;75/75%;76/76%;77/77%;78/78%;79/79%;80/80%;
+                                    ;81/81%;82/82%;83/83%;84/84%;85/85%;86/86%;87/87%;88/88%;89/89%;90/90%;91/91%;92/92%;93/93%;94/94%;95/95%;96/96%;97/97%;98/98%;100/100%">Night brightness</th>
+                                    
+                                    <th class="header brightnessLoading translate" data-name="loadingLowering" data-default="10" data-type="select" data-options="0/0%;1/1%;2/2%;3/3%;4/4%;5/5%;6/6%;7/7%;8/8%;9/9%;10/10%;11/11%;12/12%;13/13%;14/14%;15/15%;16/16%;17/17%;18/18%;19/19%;20/20%;
+                                    ;21/21%;22/22%;23/23%;24/24%;25/25%;26/26%;27/27%;28/28%;29/29%;30/30%;31/31%;32/32%;33/33%;34/34%;35/35%;36/36%;37/37%;38/38%;39/39%;40/40%;
+                                    ;41/41%;42/42%;43/43%;44/44%;45/45%;46/46%;47/47%;48/48%;49/49%;50/50%;51/51%;52/52%;53/53%;54/54%;55/55%;56/56%;57/57%;58/58%;59/59%;60/60%;
+                                    ;61/61%;62/62%;63/63%;64/64%;65/65%;66/66%;67/67%;68/68%;69/69%;70/70%;71/71%;72/72%;73/73%;74/74%;75/75%;76/76%;77/77%;78/78%;79/79%;80/80%;
+                                    ;81/81%;82/82%;83/83%;84/84%;85/85%;86/86%;87/87%;88/88%;89/89%;90/90%;91/91%;92/92%;93/93%;94/94%;95/95%;96/96%;97/97%;98/98%;100/100%">lowering when loading</th>
+                                    <th class="header brightnessEnabled translate " data-default="true" data-type="checkbox" data-name="enabledBrightness">enabled</th>
+                                    <th class="header Delete translate" data-buttons="delete">delete</th>
+                                </tr>
+                                </thead>
+                            </table>
                         </div>
                     </div>
-                    <!-- end brightness table -->
                 </div>
+                <!-- end brightness table -->
+            </div>
             <!-- end Tab with id "tab-brightness" -->
     
             <!-- Tab with id "tab-screen"-->
-                <div id="tab-screen" class="col s12">
+            <div id="tab-screen" class="col s12">
                 <div class="row">
                     <!-- select screen active -->
                     <div class="input-field col s3 selectScreen">
@@ -648,40 +691,39 @@
                         <label for="screenSaverON"></label>
                     </div>
                     <!-- end select screen active -->
-    
-                    <!-- telegram table -->
+                    <!-- screenSaver table -->
                     <div class="col s12 screenSaver" id="screenSaver">
                         <div class="row center add-btn">
-                            <a class="waves-effect waves-light btn table-button-add translate">add Device</a>
+                             <a id='addScreensaver' class="waves-effect waves-light btn table-button-add"><i class="material-icons left">settings_system_daydream</i><span class='translate'> add screenSaver</span></a>
                         </div>
                         <div class="table-values-div">
                             <table class="table-values">
                                 <thead>
                                     <tr>
-                                        <th class="header translate" data-name="_index">Nr.</th>
-                                        <th class="header translate" data-name="TabletName">name</th>
-                                        <th class="header translate" data-name="screensaverName">Description of the screensaver</th>
-                                        <th class="header translate" data-name="url">YouTube-Url or wallpaper-Url</th>
-                                        <th class="header translate" data-type="select" data-name="screensaverMode" data-options="true/YouTube Url;false/Wallpaper Url">Screensaver Mode</th>
-                                        <th class="header translate" data-type="select" data-name="minute" data-options="1/01 min;2/02 min;3/03 min;4/04 min;5/05 min;6/06 min;7/07 min;8/08 min;9/09 min;10/10 min;
-                                            ;11/11 min;12/12 min;13/13 min;14/14 min;15/15 min;16/16 min;17/17 min;18/18 min;19/19 min;20/20 min;
-                                            ;21/21 min;22/22 min;23/23 min;24/24 min;25/25 min;26/26 min;27/27 min;28/28 min;29/29 min;30/30 min;
-                                            ;31/31 min;32/32 min;33/33 min;34/34 min;35/35 min;36/36 min;37/37 min;38/38 min;39/39 min;40/40 min;
-                                            ;41/41 min;42/42 min;43/43 min;44/44 min;45/45 min;46/46 min;47/47 min;48/48 min;49/49 min;50/50 min;
-                                            ;51/51 min;52/52 min;53/53 min;54/54 min;55/55 min;56/56 min;57/57 min;58/58 min;59/59 min;60/60 min">minute</th>
-                                        <th class="header translate " data-default="true" data-type="checkbox" data-name="enabled">enableBrightnessSync</th>
-                                        <th class="header translate" data-buttons="delete">delete</th>
+                                        <!-- <th class="header translate" data-name="_index">Nr.</th>-->
+                                        <th class="header screensaverName translate" data-name="TabletName">name</th>
+                                        <th class="header screensaverDesc translate" data-name="screensaverName">Description of the screensaver</th>
+                                        <th class="header screensaverUrl translate" data-name="url">YouTube-Url or wallpaper-Url</th>
+                                        <th class="header screensaverMode screensaverMode translate" data-type="select" data-name="screensaverMode" data-options="true/YouTube Url;false/Wallpaper Url">Screensaver Mode</th>
+                                        <th class="header screensaverMinute translate" data-type="select" data-name="minute" data-options="1/01 min;2/02 min;3/03 min;4/04 min;5/05 min;6/06 min;7/07 min;8/08 min;9/09 min;10/10 min;
+                                        ;11/11 min;12/12 min;13/13 min;14/14 min;15/15 min;16/16 min;17/17 min;18/18 min;19/19 min;20/20 min;
+                                        ;21/21 min;22/22 min;23/23 min;24/24 min;25/25 min;26/26 min;27/27 min;28/28 min;29/29 min;30/30 min;
+                                        ;31/31 min;32/32 min;33/33 min;34/34 min;35/35 min;36/36 min;37/37 min;38/38 min;39/39 min;40/40 min;
+                                        ;41/41 min;42/42 min;43/43 min;44/44 min;45/45 min;46/46 min;47/47 min;48/48 min;49/49 min;50/50 min;
+                                        ;51/51 min;52/52 min;53/53 min;54/54 min;55/55 min;56/56 min;57/57 min;58/58 min;59/59 min;60/60 min">minute</th>
+                                        <th class="header screensaverEnabled translate " data-default="true" data-type="checkbox" data-name="enabled">enableBrightnessSync</th>
+                                        <th class="header Delete translate" data-buttons="delete">delete</th>
                                     </tr>
                                 </thead>
                             </table>
                         </div>
-                        <!-- end screen table -->
                     </div>
+                    <!-- end screenSaver table -->
                 </div>
             </div>
-            <!-- end screen table -->
+            <!-- end tab-screen -->
     
-            <!-- Tab with id "tab-tables" -->
+            <!-- tab with id "tab-telegram" -->
             <div id="tab-telegram" class="col s12">
                 <div class="row">
                     <!-- select telegram active -->
@@ -690,141 +732,1017 @@
                             <option class="translate" value="true">Warning activated</option>
                             <option class="translate" value="false" selected>Warning deactivated</option>
                         </select>
-                         <label for="telegram_enabled"></label>
+                        <label for="telegram_enabled"></label>
                     </div>
-
+                    <!-- end select telegram -->
+                    <!-- telegram Table -->
                     <div class="col s12 telegram" id="telegram">
                              <div class="row center add-btn">
-                                 <a id="addUser" class="waves-effect waves-light btn table-button-add translate">add User</a>
+                                 <a id="addUser" class="waves-effect waves-light btn table-button-add"><i class="material-icons left">person_add</i><span class='translate'> add User</span></a>
                              </div>
                              <div class="table-values-div">
-                                 <table class="table-values">
+                                 <table class="centerTable table-values">
                                      <thead>
                                          <tr>
-                                             <th id="User" data-name="telegramUser" class="header translate" data-type="select" data-default="" data-options="auswahl">telegramUser</th>
+                                             <th id="User" class="header telegram_User translate" data-name="telegramUser" data-type="select" data-default="" data-options="auswahl">telegramUser</th>
                                              <!--  multi User select-->
                                              <!-- <th id="User" data-name="telegramUser"  class="header translate" data-type="select multiple" data-default="" data-options="auswahl">telegramUser</th>-->
-                                             <th class="header translate" data-buttons="delete">delete</th>
+                                             <th class="header Delete translate" data-buttons="delete">delete</th>
                                          </tr>
                                      </thead>
                                 </table>
                             </div>
                         </div>
-            
+                    <!-- end telegram Table -->
                     <h3 class='TelegramAdapter translate'>Telegram adapter is not installed please install the Telegram adapter before activating the function.</h3>
                     <h3 class='TelegramUser translate'>There are no Telegram users available</h3>
-            
                 </div>
             </div>
-            <!-- end telegram table -->
+            <!-- end tab-telegram -->
     
             <!-- Tab with id "tab-motion" -->
             <div id="tab-motion" class="col s12">
-                    <div class="row">
-                        <!-- select motion active -->
-                        <div class="input-field col s3 selectMotion">
-                            <select class="value" autofocus="autofocus" id="motionSensor_enabled">
-                                <option class="translate" value="true">Activate motion sensors</option>
-                                <option class="translate" value="false" selected>Deactivate motion sensors</option>
-                            </select>
-                            <label for="motionSensor_enabled"></label>
-                        </div>
-                        <!-- end select motion active -->
-                
+                <div class="row">
+                    <!-- select motion active -->
+                    <div class="input-field col s3 selectMotion">
+                        <select class="value" autofocus="autofocus" id="motionSensor_enabled">
+                            <option class="translate" value="true">Activate motion sensors</option>
+                            <option class="translate" value="false" selected>Deactivate motion sensors</option>
+                        </select>
+                        <label for="motionSensor_enabled"></label>
+                    </div>
+                    <!-- end select motion active -->
                     <div class="row"></div>
-                        <!-- motion table -->
+                    <!-- motion table -->
                     <div class="col s12 motion" id="motion">
                         <div class="row center add-btn">
-                            <a class="waves-effect waves-light btn table-button-add translate">add Device</a>
+                            <a id='addMotion' class="waves-effect waves-light btn table-button-add"><i class="material-icons left">settings_remote</i><span class='translate'> add Motion Sensor Device</span></a>
                         </div>
                         <div class="table-values-div">
                             <table class="table-values">
                                 <thead>
                                     <tr>
-                                        <th class="header translate" data-name="_index">Nr.</th>
-                                        <th class="header translate" data-type='OID' data-name="motionid">motionID</th>
-                                        <th class="header translate" data-default="true" data-type="checkbox" data-name="enabled">enabled</th>
-                                        <th class="header translate" data-buttons="delete">delete</th>
+                                        <th class="header motionIndex translate" data-name="_index">Nr.</th>
+                                        <th class="header motionID translate" data-type='OID' data-name="motionid">motionID</th>
+                                        <th class="header motionEnabled translate" data-default="true" data-type="checkbox" data-name="enabled">enabled</th>
+                                        <th class="header Delete translate" data-buttons="delete">delete</th>
                                     </tr>
                                 </thead>
                             </table>
                         </div>
                     </div>
-                        <!-- end motion table -->
+                    <!-- end motion table -->
                     </div>
                 </div>
             <!-- end Tab with id "tab-motion" -->
     
-            <!-- Tab with id "tab-motion" -->
+            <!-- Tab with id "vis_view" -->
             <div id="tab-vis_view" class="col s12">
-                    <div class="row">
-                        <!-- select motion active -->
-                        <div class="input-field col s3 visSelect">
-                            <label for="viewChange_enabled"></label><select class="value" autofocus="autofocus" id="viewChange_enabled">
-                                <option class="translate" value="true">Activate view change</option>
-                                <option class="translate" value="false" selected>Deactivate view change</option>
-                            </select>
-                             <label class='Select-text translate' for="viewChange_enabled">Automatic Vis view change</label>
-                        </div>
-                        <!-- end select motion active -->
-                        <!-- select motion active -->
-                        <div class="input-field col s3 viewMode visSelect">
-                           <select class="value" autofocus="autofocus" id="viewMode">
-                                <option class="translate" value="true">View in Widget 8</option>
-                                <option class="translate" value="false" selected>Vis control</option>
-                            </select>
-                            <label class='Select-text translate' for="viewMode">vis Mode widget 8 or vis control</label>
-                        </div>
-                        <!-- end select motion active -->
-
-                        <div class="row"></div>
-                        <h3 class='visAdapter translate'>The adapter is not installed. Please install the adapter before activating the function.</h3>
-    
-                        <!-- motion table -->
-                       
-                        <div class="col s12" id="visView">
-                            <div class="row center">
-                                <a class="waves-effect waves-light btn table-button-add translate">add View</a>
-                            </div>
-                
-                            <div class="table-values-div">
-                                <table class="table-values">
-                                    <thead>
-                                        <tr>
-                                            <th class="header translate" data-name="_index">Nr.</th>
-                                            <th class="header translate" data-name="visProjekt" data-default="main">Vis Projekt name</th>
-                                            <th class="header translate" data-name="viewName">Vis View Name</th>
-                                            <th class="header translate" data-name="viewNumber">number of the view in widget 8</th>
-                                            <th class="header translate" data-name="time" data-type="number" data-default="00">time in (sec)</th>
-                                            <th class="header translate" data-buttons="delete">delete</th>
-                                        </tr>
-                                    </thead>
-                                </table>
-                            </div>
-                        </div>
-                        <!-- end motion table -->
+                <div class="row">
+                    <!-- select motion active -->
+                    <div class="input-field col s3 visSelect">
+                        <label for="viewChange_enabled"></label>
+                        <select class="value" autofocus="autofocus" id="viewChange_enabled">
+                            <option class="translate" value="true">Activate view change</option>
+                            <option class="translate" value="false" selected>Deactivate view change</option>
+                        </select>
+                        <label class='Select-text translate' for="viewChange_enabled">Automatic Vis view change</label>
                     </div>
+                    <!-- end select motion active -->
+                    <!-- select motion active -->
+                    <div class="input-field col s3 viewMode visSelect">
+                        <select class="value" autofocus="autofocus" id="viewMode">
+                            <option class="translate" value="true">View in Widget 8</option>
+                            <option class="translate" value="false" selected>Vis control</option>
+                        </select>
+                        <label class='Select-text translate' for="viewMode">vis Mode widget 8 or vis control</label>
+                    </div>
+                    <!-- end select motion active -->
+                    <div class="row"></div>
+                    <h3 class='visAdapter translate'>The adapter is not installed. Please install the adapter before activating the function.</h3>
+                    <!-- motion table -->
+                    <div class="col s12" id="visView">
+                        <div class="row center">
+                            <a id='addView' class="waves-effect waves-light btn table-button-add"><i class="material-icons left">view_list</i><span class='translate'> add View list</span></a>
+                        </div>
+                        <div class="table-values-div">
+                            <table class="table-values">
+                                <thead>
+                                <tr>
+                                    <th class="header visViewIndex translate" data-name="_index">Nr.</th>
+                                    <th class="header visViewProjekt translate" data-name="visProjekt" data-default="main">Vis Projekt name</th>
+                                    <th class="header visViewName translate" data-name="viewName">Vis View Name</th>
+                                    <th class="header visViewNumber translate" data-name="viewNumber">number of the view in widget 8</th>
+                                    <th class="header visViewTime translate" data-name="time" data-type="number" data-default="00">time in (sec)</th>
+                                    <th class="header Delete translate" data-buttons="delete">delete</th>
+                                </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- end motion table -->
                 </div>
+            </div>
             <!-- end Tab with id "tab-motion" -->
         </div>
-         <div class="m material-dialogs">
-      <div id="dialog-select-member" class="modal modal-fixed-footer">
-        <div class="modal-content">
-          <div class="row">
-            <div class="col s12 title"></div>
-          </div>
-          <div class="row">
-            <div class="col s12 dialog-content"></div>
-          </div>
+        <!-- modal material-dialogs -->
+        <div class="m material-dialogs">
+            <div id="dialog-select-member" class="modal modal-fixed-footer">
+                <div class="modal-content">
+                    <div class="row">
+                        <div class="col s12 title"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col s12 dialog-content"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a class="modal-action modal-close waves-effect waves-green btn btn-set"><i class="large material-icons left">check</i><span class="translate">Select</span></a>
+                    <a class="modal-action modal-close waves-effect waves-green btn btn-close"><i class="large material-icons left ">close</i><span class="translate">Cancel</span></a>
+                </div>
+            </div>
         </div>
-        <div class="modal-footer">
-          <a class="modal-action modal-close waves-effect waves-green btn btn-set"><i class="large material-icons left">check</i><span class="translate">Select</span></a>
-          <a class="modal-action modal-close waves-effect waves-green btn btn-close"><i class="large material-icons left ">close</i><span class="translate">Cancel</span></a>
-        </div>
-      </div>
+        <!-- End modal material-dialogs -->
     </div>
-    </div>
-
 </body>
-
 </html>
+
+
+
+<!--<html>-->
+
+<!--<head>-->
+<!--    &lt;!&ndash; Load ioBroker scripts and styles&ndash;&gt;-->
+<!--    &lt;!&ndash; Materialze style &ndash;&gt;-->
+<!--    <link rel="stylesheet" type="text/css" href="../../css/adapter.css"/>-->
+<!--    <link rel="stylesheet" type="text/css" href="../../lib/css/materialize.css">-->
+<!--    &lt;!&ndash;    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">&ndash;&gt;-->
+<!--    -->
+<!--    &lt;!&ndash;    For menu to select states styles&ndash;&gt;-->
+<!--    <link type="text/css" rel="stylesheet" href="../../lib/css/themes/jquery-ui/default/jquery-ui.min.css">-->
+<!--    <link type="text/css" rel="stylesheet" href="../../lib/css/fancytree/ui.fancytree.min.css"/>-->
+<!--    <link rel="stylesheet" type="text/css" href="../../lib/css/iob/selectID.css"/>-->
+<!--    -->
+<!--    &lt;!&ndash;  Load ioBroker scripts  &ndash;&gt;-->
+<!--    <script type="text/javascript" src="../../lib/js/jquery-3.2.1.min.js"></script>-->
+<!--    <script type="text/javascript" src="../../socket.io/socket.io.js"></script>-->
+<!--    <script type="text/javascript" src="../../js/translate.js"></script>-->
+<!--    <script type="text/javascript" src="../../lib/js/materialize.js"></script>-->
+<!--    <script type="text/javascript" src="../../js/adapter-settings.js"></script>-->
+<!--    -->
+<!--    &lt;!&ndash;    For menu to select states scripts&ndash;&gt;-->
+<!--    <script type="text/javascript" src="../../lib/js/jquery-ui-1.10.3.full.min.js"></script>-->
+<!--    <script type="text/javascript" src="../../lib/js/jquery.fancytree-all.min.js"></script>-->
+<!--    <script type="text/javascript" src="../../lib/js/selectID.js"></script>-->
+<!--    -->
+<!--    &lt;!&ndash; Load our own files &ndash;&gt;-->
+<!--  <link rel="stylesheet" type="text/css" href="style.css"/>-->
+<!--  <script type="text/javascript" src="words.js"></script>-->
+
+<!--  <script type="text/javascript">-->
+
+<!--            let brightness = [];-->
+<!--            let screenSaver = [];-->
+<!--            let devices = [];-->
+<!--            let telegram = [];-->
+<!--            let motion = [];-->
+<!--            let charger = [];-->
+<!--            let visView = [];-->
+<!--            let TabletName = [];-->
+<!--            let firstName = [];-->
+<!--            let telegramAdapter = false;-->
+<!--            let visAdapter = false;-->
+
+<!--            function getObjectView() {-->
+<!--    -->
+<!--                socket.emit('getObjectView', 'system', 'instance', {startkey: 'system.adapter.', endkey: 'system.adapter.\u9999'}, (err, state) => {-->
+<!--                    if (!err) {-->
+<!--                        var result = [];-->
+<!--                        const arrTemp = [];-->
+<!--                        $.each(state.rows, (index, element) => {-->
+<!--                            result.push(element.value);-->
+<!--                        });-->
+<!--                        $.each(result, (index, element) => {-->
+<!--                -->
+<!--                            for (let i = 0; i < 10; i++) {-->
+<!--                    -->
+<!--                                if (element._id === `system.adapter.telegram.${i}`) {-->
+<!--                                    telegramAdapter = true;-->
+<!--                                    arrTemp.push(`telegram.${i}.communicate.users`)-->
+<!--                                }-->
+<!--                    -->
+<!--                            }-->
+<!--                -->
+<!--                            if (element._id === 'system.adapter.vis.0') {-->
+<!--                                visAdapter = true;-->
+<!--                                showHideSettings()-->
+<!--                            }-->
+<!--                -->
+<!--                        });-->
+<!--            -->
+<!--                        if (arrTemp.length > 0) readUser(arrTemp)-->
+<!--            -->
+<!--                    }-->
+<!--                    else {-->
+<!--                        console.error(err);-->
+<!--                    }-->
+<!--                });-->
+<!--            }-->
+
+<!--            function readUser(adapterList) {-->
+<!--    -->
+<!--                for (const listKey in adapterList) {-->
+<!--        -->
+<!--                    socket.emit('getState', adapterList[listKey], (err, state) => {-->
+<!--                        if (!err) {-->
+<!--                            if (state !== null || state !== undefined) {-->
+<!--                                if (state.val !== '') {-->
+<!--                        -->
+<!--                                    $.each(JSON.parse(state.val), (index, element) => {-->
+<!--                            -->
+<!--                                        if (element.firstName !== undefined) {-->
+<!--                                -->
+<!--                                            firstName.push(`${element.firstName}/${element.firstName}`);-->
+<!--                                -->
+<!--                                        }-->
+<!--                                        else if (element.userName !== undefined) {-->
+<!--                                -->
+<!--                                            firstName.push(`${element.userName}/${element.userName}`);-->
+<!--                                -->
+<!--                                        }-->
+<!--                                        else {-->
+<!--                                            firstName.push('');-->
+<!--                                        }-->
+<!--                            -->
+<!--                                    });-->
+<!--    -->
+<!--                                    $(document).ready(function () {-->
+<!--        -->
+<!--                                        $('#User').attr('data-options', firstName.join(';'));-->
+<!--        -->
+<!--                                    });-->
+<!--    -->
+<!--    -->
+<!--                                }-->
+<!--                                else {-->
+<!--                        -->
+<!--                                    showHideSettings();-->
+<!--                        -->
+<!--                                }-->
+<!--                            }-->
+<!--                -->
+<!--                        }-->
+<!--                        else {-->
+<!--                            console.error(err);-->
+<!--                        }-->
+<!--                    });-->
+<!--                }-->
+<!--    -->
+<!--            }-->
+
+<!--            function showHideSettings() {-->
+<!--                let telegram_enabled = JSON.parse($('#telegram_enabled').val());-->
+<!--                let chargerON = JSON.parse($('#chargerON').val());-->
+<!--                let viewChange_enabled = JSON.parse($('#viewChange_enabled').val());-->
+<!--                let motionSensor_enabled = JSON.parse($('#motionSensor_enabled').val());-->
+<!--                let screenSaverON = JSON.parse($('#screenSaverON').val());-->
+<!--                let brightness_on = JSON.parse($('#brightness_on').val());-->
+<!--                let timeMode = JSON.parse($('#timeMode').val());-->
+<!--    -->
+<!--                //charger Table show/hide-->
+<!--                if (chargerON) {-->
+<!--                    $('#charger').show();-->
+<!--                }-->
+<!--                else {-->
+<!--                    $('#charger').hide();-->
+<!--                }-->
+<!--    -->
+<!--                //Brightness Table show/hide-->
+<!--                if (brightness_on) {-->
+<!--        -->
+<!--                    $('#brightness').show();-->
+<!--                    $('.sub-title-table').show();-->
+<!--                    $('.sub-title-TimeControl').show();-->
+<!--        -->
+<!--                    // Time Mode ( Astro or Manuel )-->
+<!--                    if (timeMode) {-->
+<!--                        $('.selectBrightness_time').hide();-->
+<!--                        $('.selectAstroBrightness').show();-->
+<!--                        $('.selectBrightness_checkInterval').show();-->
+<!--                        $('.AstroBrightness').show();-->
+<!--                    }-->
+<!--                    else {-->
+<!--                        $('.AstroBrightness').hide();-->
+<!--                        $('.selectAstroBrightness').show();-->
+<!--                        $('.selectBrightness_checkInterval').show();-->
+<!--                        $('.selectBrightness_time').show();-->
+<!--                    }-->
+<!--                }-->
+<!--                else {-->
+<!--                    $('#brightness').hide();-->
+<!--                    $('.AstroBrightness').hide();-->
+<!--                    $('.selectBrightness_time').hide();-->
+<!--                    $('.selectAstroBrightness').hide();-->
+<!--                    $('.selectBrightness_checkInterval').hide();-->
+<!--                    $('.sub-title-TimeControl').hide();-->
+<!--                    $('.sub-title-table').hide();-->
+<!--                }-->
+<!--    -->
+<!--                //screenSaver Table show/hide-->
+<!--                if (screenSaverON) {-->
+<!--                    $('#screenSaver').show();-->
+<!--                }-->
+<!--                else {-->
+<!--                    $('#screenSaver').hide();-->
+<!--                }-->
+<!--    -->
+<!--                //motionSensor Table show/hide-->
+<!--                if (motionSensor_enabled) {-->
+<!--                    $('#motion').show();-->
+<!--                }-->
+<!--                else {-->
+<!--                    $('#motion').hide();-->
+<!--                }-->
+<!--    -->
+<!--                // VisView mode and Table show/hide-->
+<!--                if (visAdapter) {-->
+<!--                    $('.visAdapter').hide();-->
+<!--        -->
+<!--                    if (viewChange_enabled) {-->
+<!--                        $('.viewMode').show();-->
+<!--                        $('#visView').show();-->
+<!--                    }-->
+<!--                    else {-->
+<!--                        $('.viewMode').hide();-->
+<!--                        $('#visView').hide();-->
+<!--                    }-->
+<!--        -->
+<!--                }-->
+<!--                else {-->
+<!--                    $('.visAdapter').show();-->
+<!--                }-->
+<!--    -->
+<!--                // telegram Tabel show/hide-->
+<!--                if (telegram_enabled) {-->
+<!--                    if (telegramAdapter) {-->
+<!--            -->
+<!--                        $('.TelegramAdapter').hide();-->
+<!--            -->
+<!--                        if (firstName.length !== 0) {-->
+<!--                            $('.telegram').show();-->
+<!--                            $('.TelegramUser').hide();-->
+<!--                        }-->
+<!--                        else {-->
+<!--                            $('.telegram').hide();-->
+<!--                            $('.TelegramUser').show();-->
+<!--                        }-->
+<!--                    }-->
+<!--                    else {-->
+<!--                        $('.TelegramAdapter').show();-->
+<!--                    }-->
+<!--                }-->
+<!--                else {-->
+<!--                    $('.telegram').hide();-->
+<!--                    $('.TelegramAdapter').hide();-->
+<!--                    $('.TelegramUser').hide();-->
+<!--                }-->
+<!--            }-->
+
+
+<!--            getObjectView();-->
+
+<!--            //the function loadSettings has to exist ...-->
+<!--            function load(settings, onChange) {-->
+<!--                if (!settings) return;-->
+<!--    -->
+<!--                devices = settings.devices || [];-->
+<!--                brightness = settings.brightness || [];-->
+<!--                screenSaver = settings.screenSaver || [];-->
+<!--                telegram = settings.telegram || [];-->
+<!--                motion = settings.motion || [];-->
+<!--                charger = settings.charger || [];-->
+<!--                visView = settings.visView || [];-->
+<!--    -->
+<!--                $('#bri_addDevice').click(() => {-->
+<!--                    $(document).ready(function () {-->
+<!--                        for (const n in devices) {-->
+<!--                            TabletName[n] = devices[n].name;-->
+<!--                -->
+<!--                            for (let i = 0; i < brightness.length; i++) {-->
+<!--                                brightness[i].TabletName = TabletName[i];-->
+<!--                            }-->
+<!--                        }-->
+<!--                        setTimeout(function () {-->
+<!--                            $('#brightness tr').each(function() {-->
+<!--                                $(this).find("td:first .values-input").prop('disabled', true);-->
+<!--                            });-->
+<!--                        }, 130);-->
+<!--                    });-->
+<!--                });-->
+<!--                $('#chAddDevice').click(() => {-->
+<!--                    $(document).ready(function () {-->
+<!--                        for (const n in devices) {-->
+<!--                            TabletName[n] = devices[n].name;-->
+<!--                -->
+<!--                            for (let i = 0; i < charger.length; i++) {-->
+<!--                                charger[i].TabletName = TabletName[i];-->
+<!--                            }-->
+<!--                        }-->
+<!--                        setTimeout(function () {-->
+<!--                            $('#charger tr').each(function() {-->
+<!--                                $(this).find("td:first .values-input").prop('disabled', true);-->
+<!--                            });-->
+<!--                        }, 130);-->
+<!--                    });-->
+<!--                });-->
+<!--                $('#addScreensaver').click(() => {-->
+<!--                    $(document).ready(function () {-->
+<!--                        for (const n in devices) {-->
+<!--                            TabletName[n] = devices[n].name;-->
+<!--                -->
+<!--                            for (let i = 0; i < screenSaver.length; i++) {-->
+<!--                                screenSaver[i].TabletName = TabletName[i];-->
+<!--                            }-->
+<!--                        }-->
+<!--                        setTimeout(function () {-->
+<!--                            $('#screenSaver tr').each(function() {-->
+<!--                                $(this).find("td:first .values-input").prop('disabled', true);-->
+<!--                            });-->
+<!--                        }, 130);-->
+<!--                    });-->
+<!--        -->
+<!--                });-->
+<!--                -->
+<!--                $('.value').each(function () {-->
+<!--                    const $key = $(this);-->
+<!--                    const id = $key.attr('id');-->
+<!--                    if ($key.attr('type') === 'checkbox') {-->
+<!--                        // do not call onChange direct, because onChange could expect some arguments-->
+<!--                        $key.prop('checked', settings[id])-->
+<!--                                .on('change', () => {-->
+<!--                                    showHideSettings();-->
+<!--                                    onChange();-->
+<!--                                });-->
+<!--                    }-->
+<!--                    else {-->
+<!--                        // do not call onChange direct, because onChange could expect some arguments-->
+<!--                        $key.val(settings[id])-->
+<!--                                .on('change', () => {-->
+<!--                                    showHideSettings();-->
+<!--                                    onChange();-->
+<!--                                })-->
+<!--                                .on('keyup', () => onChange());-->
+<!--                    }-->
+<!--                });-->
+<!--    -->
+<!--    -->
+<!--                onChange(false);-->
+<!--                // reinitialize all the Materialize labels on the page if you are dynamically adding inputs:-->
+<!--                showHideSettings();-->
+<!--             -->
+<!--    -->
+<!--                values2table('brightness', brightness, onChange);-->
+<!--                values2table('screenSaver', screenSaver, onChange);-->
+<!--                values2table('devices', devices, onChange);-->
+<!--                values2table('motion', motion, onChange);-->
+<!--                values2table('charger', charger, onChange);-->
+<!--                values2table('telegram', telegram, onChange);-->
+<!--                values2table('visView', visView, onChange);-->
+<!--    -->
+<!--                setTimeout(function () {-->
+<!--        -->
+<!--                    $('#charger tr').each(function() {-->
+<!--                        $(this).find("td:first .values-input").prop('disabled', true);-->
+<!--                    });-->
+<!--                    $('#brightness tr').each(function() {-->
+<!--                        $(this).find("td:first .values-input").prop('disabled', true);-->
+<!--                    });-->
+<!--                    $('#screenSaver tr').each(function() {-->
+<!--                        $(this).find("td:first .values-input").prop('disabled', true);-->
+<!--                    });-->
+<!--        -->
+<!--        -->
+<!--                }, 130);-->
+<!--                if (M) M.updateTextFields();-->
+<!--    -->
+<!--            }-->
+
+<!--            //######  END LOAD  #######-->
+
+<!--            //###########  SAVE  #########-->
+
+<!--            // ... and the function save has to exist.-->
+<!--            // you have to make sure the callback is called with the settings object as first param!-->
+<!--            function save(callback) {-->
+<!--                // example: select elements with class=value and build settings object-->
+<!--                const obj = {};-->
+<!--                $('.value').each(function () {-->
+<!--                    const $this = $(this);-->
+<!--                    if ($this.attr('type') === 'checkbox') {-->
+<!--                        obj[$this.attr('id')] = $this.prop('checked');-->
+<!--                    }-->
+<!--                    else {-->
+<!--                        obj[$this.attr('id')] = $this.val();-->
+<!--                    }-->
+<!--                });-->
+<!--    -->
+<!--                obj.brightness = table2values('brightness');-->
+<!--                obj.screenSaver = table2values('screenSaver');-->
+<!--                obj.devices = table2values('devices');-->
+<!--                obj.telegram = table2values('telegram');-->
+<!--                obj.motion = table2values('motion');-->
+<!--                obj.charger = table2values('charger');-->
+<!--                obj.visView = table2values('visView');-->
+<!--    -->
+<!--                callback(obj);-->
+<!--            }-->
+
+<!--            //######  END SAVE  #######-->
+
+<!--    </script>-->
+
+<!--</head>-->
+
+<!--<body>-->
+<!--    &lt;!&ndash; you have to put your config page in a div with id adapter-container &ndash;&gt;-->
+<!--    <div class="m adapter-container">-->
+<!--        <div class="row">-->
+<!--            &lt;!&ndash; Tabs: Menu &ndash;&gt;-->
+<!--            <div class="col s12">-->
+<!--                <ul class="tabs">-->
+<!--                    &lt;!&ndash; Single tab entry &ndash;&gt;-->
+<!--                    <li class="tab col s2"><a href="#tab-devices" class="translate">fully browser</a></li>-->
+<!--                    <li class="tab col s1.7"><a href="#tab-charger" class="translate">charger</a></li>-->
+<!--                    <li class="tab col s1.7"><a href="#tab-brightness" class="translate">brightness</a></li>-->
+<!--                    <li class="tab col s1.7"><a href="#tab-screen" class="translate">screen</a></li>-->
+<!--                    <li class="tab col s2"><a href="#tab-telegram" class="translate">telegram</a></li>-->
+<!--                    <li class="tab col s1.7"><a href="#tab-motion" class="translate">motion detector</a></li>-->
+<!--                    <li class="tab col s1.7"><a href="#tab-vis_view" class="translate">vis view</a></li>-->
+<!--                </ul>-->
+<!--            </div>-->
+<!--    -->
+<!--            &lt;!&ndash; end Tabs: Menu &ndash;&gt;-->
+<!--    -->
+<!--            &lt;!&ndash; Tab with id "tab-devices" &ndash;&gt;-->
+<!--            <div id="tab-devices" class="col s12 " style="top: 20px">-->
+<!--            &lt;!&ndash; logo &ndash;&gt;-->
+<!--                <div class="row">-->
+<!--                    <div class="col s12 m4 l2">-->
+<!--                        <img src="tablet-control.png"><img class="logo">-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                &lt;!&ndash; end logo &ndash;&gt;-->
+<!--    -->
+<!--                &lt;!&ndash; polling interval &ndash;&gt;-->
+<!--                <div class="col s1.1 input-field ">-->
+<!--                    <input type="number" class="value intervalField" id="interval" max="3600" min="0" value="30"/>-->
+<!--                    <label for="interval" class="translate">interval</label>-->
+<!--                </div>-->
+<!--                &lt;!&ndash; end polling interval &ndash;&gt;-->
+<!--    -->
+<!--                &lt;!&ndash; back to Fully Browser &ndash;&gt;-->
+<!--                <div class="col m4 l4 input-field">-->
+<!--                  <input type="number" class="value intervalField" id="fireTablet" max="120" min="1" value="3">-->
+<!--                    <label class="translate" for="fireTablet">back to Fully Browser in (min)</label>-->
+<!--                    <div class="row"></div>-->
+<!--                    <span class="translate tabletMessage">Brings the browser back to the foreground</span>-->
+<!--                </div>-->
+<!--                &lt;!&ndash; end back to Fully Browser &ndash;&gt;-->
+<!--    -->
+<!--                &lt;!&ndash; fully browser login table &ndash;&gt;-->
+<!--                    <div class="col s12 devicesLogin" id="devices">-->
+<!--                        <div class="row center">-->
+<!--                            <a class="waves-effect waves-light btn table-button-add button:hover translate">add Device</a>-->
+<!--                        </div>-->
+<!--                        <div class="table-values-div">-->
+<!--                            <table class="table-values">-->
+<!--                                <thead>-->
+<!--                                    <tr>-->
+<!--                                        <th class="header translate" data-name="_index">Nr.</th>-->
+<!--                                        <th class="header name translate" data-name="name">name</th>-->
+<!--                                        <th class="header translate" data-name="ip">ip</th>-->
+<!--                                        <th class="header translate" data-type="number" data-default="2323" data-name="port">port</th>-->
+<!--                                        <th class="header translate" data-name="password" data-type="password">password</th>-->
+<!--                                        <th class="header translate" data-default="true" data-type="checkbox" data-name="enabled">enabled</th>-->
+<!--                                        <th class="header translate" data-buttons="delete">delete</th>-->
+<!--                                    </tr>-->
+<!--                                </thead>-->
+<!--                            </table>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                &lt;!&ndash; end fully browser table &ndash;&gt;-->
+<!--            </div>-->
+<!--            &lt;!&ndash; end Tab with id "tab-devices" &ndash;&gt;-->
+<!--    -->
+<!--            &lt;!&ndash; Tab with id "tab-charger" &ndash;&gt;-->
+<!--                <div id="tab-charger" class="col s12">-->
+<!--                    <div class="row"></div>-->
+<!--                    &lt;!&ndash; charger table &ndash;&gt;-->
+<!--                    <div class="row">-->
+<!--                    &lt;!&ndash; select screen active &ndash;&gt;-->
+<!--                    <div class="input-field col s3 selectCharger">-->
+<!--                        <select class="value" autofocus="autofocus" data-default="false" id="chargerON">-->
+<!--                            <option class="translate" value="true">Switch on charging control</option>-->
+<!--                            <option class="translate" value="false" selected>Switch off charging control</option>-->
+<!--                        </select>-->
+<!--                        <label for="chargerON"></label>-->
+<!--                    </div>-->
+<!--                        &lt;!&ndash; end select screen active &ndash;&gt;-->
+
+<!--                        <div class="col s12 charger" id="charger">-->
+<!--                            <div class="row center add-btn">-->
+<!--                                <a id='chAddDevice' class="waves-effect waves-light btn table-button-add translate">add Device</a>-->
+<!--                            </div>-->
+<!--                            <div class="table-values-div">-->
+<!--                                <table class="table-values">-->
+<!--                                    <thead>-->
+<!--                                        <tr>-->
+<!--&lt;!&ndash;                                            <th class="header translate" data-name="_index">Nr.</th>&ndash;&gt;-->
+<!--                                            <th class="header translate" data-name="TabletName">name</th>-->
+<!--                                            <th class="header translate" data-type='OID' data-name="chargerid">chargerID</th>-->
+<!--                                            <th class="header translate" data-type="select" data-name="power_mode" data-options="true/Charge cycle;false/Continuous current;off/Off">power_mode</th>-->
+<!--                                            <th class="header translate" data-default="20" data-type="select" data-name="loadStart" data-options="20/20%;25/25%;30/30%;35/35%;40/40%;45/45%;50/50%">load start</th>-->
+<!--                                            <th class="header translate" data-default="85" data-type="select" data-name="loadStop" data-options="55/55%;60/60%;65/65%;70/70%;75/75%;80/80%;85/85%;90/90%;95/95%;100/100%">load stop</th>-->
+<!--                                            <th class="header translate" data-buttons="delete">delete</th>-->
+<!--                                        </tr>-->
+<!--                                    </thead>-->
+<!--                                </table>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    &lt;!&ndash; end charger table &ndash;&gt;-->
+<!--                </div>-->
+<!--            &lt;!&ndash; end Tab with id "tab-charger" &ndash;&gt;-->
+<!--    -->
+<!--            &lt;!&ndash; Tab with id "tab-brightness" &ndash;&gt;-->
+<!--                <div id="tab-brightness" class="col s12">-->
+<!--                    <div class="row"></div>-->
+<!--                    &lt;!&ndash; brightness table &ndash;&gt;-->
+<!--                    <div class="row">-->
+<!--                    &lt;!&ndash; select screen active &ndash;&gt;-->
+<!--                    <div class="input-field col s3 selectScreenOn">-->
+<!--                        <select class="value" autofocus="autofocus" id="screen_on">-->
+<!--                            <option class="translate" value="true" selected>Screen on</option>-->
+<!--                            <option class="translate" value="false">Screen auto</option>-->
+<!--                        </select>-->
+<!--                        <label for="screen_on"></label>-->
+<!--                    </div>-->
+<!--                        &lt;!&ndash; end select screen active &ndash;&gt;-->
+<!--                -->
+<!--                    <div class="row"></div>-->
+<!--                    <p class="translate sub-title-brightness">brightness</p>-->
+<!--                        &lt;!&ndash; select screen active &ndash;&gt;-->
+<!--                               <div class="input-field col s3 selectBrightness_on">-->
+<!--                                <select class="value" autofocus="autofocus" id="brightness_on">-->
+<!--                                    <option class="translate" value="true">Brightness control via config page</option>-->
+<!--                                    <option class="translate" value="false" selected>Brightness control manually</option>-->
+<!--                                </select>-->
+<!--                            <label for="brightness_on"></label>-->
+<!--                            </div>-->
+<!--                        &lt;!&ndash; end select screen active &ndash;&gt;-->
+<!--    -->
+<!--                        &lt;!&ndash; select screen active &ndash;&gt;-->
+<!--                            <div class="input-field col s3 selectAstroBrightness">-->
+<!--                                <select class="value" autofocus="autofocus" id="timeMode">-->
+<!--                                    <option class="translate" value="true" selected>astro time</option>-->
+<!--                                    <option class="translate" value="false">Manual time</option>-->
+<!--                                </select>-->
+<!--                                <label for="timeMode"></label>-->
+<!--                            </div>-->
+<!--                        &lt;!&ndash; end select screen active &ndash;&gt;-->
+<!--                        &lt;!&ndash; check interval &ndash;&gt;-->
+<!--                    <div class="col s3 input-field selectBrightness_checkInterval">-->
+<!--                        <input class="value" type="number" id="checkInterval" max="120" min="1" value="5"/>-->
+<!--                        <label class="selectBrightness_label translate" for="checkInterval">Check interval</label>-->
+<!--                    </div>-->
+<!--    -->
+<!--                        &lt;!&ndash; end check interval &ndash;&gt;-->
+<!--                        <div class="row"></div>-->
+<!--                    <p class="translate sub-title-TimeControl">TimeControl</p>-->
+<!--                        &lt;!&ndash; select screen active &ndash;&gt;-->
+<!--                         <div class="input-field col s3 AstroBrightness">-->
+<!--                            <select class="value" autofocus="autofocus" id="astroSelectDay">-->
+<!--                                <option class="translate" value="sunrise" selected>sunrise</option>-->
+<!--                                <option class="translate" value="sunriseEnd">sunriseEnd</option>-->
+<!--                                <option class="translate" value="goldenHourEnd">goldenHourEnd</option>-->
+<!--                                <option class="translate" value="solarNoon">solarNoon</option>-->
+<!--                                <option class="translate" value="goldenHour">goldenHour</option>-->
+<!--                                <option class="translate" value="sunsetStart">sunsetStart</option>-->
+<!--                                <option class="translate" value="sunset">sunset</option>-->
+<!--                                <option class="translate" value="dusk">dusk</option>-->
+<!--                                <option class="translate" value="nauticalDusk">nauticalDusk</option>-->
+<!--                                <option class="translate" value="night">night</option>-->
+<!--                                <option class="translate" value="nadir">nadir</option>-->
+<!--                                <option class="translate" value="nightEnd">nightEnd</option>-->
+<!--                                <option class="translate" value="nauticalDawn">nauticalDawn</option>-->
+<!--                                <option class="translate" value="dawn">dawn</option>-->
+<!--                            </select>-->
+<!--                            <label class="selectBrightness_label translate" for="astroSelectDay">astro time day</label>-->
+<!--                        </div>-->
+<!--                        &lt;!&ndash; end select screen active &ndash;&gt;-->
+<!--                        &lt;!&ndash; select screen active &ndash;&gt;-->
+<!--                        <div class="input-field col s3 AstroBrightness">-->
+<!--                            <select class="value" autofocus="autofocus" id="astroSelectNight">-->
+<!--                                <option class="translate" value="sunrise">sunrise</option>-->
+<!--                                <option class="translate" value="sunriseEnd">sunriseEnd</option>-->
+<!--                                <option class="translate" value="goldenHourEnd">goldenHourEnd</option>-->
+<!--                                <option class="translate" value="solarNoon">solarNoon</option>-->
+<!--                                <option class="translate" value="goldenHour">goldenHour</option>-->
+<!--                                <option class="translate" value="sunsetStart">sunsetStart</option>-->
+<!--                                <option class="translate" value="sunset" selected>sunset</option>-->
+<!--                                <option class="translate" value="dusk">dusk</option>-->
+<!--                                <option class="translate" value="nauticalDusk">nauticalDusk</option>-->
+<!--                                <option class="translate" value="night">night</option>-->
+<!--                                <option class="translate" value="nadir">nadir</option>-->
+<!--                                <option class="translate" value="nightEnd">nightEnd</option>-->
+<!--                                <option class="translate" value="nauticalDawn">nauticalDawn</option>-->
+<!--                                <option class="translate" value="dawn">dawn</option>-->
+<!--                            </select>-->
+<!--                            <label class="selectBrightness_label translate" for="astroSelectNight">astro time night</label>-->
+<!--                        </div>-->
+<!--                        &lt;!&ndash; end select screen active &ndash;&gt;-->
+<!--                        &lt;!&ndash; select dayTime active &ndash;&gt;-->
+<!--                    <div class="input-field col s3 selectBrightness_time">-->
+<!--                        <select class="value" autofocus="autofocus" id="dayTime">-->
+<!--                            <option class="translate" value="4">4Clock</option>-->
+<!--                            <option class="translate" value="5">5Clock</option>-->
+<!--                            <option class="translate" value="6">6Clock</option>-->
+<!--                            <option class="translate" value="7" selected>7Clock</option>-->
+<!--                            <option class="translate" value="8">8Clock</option>-->
+<!--                            <option class="translate" value="9">9Clock</option>-->
+<!--                            <option class="translate" value="10">10Clock</option>-->
+<!--                        </select>-->
+<!--                        <label class="selectBrightness_label translate" for="dayTime">In the morning</label>-->
+<!--                    </div>-->
+<!--                        &lt;!&ndash; end select dayTime active &ndash;&gt;-->
+<!--    -->
+<!--                        &lt;!&ndash; select midTime active &ndash;&gt;-->
+<!--                    <div class="input-field col s3 selectBrightness_time">-->
+<!--                        <select class="value" autofocus="autofocus" id="midTime">-->
+<!--                            <option class="translate" value="11">11Clock</option>-->
+<!--                            <option class="translate" value="12">12Clock</option>-->
+<!--                            <option class="translate" value="13" selected>13Clock</option>-->
+<!--                            <option class="translate" value="14">14Clock</option>-->
+<!--                            <option class="translate" value="15">15Clock</option>-->
+<!--                            <option class="translate" value="16">16Clock</option>-->
+<!--                            <option class="translate" value="17">17Clock</option>-->
+<!--                        </select>-->
+<!--                        <label class="selectBrightness_label translate" for="midTime">afternoon</label>-->
+<!--                    </div>-->
+<!--                        &lt;!&ndash; end select midTime active &ndash;&gt;-->
+<!--    -->
+<!--                        &lt;!&ndash; select nightTime active &ndash;&gt;-->
+<!--                    <div class="input-field col s3 selectBrightness_time">-->
+<!--                        <select class="value" autofocus="autofocus" id="nightTime">-->
+<!--                            <option class="translate" value="18">18Clock</option>-->
+<!--                            <option class="translate" value="19">19Clock</option>-->
+<!--                            <option class="translate" value="20">20Clock</option>-->
+<!--                            <option class="translate" value="21">21Clock</option>-->
+<!--                            <option class="translate" value="22" selected>22Clock</option>-->
+<!--                            <option class="translate" value="23">23Clock</option>-->
+<!--                        </select>-->
+<!--                        <label class="selectBrightness_label translate" for="nightTime">At night</label>-->
+<!--                    </div>-->
+<!--                        &lt;!&ndash; end select nightTime active &ndash;&gt;-->
+<!--    -->
+<!--                        &lt;!&ndash; select brightness table &ndash;&gt;-->
+<!--                        <div class="row"></div>-->
+<!--                         <p class="translate sub-title-table">table</p>-->
+<!--                        -->
+<!--                    <div class="col s12 briTables" id="brightness">-->
+<!--                            <div class="row center">-->
+<!--                                <a id='bri_addDevice' class="waves-effect waves-light btn table-button-add translate">add Device</a>-->
+<!--                            </div>-->
+<!--                            <div class="table-values-div">-->
+<!--                                <table class="table-values">-->
+<!--                                    <thead>-->
+<!--                                        <tr>-->
+<!--&lt;!&ndash;                                            <th class="header translate" data-name="_index">Nr.</th>&ndash;&gt;-->
+<!--                                            <th class="header translate" data-name="TabletName">name</th>-->
+<!--                                                <th class="header day translate" data-name="dayBrightness" data-default="20" data-type="select" data-options="0/0%;1/1%;2/2%;3/3%;4/4%;5/5%;6/6%;7/7%;8/8%;9/9%;10/10%;11/11%;12/12%;13/13%;14/14%;15/15%;16/16%;17/17%;18/18%;19/19%;20/20%;-->
+<!--                                                    ;21/21%;22/22%;23/23%;24/24%;25/25%;26/26%;27/27%;28/28%;29/29%;30/30%;31/31%;32/32%;33/33%;34/34%;35/35%;36/36%;37/37%;38/38%;39/39%;40/40%;-->
+<!--                                                    ;41/41%;42/42%;43/43%;44/44%;45/45%;46/46%;47/47%;48/48%;49/49%;50/50%;51/51%;52/52%;53/53%;54/54%;55/55%;56/56%;57/57%;58/58%;59/59%;60/60%;-->
+<!--                                                    ;61/61%;62/62%;63/63%;64/64%;65/65%;66/66%;67/67%;68/68%;69/69%;70/70%;71/71%;72/72%;73/73%;74/74%;75/75%;76/76%;77/77%;78/78%;79/79%;80/80%;-->
+<!--                                                    ;81/81%;82/82%;83/83%;84/84%;85/85%;86/86%;87/87%;88/88%;89/89%;90/90%;91/91%;92/92%;93/93%;94/94%;95/95%;96/96%;97/97%;98/98%;100/100%">morningtime brightness</th>-->
+<!--                                            -->
+<!--                                                <th class="header midTime translate" data-name="midTimeBrightness" data-default="20" data-type="select" data-options="0/0%;1/1%;2/2%;3/3%;4/4%;5/5%;6/6%;7/7%;8/8%;9/9%;10/10%;11/11%;12/12%;13/13%;14/14%;15/15%;16/16%;17/17%;18/18%;19/19%;20/20%;-->
+<!--                                                    ;21/21%;22/22%;23/23%;24/24%;25/25%;26/26%;27/27%;28/28%;29/29%;30/30%;31/31%;32/32%;33/33%;34/34%;35/35%;36/36%;37/37%;38/38%;39/39%;40/40%;-->
+<!--                                                    ;41/41%;42/42%;43/43%;44/44%;45/45%;46/46%;47/47%;48/48%;49/49%;50/50%;51/51%;52/52%;53/53%;54/54%;55/55%;56/56%;57/57%;58/58%;59/59%;60/60%;-->
+<!--                                                    ;61/61%;62/62%;63/63%;64/64%;65/65%;66/66%;67/67%;68/68%;69/69%;70/70%;71/71%;72/72%;73/73%;74/74%;75/75%;76/76%;77/77%;78/78%;79/79%;80/80%;-->
+<!--                                                    ;81/81%;82/82%;83/83%;84/84%;85/85%;86/86%;87/87%;88/88%;89/89%;90/90%;91/91%;92/92%;93/93%;94/94%;95/95%;96/96%;97/97%;98/98%;100/100%">midTime brightness</th>-->
+<!--                                            -->
+<!--                                                <th class="header night translate" data-name="nightBrightness" data-default="0" data-type="select" data-options="0/0%;1/1%;2/2%;3/3%;4/4%;5/5%;6/6%;7/7%;8/8%;9/9%;10/10%;11/11%;12/12%;13/13%;14/14%;15/15%;16/16%;17/17%;18/18%;19/19%;20/20%;-->
+<!--                                                    ;21/21%;22/22%;23/23%;24/24%;25/25%;26/26%;27/27%;28/28%;29/29%;30/30%;31/31%;32/32%;33/33%;34/34%;35/35%;36/36%;37/37%;38/38%;39/39%;40/40%;-->
+<!--                                                    ;41/41%;42/42%;43/43%;44/44%;45/45%;46/46%;47/47%;48/48%;49/49%;50/50%;51/51%;52/52%;53/53%;54/54%;55/55%;56/56%;57/57%;58/58%;59/59%;60/60%;-->
+<!--                                                    ;61/61%;62/62%;63/63%;64/64%;65/65%;66/66%;67/67%;68/68%;69/69%;70/70%;71/71%;72/72%;73/73%;74/74%;75/75%;76/76%;77/77%;78/78%;79/79%;80/80%;-->
+<!--                                                    ;81/81%;82/82%;83/83%;84/84%;85/85%;86/86%;87/87%;88/88%;89/89%;90/90%;91/91%;92/92%;93/93%;94/94%;95/95%;96/96%;97/97%;98/98%;100/100%">Night brightness</th>-->
+<!--                                                   -->
+<!--                                                <th class="header loading translate" data-name="loadingLowering" data-default="10" data-type="select" data-options="0/0%;1/1%;2/2%;3/3%;4/4%;5/5%;6/6%;7/7%;8/8%;9/9%;10/10%;11/11%;12/12%;13/13%;14/14%;15/15%;16/16%;17/17%;18/18%;19/19%;20/20%;-->
+<!--                                                    ;21/21%;22/22%;23/23%;24/24%;25/25%;26/26%;27/27%;28/28%;29/29%;30/30%;31/31%;32/32%;33/33%;34/34%;35/35%;36/36%;37/37%;38/38%;39/39%;40/40%;-->
+<!--                                                    ;41/41%;42/42%;43/43%;44/44%;45/45%;46/46%;47/47%;48/48%;49/49%;50/50%;51/51%;52/52%;53/53%;54/54%;55/55%;56/56%;57/57%;58/58%;59/59%;60/60%;-->
+<!--                                                    ;61/61%;62/62%;63/63%;64/64%;65/65%;66/66%;67/67%;68/68%;69/69%;70/70%;71/71%;72/72%;73/73%;74/74%;75/75%;76/76%;77/77%;78/78%;79/79%;80/80%;-->
+<!--                                                    ;81/81%;82/82%;83/83%;84/84%;85/85%;86/86%;87/87%;88/88%;89/89%;90/90%;91/91%;92/92%;93/93%;94/94%;95/95%;96/96%;97/97%;98/98%;100/100%">lowering when loading</th>-->
+<!--                                                <th class="header translate " data-default="true" data-type="checkbox" data-name="enabledBrightness">enabled</th>-->
+<!--                                            <th class="header translate" data-buttons="delete">delete</th>-->
+<!--                                        </tr>-->
+<!--                                    </thead>-->
+<!--                                </table>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    &lt;!&ndash; end brightness table &ndash;&gt;-->
+<!--                </div>-->
+<!--            &lt;!&ndash; end Tab with id "tab-brightness" &ndash;&gt;-->
+<!--    -->
+<!--            &lt;!&ndash; Tab with id "tab-screen"&ndash;&gt;-->
+<!--                <div id="tab-screen" class="col s12">-->
+<!--                <div class="row">-->
+<!--                    &lt;!&ndash; select screen active &ndash;&gt;-->
+<!--                    <div class="input-field col s3 selectScreen">-->
+<!--                        <select class="value" autofocus="autofocus" data-default="false" id="screenSaverON">-->
+<!--                            <option class="translate" value="true">Screensaver on</option>-->
+<!--                            <option class="translate" value="false" selected>Screensaver off</option>-->
+<!--                        </select>-->
+<!--                        <label for="screenSaverON"></label>-->
+<!--                    </div>-->
+<!--                    &lt;!&ndash; end select screen active &ndash;&gt;-->
+<!--    -->
+<!--                    &lt;!&ndash; telegram table &ndash;&gt;-->
+<!--                    <div class="col s12 screenSaver" id="screenSaver">-->
+<!--                        <div class="row center add-btn">-->
+<!--                             <a id='addScreensaver' class="waves-effect waves-light btn table-button-add translate">add Device</a>-->
+<!--                        </div>-->
+<!--                        <div class="table-values-div">-->
+<!--                            <table class="table-values">-->
+<!--                                <thead>-->
+<!--                                    <tr>-->
+<!--&lt;!&ndash;                                        <th class="header translate" data-name="_index">Nr.</th>&ndash;&gt;-->
+<!--                                        <th class="header translate" data-name="TabletName">name</th>-->
+<!--                                        <th class="header translate" data-name="screensaverName">Description of the screensaver</th>-->
+<!--                                        <th class="header translate" data-name="url">YouTube-Url or wallpaper-Url</th>-->
+<!--                                        <th class="header translate" data-type="select" data-name="screensaverMode" data-options="true/YouTube Url;false/Wallpaper Url">Screensaver Mode</th>-->
+<!--                                        <th class="header translate" data-type="select" data-name="minute" data-options="1/01 min;2/02 min;3/03 min;4/04 min;5/05 min;6/06 min;7/07 min;8/08 min;9/09 min;10/10 min;-->
+<!--                                            ;11/11 min;12/12 min;13/13 min;14/14 min;15/15 min;16/16 min;17/17 min;18/18 min;19/19 min;20/20 min;-->
+<!--                                            ;21/21 min;22/22 min;23/23 min;24/24 min;25/25 min;26/26 min;27/27 min;28/28 min;29/29 min;30/30 min;-->
+<!--                                            ;31/31 min;32/32 min;33/33 min;34/34 min;35/35 min;36/36 min;37/37 min;38/38 min;39/39 min;40/40 min;-->
+<!--                                            ;41/41 min;42/42 min;43/43 min;44/44 min;45/45 min;46/46 min;47/47 min;48/48 min;49/49 min;50/50 min;-->
+<!--                                            ;51/51 min;52/52 min;53/53 min;54/54 min;55/55 min;56/56 min;57/57 min;58/58 min;59/59 min;60/60 min">minute</th>-->
+<!--                                        <th class="header translate " data-default="true" data-type="checkbox" data-name="enabled">enableBrightnessSync</th>-->
+<!--                                        <th class="header translate" data-buttons="delete">delete</th>-->
+<!--                                    </tr>-->
+<!--                                </thead>-->
+<!--                            </table>-->
+<!--                        </div>-->
+<!--                        &lt;!&ndash; end screen table &ndash;&gt;-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            &lt;!&ndash; end screen table &ndash;&gt;-->
+<!--    -->
+<!--            &lt;!&ndash; Tab with id "tab-tables" &ndash;&gt;-->
+<!--            <div id="tab-telegram" class="col s12">-->
+<!--                <div class="row">-->
+<!--                    &lt;!&ndash; select telegram active &ndash;&gt;-->
+<!--                    <div class="input-field col s3 selectTelegram">-->
+<!--                       <select class="value" autofocus="autofocus" id="telegram_enabled">-->
+<!--                            <option class="translate" value="true">Warning activated</option>-->
+<!--                            <option class="translate" value="false" selected>Warning deactivated</option>-->
+<!--                        </select>-->
+<!--                         <label for="telegram_enabled"></label>-->
+<!--                    </div>-->
+
+<!--                    <div class="col s12 telegram" id="telegram">-->
+<!--                             <div class="row center add-btn">-->
+<!--                                 <a id="addUser" class="waves-effect waves-light btn table-button-add translate">add User</a>-->
+<!--                             </div>-->
+<!--                             <div class="table-values-div">-->
+<!--                                 <table class="table-values">-->
+<!--                                     <thead>-->
+<!--                                         <tr>-->
+<!--                                             <th id="User" data-name="telegramUser" class="header translate" data-type="select" data-default="" data-options="auswahl">telegramUser</th>-->
+<!--                                             &lt;!&ndash;  multi User select&ndash;&gt;-->
+<!--                                             &lt;!&ndash; <th id="User" data-name="telegramUser"  class="header translate" data-type="select multiple" data-default="" data-options="auswahl">telegramUser</th>&ndash;&gt;-->
+<!--                                             <th class="header translate" data-buttons="delete">delete</th>-->
+<!--                                         </tr>-->
+<!--                                     </thead>-->
+<!--                                </table>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--            -->
+<!--                    <h3 class='TelegramAdapter translate'>Telegram adapter is not installed please install the Telegram adapter before activating the function.</h3>-->
+<!--                    <h3 class='TelegramUser translate'>There are no Telegram users available</h3>-->
+<!--            -->
+<!--                </div>-->
+<!--            </div>-->
+<!--            &lt;!&ndash; end telegram table &ndash;&gt;-->
+<!--    -->
+<!--            &lt;!&ndash; Tab with id "tab-motion" &ndash;&gt;-->
+<!--            <div id="tab-motion" class="col s12">-->
+<!--                    <div class="row">-->
+<!--                        &lt;!&ndash; select motion active &ndash;&gt;-->
+<!--                        <div class="input-field col s3 selectMotion">-->
+<!--                            <select class="value" autofocus="autofocus" id="motionSensor_enabled">-->
+<!--                                <option class="translate" value="true">Activate motion sensors</option>-->
+<!--                                <option class="translate" value="false" selected>Deactivate motion sensors</option>-->
+<!--                            </select>-->
+<!--                            <label for="motionSensor_enabled"></label>-->
+<!--                        </div>-->
+<!--                        &lt;!&ndash; end select motion active &ndash;&gt;-->
+<!--                -->
+<!--                    <div class="row"></div>-->
+<!--                        &lt;!&ndash; motion table &ndash;&gt;-->
+<!--                    <div class="col s12 motion" id="motion">-->
+<!--                        <div class="row center add-btn">-->
+<!--                            <a class="waves-effect waves-light btn table-button-add translate">add Device</a>-->
+<!--                        </div>-->
+<!--                        <div class="table-values-div">-->
+<!--                            <table class="table-values">-->
+<!--                                <thead>-->
+<!--                                    <tr>-->
+<!--&lt;!&ndash;                                        <th class="header translate" data-name="_index">Nr.</th>&ndash;&gt;-->
+<!--                                        <th class="header translate" data-type='OID' data-name="motionid">motionID</th>-->
+<!--                                        <th class="header translate" data-default="true" data-type="checkbox" data-name="enabled">enabled</th>-->
+<!--                                        <th class="header translate" data-buttons="delete">delete</th>-->
+<!--                                    </tr>-->
+<!--                                </thead>-->
+<!--                            </table>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                        &lt;!&ndash; end motion table &ndash;&gt;-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            &lt;!&ndash; end Tab with id "tab-motion" &ndash;&gt;-->
+<!--    -->
+<!--            &lt;!&ndash; Tab with id "tab-motion" &ndash;&gt;-->
+<!--            <div id="tab-vis_view" class="col s12">-->
+<!--                    <div class="row">-->
+<!--                        &lt;!&ndash; select motion active &ndash;&gt;-->
+<!--                        <div class="input-field col s3 visSelect">-->
+<!--                            <label for="viewChange_enabled"></label><select class="value" autofocus="autofocus" id="viewChange_enabled">-->
+<!--                                <option class="translate" value="true">Activate view change</option>-->
+<!--                                <option class="translate" value="false" selected>Deactivate view change</option>-->
+<!--                            </select>-->
+<!--                             <label class='Select-text translate' for="viewChange_enabled">Automatic Vis view change</label>-->
+<!--                        </div>-->
+<!--                        &lt;!&ndash; end select motion active &ndash;&gt;-->
+<!--                        &lt;!&ndash; select motion active &ndash;&gt;-->
+<!--                        <div class="input-field col s3 viewMode visSelect">-->
+<!--                           <select class="value" autofocus="autofocus" id="viewMode">-->
+<!--                                <option class="translate" value="true">View in Widget 8</option>-->
+<!--                                <option class="translate" value="false" selected>Vis control</option>-->
+<!--                            </select>-->
+<!--                            <label class='Select-text translate' for="viewMode">vis Mode widget 8 or vis control</label>-->
+<!--                        </div>-->
+<!--                        &lt;!&ndash; end select motion active &ndash;&gt;-->
+
+<!--                        <div class="row"></div>-->
+<!--                        <h3 class='visAdapter translate'>The adapter is not installed. Please install the adapter before activating the function.</h3>-->
+<!--    -->
+<!--                        &lt;!&ndash; motion table &ndash;&gt;-->
+<!--                       -->
+<!--                        <div class="col s12" id="visView">-->
+<!--                            <div class="row center">-->
+<!--                                <a class="waves-effect waves-light btn table-button-add translate">add View</a>-->
+<!--                            </div>-->
+<!--                -->
+<!--                            <div class="table-values-div">-->
+<!--                                <table class="table-values">-->
+<!--                                    <thead>-->
+<!--                                        <tr>-->
+<!--                                            <th class="header translate" data-name="_index">Nr.</th>-->
+<!--                                            <th class="header translate" data-name="visProjekt" data-default="main">Vis Projekt name</th>-->
+<!--                                            <th class="header translate" data-name="viewName">Vis View Name</th>-->
+<!--                                            <th class="header translate" data-name="viewNumber">number of the view in widget 8</th>-->
+<!--                                            <th class="header translate" data-name="time" data-type="number" data-default="00">time in (sec)</th>-->
+<!--                                            <th class="header translate" data-buttons="delete">delete</th>-->
+<!--                                        </tr>-->
+<!--                                    </thead>-->
+<!--                                </table>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        &lt;!&ndash; end motion table &ndash;&gt;-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            &lt;!&ndash; end Tab with id "tab-motion" &ndash;&gt;-->
+<!--        </div>-->
+<!--         <div class="m material-dialogs">-->
+<!--      <div id="dialog-select-member" class="modal modal-fixed-footer">-->
+<!--        <div class="modal-content">-->
+<!--          <div class="row">-->
+<!--            <div class="col s12 title"></div>-->
+<!--          </div>-->
+<!--          <div class="row">-->
+<!--            <div class="col s12 dialog-content"></div>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--        <div class="modal-footer">-->
+<!--          <a class="modal-action modal-close waves-effect waves-green btn btn-set"><i class="large material-icons left">check</i><span class="translate">Select</span></a>-->
+<!--          <a class="modal-action modal-close waves-effect waves-green btn btn-close"><i class="large material-icons left ">close</i><span class="translate">Cancel</span></a>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--    </div>-->
+
+<!--</body>-->
+
+<!--</html>-->
