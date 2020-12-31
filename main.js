@@ -83,6 +83,7 @@ class FullyTabletControl extends utils.Adapter {
         this.on('ready', this.onReady.bind(this));
         this.on('stateChange', this.onStateChange.bind(this));
         this.on('message', this.onMessage.bind(this));
+        this.on('message', this.onMessage2.bind(this));
         this.on('unload', this.onUnload.bind(this));
 
     }
@@ -1008,7 +1009,7 @@ class FullyTabletControl extends utils.Adapter {
 
                     case 'batteryLevel': {
 
-                        const bat = objects['batteryLevel'];
+                        let bat = objects['batteryLevel'];
                         let plugged = objects['plugged'] ? objects['plugged'] : objects['isPlugged'];
 
                         this.setState(`device.${deviceID}.battery`, {val: bat, ack: true});
@@ -1046,14 +1047,10 @@ class FullyTabletControl extends utils.Adapter {
 
                         this.log.debug(`Now start the charging control`);
                         await this.charger(index, bat);
-
-
                         break;
                     }
 
                     case 'isScreenOn':
-
-
                         const isScreenOn = objects['isScreenOn'];
 
                         this.setState(`device.${deviceID}.device_info.isScreenOn`, {val: isScreenOn, ack: true});
@@ -1064,7 +1061,6 @@ class FullyTabletControl extends utils.Adapter {
                         if (!isScreenOn) {
                             await this.screenOn(index);
                         }
-
                         break;
 
                     case 'screenOn':
@@ -1080,7 +1076,6 @@ class FullyTabletControl extends utils.Adapter {
                         if (!screenOn) {
                             await this.screenOn(index);
                         }
-
                         break;
 
                     case 'screenBrightness':
@@ -1124,7 +1119,6 @@ class FullyTabletControl extends utils.Adapter {
                     case 'SSID':
                         // new from App version 1.40.3
                         const SSID = objects['SSID'].replace(/"/gi, '');
-
 
                         this.log.debug(`SSID ROW state for ${deviceID} : ${SSID}`);
 
@@ -2895,97 +2889,97 @@ class FullyTabletControl extends utils.Adapter {
 
                         this.log.debug(`Check which mode is switched on`);
                         if (chargeDevice !== null) {
-                        if (power_mode === 'true') {
-                            this.log.debug(`Charging cycle is switched on`);
+                            if (power_mode === 'true') {
+                                this.log.debug(`Charging cycle is switched on`);
 
-                            if (chargerid) {
+                                if (chargerid) {
 
-                                messageCharging[index] = false;
-                                this.log.debug(`Check whether the battery level is lower than the set start limit`);
-                                if (bat <= loadStart && !chargeDeviceValue[index]) {
+                                    messageCharging[index] = false;
+                                    this.log.debug(`Check whether the battery level is lower than the set start limit`);
+                                    if (bat <= loadStart && !chargeDeviceValue[index]) {
+
+                                        switch (typeof (chargeDevice.val)) {
+                                            case 'number':
+
+                                                this.log.debug(`Battery is at the start of charging limit start charging`);
+                                                await this.setForeignStateAsync(chargerid, 1, false);
+                                                this.log.info(`${tabletName[index]} charging started`);
+
+                                                break;
+
+                                            case 'boolean':
+
+                                                this.log.debug(`Battery is at the start of charging limit start charging`);
+                                                await this.setForeignStateAsync(chargerid, true, false);
+                                                this.log.info(`${tabletName[index]} charging started`);
+
+                                                break;
+                                        }
+                                    }
+                                    else if (bat >= loadStop && chargeDeviceValue[index]) {
+                                        switch (typeof (chargeDevice.val)) {
+                                            case 'number':
+
+                                                this.log.debug(`Battery level has reached the set charging stop, stop charging`);
+                                                messageSend[index] = false;
+                                                await this.setForeignStateAsync(chargerid, 0, false);
+                                                this.log.info(`${tabletName[index]} Charging cycle ended`);
+
+                                                break;
+
+                                            case 'boolean':
+
+                                                this.log.debug(`Battery level has reached the set charging stop, stop charging`);
+                                                messageSend[index] = false;
+                                                await this.setForeignStateAsync(chargerid, false, false);
+                                                this.log.info(`${tabletName[index]} Charging cycle ended`);
+
+                                                break;
+                                        }
+                                    }
+                                }
+                                else {
+                                    this.log.warn(`${tabletName[index]} Charger ID for Charging cycle not specified`);
+                                }
+                            }
+                            else if (power_mode === 'false') {
+                                this.log.debug(`Continuous current mode is activated`);
+
+                                if (chargerid) {
 
                                     switch (typeof (chargeDevice.val)) {
                                         case 'number':
 
-                                            this.log.debug(`Battery is at the start of charging limit start charging`);
-                                            await this.setForeignStateAsync(chargerid, 1, false);
-                                            this.log.info(`${tabletName[index]} charging started`);
+                                            messageCharging[index] = false;
+                                            if (!chargeDeviceValue[index]) this.log.debug(`The adapter now switches on the socket`);
+                                            if (!chargeDeviceValue[index]) await this.setForeignStateAsync(chargerid, 1, false);
+                                            if (!chargeDeviceValue[index]) this.log.debug(`${tabletName[index]} Continuous current`);
 
                                             break;
 
                                         case 'boolean':
 
-                                            this.log.debug(`Battery is at the start of charging limit start charging`);
-                                            await this.setForeignStateAsync(chargerid, true, false);
-                                            this.log.info(`${tabletName[index]} charging started`);
+                                            messageCharging[index] = false;
+                                            if (!chargeDeviceValue[index]) this.log.debug(`The adapter now switches on the socket`);
+                                            if (!chargeDeviceValue[index]) await this.setForeignStateAsync(chargerid, true, false);
+                                            if (!chargeDeviceValue[index]) this.log.debug(`${tabletName[index]} Continuous current`);
 
                                             break;
                                     }
+
+
                                 }
-                                else if (bat >= loadStop && chargeDeviceValue[index]) {
-                                    switch (typeof (chargeDevice.val)) {
-                                        case 'number':
-
-                                            this.log.debug(`Battery level has reached the set charging stop, stop charging`);
-                                            messageSend[index] = false;
-                                            await this.setForeignStateAsync(chargerid, 0, false);
-                                            this.log.info(`${tabletName[index]} Charging cycle ended`);
-
-                                            break;
-
-                                        case 'boolean':
-
-                                            this.log.debug(`Battery level has reached the set charging stop, stop charging`);
-                                            messageSend[index] = false;
-                                            await this.setForeignStateAsync(chargerid, false, false);
-                                            this.log.info(`${tabletName[index]} Charging cycle ended`);
-
-                                            break;
-                                    }
+                                else {
+                                    this.log.warn(`${tabletName[index]} Charger ID for Continuous current not specified`);
                                 }
                             }
-                            else {
-                                this.log.warn(`${tabletName[index]} Charger ID for Charging cycle not specified`);
-                            }
-                        }
-                        else if (power_mode === 'false') {
-                            this.log.debug(`Continuous current mode is activated`);
-
-                            if (chargerid) {
-
-                                switch (typeof (chargeDevice.val)) {
-                                    case 'number':
-
-                                        messageCharging[index] = false;
-                                        if (!chargeDeviceValue[index]) this.log.debug(`The adapter now switches on the socket`);
-                                        if (!chargeDeviceValue[index]) await this.setForeignStateAsync(chargerid, 1, false);
-                                        if (!chargeDeviceValue[index]) this.log.debug(`${tabletName[index]} Continuous current`);
-
-                                        break;
-
-                                    case 'boolean':
-
-                                        messageCharging[index] = false;
-                                        if (!chargeDeviceValue[index]) this.log.debug(`The adapter now switches on the socket`);
-                                        if (!chargeDeviceValue[index]) await this.setForeignStateAsync(chargerid, true, false);
-                                        if (!chargeDeviceValue[index]) this.log.debug(`${tabletName[index]} Continuous current`);
-
-                                        break;
+                            else if (power_mode === 'off') {
+                                if (!messageCharging[index]) {
+                                    this.log.info(`${tabletName[index]} Charging Off`);
+                                    messageCharging[index] = true;
                                 }
-
-
-                            }
-                            else {
-                                this.log.warn(`${tabletName[index]} Charger ID for Continuous current not specified`);
                             }
                         }
-                        else if (power_mode === 'off') {
-                            if (!messageCharging[index]) {
-                                this.log.info(`${tabletName[index]} Charging Off`);
-                                messageCharging[index] = true;
-                            }
-                        }
-                    }
 
                         if (power_mode !== 'off') {
                             if (chargeDevice !== null) {
@@ -2997,7 +2991,7 @@ class FullyTabletControl extends utils.Adapter {
                                             case 'number':
 
                                                 telegramStatus[index] = true;
-                                                this.onMessage(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${tabletName[index]} Tablet charging function has detected a malfunction, the tablet is not charging, please check it !!!`, User);
+                                                this.onMessage2(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${tabletName[index]} Tablet charging function has detected a malfunction, the tablet is not charging, please check it !!!`, User);
                                                 this.log.warn(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + `  ${tabletName[index]} Tablet charging function has detected a malfunction, the tablet is not charging, please check it !!!`);
                                                 await this.setForeignStateAsync(chargerid[index], 1, false);
                                                 this.setState(`device.${tabletName[index]}.charging_warning`, {val: true, ack: true});
@@ -3007,7 +3001,7 @@ class FullyTabletControl extends utils.Adapter {
                                             case 'boolean':
 
                                                 telegramStatus[index] = true;
-                                                this.onMessage(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${tabletName[index]} Tablet charging function has detected a malfunction, the tablet is not charging, please check it !!!`, User);
+                                                this.onMessage2(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${tabletName[index]} Tablet charging function has detected a malfunction, the tablet is not charging, please check it !!!`, User);
                                                 this.log.warn(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + `  ${tabletName[index]} Tablet charging function has detected a malfunction, the tablet is not charging, please check it !!!`);
                                                 await this.setForeignStateAsync(chargerid[index], true, false);
                                                 this.setState(`device.${tabletName[index]}.charging_warning`, {val: true, ack: true});
@@ -3018,7 +3012,7 @@ class FullyTabletControl extends utils.Adapter {
                                     }
                                     else if (bat > 18 && chargeDeviceValue[index] && telegramStatus[index]) {
                                         telegramStatus[index] = false;
-                                        this.onMessage(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${tabletName[index]} Tablet is charging the problem has been fixed.`, User);
+                                        this.onMessage2(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${tabletName[index]} Tablet is charging the problem has been fixed.`, User);
                                         this.log.warn(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${tabletName[index]} Tablet is charging the problem has been fixed.`);
                                         this.setState(`device.${tabletName[index]}.charging_warning`, {val: false, ack: true});
                                     }
@@ -3090,7 +3084,7 @@ class FullyTabletControl extends utils.Adapter {
                 this.log.debug(`check whether which mode is set`);
                 if (!mode) {
                     // build vis command string
-                    const visCmd = `{"instance": "FFFFFFFF", "command": "changeView", "date": "${homeView}"}`;
+                    const visCmd = `{"instance": "FFFFFFFF", "command": "changeView", "data": "${homeView}"}`;
                     this.log.debug(`build vis command string: ${visCmd}`);
 
                     // Set the timer to 1 sec
@@ -3300,12 +3294,6 @@ class FullyTabletControl extends utils.Adapter {
     async time_range(startTime, midTime, endTime) {
         // Get the current date
         let currentDate = new Date();
-//
-// const test = `20:00:00`
-//         currentDate.setHours(test.split(':')[0]);
-//         currentDate.setMinutes(test.split(':')[1]);
-//         currentDate.setSeconds(test.split(':')[2]);
-//
 
         // Format the start date
         let startDate = new Date(currentDate.getTime());
@@ -3325,7 +3313,6 @@ class FullyTabletControl extends utils.Adapter {
         endDate.setHours(endTime.split(':')[0]);
         endDate.setMinutes(endTime.split(':')[1]);
         endDate.setSeconds(endTime.split(':')[2]);
-
 
         // Reset time range
         let valid_time_frame;
@@ -3682,7 +3669,7 @@ class FullyTabletControl extends utils.Adapter {
      * @param msg
      * @param user
      */
-    onMessage(msg, user) {
+    onMessage2(msg, user) {
         // e.g. send email or pushover or whatever
         this.log.debug(`send msg to ${user} with message: ${msg}`);
 
@@ -3690,6 +3677,98 @@ class FullyTabletControl extends utils.Adapter {
             text: msg,
             user: user
         });
+    }
+
+    /**
+     * added in version 0.3.1-Beta.0
+     * on Telegram and Vis adapter if available and Telegram user call from the adapter
+     * @return {Object}     //return Object {'User':[],'visAdapter':false, 'telegramAdapter':false}
+     */
+    async readTelegramUser() {
+        const viewObj = await this.getObjectViewAsync('system', 'instance', {startkey: 'system.adapter.', endkey: 'system.adapter.\u9999'});
+        const result = [];
+        const arrTemp = [];
+        const telegramUser = [];
+        const telegramObj = {
+            'User': [],
+            'visAdapter': false,
+            'telegramAdapter': false
+        };
+        for (const objKey in viewObj.rows) {
+            result.push(viewObj.rows[objKey].value);
+        }
+        for (const r in result) {
+            for (let i = 0; i < 10; i++) {
+                if (result[r]._id === `system.adapter.telegram.${i}`) {
+                    telegramObj.telegramAdapter = true;
+                    arrTemp.push(`telegram.${i}.communicate.users`);
+                }
+                if (result[r]._id === `system.adapter.vis.0`) {
+                    telegramObj.visAdapter = true;
+                }
+            }
+        }
+        for (const u in arrTemp) {
+            telegramUser[u] = await this.getForeignStateAsync(arrTemp[u]);
+            if (telegramUser !== null || telegramUser !== undefined) {
+                if (telegramUser.val !== '') {
+                    for (const s in telegramUser) {
+                        const tempUser = JSON.parse(telegramUser[s].val);
+                        for (const t in tempUser) {
+                            if (tempUser[t].firstName !== undefined) {
+                                telegramObj.User.push(`${tempUser[t].firstName}/${tempUser[t].firstName}`);
+                            }
+                            else if (tempUser[t].userName !== undefined) {
+                                telegramObj.User.push(`${tempUser[t].userName}/${tempUser[t].userName}`);
+                            }
+                            else {
+                                telegramObj.User.push('');
+                            }
+                        }
+                    }
+                    return telegramObj;
+                }
+            }
+        }
+    }
+
+    // If you need to accept messages in your adapter, uncomment the following block and the corresponding line in the constructor.
+    /**
+     * added in version 0.3.1-Beta.0
+     * Some message was sent to this instance over message box. Used by email, pushover, text2speech, ...
+     * Using this method requires "common.messagebox" property to be set to true in io-package.json
+     * @param {ioBroker.Message} obj
+     */
+    async onMessage(obj) {
+        if (typeof obj === 'object' && obj.message) {
+            const deviceObj = obj.message;
+            const deviceOnline = [];
+            let TelegramObj = {};
+            switch (obj.command) {
+                case 'pingTablet':
+                    for (const i in deviceObj) {
+                        if (deviceObj[i].enabled) {
+                            await axios.get(`http://${deviceObj[i].ip}:${deviceObj[i].port}/?cmd=deviceInfo&type=json&password=${deviceObj[i].password}`)
+                                .then(async apiResult => {
+                                    if (apiResult.statusText === 'OK ') {
+                                        deviceOnline[i] = true;
+                                    }
+                                })
+                                .catch(async error => {
+                                    if (error.code === 'ETIMEDOUT') {
+                                        deviceOnline[i] = false;
+                                    }
+                                });
+                        }
+                    }
+                    this.sendTo(obj.from, obj.command, deviceOnline, obj.callback);
+                    break;
+                case 'TelegramUser':
+                    TelegramObj = await this.readTelegramUser();
+                    this.sendTo(obj.from, obj.command, TelegramObj, obj.callback);
+                    break;
+            }
+        }
     }
 }
 
