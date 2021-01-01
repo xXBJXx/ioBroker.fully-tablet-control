@@ -83,7 +83,6 @@ class FullyTabletControl extends utils.Adapter {
         this.on('ready', this.onReady.bind(this));
         this.on('stateChange', this.onStateChange.bind(this));
         this.on('message', this.onMessage.bind(this));
-        this.on('message', this.onMessage2.bind(this));
         this.on('unload', this.onUnload.bind(this));
 
     }
@@ -2991,7 +2990,10 @@ class FullyTabletControl extends utils.Adapter {
                                             case 'number':
 
                                                 telegramStatus[index] = true;
-                                                this.onMessage2(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${tabletName[index]} Tablet charging function has detected a malfunction, the tablet is not charging, please check it !!!`, User);
+                                                this.sendTo('telegram.0', 'send', {
+                                                    text: this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${tabletName[index]} Tablet charging function has detected a malfunction, the tablet is not charging, please check it !!!`,
+                                                    user: User
+                                                });
                                                 this.log.warn(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + `  ${tabletName[index]} Tablet charging function has detected a malfunction, the tablet is not charging, please check it !!!`);
                                                 await this.setForeignStateAsync(chargerid[index], 1, false);
                                                 this.setState(`device.${tabletName[index]}.charging_warning`, {val: true, ack: true});
@@ -3001,7 +3003,11 @@ class FullyTabletControl extends utils.Adapter {
                                             case 'boolean':
 
                                                 telegramStatus[index] = true;
-                                                this.onMessage2(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${tabletName[index]} Tablet charging function has detected a malfunction, the tablet is not charging, please check it !!!`, User);
+
+                                                this.sendTo('telegram.0', 'send', {
+                                                    text: this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${tabletName[index]} Tablet charging function has detected a malfunction, the tablet is not charging, please check it !!!`,
+                                                    user: User
+                                                });
                                                 this.log.warn(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + `  ${tabletName[index]} Tablet charging function has detected a malfunction, the tablet is not charging, please check it !!!`);
                                                 await this.setForeignStateAsync(chargerid[index], true, false);
                                                 this.setState(`device.${tabletName[index]}.charging_warning`, {val: true, ack: true});
@@ -3012,7 +3018,10 @@ class FullyTabletControl extends utils.Adapter {
                                     }
                                     else if (bat > 18 && chargeDeviceValue[index] && telegramStatus[index]) {
                                         telegramStatus[index] = false;
-                                        this.onMessage2(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${tabletName[index]} Tablet is charging the problem has been fixed.`, User);
+                                        this.sendTo('telegram.0', 'send', {
+                                            text: this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${tabletName[index]} Tablet is charging the problem has been fixed.`,
+                                            user: User
+                                        });
                                         this.log.warn(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${tabletName[index]} Tablet is charging the problem has been fixed.`);
                                         this.setState(`device.${tabletName[index]}.charging_warning`, {val: false, ack: true});
                                     }
@@ -3661,22 +3670,6 @@ class FullyTabletControl extends utils.Adapter {
         catch (error) {
             this.log.error(`[onStateChane ${id}] error: ${error.message}, stack: ${error.stack}`);
         }
-    }
-
-    /**
-     * Some message was sent to this instance over message box. Used by email, pushover, text2speech, ...
-     * Using this method requires "common.message" property to be set to true in io-package.json
-     * @param msg
-     * @param user
-     */
-    onMessage2(msg, user) {
-        // e.g. send email or pushover or whatever
-        this.log.debug(`send msg to ${user} with message: ${msg}`);
-
-        this.sendTo('telegram.0', 'send', {
-            text: msg,
-            user: user
-        });
     }
 
     /**

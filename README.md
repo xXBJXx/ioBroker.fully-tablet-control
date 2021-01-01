@@ -258,6 +258,10 @@ _______________________________
  Placeholder for the next version (at the beginning of the line):
  ### __WORK IN PROGRESS__ ( - falls nicht benötigt löschen sonst klammern entfernen und nach dem - dein text schreiben )
 -->
+
+### __WORK IN PROGRESS__
+* (xXBJXx) fix Telegram error message when accessing the config page [(issue #109)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/109)
+
 ### 0.3.1-beta.0 (2020-12-31)
 * (xXBJXx) test-and-release.yml update
 * (xXBJXx) admin Page Revised
