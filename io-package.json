@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "fully-tablet-control",
-        "version": "0.3.1-beta.0",
+        "version": "0.3.1-beta.1",
         "news": {
+            "0.3.1-beta.1": {
+                "en": "fix Telegram error message when accessing the config page [(issue #109)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/109)",
+                "de": "Behebung der Telegrammfehlermeldung beim Zugriff auf die Konfigurationsseite [(Problem Nr. 109)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/109)",
+                "ru": "исправить сообщение об ошибке Telegram при доступе к странице конфигурации [(issue # 109)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/109)",
+                "pt": "corrigir mensagem de erro do Telegram ao acessar a página de configuração [(problema # 109)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/109)",
+                "nl": "Telegram-foutmelding repareren bij toegang tot de configuratiepagina [(issue # 109)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/109)",
+                "fr": "correction du message d'erreur Telegram lors de l'accès à la page de configuration [(issue # 109)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/109)",
+                "it": "correggere il messaggio di errore di Telegram quando si accede alla pagina di configurazione [(problema # 109)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/109)",
+                "es": "arregla el mensaje de error de Telegram al acceder a la página de configuración [(problema # 109)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/109)",
+                "pl": "naprawić komunikat o błędzie Telegrama podczas uzyskiwania dostępu do strony konfiguracyjnej [(problem # 109)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/109)",
+                "zh-cn": "修复访问配置页面[（issue＃109）]时的电报错误消息（https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/109）"
+            },
             "0.3.1-beta.0": {
                 "en": "test-and-release.yml update\nadmin Page Revised\ncheck for 0/1 implemented for sockets (issue #66)",
                 "de": "test-and-release.yml update\nadmin Seite überarbeitet\nÜberprüfen Sie, ob 0/1 für Sockets implementiert ist (Problem Nr. 66).",
@@ -230,18 +242,6 @@
                 "es": "Cambio de nombre del adaptador",
                 "pl": "Zmiana nazwy adaptera",
                 "zh-cn": "适配器名称更改"
-            },
-            "0.2.0": {
-                "en": "bug in Automatic change to home view widget 8 fixed ",
-                "de": "Fehler im automatischen Wechsel zum Home View Widget 8 behoben",
-                "ru": "исправлена ошибка в автоматическом переходе на виджет 8 для домашнего просмотра",
-                "pt": "corrigido o erro na mudança automática para o widget de exibição em casa 8 corrigido",
-                "nl": "bug in Automatische wijziging naar startweergave widget 8 opgelost",
-                "fr": "bug dans le changement automatique du widget de vue d'accueil 8 corrigé",
-                "it": "bug in Correzione automatica del widget 8 della vista principale risolto",
-                "es": "error en el cambio automático al widget de vista de inicio 8 corregido",
-                "pl": "błąd w automatycznej zmianie widżetu 8 widoku domowego",
-                "zh-cn": "自动更改为主视图小部件中的错误8已修复"
             }
         },
         "title": "Fully Tablet Control",
