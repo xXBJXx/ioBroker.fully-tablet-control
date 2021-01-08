@@ -259,6 +259,9 @@ _______________________________
  ### __WORK IN PROGRESS__ ( - falls nicht benötigt löschen sonst klammern entfernen und nach dem - dein text schreiben )
 -->
 
+### __WORK IN PROGRESS__
+* (xXBJXx) fixed TypeError: Cannot read property 'val' of null [(issue #113)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/113)
+
 ### 0.3.1-beta.1 (2021-01-01)
 * (xXBJXx) fix Telegram error message when accessing the config page [(issue #109)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/109)
 
@@ -424,7 +427,7 @@ _______________________________
 
 MIT License
 
-Copyright (c) 2020 xXBJXx
+Copyright (c) 2021 xXBJXx
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

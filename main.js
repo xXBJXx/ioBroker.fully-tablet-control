@@ -99,6 +99,7 @@ class FullyTabletControl extends utils.Adapter {
         await this.stateRequest();
         await this.astroTime();
         await this.automatic_bri();
+        // @ts-ignore
         await this.checkView();
 
 
@@ -211,6 +212,7 @@ class FullyTabletControl extends utils.Adapter {
 
                 if (telegramOn) {
 
+                    // @ts-ignore
                     if (!telegramUser && telegramUser.length !== 0 || telegramUser !== [] && telegramUser.length !== 0) {
                         for (const u in telegramUser) {
 
@@ -286,6 +288,7 @@ class FullyTabletControl extends utils.Adapter {
 
                 if (brightnessControlEnabled) {
 
+                    // @ts-ignore
                     if (!brightnessObject && brightnessObject.length !== 0 || brightnessObject !== [] && brightnessObject.length !== 0) {
 
                         for (const b in deviceEnabled) {
@@ -352,6 +355,7 @@ class FullyTabletControl extends utils.Adapter {
                 const motion = this.config.motion;
                 const motionSensor_enabled = JSON.parse(this.config.motionSensor_enabled)
                 if (motionSensor_enabled) {
+                    // @ts-ignore
                     if (!motion && motion.length !== 0 || motion !== [] && motion.length !== 0) {
                         for (const sensor in motion) {
 
@@ -399,6 +403,7 @@ class FullyTabletControl extends utils.Adapter {
                 if (screenSaverON) {
                     this.log.debug(`Screensaver control is switched on`);
 
+                    // @ts-ignore
                     if (!screenSaverObj && screenSaverObj.length !== 0 || screenSaverObj !== [] && screenSaverObj.length !== 0) {
                         for (const s in deviceEnabled) {
                             if (deviceEnabled[s]) {
@@ -1405,8 +1410,6 @@ class FullyTabletControl extends utils.Adapter {
                                 this.log.error(`${tabletName[index]} send status for startApplication could not be sent => ${error.message}, stack: ${error.stack}`);
                                 console.log(`${tabletName[index]} send status for startApplication could not be sent [ command: ${cmd} val: ${state.val} ] => ${error.message}, stack: ${error.stack}`);
                             });
-
-
                     }
                     break;
 
@@ -1433,6 +1436,7 @@ class FullyTabletControl extends utils.Adapter {
 
                 case 'camshot':
                     let motionDetection = await this.getStateAsync(`device.${tabletName[index]}.commands.motionDetection`);
+                    // @ts-ignore
                     motionDetection = motionDetection.val;
 
                     if (motionDetection) {
@@ -1453,12 +1457,13 @@ class FullyTabletControl extends utils.Adapter {
                         const htmlBase64 = `<img src="data:image/png;base64,${base64}" style="width: auto ;height: 100%;"  alt='no Image'/>`
 
                         await this.setStateAsync(`device.${tabletName[index]}.device_info.camshot64`, {val: htmlBase64, ack: true})
+                        // @ts-ignore
                         let base64String = Buffer.from(base64, 'base64')
                         this.writeFile(`fully-tablet-control.admin`, `media/camshot_${tabletName[index]}_${this.instance}.png`, base64String, function (err) {
+                            // @ts-ignore
                             if (err) this.log.error(err)
                             console.log('File created');
                         });
-                        this.w
                         await this.setState(`device.${tabletName[index]}.device_info.camshotUrl`, {val: `/fully-tablet-control.admin/media/camshot_${tabletName[index]}_${this.instance}.png`, ack: true});
                     }
                     else {
@@ -1467,10 +1472,13 @@ class FullyTabletControl extends utils.Adapter {
                     break;
 
                 case 'kioskPin_confirm':
+                    // @ts-ignore
                     const pin = (await this.getStateAsync(`${this.namespace}.device.${tabletName[index]}.commands.kiosk.kioskPin`)).val;
                     const pinConfirm = state.val;
                     if (kioskPinTimeout[index]) clearTimeout(kioskPinTimeout[index]);
+                    // @ts-ignore
                     if (!isNaN(pin) && !isNaN(pinConfirm)) {
+                        // @ts-ignore
                         console.log(isNaN(pin))
                         console.log(isNaN(pinConfirm))
                         if (pinConfirm === pin) {
@@ -1502,6 +1510,7 @@ class FullyTabletControl extends utils.Adapter {
                             this.setState(id, {val: 'pin does not match try again', ack: true});
                         }
                     }
+                    // @ts-ignore
                     else if (isNaN(pin)) {
                         this.setState(`${this.namespace}.device.${tabletName[index]}.commands.kiosk.kioskPin`, {val: 'Attention kiosk pin may only contain numbers (1234567890) do not contain any special characters or letters', ack: true});
                         this.log.warn(`Attention kiosk pin may only contain numbers (1234567890) do not contain any special characters or letters`);
@@ -1734,7 +1743,9 @@ class FullyTabletControl extends utils.Adapter {
             let nightM;
             let nightS;
 
+            // @ts-ignore
             const iobrokerLatitude = config.common.latitude;
+            // @ts-ignore
             const iobrokerLongitude = config.common.longitude;
 
             if (iobrokerLatitude !== '' && iobrokerLongitude !== '') {
@@ -1798,6 +1809,7 @@ class FullyTabletControl extends utils.Adapter {
             }
 
             this.log.debug(`Time initialization is complete. Now start the cron`);
+            // @ts-ignore
             await this.brightnessCron(dayH, dayM, nightH, nightM);
 
         }
@@ -1943,11 +1955,13 @@ class FullyTabletControl extends utils.Adapter {
             this.log.debug(`Check whether value is in boolean or number`);
             let typ = typeof (value);
             let controlMode = await this.getStateAsync(`device.${tabletName[index]}.brightness_control_mode`);
+            // @ts-ignore
             controlMode = controlMode['val'];
 
             switch (typ) {
                 case 'boolean': {
                     let stateValue = await this.getStateAsync(`device.${tabletName[index]}.manualBrightness`);
+                    // @ts-ignore
                     stateValue = stateValue.val;
                     controlMode = value;
                     if (day_Time === 1 || day_Time === 2) {
@@ -1958,6 +1972,7 @@ class FullyTabletControl extends utils.Adapter {
                             if (automatic_briTimeout) clearTimeout(automatic_briTimeout);
 
                             this.log.debug(`start manuel brightness function`);
+                            // @ts-ignore
                             await this.manuel_Bri(index, stateValue, controlMode);
 
                         }
@@ -1979,6 +1994,7 @@ class FullyTabletControl extends utils.Adapter {
                             if (automatic_briTimeout) clearTimeout(automatic_briTimeout);
 
                             this.log.debug(`start manuel brightness function`);
+                            // @ts-ignore
                             await this.manuel_Bri(index, stateValue, controlMode);
 
                         }
@@ -2014,6 +2030,7 @@ class FullyTabletControl extends utils.Adapter {
                         this.log.debug(`night and day timeout are reset`);
                         if (automatic_briTimeout) clearTimeout(automatic_briTimeout);
                         this.log.debug(`start manuel brightness function`);
+                        // @ts-ignore
                         await this.manuel_Bri(index, value, controlMode);
 
 
@@ -2232,6 +2249,7 @@ class FullyTabletControl extends utils.Adapter {
             try {
                 const brightnessD = this.config.brightness;
                 const screenSaverON = JSON.parse(this.config['screenSaverON']);
+                // @ts-ignore
                 if (!brightnessD && brightnessD.length !== 0 || brightnessD !== [] && brightnessD.length !== 0) {
 
                     for (const d in deviceEnabled) {
@@ -2280,7 +2298,7 @@ class FullyTabletControl extends utils.Adapter {
                                                 .catch(async error => {
 
                                                     this.log.error(`${tabletName[d]} send status for ScreensaverOnBri name could not be sent => ${error.message}, stack: ${error.stack}`);
-                                                    console.log(`${tabletName[d]} send status for ScreensaverOnBri name could not be sent val: ${value} ] => ${error.message}, stack: ${error.stack}`);
+                                                    console.log(`${tabletName[d]} send status for ScreensaverOnBri name could not be sent => ${error.message}, stack: ${error.stack}`);
 
                                                 });
 
@@ -2295,7 +2313,7 @@ class FullyTabletControl extends utils.Adapter {
                                                 .catch(async error => {
 
                                                     this.log.error(`${tabletName[d]} send status for BrightnessURL could not be sent => ${error.message}, stack: ${error.stack}`);
-                                                    console.log(`${tabletName[d]} send status for BrightnessURL could not be sent val: ${value} ] => ${error.message}, stack: ${error.stack}`);
+                                                    console.log(`${tabletName[d]} send status for BrightnessURL could not be sent => ${error.message}, stack: ${error.stack}`);
                                                 });
 
                                             this.log.debug(`Start the stateRequest in 300 ms to get the current values of the ${tabletName[d]} device`);
@@ -2320,7 +2338,7 @@ class FullyTabletControl extends utils.Adapter {
                                             .catch(async error => {
 
                                                 this.log.error(`${tabletName[d]} send status for BrightnessURL could not be sent => ${error.message}, stack: ${error.stack}`);
-                                                console.log(`${tabletName[d]} send status for BrightnessURL could not be sent val: ${value} ] => ${error.message}, stack: ${error.stack}`);
+                                                console.log(`${tabletName[d]} send status for BrightnessURL could not be sent => ${error.message}, stack: ${error.stack}`);
                                             });
 
                                         this.log.debug(`Start the stateRequest in 300 ms to get the current values of the ${tabletName[d]} device`);
@@ -2353,6 +2371,7 @@ class FullyTabletControl extends utils.Adapter {
             try {
                 const brightnessD = this.config.brightness;
                 const screenSaverON = JSON.parse(this.config['screenSaverON']);
+                // @ts-ignore
                 if (!brightnessD && brightnessD.length !== 0 || brightnessD !== [] && brightnessD.length !== 0) {
 
                     for (const d in deviceEnabled) {
@@ -2401,7 +2420,7 @@ class FullyTabletControl extends utils.Adapter {
                                                 .catch(async error => {
 
                                                     this.log.error(`${tabletName[d]} send status for ScreensaverOnBri name could not be sent => ${error.message}, stack: ${error.stack}`);
-                                                    console.log(`${tabletName[d]} send status for ScreensaverOnBri name could not be sent val: ${value} ] => ${error.message}, stack: ${error.stack}`);
+                                                    console.log(`${tabletName[d]} send status for ScreensaverOnBri name could not be sent => ${error.message}, stack: ${error.stack}`);
 
                                                 });
 
@@ -2416,7 +2435,7 @@ class FullyTabletControl extends utils.Adapter {
                                                 .catch(async error => {
 
                                                     this.log.error(`${tabletName[d]} send status for BrightnessURL could not be sent => ${error.message}, stack: ${error.stack}`);
-                                                    console.log(`${tabletName[d]} send status for BrightnessURL could not be sent val: ${value} ] => ${error.message}, stack: ${error.stack}`);
+                                                    console.log(`${tabletName[d]} send status for BrightnessURL could not be sent => ${error.message}, stack: ${error.stack}`);
                                                 });
 
                                             this.log.debug(`Start the stateRequest in 300 ms to get the current values of the ${tabletName[d]} device`);
@@ -2441,7 +2460,7 @@ class FullyTabletControl extends utils.Adapter {
                                             .catch(async error => {
 
                                                 this.log.error(`${tabletName[d]} send status for BrightnessURL could not be sent => ${error.message}, stack: ${error.stack}`);
-                                                console.log(`${tabletName[d]} send status for BrightnessURL could not be sent val: ${value} ] => ${error.message}, stack: ${error.stack}`);
+                                                console.log(`${tabletName[d]} send status for BrightnessURL could not be sent => ${error.message}, stack: ${error.stack}`);
                                             });
 
                                         this.log.debug(`Start the stateRequest in 300 ms to get the current values of the ${tabletName[d]} device`);
@@ -2477,6 +2496,7 @@ class FullyTabletControl extends utils.Adapter {
                 const brightnessN = this.config.brightness;
                 const screenSaverON = JSON.parse(this.config['screenSaverON']);
 
+                // @ts-ignore
                 if (!brightnessN && brightnessN.length !== 0 || brightnessN !== [] && brightnessN.length !== 0) {
 
                     for (const d in deviceEnabled) {
@@ -2525,7 +2545,7 @@ class FullyTabletControl extends utils.Adapter {
                                                 .catch(async error => {
 
                                                     this.log.error(`${tabletName[d]} send status for ScreensaverOnBri name could not be sent => ${error.message}, stack: ${error.stack}`);
-                                                    console.log(`${tabletName[d]} send status for ScreensaverOnBri name could not be sent val: ${value} ] => ${error.message}, stack: ${error.stack}`);
+                                                    console.log(`${tabletName[d]} send status for ScreensaverOnBri name could not be sent => ${error.message}, stack: ${error.stack}`);
 
                                                 });
 
@@ -2540,7 +2560,7 @@ class FullyTabletControl extends utils.Adapter {
                                                 .catch(async error => {
 
                                                     this.log.error(`${tabletName[d]} send status for BrightnessURL could not be sent => ${error.message}, stack: ${error.stack}`);
-                                                    console.log(`${tabletName[d]} send status for BrightnessURL could not be sent val: ${value} ] => ${error.message}, stack: ${error.stack}`);
+                                                    console.log(`${tabletName[d]} send status for BrightnessURL could not be sent => ${error.message}, stack: ${error.stack}`);
                                                 });
 
                                             this.log.debug(`Start the stateRequest in 300 ms to get the current values of the ${tabletName[d]} device`);
@@ -2566,7 +2586,7 @@ class FullyTabletControl extends utils.Adapter {
                                             .catch(async error => {
 
                                                 this.log.error(`${tabletName[d]} send status for BrightnessURL could not be sent => ${error.message}, stack: ${error.stack}`);
-                                                console.log(`${tabletName[d]} send status for BrightnessURL could not be sent val: ${value} ] => ${error.message}, stack: ${error.stack}`);
+                                                console.log(`${tabletName[d]} send status for BrightnessURL could not be sent => ${error.message}, stack: ${error.stack}`);
                                             });
 
                                         this.log.debug(`Start the stateRequest in 300 ms to get the current values of the ${tabletName[d]} device`);
@@ -2647,6 +2667,7 @@ class FullyTabletControl extends utils.Adapter {
             this.log.debug(`read motionSensor_enabled val: ${motionSensor_enabled}`);
 
             if (motionSensor_enabled) {
+                // @ts-ignore
                 if (!motion && motion.length !== 0 || motion !== [] && motion.length !== 0) {
 
                     this.log.debug(`Check if the sensor is activated`);
@@ -2701,6 +2722,7 @@ class FullyTabletControl extends utils.Adapter {
             this.log.debug(`Check whether the screen saver control is activated`);
             if (screenSaverOn) {
 
+                // @ts-ignore
                 if (!tabletName && tabletName.length !== 0 || tabletName !== [] && tabletName.length !== 0) {
 
                     for (const on in ip) {
@@ -2843,6 +2865,7 @@ class FullyTabletControl extends utils.Adapter {
             if (JSON.parse(this.config['chargerON'])) {
                 this.log.debug(`Charge control is activated`);
 
+                // @ts-ignore
                 if (!charger && charger.length !== 0 || charger !== [] && charger.length !== 0) {
                     if (charger[index]) {
 
@@ -2857,7 +2880,7 @@ class FullyTabletControl extends utils.Adapter {
                             this.log.debug(`load object data from ${chargerid}`);
                             chargeDevice = await this.getForeignStateAsync(chargerid);
 
-                            if (chargeDevice !== null) {
+                            if (chargeDevice !== null && chargeDevice !== undefined) {
 
                                 switch (typeof (chargeDevice.val)) {
                                     case 'number':
@@ -2887,7 +2910,7 @@ class FullyTabletControl extends utils.Adapter {
                         }
 
                         this.log.debug(`Check which mode is switched on`);
-                        if (chargeDevice !== null) {
+                        if (chargeDevice !== null && chargeDevice !== undefined) {
                             if (power_mode === 'true') {
                                 this.log.debug(`Charging cycle is switched on`);
 
@@ -2981,7 +3004,8 @@ class FullyTabletControl extends utils.Adapter {
                         }
 
                         if (power_mode !== 'off') {
-                            if (chargeDevice !== null) {
+                            if (chargeDevice !== null && chargeDevice !== undefined) {
+
                                 if (telegram_enabled === true) {
 
                                     if (bat <= 18 && !chargeDeviceValue[index] && !telegramStatus[index] || bat <= 18 && chargeDeviceValue[index] && !telegramStatus[index]) {
@@ -3106,14 +3130,18 @@ class FullyTabletControl extends utils.Adapter {
 
                         if (timer && timer.val) {
 
+                            // @ts-ignore
                             timer = parseInt(timer.val);
+                            // @ts-ignore
                             this.log.debug(`parse timer.val string => ${timer.val} to number => ${timer}`);
 
                             // check whether the timer is greater than 1 if so then count down otherwise for action
                             this.log.debug(`check whether the timer is greater than 1 if so then count down otherwise for action`);
+                            // @ts-ignore
                             if (timer > 1) {
 
                                 // Count down the timer
+                                // @ts-ignore
                                 await this.setStateChangedAsync(`vis_View.Timer_View_Switch`, timer - 1, true);
                                 this.log.debug(`Count down the timer`);
                                 await this.switchToHomeView(view_enabled, mode);
@@ -3141,14 +3169,18 @@ class FullyTabletControl extends utils.Adapter {
                         if (timer && timer.val) {
 
 
+                            // @ts-ignore
                             timer = parseInt(timer.val);
+                            // @ts-ignore
                             this.log.debug(`parse timer.val string => ${timer.val} to number => ${timer}`);
 
                             // check whether the timer is greater than 1 if so then count down otherwise for action
                             this.log.debug(`check whether the timer is greater than 1 if so then count down otherwise for action`);
+                            // @ts-ignore
                             if (timer > 1) {
 
                                 // Count down the timer
+                                // @ts-ignore
                                 await this.setStateChangedAsync(`vis_View.Timer_View_Switch`, timer - 1, true);
                                 this.log.debug(`Count down the timer`);
                                 await this.switchToHomeView(view_enabled, mode);
@@ -3279,7 +3311,7 @@ class FullyTabletControl extends utils.Adapter {
      * zeroPad(1234, 2); // becomes "1234" :)
      * @param  {string|number} num      Number that should have leading zeros
      * @param  {number} places          number of digits
-     * @return {string} Number          with leading zeros as desired.
+     * @return {Promise} Number          with leading zeros as desired.
      */
     async zeroPad(num, places) {
         try {
@@ -3298,7 +3330,7 @@ class FullyTabletControl extends utils.Adapter {
      * @param   {string|number}    startTime                example: 06:15:00
      * @param   {string|number}    midTime                  example: 13:45:00
      * @param   {string|number}    endTime                  example: 23:21:00
-     * @return  {number}   valid_time_frame       example: 1 (morning) / 2 (midday) / 3 (night)
+     * @return  {Promise}   valid_time_frame       example: 1 (morning) / 2 (midday) / 3 (night)
      */
     async time_range(startTime, midTime, endTime) {
         // Get the current date
@@ -3306,21 +3338,30 @@ class FullyTabletControl extends utils.Adapter {
 
         // Format the start date
         let startDate = new Date(currentDate.getTime());
+        // @ts-ignore
         startDate.setHours(startTime.split(':')[0]);
+        // @ts-ignore
         startDate.setMinutes(startTime.split(':')[1]);
+        // @ts-ignore
         startDate.setSeconds(startTime.split(':')[2]);
 
         // Format the end date
         let midDate = new Date(currentDate.getTime());
+        // @ts-ignore
         midDate.setHours(midTime.split(':')[0]);
+        // @ts-ignore
         midDate.setMinutes(midTime.split(':')[1]);
+        // @ts-ignore
         midDate.setSeconds(midTime.split(':')[2]);
 
         // Format the end date
 
         let endDate = new Date(currentDate.getTime());
+        // @ts-ignore
         endDate.setHours(endTime.split(':')[0]);
+        // @ts-ignore
         endDate.setMinutes(endTime.split(':')[1]);
+        // @ts-ignore
         endDate.setSeconds(endTime.split(':')[2]);
 
         // Reset time range
@@ -3353,7 +3394,7 @@ class FullyTabletControl extends utils.Adapter {
     /**
      * Check on number.
      * @param {number} str
-     * @return {number} str
+     * @return {Promise} str
      */
     async convert_percent(str) {
         if (Number.isNaN(str)) {
@@ -3365,21 +3406,23 @@ class FullyTabletControl extends utils.Adapter {
     /**
      * Calculate memory size and add the ending.
      * @param {number} bytes
-     * @return {string}
+     * @return {Promise}
      */
     async bytesToSize(bytes) {
         const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
         if (bytes === 0) return '0 Byte';
 
+        // @ts-ignore
         const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
 
+        // @ts-ignore
         return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
     }
 
     /**
      * Replaces text in a string, using an object that supports replacement within a string.
      * @param {string} str
-     * @return {string}
+     * @return {Promise}
      */
     async replaceFunction(str) {
         if (str) {
@@ -3675,7 +3718,7 @@ class FullyTabletControl extends utils.Adapter {
     /**
      * added in version 0.3.1-Beta.0
      * on Telegram and Vis adapter if available and Telegram user call from the adapter
-     * @return {Object}     //return Object {'User':[],'visAdapter':false, 'telegramAdapter':false}
+     * @return {Promise}     //return Object {'User':[],'visAdapter':false, 'telegramAdapter':false}
      */
     async readTelegramUser() {
         const viewObj = await this.getObjectViewAsync('system', 'instance', {startkey: 'system.adapter.', endkey: 'system.adapter.\u9999'});
@@ -3692,35 +3735,43 @@ class FullyTabletControl extends utils.Adapter {
         }
         for (const r in result) {
             for (let i = 0; i < 10; i++) {
+                // @ts-ignore
                 if (result[r]._id === `system.adapter.telegram.${i}`) {
                     telegramObj.telegramAdapter = true;
                     arrTemp.push(`telegram.${i}.communicate.users`);
                 }
+                // @ts-ignore
                 if (result[r]._id === `system.adapter.vis.0`) {
                     telegramObj.visAdapter = true;
                 }
             }
         }
+
         for (const u in arrTemp) {
             telegramUser[u] = await this.getForeignStateAsync(arrTemp[u]);
             if (telegramUser !== null || telegramUser !== undefined) {
-                if (telegramUser.val !== '') {
-                    for (const s in telegramUser) {
-                        const tempUser = JSON.parse(telegramUser[s].val);
-                        for (const t in tempUser) {
-                            if (tempUser[t].firstName !== undefined) {
-                                telegramObj.User.push(`${tempUser[t].firstName}/${tempUser[t].firstName}`);
-                            }
-                            else if (tempUser[t].userName !== undefined) {
-                                telegramObj.User.push(`${tempUser[t].userName}/${tempUser[t].userName}`);
-                            }
-                            else {
-                                telegramObj.User.push('');
+                for (const s in telegramUser) {
+                    if (telegramUser[s] !== null) {
+                        if (telegramUser[s].val !== '') {
+                            const tempUser = JSON.parse(telegramUser[s].val);
+                            for (const t in tempUser) {
+                                if (tempUser[t].firstName !== undefined) {
+                                    // @ts-ignore
+                                    telegramObj.User.push(`${tempUser[t].firstName}/${tempUser[t].firstName}`);
+                                }
+                                else if (tempUser[t].userName !== undefined) {
+                                    // @ts-ignore
+                                    telegramObj.User.push(`${tempUser[t].userName}/${tempUser[t].userName}`);
+                                }
+                                else {
+                                    // @ts-ignore
+                                    telegramObj.User.push('');
+                                }
                             }
                         }
                     }
-                    return telegramObj;
                 }
+                return telegramObj;
             }
         }
     }
@@ -3739,6 +3790,7 @@ class FullyTabletControl extends utils.Adapter {
             let TelegramObj = {};
             switch (obj.command) {
                 case 'pingTablet':
+                    // @ts-ignore
                     for (const i in deviceObj) {
                         if (deviceObj[i].enabled) {
                             await axios.get(`http://${deviceObj[i].ip}:${deviceObj[i].port}/?cmd=deviceInfo&type=json&password=${deviceObj[i].password}`)
@@ -3765,6 +3817,7 @@ class FullyTabletControl extends utils.Adapter {
     }
 }
 
+// @ts-ignore parent is a valid property on module
 if (module.parent) {
     // Export the constructor in compact mode
     /**
