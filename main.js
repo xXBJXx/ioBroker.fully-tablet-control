@@ -317,13 +317,6 @@ class FullyTabletControl extends utils.Adapter {
                                 this.log.warn(`it is switched off temporarily, please deactivate it or activate it correctly`);
 
                             }
-
-                            if (enabledBrightness[b]) {
-
-                                this.log.debug(`automatic brightness control for ${tabletName[b]} is switched on the manual control is now switched off`);
-                                await this.setStateAsync(`device.${tabletName[b]}.brightness_control_mode`, false, true);
-
-                            }
                         }
                     }
                     else {
@@ -338,7 +331,6 @@ class FullyTabletControl extends utils.Adapter {
                     for (const b in deviceEnabled) {
                         this.log.debug(`automatic brightness control for ${tabletName[b]} is switched off the manual control is now switched on`);
                         enabledBrightness[b] = false;
-                        await this.setStateAsync(`device.${await this.replaceFunction(tabletName[b])}.brightness_control_mode`, true, true);
                     }
                 }
                 this.log.debug(`BrightnessControl initialization has been fully initialized`);
@@ -671,7 +663,7 @@ class FullyTabletControl extends utils.Adapter {
                                         this.log.debug(`API request ended successfully --> result from api Request: ${JSON.stringify(apiResult['data'])}`);
 
                                         this.log.debug(`State Create is now running ...`);
-                                        await this.create_state(apiResult, i);
+                                        await this.create_state(i);
                                         this.log.debug(`State Create was carried out`);
 
                                         this.log.debug(`check if battery level is> = 0 if yes then restart app`)
@@ -2257,13 +2249,13 @@ class FullyTabletControl extends utils.Adapter {
                         if (deviceEnabled[d] && !logMessage[d]) {
 
                             if (enabledBrightness[d]) {
+                                this.log.debug(`automatic brightness control for ${tabletName[d]} is switched on the manual control is now switched off`);
+                                await this.setStateAsync(`device.${tabletName[d]}.brightness_control_mode`, false, true);
 
                                 if (brightnessD[d]) {
 
                                     let newBrightnessD = 0;
                                     if (chargeDeviceValue[d]) {
-
-
                                         newBrightnessD = Math.round(await this.convert_percent(brightnessD[d]['dayBrightness'] - brightnessD[d]['loadingLowering']));
 
                                         if (newBrightnessD <= 0) {
@@ -2272,10 +2264,8 @@ class FullyTabletControl extends utils.Adapter {
                                         }
                                     }
                                     else {
-
                                         newBrightnessD = Math.round(await this.convert_percent(brightnessD[d]['dayBrightness']));
                                         this.log.debug(`${tabletName[d]} brightness set on: ${newBrightnessD}[${brightnessD[d]['dayBrightness']}%]`);
-
                                     }
 
                                     const BrightnessURL = `http://${ip[d]}:${port[d]}/?cmd=setStringSetting&key=screenBrightness&value=${newBrightnessD}&password=${password[d]}`;
@@ -2379,6 +2369,8 @@ class FullyTabletControl extends utils.Adapter {
                         if (deviceEnabled[d] && !logMessage[d]) {
 
                             if (enabledBrightness[d]) {
+                                this.log.debug(`automatic brightness control for ${tabletName[d]} is switched on the manual control is now switched off`);
+                                await this.setStateAsync(`device.${tabletName[d]}.brightness_control_mode`, false, true);
 
                                 if (brightnessD[d]) {
 
@@ -2504,6 +2496,8 @@ class FullyTabletControl extends utils.Adapter {
                         if (deviceEnabled[d] && !logMessage[d]) {
 
                             if (enabledBrightness[d]) {
+                                this.log.debug(`automatic brightness control for ${tabletName[d]} is switched on the manual control is now switched off`);
+                                await this.setStateAsync(`device.${tabletName[d]}.brightness_control_mode`, false, true);
 
                                 if (brightnessN[d]) {
 
@@ -3441,10 +3435,9 @@ class FullyTabletControl extends utils.Adapter {
 
     /**
      *
-     * @param {object} result
      * @param {string|number} index
      */
-    async create_state(result, index) {
+    async create_state(index) {
 
         try {
 
@@ -3525,31 +3518,24 @@ class FullyTabletControl extends utils.Adapter {
                 commandsID.push(`.device.${deviceID}.commands.${obj}`);
             }
 
-
             for (const obj in kiosk_Object) {
                 await this.setObjectNotExistsAsync(`device.${deviceID}.commands.kiosk.${obj}`, kiosk_Object[obj]);
                 if (obj !== 'kioskPin') this.subscribeStates(`device.${deviceID}.commands.kiosk.${obj}`);
-
-
             }
-
 
             for (const obj in device_info_Object) {
                 await this.setObjectNotExistsAsync(`device.${deviceID}.device_info.${obj}`, device_info_Object[obj]);
             }
 
-
             for (const obj in memory_Object) {
                 await this.setObjectNotExistsAsync(`device.${deviceID}.device_info.memory.${obj}`, memory_Object[obj]);
             }
-
 
             for (const obj in vis_View_object) {
                 await this.setObjectNotExistsAsync(`vis_View.${obj}`, vis_View_object[obj]);
             }
             this.subscribeStates(`vis_View.widget_8_view`);
             this.subscribeForeignStates(`vis.0.control.data`);
-
 
             if (!deviceEnabled[index] && !logMessage[index]) {
                 this.setState(`device.${tabletName[index]}.isFullyAlive`, {val: false, ack: true});
