@@ -66,7 +66,7 @@ const foreground = [];
 const versionCheck = [];
 const screensaverOnURL = [];
 const screensaverOffURL = [];
-let manuel_screenSaver = [false, false];
+let manuel_screenSaver = [false];
 
 
 class FullyTabletControl extends utils.Adapter {
@@ -399,9 +399,8 @@ class FullyTabletControl extends utils.Adapter {
                     if (!screenSaverObj && screenSaverObj.length !== 0 || screenSaverObj !== [] && screenSaverObj.length !== 0) {
                         for (const s in deviceEnabled) {
                             if (deviceEnabled[s]) {
-
                                 if (screenSaverObj[s] !== undefined) {
-
+                                    manuel_screenSaver[s] = false
                                     this.log.debug(`Screensaver time is now read out`);
                                     screenSaverTime[s] = JSON.parse(screenSaverObj[s]['minute']) * 60000;
                                     this.log.debug(`Screensaver time was successfully read out for ${tabletName[s]} ==> ${screenSaverTime[s]}`);
@@ -555,9 +554,13 @@ class FullyTabletControl extends utils.Adapter {
                                     }
                                 }
                                 else {
+                                    manuel_screenSaver[s] = true
                                     this.log.warn(`There is no screensaver config set for ${tabletName[s]}`);
                                     this.log.warn(`Please add a screensaver configuration or switch off the screensaver control.`);
                                 }
+                            }
+                            else {
+                                manuel_screenSaver[s] = true
                             }
                         }
                     }
@@ -774,11 +777,13 @@ class FullyTabletControl extends utils.Adapter {
                         this.log.debug(`IP state for ${deviceID} : ${isInScreensaver[index]}`);
 
                         if (!JSON.parse(this.config['motionSensor_enabled']) && !isInScreensaver[index] && !manuel_screenSaver[index]) {
-                            manuel_screenSaver[index] = true;
-                            await this.screensaverManuel(index);
+                            const screenSaverObj = this.config.screenSaver;
+                            // @ts-ignore
+                            if (!screenSaverObj && screenSaverObj.length !== 0 || screenSaverObj !== [] && screenSaverObj.length !== 0) {
+                                manuel_screenSaver[index] = true;
+                                await this.screensaverManuel(index);
+                            }
                         }
-
-
                         break;
 
                     case 'currentFragment':
