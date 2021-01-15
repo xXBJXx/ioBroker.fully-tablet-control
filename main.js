@@ -294,29 +294,24 @@ class FullyTabletControl extends utils.Adapter {
                         for (const b in deviceEnabled) {
 
                             this.log.debug(`Check whether the brightness control is activated for ${tabletName[b]}`);
-
-                            enabledBrightness[b] = brightnessObject[b]['enabledBrightness']
+                            if (brightnessObject[b] !== undefined) {
+                                enabledBrightness[b] = brightnessObject[b]['enabledBrightness']
+                            }
+                            else {
+                                this.log.warn(`Attention the brightness control of ${tabletName[b]} is not activated correctly ==> undefined`);
+                                enabledBrightness[b] = false;
+                                this.log.warn(`it is switched off temporarily, please deactivate it or activate it correctly`);
+                            }
 
                             manualBrightnessMode[b] = await this.getStateAsync(`device.${tabletName[b]}.brightness_control_mode`)
 
                             if (manualBrightnessMode[b] === null) {
-
                                 manualBrightnessMode[b] = false
-
                             }
                             else {
-
                                 manualBrightnessMode[b] = manualBrightnessMode[b].val
                             }
 
-                            this.log.debug(`Check whether the brightness control for ${tabletName[b]} is set correctly`);
-                            if (enabledBrightness[b] === undefined) {
-
-                                this.log.warn(`Attention the brightness control of ${tabletName[b]} is not activated correctly ==> undefined`);
-                                enabledBrightness[b] = false;
-                                this.log.warn(`it is switched off temporarily, please deactivate it or activate it correctly`);
-
-                            }
                         }
                     }
                     else {
