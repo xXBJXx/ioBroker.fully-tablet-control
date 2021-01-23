@@ -263,7 +263,7 @@ _______________________________
 * (xXBJXx) fixed problem with ( has no existing object ) for the new JS controller [(issue #114)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/114)
 * (xXBJXx) fixed [(issue #120)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/120) check if the screensaver is defined added
 * (xXBJXx) fixed brightness control bug 
-
+* (xXBJXx) Added deletion of screenSaver from config [(issue #124)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/124)
 ### 0.3.1-beta.2 (2021-01-08)
 * (xXBJXx) fixed TypeError: Cannot read property 'val' of null [(issue #113)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/113)
 
