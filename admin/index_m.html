@@ -95,9 +95,11 @@
               //screenSaver Table show/hide
               if (screenSaverON) {
                   $('#screenSaver').show();
+                  $('.ManualMode').hide();
               }
               else {
                   $('#screenSaver').hide();
+                  $('.ManualMode').show();
               }
     
               //motionSensor Table show/hide
@@ -683,12 +685,19 @@
             <div id="tab-screen" class="col s12">
                 <div class="row">
                     <!-- select screen active -->
-                    <div class="input-field col s3 selectScreen">
+                    <div class="input-field col s3 selectScreenSaver">
                         <select class="value" autofocus="autofocus" data-default="false" id="screenSaverON">
                             <option class="translate" value="true">Screensaver on</option>
                             <option class="translate" value="false" selected>Screensaver off</option>
                         </select>
                         <label for="screenSaverON"></label>
+                    </div>
+                    <div class="input-field col s3 selectScreenSaver ManualMode">
+                        <select class="value" autofocus="autofocus" data-default="false" id="screenSaverDeletion">
+                            <option class="translate" value="true">Automatic deletion</option>
+                            <option class="translate" value="false" selected>Manual deletion</option>
+                        </select>
+                        <label class="screenSaverManual_label translate"for="screenSaverDeletion">Automatic deletion of screensaver configuration from FullyBrowser</label>
                     </div>
                     <!-- end select screen active -->
                     <!-- screenSaver table -->

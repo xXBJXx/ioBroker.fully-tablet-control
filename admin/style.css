@@ -197,6 +197,18 @@ div.table-values-div {
 	bottom: 52px !important;;
 	}
 
+.selectScreenSaver {
+	width: 300px !important;
+	text-align-last: center !important;
+	margin-top: 2rem !important;
+	}
+
+.screenSaverManual_label {
+	top: -40px !important;
+	left: .75em !important;
+	right: -.75em;
+	color: red !important;
+	}
 
 /*#########################*/
 

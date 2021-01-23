@@ -384,7 +384,8 @@ class FullyTabletControl extends utils.Adapter {
                 // read screensaverTimer and screenSaverSelect
                 this.log.debug(`The screensaver config is now read out`);
                 const screenSaverON = JSON.parse(this.config['screenSaverON']);
-                const screenSaverObj = this.config.screenSaver;
+                const screenSaverObj = this.config['screenSaver'];
+                const screenSaverDeletion = JSON.parse(this.config['screenSaverDeletion']);
 
                 this.log.debug(`It is checked whether the screensaver control is switched on`);
                 if (screenSaverON) {
@@ -428,33 +429,23 @@ class FullyTabletControl extends utils.Adapter {
                                     if (screensaverMode) {
 
                                         if (screenSaverUrl === '') {
+                                            const playlistUrl = [];
+                                            playlistUrl.push(`http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverPlaylist&value=&password=${password[s]}`);
+                                            playlistUrl.push(`http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverWallpaperURL&value=fully://color black&password=${password[s]}`);
 
-                                            const playlistUrl = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverPlaylist&value=&password=${password[s]}`;
-                                            const wallpaperURL = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverWallpaperURL&value=fully://color black&password=${password[s]}`;
                                             this.log.debug(`The screensaver url for ${tabletName[s]} is not set the screensaver is set to a black image`);
+                                            for (const playlistUrlKey in playlistUrl) {
+                                                await axios.get(playlistUrl[playlistUrlKey])
+                                                    .then(async result => {
 
-                                            await axios.get(playlistUrl)
-                                                .then(async result => {
+                                                        this.log.debug(`${tabletName[s]} send status for playlistUrl = status Code: ${result.status} => status Message: ${result.statusText}`);
 
-                                                    this.log.debug(`${tabletName[s]} send status for playlistUrl = status Code: ${result.status} => status Message: ${result.statusText}`);
+                                                    }).catch(async error => {
 
-                                                }).catch(async error => {
+                                                        this.log.error(`${tabletName[s]} send status for playlistUrl has a problem => ${error.message}, stack: ${error.stack}`);
 
-                                                    this.log.error(`${tabletName[s]} send status for playlistUrl has a problem => ${error.message}, stack: ${error.stack}`);
-
-                                                });
-
-                                            await axios.get(wallpaperURL)
-                                                .then(async result => {
-
-                                                    this.log.debug(`${tabletName[s]} send status for wallpaperURL = status Code: ${result.status} => status Message: ${result.statusText}`);
-
-                                                }).catch(async error => {
-
-                                                    this.log.error(`${tabletName[s]} send status for wallpaperURL  could not be sent => ${error.message}, stack: ${error.stack}`);
-
-                                                });
-
+                                                    });
+                                            }
                                         }
                                         else {
 
@@ -492,59 +483,43 @@ class FullyTabletControl extends utils.Adapter {
                                     }
                                     else if (!screensaverMode) {
                                         if (screenSaverUrl === '') {
-                                            const playlistUrl = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverPlaylist&value=&password=${password[s]}`;
-                                            const wallpaperURL = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverWallpaperURL&value=fully://color black&password=${password[s]}`;
+                                            const playlistUrl = [];
+                                            playlistUrl.push(`http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverPlaylist&value=&password=${password[s]}`);
+                                            playlistUrl.push(`http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverWallpaperURL&value=fully://color black&password=${password[s]}`);
+
                                             this.log.debug(`The screensaver url for ${tabletName[s]} is not set the screensaver is set to a black image`);
+                                            for (const playlistUrlKey in playlistUrl) {
+                                                await axios.get(playlistUrl[playlistUrlKey])
+                                                    .then(async result => {
 
-                                            await axios.get(playlistUrl)
-                                                .then(async result => {
+                                                        this.log.debug(`${tabletName[s]} send status for playlistUrl = status Code: ${result.status} => status Message: ${result.statusText}`);
 
-                                                    this.log.debug(`${tabletName[s]} send status for playlistUrl = status Code: ${result.status} => status Message: ${result.statusText}`);
+                                                    }).catch(async error => {
 
-                                                }).catch(async error => {
+                                                        this.log.error(`${tabletName[s]} send status for playlistUrl has a problem => ${error.message}, stack: ${error.stack}`);
 
-                                                    this.log.error(`${tabletName[s]} send status for playlistUrl has a problem => ${error.message}, stack: ${error.stack}`);
-
-                                                });
-
-                                            await axios.get(wallpaperURL)
-                                                .then(async result => {
-
-                                                    this.log.debug(`${tabletName[s]} send status for wallpaperURL = status Code: ${result.status} => status Message: ${result.statusText}`);
-
-                                                }).catch(async error => {
-
-                                                    this.log.error(`${tabletName[s]} send status for wallpaperURL  could not be sent => ${error.message}, stack: ${error.stack}`);
-
-                                                });
+                                                    });
+                                            }
                                         }
                                         else {
-                                            const playlistUrl = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverPlaylist&value=&password=${password[s]}`;
-                                            const wallpaperURL = `http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverWallpaperURL&value=${screenSaverUrl}&password=${password[s]}`;
+                                            const playlistUrl = [];
+                                            playlistUrl.push(`http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverPlaylist&value=&password=${password[s]}`);
+                                            playlistUrl.push(`http://${ip[s]}:${port[s]}/?cmd=setStringSetting&key=screensaverWallpaperURL&value=${screenSaverUrl}&password=${password[s]}`);
+
                                             this.log.debug(`${tabletName[s]} screensaver is switched on for wallpaper the playlist is now deleted and WallpaperUrl is set`);
-
-                                            await axios.get(playlistUrl)
-                                                .then(async result => {
-
-                                                    this.log.debug(`${tabletName[s]} send status for playlistUrl = status Code: ${result.status} => status Message: ${result.statusText}`);
-
-                                                }).catch(async error => {
-
-                                                    this.log.error(`${tabletName[s]} send status for playlistUrl has a problem => ${error.message}, stack: ${error.stack}`);
-
-                                                });
-
                                             this.log.debug(`Wallpaper Screensaver Url => ${screenSaverUrl} is set for ${tabletName[s]}`);
-                                            await axios.get(wallpaperURL)
-                                                .then(async result => {
+                                            for (const playlistUrlKey in playlistUrl) {
+                                                await axios.get(playlistUrl[playlistUrlKey])
+                                                    .then(async result => {
 
-                                                    this.log.debug(`${tabletName[s]} send status for wallpaperURL = status Code: ${result.status} => status Message: ${result.statusText}`);
+                                                        this.log.debug(`${tabletName[s]} send status for playlistUrl = status Code: ${result.status} => status Message: ${result.statusText}`);
 
-                                                }).catch(async error => {
+                                                    }).catch(async error => {
 
-                                                    this.log.error(`${tabletName[s]} send status for wallpaperURL  could not be sent => ${error.message}, stack: ${error.stack}`);
+                                                        this.log.error(`${tabletName[s]} send status for playlistUrl has a problem => ${error.message}, stack: ${error.stack}`);
 
-                                                });
+                                                    });
+                                            }
                                         }
                                     }
                                 }
@@ -556,6 +531,26 @@ class FullyTabletControl extends utils.Adapter {
                             }
                             else {
                                 manuel_screenSaver[s] = true
+                            }
+                        }
+                    }
+                }
+                else {
+                    if (screenSaverDeletion) {
+                        for (const deviceEnabledkey in deviceEnabled) {
+                            const playlistUrl = []
+                            if (deviceEnabled[deviceEnabledkey]) {
+                                playlistUrl.push(`http://${ip[deviceEnabledkey]}:${port[deviceEnabledkey]}/?cmd=setStringSetting&key=timeToScreensaverV2&value=0&password=${password[deviceEnabledkey]}`)
+                                playlistUrl.push(`http://${ip[deviceEnabledkey]}:${port[deviceEnabledkey]}/?cmd=setStringSetting&key=screensaverPlaylist&value=&password=${password[deviceEnabledkey]}`)
+                                playlistUrl.push(`http://${ip[deviceEnabledkey]}:${port[deviceEnabledkey]}/?cmd=setStringSetting&key=screensaverWallpaperURL&value=fully://color black&password=${password[deviceEnabledkey]}`)
+                            }
+                            for (const playlistUrlKey in playlistUrl) {
+                                await axios.get(playlistUrl[playlistUrlKey])
+                                    .then(async result => {
+                                        this.log.debug(`${tabletName[deviceEnabledkey]} send status for playlistUrl = status Code: ${result.status} => status Message: ${result.statusText}`);
+                                    }).catch(async error => {
+                                        this.log.error(`${tabletName[deviceEnabledkey]} send status for playlistUrl has a problem => ${error.message}, stack: ${error.stack}`);
+                                    });
                             }
                         }
                     }
@@ -1773,15 +1768,15 @@ class FullyTabletControl extends utils.Adapter {
 
                 this.log.debug(`The current time is now checked whether it is in the time range from ${dayH}:${dayM}:${dayS} to ${nightH}:${nightM}:${nightS}`);
                 let astro_Time = await this.time_range(`${dayH}:${dayM}:${dayS}`, ``, `${nightH}:${nightM}:${nightS}`);
-                console.log(`${dayH}:${dayM}:${dayS}`)
+                // console.log(`${dayH}:${dayM}:${dayS}`)
                 this.log.debug(`Time of day is now set to day or night`);
                 day_Time = astro_Time;
 
-                if (day_Time) this.log.debug(`It is day`);
-                if (!day_Time) this.log.debug(`It's night`);
+                if (day_Time === 1) this.log.debug(`It is Morning`);
+                if (day_Time === 3) this.log.debug(`It's night`);
+                if (day_Time === 1) console.log(`It is day: ${day_Time}`);
+                if (day_Time === 3) console.log(`It's night: ${day_Time}`);
 
-                if (day_Time) console.log(`It is day: ${day_Time}`);
-                if (!day_Time) console.log(`It's night: ${day_Time}`);
             }
             else {
                 this.log.debug(`The current time is now checked whether it is in the time range from ${dayTime}:00:00 to ${midTime}:00:00 and ${nightTime}:00:00`);

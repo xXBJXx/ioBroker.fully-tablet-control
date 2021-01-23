@@ -1,7 +1,44 @@
 /*global systemDictionary:true */
 'use strict';
 
+// @ts-ignore
 systemDictionary = {
+	"Automatic deletion of screensaver configuration from FullyBrowser": {
+		"en": "Automatic deletion of screensaver configuration from FullyBrowser",
+		"de": "Automatisches Löschen der Bildschirmschoner-Konfiguration aus FullyBrowser",
+		"ru": "Автоматическое удаление конфигурации заставки из FullyBrowser",
+		"pt": "Exclusão automática da configuração do protetor de tela do FullyBrowser",
+		"nl": "Automatische verwijdering van de screensaver-configuratie uit FullyBrowser",
+		"fr": "Suppression automatique de la configuration de l'économiseur d'écran de FullyBrowser",
+		"it": "Cancellazione automatica della configurazione dello screensaver da FullyBrowser",
+		"es": "Eliminación automática de la configuración del protector de pantalla de FullyBrowser",
+		"pl": "Automatyczne usuwanie konfiguracji wygaszacza ekranu z FullyBrowser",
+		"zh-cn": "自动从FullyBrowser中删除屏幕保护程序配置"
+	},
+	"Manual deletion": {
+		"en": "Manual deletion",
+		"de": "Manuelles Löschen",
+		"ru": "Ручное удаление",
+		"pt": "Exclusão manual",
+		"nl": "Handmatige verwijdering",
+		"fr": "Suppression manuelle",
+		"it": "Cancellazione manuale",
+		"es": "Eliminación manual",
+		"pl": "Ręczne usuwanie",
+		"zh-cn": "手动删除"
+	},
+	"Automatic deletion": {
+		"en": "Automatic deletion",
+		"de": "Automatisches Löschen",
+		"ru": "Автоматическое удаление",
+		"pt": "Exclusão automática",
+		"nl": "Automatische verwijdering",
+		"fr": "Suppression automatique",
+		"it": "Cancellazione automatica",
+		"es": "Borrado automático",
+		"pl": "Automatyczne usuwanie",
+		"zh-cn": "自动删除"
+	},
 	'The adapter is deactivated please activate the adapter to unlock all functions': {
 		'en': 'The adapter is deactivated please activate the adapter to unlock all functions',
 		'de': 'Der Adapter ist deaktiviert, bitte aktivieren Sie den Adapter, um alle Funktionen freizuschalten',

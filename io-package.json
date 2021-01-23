@@ -312,7 +312,8 @@
         "brightness_on": "false",
         "astroSelectNight": "sunset",
         "astroSelectDay": "sunrise",
-        "timeMode": "true"
+        "timeMode": "true",
+        "screenSaverDeletion": "false"
     },
     "objects": [],
     "instanceObjects": [
