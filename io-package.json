@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "fully-tablet-control",
-        "version": "0.3.1-beta.2",
+        "version": "0.3.2-beta.0",
         "news": {
+            "0.3.2-beta.0": {
+                "en": "fixed problem with ( has no existing object ) for the new JS controller [(issue #114)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/114)\nfixed [(issue #120)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/120) check if the screensaver is defined added\nfixed brightness control bug \nAdded deletion of screenSaver from config [(issue #124)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/124)",
+                "de": "Problem mit (hat kein vorhandenes Objekt) für den neuen JS-Controller behoben [(Problem Nr. 114)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/114)\nbehoben [(Problem Nr. 120)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/120) Überprüfen Sie, ob der Bildschirmschoner als hinzugefügt definiert ist\nFehler bei der Helligkeitsregelung behoben\nLöschen von screenSaver aus config [(Problem Nr. 124)] hinzugefügt (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/124)",
+                "ru": "исправлена проблема с (нет существующего объекта) для нового контроллера JS [(issue # 114)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/114)\nисправлено [(issue # 120)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/120) проверьте, определена ли заставка добавлена\nисправлена ошибка управления яркостью\nДобавлено удаление screenSaver из конфига [(issue # 124)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/124)",
+                "pt": "corrigido o problema com (não tem objeto existente) para o novo controlador JS [(problema # 114)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/114)\ncorrigido [(problema # 120)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/120) verifique se o protetor de tela está definido adicionado\nbug corrigido de controle de brilho\nAdicionada exclusão do protetor de tela da configuração [(problema # 124)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/124)",
+                "nl": "probleem opgelost met (heeft geen bestaand object) voor de nieuwe JS-controller [(issue # 114)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/114)\nopgelost [(issue # 120)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/120) controleer of de screensaver is gedefinieerd toegevoegd\nbug voor helderheidsregeling opgelost\nVerwijdering van screenSaver uit configuratie [(issue # 124)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/124) toegevoegd",
+                "fr": "Correction d'un problème avec (n'a pas d'objet existant) pour le nouveau contrôleur JS [(issue # 114)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/114)\ncorrigé [(issue # 120)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/120) vérifier si l'économiseur d'écran est défini ajouté\ncorrection d'un bug de contrôle de la luminosité\nAjout de la suppression de screenSaver de la configuration [(issue # 124)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/124)",
+                "it": "risolto problema con (non ha oggetto esistente) per il nuovo controller JS [(problema # 114)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/114)\nrisolto [(problema # 120)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/120) controlla se lo screensaver è definito aggiunto\ncorretto bug di controllo della luminosità\nAggiunta l'eliminazione di screenSaver da config [(issue # 124)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/124)",
+                "es": "Problema solucionado con (no tiene ningún objeto existente) para el nuevo controlador JS [(problema # 114)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/114)\nfijo [(problema # 120)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/120) verifique si el protector de pantalla está definido agregado\nerror de control de brillo fijo\nSe agregó la eliminación de screenSaver de la configuración [(problema # 124)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/124)",
+                "pl": "naprawiony problem z (nie ma istniejącego obiektu) dla nowego kontrolera JS [(problem # 114)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/114)\nnaprawiono [(problem # 120)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/120) sprawdź, czy zdefiniowano wygaszacz ekranu dodany\nnaprawiony błąd kontroli jasności\nDodano usunięcie screenSaver z konfiguracji [(numer 124)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/124)",
+                "zh-cn": "修复了新JS控制器[（issue＃114）]（没有现有对象）的问题（https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/114）\n固定[（issue＃120）]（https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/120）检查是否定义了屏幕保护程序\n修复亮度控制错误\n添加了从配置[（issue＃124）]中删除screenSaver的功能（https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/124）"
+            },
             "0.3.1-beta.2": {
                 "en": "fixed TypeError: Cannot read property 'val' of null [(issue #113)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/113)",
                 "de": "fester TypeError: Eigenschaft 'val' von null [(Problem # 113)] kann nicht gelesen werden (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/113)",
@@ -230,18 +242,6 @@
                 "es": "FullyBrowser implementado\n arreglado algunos errores",
                 "pl": "W pełni zaimplementowany\n naprawiono kilka błędów",
                 "zh-cn": "FullyBrowser已实现\n 修复了一些错误"
-            },
-            "0.2.4": {
-                "en": "Screen saver time adjusted now in 1 min steps,\n State_of_charge adjusted,",
-                "de": "Bildschirmschonerzeit jetzt in Schritten von 1 Minute eingestellt,\nLadezustand angepasst,",
-                "ru": "Время заставки настроено с шагом в 1 минуту,\nState_of_charge скорректирована,",
-                "pt": "Tempo de proteção de tela ajustado agora em etapas de 1 minuto,\nState_of_charge ajustado,",
-                "nl": "Schermbeveiligingstijd nu aangepast in stappen van 1 minuut,\nState_of_charge aangepast,",
-                "fr": "Économiseur d'écran ajusté maintenant en 1 minute,\nState_of_charge ajusté,",
-                "it": "Il tempo di screen saver ora è regolato in passi di 1 minuto\nState_of_charge corretto,",
-                "es": "Tiempo de protector de pantalla ajustado ahora en pasos de 1 minuto,\nEstado_de_carga ajustado,",
-                "pl": "Czas wygaszacza ekranu dostosowywany teraz co 1 minutę,\nSkorygowano stan naładowania,",
-                "zh-cn": "屏幕保护程序时间现在以1分钟为单位进行了调整，\n充电状态已调整,"
             }
         },
         "title": "Fully Tablet Control",

@@ -259,7 +259,7 @@ _______________________________
  ### __WORK IN PROGRESS__ ( - falls nicht benötigt löschen sonst klammern entfernen und nach dem - dein text schreiben )
 -->
 
-### __WORK IN PROGRESS__
+### 0.3.2-beta.0 (2021-01-24)
 * (xXBJXx) fixed problem with ( has no existing object ) for the new JS controller [(issue #114)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/114)
 * (xXBJXx) fixed [(issue #120)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/120) check if the screensaver is defined added
 * (xXBJXx) fixed brightness control bug 
