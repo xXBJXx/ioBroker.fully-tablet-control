@@ -5,7 +5,7 @@
     <!-- Load ioBroker scripts and styles-->
     <!-- Materialze style -->
     <link rel="stylesheet" type="text/css" href="../../css/adapter.css"/>
-    <!--        <link rel="stylesheet" type="text/css" href="../../lib/css/materialize.css">-->
+            <link rel="stylesheet" type="text/css" href="../../lib/css/materialize.css">
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     
     <!--    For menu to select states styles-->
@@ -27,7 +27,6 @@
     
     <!-- Load our own files -->
     <link rel="stylesheet" type="text/css" href="style.css"/>
-    <link rel="stylesheet" type="text/css" href="materialize.css"/>
     <script type="text/javascript" src="words.js"></script>
     <script type="text/javascript">
         
@@ -52,6 +51,7 @@
               let screenSaverON = JSON.parse($('#screenSaverON').val());
               let brightness_on = JSON.parse($('#brightness_on').val());
               let timeMode = JSON.parse($('#timeMode').val());
+              let record_mode = JSON.parse($('#record_mode').val());
     
               //charger Table show/hide
               if (chargerON) {
@@ -152,6 +152,15 @@
                   $('.TelegramAdapter').hide();
                   $('.TelegramUser').hide();
               }
+              
+              // image_capture show/hide
+              if (record_mode) {
+                  $('#ul_single_shot').hide();
+                  $('#ul_series_shot').show();
+              } else {
+                  $('#ul_series_shot').hide();
+                  $('#ul_single_shot').show();
+              }
           }
 
           //the function loadSettings has to exist ...
@@ -171,6 +180,7 @@
                       $('#tabTelegram').addClass('disabled');
                       $('#tabMotion').addClass('disabled');
                       $('#tabVis_view').addClass('disabled');
+                      $('#tabImage_capture').addClass('disabled');
                       $('.adapter_offline').show();
             
                   }
@@ -185,6 +195,7 @@
                       $('#tabTelegram').removeClass('disabled');
                       $('#tabMotion').removeClass('disabled');
                       $('#tabVis_view').removeClass('disabled');
+                      $('#tabImage_capture').removeClass('disabled');
             
                   }
               });
@@ -218,7 +229,7 @@
                               .on('keyup', () => onChange());
                   }
               });
-    
+              $('.collapsible').collapsible();
               onChange(false);
               // reinitialize all the Materialize labels on the page if you are dynamically adding inputs:
     
@@ -402,16 +413,129 @@
             <div class="col s12">
                 <ul class="tabs">
                     <!-- Single tab entry -->
-                    <li id='tabDevices' class="tab col s2"><a href="#tab-devices" class="translate">fully browser</a></li>
-                    <li id='tabTrigger' class="tab col s1.7"><a href="#tab-charger" class="translate">charger</a></li>
-                    <li id='tabBrightness' class="tab col s1.7"><a href="#tab-brightness" class="translate">brightness</a></li>
-                    <li id='tabScreen' class="tab col s1.7"><a href="#tab-screen" class="translate">screen</a></li>
-                    <li id='tabTelegram' class="tab col s2"><a href="#tab-telegram" class="translate">telegram</a></li>
-                    <li id='tabMotion' class="tab col s1.7"><a href="#tab-motion" class="translate">motion detector</a></li>
-                    <li id='tabVis_view' class="tab col s1.7"><a href="#tab-vis_view" class="translate">vis view</a></li>
+                    <li id='tabDevices' class="tab col s3"><a href="#tab-devices" class="translate">fully browser</a></li>
+                    <li id='tabTrigger' class="tab col s3"><a href="#tab-charger" class="translate">charger</a></li>
+                    <li id='tabBrightness' class="tab col s3"><a href="#tab-brightness" class="translate">brightness</a></li>
+                    <li id='tabScreen' class="tab col s3"><a href="#tab-screen" class="translate">screen</a></li>
+                    <li id='tabTelegram' class="tab col s3"><a href="#tab-telegram" class="translate">telegram</a></li>
+                    <li id='tabMotion' class="tab col s3"><a href="#tab-motion" class="translate">motion detector</a></li>
+                    <li id='tabImage_capture' class="tab col s3"><a href="#tab-image_capture" class="translate">Image capture</a></li>
+                    <li id='tabVis_view' class="tab col s3"><a href="#tab-vis_view" class="translate">vis view</a></li>
                 </ul>
             </div>
-    
+            <div id="tab-image_capture" class="col s12 ">
+             <div class="row">
+                   <div>
+                       <ul id='test-container' class="collapsible">
+                           <li>
+                               <div>
+                                   <div class="collapsible-header blue lighten-1">
+                                       <i class="material-icons">camera_indoor</i><span class='translate headerFont'>Activate Automatic the motionDetection</span>
+                                   </div>
+                               </div>
+                               <div class="collapsible-body blue lighten-5">
+                                   <div class='row center'>
+                                       <h5 class='translate'>Activate a function that sets Automatic the state motionDetection to true when taking a picture</h5>
+                                       <h5 class='translate'>the state must be Manuel deactivated when it is no longer needed</h5>
+                                   </div>
+                                   <div class="row auto_motionDetection">
+                                       <div class="input-field fontS">
+                                           <select class="value" autofocus="autofocus" data-default="false" id="auto_motionDetection">
+                                               <option class="translate" value="true">Automatic</option>
+                                               <option class="translate" value="false" selected>Manuell</option>
+                                           </select>
+                                           <label for="auto_motionDetection"></label>
+                                       </div>
+                                   </div>
+                               </div>
+                           </li>
+                           <li>
+                               <div>
+                                   <div class="collapsible-header blue lighten-1">
+                                       <i class="material-icons translate">camera_indoor</i><span class='translate headerFont'>Selection of the type of recording mode</span>
+                                   </div>
+                               </div>
+                               <div class="collapsible-body blue lighten-5">
+                                   <div class='row center'>
+                                       <h5 class='translate'>No.1: in the single shot is always taken only one image.</h5> <br>.
+                                       <h5 class='translate'>No.2: in the series recording as many images are recorded, as one has specified. Attention the series recording must not be greater than the number of images to be saved if so only as many images are made as specified when saving</h5>.
+                                   </div>
+                                   <div class="row ">
+                                       <div class='col s5'></div>
+                                       <div class="col s5 input-field fontS">
+                                           <select class="value" autofocus="autofocus" data-default="false" id="record_mode">
+                                               <option class="translate" value="true">series recording</option>
+                                               <option class="translate" value="false" selected>single shot</option>
+                                           </select>
+                                           <label for="record_mode"></label>
+                                       </div>
+                                       <div class='col s5'></div>
+                                   </div>
+                                   <ul id='ul_single_shot' class="collapsible">
+                                       <li>
+                                           <div>
+                                               <div class="collapsible-header blue lighten-1">
+                                                   <i class="material-icons translate">camera_indoor</i><span class="translate headerFont">Number of images to be saved for single shot</span>
+                                               </div>
+                                           </div>
+                                           <div class="collapsible-body blue lighten-5 div_single_shot">
+                                               <div class='row center'>
+                                                   <h5 class='translate'>You must specify how many images you want to save</h5>
+                                               </div>
+                                               <div class='row'>
+                                                    <div class='col s5'></div>
+                                                   <div class="col s5 input-field">
+                                                       <input type="number" class="value" id="single_shot" max="30" min="1" value="1"/>
+                                                       <label for="single_shot" class="translate single_shot_label">Number of images that will be saved for single shot</label>
+                                                       <div></div>
+                                                       <span class='translate MAX'>MAX 30 images</span>
+                                                   </div>
+                                                    <div class='col s5'></div>
+                                               </div>
+                                           </div>
+                                       </li>
+                                   </ul>
+                                   <ul id='ul_series_shot' class="collapsible">
+                                       <li>
+                                           <div>
+                                               <div class="collapsible-header blue lighten-1">
+                                                   <i class="material-icons translate">camera_indoor</i><span class='translate headerFont'>Number of images to be saved for series recording</span>
+                                               </div>
+                                           </div>
+                                           <div class="collapsible-body blue lighten-5">
+                                               <div class='row center'>
+                                                   <h5 class='translate'>You must specify how many images you want to make and save</h5>
+                                               </div>
+                                                <div class='row'>
+                                                    <div class="col s5 input-field ">
+                                                        <input type="number" class="value" id="series_shot" max="30" min="1" value="2"/>
+                                                        <label for="series_shot" class="translate series_shot_label">Number of images to be taken with continuous shooting</label>
+                                                        <div></div>
+                                                        <span class='translate MAX'>MAX 30 images</span>
+                                                    </div>
+                                                    <div class="col s5 input-field ">
+                                                        <input type="number" class="value" id="series_shot_safe" max="30" min="1" value="2"/>
+                                                        <label for="series_shot_safe" class="translate series_shot_label_safe">Number of images that will be saved for series recording</label>
+                                                        <div></div>
+                                                        <span class='translate MAX'>MAX 30 images</span>
+                                                    </div>
+                                                    <div class="col s2 input-field ">
+                                                        <input type="number" class="value" id="imageTimeout" max="5" min="1" value="1"/>
+                                                        <label for="imageTimeout" class="translate imageTimeout">Time for the series picture function in ( sec )</label>
+                                                        <div></div>
+                                                        <span class='translate MAX'>MAX 5 Seconds</span>
+                                                    </div>
+                                                </div>
+                                           </div>
+                                       </li>
+                                   </ul>
+                               </div>
+                           </li>
+                       </ul>
+                   </div>
+             </div>
+            </div>
+            
             <!-- Tab with id "tab-devices" -->
             <div id="tab-devices" class="col s12 " style="top: 20px">
             <!-- logo -->

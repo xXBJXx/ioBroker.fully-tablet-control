@@ -313,7 +313,13 @@
         "astroSelectNight": "sunset",
         "astroSelectDay": "sunrise",
         "timeMode": "true",
-        "screenSaverDeletion": "false"
+        "screenSaverDeletion": "false",
+        "auto_motionDetection": "false",
+        "record_mode": "false",
+        "single_shot": "1",
+        "series_shot": "2",
+        "imageTimeout": 1,
+        "series_shot_safe": "2"
     },
     "objects": [],
     "instanceObjects": [
