@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "fully-tablet-control",
-        "version": "0.3.2-beta.0",
+        "version": "0.3.3-beta.0",
         "news": {
+            "0.3.3-beta.0": {
+                "en": "* README edited\n* removed check for batteryLevel = -1% \n* camshot function expanded to include continuous shooting [(issue #129)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/129), \n  and it is now possible to take and save multiple images.\\\n  New tab added in config page \n* fixed brightness checkInterval bug (is now checked as intended every x minutes whether the brightness changed)",
+                "de": "* README bearbeitet\n* entfernt Überprüfung auf Batterielevel = -1%\n* Die Camshot-Funktion wurde um Serienaufnahmen erweitert [(Ausgabe Nr. 129)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/129).\n  und es ist jetzt möglich, mehrere Bilder aufzunehmen und zu speichern. \\\n  Neue Registerkarte auf der Konfigurationsseite hinzugefügt\n* Fehler bei der Überprüfung der Helligkeit behobenInterval (wird jetzt alle x Minuten wie beabsichtigt überprüft, ob sich die Helligkeit geändert hat)",
+                "ru": "* README отредактировано\n* убрана проверка на batteryLevel = -1%\n* функция видеосъемки расширена и теперь включает непрерывную съемку [(issue # 129)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/129),\n  и теперь можно делать и сохранять несколько изображений. \\\n  На странице конфигурации добавлена новая вкладка\n* исправлена ошибка интервала проверки яркости (теперь проверяется, как задумано, каждые x минут, изменилась ли яркость)",
+                "pt": "* README editado\n* verificação removida para batteryLevel = -1%\n* função camshot expandida para incluir disparo contínuo [(edição # 129)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/129),\n  e agora é possível tirar e salvar várias imagens. \\\n  Nova guia adicionada na página de configuração\n* corrigido o bug de checkInterval de brilho (agora é verificado conforme pretendido a cada x minutos se o brilho mudou)",
+                "nl": "* README bewerkt\n* verwijderde controle voor batteryLevel = -1%\n* camshot-functie uitgebreid met continu-opnamen [(issue # 129)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/129),\n  en het is nu mogelijk om meerdere afbeeldingen te maken en op te slaan. \\\n  Nieuw tabblad toegevoegd in configuratiepagina\n* vaste helderheid checkInterval bug (wordt nu gecontroleerd zoals bedoeld elke x minuten of de helderheid is veranderd)",
+                "fr": "* README édité\n* suppression de la vérification du niveau de batterie = -1%\n* fonction camshot étendue pour inclure la prise de vue en continu [(issue # 129)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/129),\n  et il est maintenant possible de prendre et d'enregistrer plusieurs images. \\\n  Nouvel onglet ajouté dans la page de configuration\n* Correction de la vérification de la luminosité bogue d'intervalle (est maintenant vérifié comme prévu toutes les x minutes si la luminosité a changé)",
+                "it": "* README modificato\n* controllo rimosso per batteryLevel = -1%\n* funzione camshot espansa per includere lo scatto continuo [(issue # 129)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/129),\n  ed è ora possibile acquisire e salvare più immagini. \\\n  Nuova scheda aggiunta nella pagina di configurazione\n* corretto controllo della luminosità Errore durante l'intervallo (ora viene controllato come previsto ogni x minuti se la luminosità è cambiata)",
+                "es": "* README editado\n* cheque eliminado para batteryLevel = -1%\n* función de captura de cámara ampliada para incluir disparo continuo [(número 129)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/129),\n  y ahora es posible tomar y guardar múltiples imágenes. \\\n  Nueva pestaña agregada en la página de configuración\n* Error de intervalo de verificación de brillo fijo (ahora se verifica según lo previsto cada x minutos si el brillo cambió)",
+                "pl": "* Edytowano README\n* usunięto sprawdzanie poziomu baterii = -1%\n* funkcja camshot rozszerzona o zdjęcia seryjne [(numer 129)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/129),\n  i teraz można zrobić i zapisać wiele zdjęć. \\\n  Nowa karta dodana na stronie konfiguracji\n* naprawiono błąd interwałowego sprawdzania jasności (jest teraz sprawdzany zgodnie z przeznaczeniem co x minut, czy jasność się zmieniła)",
+                "zh-cn": "*自述文件已编辑\n*删除电池电量检查= -1％\n* camshot功能扩展为包括连续拍摄[（issue＃129）]（https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/129），\n  现在可以拍摄和保存多张图像。\\\n  在配置页面中添加了新标签\n*修复了亮度检查间隔错误（现在每隔x分钟检查一次亮度是否改变）"
+            },
             "0.3.2-beta.0": {
                 "en": "fixed problem with ( has no existing object ) for the new JS controller [(issue #114)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/114)\nfixed [(issue #120)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/120) check if the screensaver is defined added\nfixed brightness control bug \nAdded deletion of screenSaver from config [(issue #124)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/124)",
                 "de": "Problem mit (hat kein vorhandenes Objekt) für den neuen JS-Controller behoben [(Problem Nr. 114)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/114)\nbehoben [(Problem Nr. 120)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/120) Überprüfen Sie, ob der Bildschirmschoner als hinzugefügt definiert ist\nFehler bei der Helligkeitsregelung behoben\nLöschen von screenSaver aus config [(Problem Nr. 124)] hinzugefügt (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/124)",
@@ -230,18 +242,6 @@
                 "es": "El control de brillo cambió y la página de configuración cambió",
                 "pl": "Zmieniono kontrolę jasności i zmieniono stronę konfiguracji",
                 "zh-cn": "亮度控制已更改，配置页面已更改"
-            },
-            "0.2.5": {
-                "en": "FullyBrowser implemented\n fixed some bugs",
-                "de": "FullyBrowser implementiert\n Einige Fehler wurden behoben",
-                "ru": "Полностью Браузер реализован\n исправлены некоторые ошибки",
-                "pt": "FullyBrowser implementado\n corrigido alguns bugs",
-                "nl": "FullyBrowser geïmplementeerd\n enkele bugs opgelost",
-                "fr": "FullyBrowser implémenté\n correction de quelques bugs",
-                "it": "Implementato completamente\n risolti alcuni bug",
-                "es": "FullyBrowser implementado\n arreglado algunos errores",
-                "pl": "W pełni zaimplementowany\n naprawiono kilka błędów",
-                "zh-cn": "FullyBrowser已实现\n 修复了一些错误"
             }
         },
         "title": "Fully Tablet Control",
