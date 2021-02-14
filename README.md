@@ -81,8 +81,9 @@ _______________________________
 ### __WORK IN PROGRESS__
 * (xXBJXx) README edited
 * (xXBJXx) removed check for batteryLevel = -1% 
-* (xXBJXx) camshot function expanded to include continuous shooting, and it is now possible to take and save multiple images.\
-  New tab added in config page
+* (xXBJXx) camshot function expanded to include continuous shooting [(issue #129)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/129), 
+  and it is now possible to take and save multiple images.\
+  New tab added in config page 
 * (xXBJXx) fixed brightness checkInterval bug (is now checked as intended every x minutes whether the brightness changed)
 
 ### 0.3.2-beta.0 (2021-01-24)
