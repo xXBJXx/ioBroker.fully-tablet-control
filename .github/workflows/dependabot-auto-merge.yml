@@ -4,7 +4,7 @@
 name: Auto-Merge Dependabot PRs
 
 on:
-  pull_request:
+  pull_request_target:
 
 jobs:
   auto-merge:
@@ -17,6 +17,6 @@ jobs:
         uses: ahmadnassri/action-dependabot-auto-merge@v2
         with:
           # This must be a personal access token with push access
-          github-token: ${{ secrets.AUTO_MERGE_TOKEN }}
+          github-token: ${{ secrets.AUTOMERGER }}
           # By default, squash and merge, so Github chooses nice commit messages
           command: squash and merge
