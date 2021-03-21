@@ -3,9 +3,9 @@ updates:
   - package-ecosystem: npm
     directory: "/"
     schedule:
-      interval: monthly
+      interval: weekly
       time: "04:00"
       timezone: Europe/Berlin
-    target-branch: "dependencyAutoUpdate"
-    open-pull-requests-limit: 20
+    #    target-branch: "dependencyAutoUpdate"
+    open-pull-requests-limit: 30
     versioning-strategy: increase
