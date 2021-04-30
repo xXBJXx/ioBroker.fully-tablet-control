@@ -285,8 +285,7 @@
             {
                 "js-controller": ">=2.0.0"
             }
-        ],
-        "installedFrom": "https://github.com/xXBJXx/ioBroker.fully-tablet-control/tarball/1cfffc99638af4b529abf1720a9bb308361aa525"
+        ]
     },
     "native": {
         "interval": 30,

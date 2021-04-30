@@ -12,5 +12,7 @@ Thumbs.db
 # i18n intermediate files
 admin/i18n/flat.txt
 admin/i18n/*/flat.txt
-/.run/
 /API Request.http
+/dev-server_script.bat
+/.dev-server/
+/.run/
