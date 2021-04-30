@@ -1,4 +1,9 @@
 # Older changes
+## 0.3.1-beta.0 (2020-12-31)
+* (xXBJXx) test-and-release.yml update
+* (xXBJXx) admin Page Revised
+* (xXBJXx) check for 0/1 implemented for sockets [(issue #66)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/66)
+
 ## 0.3.0-beta.5 (2020-10-24)
 * (xXBJXx) reading of the user from telegram adapter instance 0-10 added
 * (xXBJXx) Current page added to Device Info

@@ -79,7 +79,7 @@ _______________________________
  ### __WORK IN PROGRESS__ ( - falls nicht benötigt löschen sonst klammern entfernen und nach dem - dein text schreiben )
 -->
 
-### __WORK IN PROGRESS__
+### 0.3.4-0 (2021-04-30)
 * (xXBJXx) dependencies updates
 * (xXBJXx) fixed wrong type of displayWidthPixels and displayHeightPixels [(issue #164)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/164)
 + (xXBJXx) add encodeUrl and change log message
@@ -103,11 +103,6 @@ _______________________________
 
 ### 0.3.1-beta.1 (2021-01-01)
 * (xXBJXx) fixed Telegram error message when accessing the config page [(issue #109)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/109)
-
-### 0.3.1-beta.0 (2020-12-31)
-* (xXBJXx) test-and-release.yml update
-* (xXBJXx) admin Page Revised
-* (xXBJXx) check for 0/1 implemented for sockets [(issue #66)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/66)
 
 ## License
 

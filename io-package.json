@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "fully-tablet-control",
-        "version": "0.3.3-beta.0",
+        "version": "0.3.4-0",
         "news": {
+            "0.3.4-0": {
+                "en": "* dependencies updates\n* fixed wrong type of displayWidthPixels and displayHeightPixels [(issue #164)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/164)\n+ (xXBJXx) add encodeUrl and change log message",
+                "de": "* Abhängigkeitsaktualisierungen\n* Falscher Typ von displayWidthPixels und displayHeightPixels [(Problem Nr. 164)] behoben (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/164)\n+ (xXBJXx) füge encodeUrl hinzu und ändere die Protokollnachricht",
+                "ru": "* обновления зависимостей\n* исправлен неправильный тип displayWidthPixels и displayHeightPixels [(issue # 164)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/164)\n+ (xXBJXx) добавить encodeUrl и изменить сообщение журнала",
+                "pt": "* atualizações de dependências\n* corrigiu o tipo errado de displayWidthPixels e displayHeightPixels [(problema # 164)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/164)\n+ (xXBJXx) adicionar encodeUrl e alterar a mensagem de log",
+                "nl": "* afhankelijkheden updates\n* verkeerd type displayWidthPixels en displayHeightPixels opgelost [(issue # 164)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/164)\n+ (xXBJXx) voeg encodeUrl toe en wijzig het logbericht",
+                "fr": "* mises à jour des dépendances\n* Correction du mauvais type de displayWidthPixels et displayHeightPixels [(issue # 164)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/164)\n+ (xXBJXx) ajouter encodeUrl et modifier le message du journal",
+                "it": "* aggiornamenti delle dipendenze\n* corretto tipo errato di displayWidthPixels e displayHeightPixels [(problema # 164)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/164)\n+ (xXBJXx) aggiunge encodeUrl e modifica il messaggio di registro",
+                "es": "* actualizaciones de dependencias\n* Se corrigió el tipo incorrecto de displayWidthPixels y displayHeightPixels [(problema # 164)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/164)\n+ (xXBJXx) agregar encodeUrl y cambiar el mensaje de registro",
+                "pl": "* aktualizacje zależności\n* naprawiono zły typ displayWidthPixels i displayHeightPixels [(numer 164)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/164)\n+ (xXBJXx) dodaj encodeUrl i zmień komunikat dziennika",
+                "zh-cn": "*依赖关系更新\n*修复了displayWidthPixels和displayHeightPixels [（issue＃164）]（https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/164）的错误类型\n+（xXBJXx）添加encodeUrl并更改日志消息"
+            },
             "0.3.3-beta.0": {
                 "en": "* README edited\n* removed check for batteryLevel = -1% \n* camshot function expanded to include continuous shooting [(issue #129)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/129), \n  and it is now possible to take and save multiple images.\\\n  New tab added in config page \n* fixed brightness checkInterval bug (is now checked as intended every x minutes whether the brightness changed)",
                 "de": "* README bearbeitet\n* entfernt Überprüfung auf Batterielevel = -1%\n* Die Camshot-Funktion wurde um Serienaufnahmen erweitert [(Ausgabe Nr. 129)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/129).\n  und es ist jetzt möglich, mehrere Bilder aufzunehmen und zu speichern. \\\n  Neue Registerkarte auf der Konfigurationsseite hinzugefügt\n* Fehler bei der Überprüfung der Helligkeit behobenInterval (wird jetzt alle x Minuten wie beabsichtigt überprüft, ob sich die Helligkeit geändert hat)",
@@ -230,18 +242,6 @@
                 "es": "Astro tiempo agregado",
                 "pl": "Dodano czas Astro",
                 "zh-cn": "天文时间已添加"
-            },
-            "0.2.6": {
-                "en": "Brightness control changed and Configuration page changed",
-                "de": "Die Helligkeitssteuerung und die Konfigurationsseite wurden geändert",
-                "ru": "Изменено управление яркостью и изменена страница конфигурации",
-                "pt": "Controle de brilho alterado e página de configuração alterada",
-                "nl": "Helderheidsregeling gewijzigd en configuratiepagina gewijzigd",
-                "fr": "Contrôle de la luminosité modifié et page de configuration modifiée",
-                "it": "Controllo della luminosità modificato e pagina di configurazione modificata",
-                "es": "El control de brillo cambió y la página de configuración cambió",
-                "pl": "Zmieniono kontrolę jasności i zmieniono stronę konfiguracji",
-                "zh-cn": "亮度控制已更改，配置页面已更改"
             }
         },
         "title": "Fully Tablet Control",
