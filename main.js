@@ -115,6 +115,11 @@ class FullyTabletControl extends utils.Adapter {
     async initialization() {
         try {
 
+
+            // let hostname = this.host
+            // console.log(hostname)
+
+
             this.log.debug(`prepare adapter for initialization`);
             this.log.debug(`Adapter config is read out`);
 
@@ -123,7 +128,7 @@ class FullyTabletControl extends utils.Adapter {
                 // polling min 5 sec.
                 interval = this.config.interval * 1000;
                 if (interval < 10000) {
-                    this.log.warn(`the request interval time falls below the permitted limit of 5 sec ==> ${interval} ms => ${interval / 1000} sec`);
+                    this.log.warn(`the request interval time falls below the permitted limit of 10 sec ==> ${interval} ms => ${interval / 1000} sec`);
                     interval = 10000;
 
                 }
@@ -143,7 +148,7 @@ class FullyTabletControl extends utils.Adapter {
                 // polling min 1 min.
                 fireTabletInterval = this.config['fireTablet'] * 60000;
                 if (fireTabletInterval < 60000) {
-                    this.log.warn(`the fire Tablet Interval time falls below the permitted limit of 5 sec ==> ${fireTabletInterval} ms => ${fireTabletInterval / 60000} min`);
+                    this.log.warn(`the fire Tablet Interval time falls below the permitted limit of 1 min ==> ${fireTabletInterval} ms => ${fireTabletInterval / 60000} min`);
                     fireTabletInterval = 60000;
 
                 }
@@ -180,7 +185,7 @@ class FullyTabletControl extends utils.Adapter {
 
                         ip[i] = login[i].ip;
                         port[i] = login[i].port;
-                        password[i] = login[i].password;
+                        password[i] = encodeURIComponent(login[i].password);
                         deviceEnabled[i] = login[i].enabled;
                         tabletName[i] = login[i].name;
 
@@ -1390,7 +1395,7 @@ class FullyTabletControl extends utils.Adapter {
                         startURL = `https://${startURL}`;
                     }
 
-                    const encodeStartURL = encodeURIComponent(startURL);
+                    const encodeStartURL = encodeURI(startURL);
 
                     if (startURL.length > 5) {
 
@@ -1415,7 +1420,7 @@ class FullyTabletControl extends utils.Adapter {
                     let strUrl = state.val;
                     strUrl = strUrl.replace(/ /g, ''); // Remove Spaces
 
-                    const encodeUrl = encodeURIComponent(strUrl);
+                    const encodeUrl = encodeURI(strUrl); // alle URLs per encodeURI(URL) senden
 
                     if (strUrl.length > 5) {
 
