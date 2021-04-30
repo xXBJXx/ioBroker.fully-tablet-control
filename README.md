@@ -8,6 +8,7 @@
 <!--![(stable)](http://iobroker.live/badges/fully-tablet-control-stable.svg)-->
 [![Dependency Status](https://img.shields.io/david/xXBJXx/iobroker.fully-tablet-control.svg)](https://david-dm.org/xXBJXx/iobroker.fully-tablet-control)
 ![Test and Release](https://github.com/xXBJXx/iobroker.fully-tablet-control/workflows/Test%20and%20Release/badge.svg)
+
 [![NPM](https://nodei.co/npm/iobroker.fully-tablet-control.png?downloads=true)](https://nodei.co/npm/iobroker.fully-tablet-control/)
 
 # Fully Tablet Control Adapter für ioBroker
@@ -77,6 +78,11 @@ _______________________________
  Placeholder for the next version (at the beginning of the line):
  ### __WORK IN PROGRESS__ ( - falls nicht benötigt löschen sonst klammern entfernen und nach dem - dein text schreiben )
 -->
+
+### __WORK IN PROGRESS__
+* (xXBJXx) dependencies updates
+* (xXBJXx) fixed wrong type of displayWidthPixels and displayHeightPixels [(issue #164)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/164)
++ (xXBJXx) add encodeUrl and change log message
 
 ### 0.3.3-beta.0 (2021-02-14)
 * (xXBJXx) README edited
