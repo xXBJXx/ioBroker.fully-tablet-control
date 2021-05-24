@@ -371,7 +371,7 @@ class FullyTabletControl extends utils.Adapter {
                         for (const b in deviceEnabled) {
                             this.log.debug(`The brightness settings for the devices are not defined. The manual mode is now switched on`);
                             enabledBrightness[b] = false;
-                            await this.setStateAsync(`device.${await this.replaceFunction(tabletName[b])}.brightness_control_mode`, true, true);
+                            // await this.setStateAsync(`device.${await this.replaceFunction(tabletName[b])}.brightness_control_mode`, true, true);
                         }
                     }
                 }
@@ -687,7 +687,7 @@ class FullyTabletControl extends utils.Adapter {
         try {
 
             if (requestTimeout) clearTimeout(requestTimeout);
-            if (!deviceInfo || deviceInfo !== []) {
+            if (deviceInfo.length !== 0) {
 
                 for (const i in deviceInfo) {
                     if (deviceEnabled[i]) {
@@ -1911,89 +1911,89 @@ class FullyTabletControl extends utils.Adapter {
 
     async astroTime() {
         try {
+            if (deviceInfo.length !== 0) {
+                this.log.debug(`Astro time is now being initialized...`);
 
-            this.log.debug(`Astro time is now being initialized...`);
+                this.log.debug(`Adapter now reads the ioBroker config for the latitude and longitude`);
+                const config = await this.getForeignObjectAsync('system.config');
 
-            this.log.debug(`Adapter now reads the ioBroker config for the latitude and longitude`);
-            const config = await this.getForeignObjectAsync('system.config');
+                timeMode = JSON.parse(this.config['timeMode']);
+                let dayH;
+                let dayM;
+                let dayS;
+                let nightH;
+                let nightM;
+                let nightS;
 
-            timeMode = JSON.parse(this.config['timeMode']);
-            let dayH;
-            let dayM;
-            let dayS;
-            let nightH;
-            let nightM;
-            let nightS;
+                // @ts-ignore
+                const iobrokerLatitude = config.common.latitude;
+                // @ts-ignore
+                const iobrokerLongitude = config.common.longitude;
 
-            // @ts-ignore
-            const iobrokerLatitude = config.common.latitude;
-            // @ts-ignore
-            const iobrokerLongitude = config.common.longitude;
+                if (iobrokerLatitude !== '' && iobrokerLongitude !== '') {
 
-            if (iobrokerLatitude !== '' && iobrokerLongitude !== '') {
+                    this.log.debug(`The latitude and longitude were read from the config. => latitude: ${iobrokerLatitude} | longitude: ${iobrokerLongitude}`);
 
-                this.log.debug(`The latitude and longitude were read from the config. => latitude: ${iobrokerLatitude} | longitude: ${iobrokerLongitude}`);
+                    const ts = SunCalc.getTimes(new Date, iobrokerLatitude, iobrokerLongitude);
 
-                const ts = SunCalc.getTimes(new Date, iobrokerLatitude, iobrokerLongitude);
+                    const astroSelectDay = this.config['astroSelectDay'];
+                    const astroSelectNight = this.config['astroSelectNight'];
 
-                const astroSelectDay = this.config['astroSelectDay'];
-                const astroSelectNight = this.config['astroSelectNight'];
+                    dayH = await this.zeroPad(ts[astroSelectDay].getHours(), 2);
+                    dayM = await this.zeroPad(ts[astroSelectDay].getMinutes(), 2);
+                    dayS = await this.zeroPad(ts[astroSelectDay].getSeconds(), 2);
 
-                dayH = await this.zeroPad(ts[astroSelectDay].getHours(), 2);
-                dayM = await this.zeroPad(ts[astroSelectDay].getMinutes(), 2);
-                dayS = await this.zeroPad(ts[astroSelectDay].getSeconds(), 2);
+                    nightH = await this.zeroPad(ts[astroSelectNight].getHours(), 2);
+                    nightM = await this.zeroPad(ts[astroSelectNight].getMinutes(), 2);
+                    nightS = await this.zeroPad(ts[astroSelectNight].getSeconds(), 2);
 
-                nightH = await this.zeroPad(ts[astroSelectNight].getHours(), 2);
-                nightM = await this.zeroPad(ts[astroSelectNight].getMinutes(), 2);
-                nightS = await this.zeroPad(ts[astroSelectNight].getSeconds(), 2);
+                }
+                else {
+                    this.log.warn(`The coordinates are not stored in the admin. Astro time is not switched on. Manuel mode is now active`);
+                    timeMode = false;
 
+                }
+
+                const dayTime = await this.zeroPad(this.config['dayTime'], 2);
+                const midTime = await this.zeroPad(this.config['midTime'], 2);
+                const nightTime = await this.zeroPad(this.config['nightTime'], 2);
+
+                this.log.debug(`The time of day is now determined`);
+                if (timeMode) {
+
+                    this.log.debug(`The current time is now checked whether it is in the time range from ${dayH}:${dayM}:${dayS} to ${nightH}:${nightM}:${nightS}`);
+                    let astro_Time = await this.time_range(`${dayH}:${dayM}:${dayS}`, ``, `${nightH}:${nightM}:${nightS}`);
+                    // console.log(`${dayH}:${dayM}:${dayS}`)
+                    this.log.debug(`Time of day is now set to day or night`);
+                    day_Time = astro_Time;
+
+                    if (day_Time === 1) this.log.debug(`It is Morning`);
+                    if (day_Time === 3) this.log.debug(`It's night`);
+                    if (day_Time === 1) console.log(`It is day: ${day_Time}`);
+                    if (day_Time === 3) console.log(`It's night: ${day_Time}`);
+
+                }
+                else {
+                    this.log.debug(`The current time is now checked whether it is in the time range from ${dayTime}:00:00 to ${midTime}:00:00 and ${nightTime}:00:00`);
+                    let manuel_Time = await this.time_range(`${dayTime}:00:00`, `${midTime}:00:00`, `${nightTime}:00:00`);
+
+                    this.log.debug(`Time of day is now set to day or night`);
+                    day_Time = manuel_Time;
+
+                    if (day_Time === 1) this.log.debug(`It is Morning`);
+                    if (day_Time === 2) this.log.debug(`It is afternoon`);
+                    if (day_Time === 3) this.log.debug(`It's night`);
+
+                    if (day_Time === 1) console.log(`It is day: ${day_Time}`);
+                    if (day_Time === 2) console.log(`It is afternoon: ${day_Time}`);
+                    if (day_Time === 3) console.log(`It's night: ${day_Time}`);
+
+                }
+
+                this.log.debug(`Time initialization is complete. Now start the cron`);
+                // @ts-ignore
+                await this.brightnessCron(dayH, dayM, nightH, nightM);
             }
-            else {
-                this.log.warn(`The coordinates are not stored in the admin. Astro time is not switched on. Manuel mode is now active`);
-                timeMode = false;
-
-            }
-
-            const dayTime = await this.zeroPad(this.config['dayTime'], 2);
-            const midTime = await this.zeroPad(this.config['midTime'], 2);
-            const nightTime = await this.zeroPad(this.config['nightTime'], 2);
-
-            this.log.debug(`The time of day is now determined`);
-            if (timeMode) {
-
-                this.log.debug(`The current time is now checked whether it is in the time range from ${dayH}:${dayM}:${dayS} to ${nightH}:${nightM}:${nightS}`);
-                let astro_Time = await this.time_range(`${dayH}:${dayM}:${dayS}`, ``, `${nightH}:${nightM}:${nightS}`);
-                // console.log(`${dayH}:${dayM}:${dayS}`)
-                this.log.debug(`Time of day is now set to day or night`);
-                day_Time = astro_Time;
-
-                if (day_Time === 1) this.log.debug(`It is Morning`);
-                if (day_Time === 3) this.log.debug(`It's night`);
-                if (day_Time === 1) console.log(`It is day: ${day_Time}`);
-                if (day_Time === 3) console.log(`It's night: ${day_Time}`);
-
-            }
-            else {
-                this.log.debug(`The current time is now checked whether it is in the time range from ${dayTime}:00:00 to ${midTime}:00:00 and ${nightTime}:00:00`);
-                let manuel_Time = await this.time_range(`${dayTime}:00:00`, `${midTime}:00:00`, `${nightTime}:00:00`);
-
-                this.log.debug(`Time of day is now set to day or night`);
-                day_Time = manuel_Time;
-
-                if (day_Time === 1) this.log.debug(`It is Morning`);
-                if (day_Time === 2) this.log.debug(`It is afternoon`);
-                if (day_Time === 3) this.log.debug(`It's night`);
-
-                if (day_Time === 1) console.log(`It is day: ${day_Time}`);
-                if (day_Time === 2) console.log(`It is afternoon: ${day_Time}`);
-                if (day_Time === 3) console.log(`It's night: ${day_Time}`);
-
-            }
-
-            this.log.debug(`Time initialization is complete. Now start the cron`);
-            // @ts-ignore
-            await this.brightnessCron(dayH, dayM, nightH, nightM);
-
         }
         catch (error) {
             this.log.error(`[astroTime] : ${error.message}, stack: ${error.stack}`);
@@ -2008,101 +2008,103 @@ class FullyTabletControl extends utils.Adapter {
      */
     async brightnessCron(dayH, dayM, nightH, nightM) {
         try {
-            this.log.debug(`Cron job is now being initialized`);
+            if (deviceInfo.length !== 0) {
+                this.log.debug(`Cron job is now being initialized`);
 
-            this.log.debug(`Check whether the brightness control is active`);
-            if (brightnessControlEnabled) {
-                for (const c in deviceEnabled) {
-                    if (enabledBrightness[c] && !logMessage[c]) {
-                        if (timeMode) {
-                            this.log.debug(`night cron: ${nightM} ${nightH} * * * `);
+                this.log.debug(`Check whether the brightness control is active`);
+                if (brightnessControlEnabled) {
+                    for (const c in deviceEnabled) {
+                        if (enabledBrightness[c] && !logMessage[c]) {
+                            if (timeMode) {
+                                this.log.debug(`night cron: ${nightM} ${nightH} * * * `);
 
-                            const astroNightBriCron = new schedule(`${nightM} ${nightH} * * * `, async () => {
-                                this.log.debug(`the night brightness is now activated`);
-                                console.log(`the night brightness is now activated`);
+                                const astroNightBriCron = new schedule(`${nightM} ${nightH} * * * `, async () => {
+                                    this.log.debug(`the night brightness is now activated`);
+                                    console.log(`the night brightness is now activated`);
 
-                                this.log.debug(`Time of day is now set to day or night`);
-                                day_Time = 3;
-                                this.log.debug(`It's night`);
+                                    this.log.debug(`Time of day is now set to day or night`);
+                                    day_Time = 3;
+                                    this.log.debug(`It's night`);
 
-                                this.log.debug(`night and day timeout are reset`);
-                                if (automatic_briTimeout) clearTimeout(automatic_briTimeout);
-                                await this.automatic_bri();
-                            });
+                                    this.log.debug(`night and day timeout are reset`);
+                                    if (automatic_briTimeout) clearTimeout(automatic_briTimeout);
+                                    await this.automatic_bri();
+                                });
 
-                            this.log.debug(`day cron: ${dayM} ${dayH} * * * `);
+                                this.log.debug(`day cron: ${dayM} ${dayH} * * * `);
 
-                            const astroDayBriCron = new schedule(`${dayM} ${dayH} * * * `, async () => {
-                                this.log.debug(`the day brightness is now activated`);
-                                console.log(`the day brightness is now activated`);
+                                const astroDayBriCron = new schedule(`${dayM} ${dayH} * * * `, async () => {
+                                    this.log.debug(`the day brightness is now activated`);
+                                    console.log(`the day brightness is now activated`);
 
-                                this.log.debug(`Time of day is now set to day or night`);
-                                day_Time = 1;
-                                this.log.debug(`It is day`);
+                                    this.log.debug(`Time of day is now set to day or night`);
+                                    day_Time = 1;
+                                    this.log.debug(`It is day`);
 
-                                this.log.debug(`night and day timeout are reset`);
-                                if (automatic_briTimeout) clearTimeout(automatic_briTimeout);
-                                await this.automatic_bri();
-                            });
+                                    this.log.debug(`night and day timeout are reset`);
+                                    if (automatic_briTimeout) clearTimeout(automatic_briTimeout);
+                                    await this.automatic_bri();
+                                });
 
-                            this.log.debug(`start cron jobs`);
-                            astroNightBriCron.start();
-                            astroDayBriCron.start();
-                        }
-                        else {
-                            const dayTime = this.config['dayTime'];
-                            const midTime = this.config['midTime'];
-                            const nightTime = this.config['nightTime'];
-                            this.log.debug('checkInterval ' + checkInterval);
-                            this.log.debug('dayTime ' + dayTime);
-                            this.log.debug('nightTime ' + nightTime);
+                                this.log.debug(`start cron jobs`);
+                                astroNightBriCron.start();
+                                astroDayBriCron.start();
+                            }
+                            else {
+                                const dayTime = this.config['dayTime'];
+                                const midTime = this.config['midTime'];
+                                const nightTime = this.config['nightTime'];
+                                this.log.debug('checkInterval ' + checkInterval);
+                                this.log.debug('dayTime ' + dayTime);
+                                this.log.debug('nightTime ' + nightTime);
 
-                            this.log.debug(`day cron: [ 0 ${dayTime} * * *  ]`);
-                            const dayBriCron = new schedule(`0 ${dayTime} * * * `, async () => {
-                                this.log.debug(`the day brightness is now activated`);
-                                console.log(`the day brightness is now activated`);
+                                this.log.debug(`day cron: [ 0 ${dayTime} * * *  ]`);
+                                const dayBriCron = new schedule(`0 ${dayTime} * * * `, async () => {
+                                    this.log.debug(`the day brightness is now activated`);
+                                    console.log(`the day brightness is now activated`);
 
-                                this.log.debug(`Time of day is now set to day or night`);
-                                day_Time = 1;
-                                this.log.debug(`It is day`);
+                                    this.log.debug(`Time of day is now set to day or night`);
+                                    day_Time = 1;
+                                    this.log.debug(`It is day`);
 
-                                this.log.debug(`night and day timeout are reset`);
-                                if (automatic_briTimeout) clearTimeout(automatic_briTimeout);
-                                await this.automatic_bri();
-                            });
+                                    this.log.debug(`night and day timeout are reset`);
+                                    if (automatic_briTimeout) clearTimeout(automatic_briTimeout);
+                                    await this.automatic_bri();
+                                });
 
-                            this.log.debug(`day cron: [ 0 ${midTime} * * *  ]`);
-                            const midBriCron = new schedule(`0 ${midTime} * * * `, async () => {
-                                this.log.debug(`the day brightness is now activated`);
-                                console.log(`the day brightness is now activated`);
+                                this.log.debug(`day cron: [ 0 ${midTime} * * *  ]`);
+                                const midBriCron = new schedule(`0 ${midTime} * * * `, async () => {
+                                    this.log.debug(`the day brightness is now activated`);
+                                    console.log(`the day brightness is now activated`);
 
-                                this.log.debug(`Time of day is now set to day or night`);
-                                day_Time = 2;
-                                this.log.debug(`It is afternoon`);
+                                    this.log.debug(`Time of day is now set to day or night`);
+                                    day_Time = 2;
+                                    this.log.debug(`It is afternoon`);
 
-                                this.log.debug(`night and day timeout are reset`);
-                                if (automatic_briTimeout) clearTimeout(automatic_briTimeout);
-                                await this.automatic_bri();
-                            });
+                                    this.log.debug(`night and day timeout are reset`);
+                                    if (automatic_briTimeout) clearTimeout(automatic_briTimeout);
+                                    await this.automatic_bri();
+                                });
 
-                            this.log.debug(`night cron: [ 0 ${nightTime} * * * ]`);
-                            const nightBriCron = new schedule(`0 ${nightTime} * * * `, async () => {
-                                this.log.debug(`the night brightness is now activated`);
-                                console.log(`the night brightness is now activated`);
+                                this.log.debug(`night cron: [ 0 ${nightTime} * * * ]`);
+                                const nightBriCron = new schedule(`0 ${nightTime} * * * `, async () => {
+                                    this.log.debug(`the night brightness is now activated`);
+                                    console.log(`the night brightness is now activated`);
 
-                                this.log.debug(`Time of day is now set to day or night`);
-                                day_Time = 3;
-                                this.log.debug(`It's night`);
+                                    this.log.debug(`Time of day is now set to day or night`);
+                                    day_Time = 3;
+                                    this.log.debug(`It's night`);
 
-                                this.log.debug(`night and day timeout are reset`);
-                                if (automatic_briTimeout) clearTimeout(automatic_briTimeout);
-                                await this.automatic_bri();
-                            });
+                                    this.log.debug(`night and day timeout are reset`);
+                                    if (automatic_briTimeout) clearTimeout(automatic_briTimeout);
+                                    await this.automatic_bri();
+                                });
 
-                            this.log.debug(`start cron jobs`);
-                            dayBriCron.start();
-                            midBriCron.start();
-                            nightBriCron.start();
+                                this.log.debug(`start cron jobs`);
+                                dayBriCron.start();
+                                midBriCron.start();
+                                nightBriCron.start();
+                            }
                         }
                     }
                 }
@@ -2366,323 +2368,349 @@ class FullyTabletControl extends utils.Adapter {
 
     async automatic_bri() {
 
-        if (automatic_briTimeout) clearTimeout(automatic_briTimeout);
-        if (day_Time === 1) {
-            try {
-                const brightnessD = this.config.brightness;
-                const screenSaverON = JSON.parse(this.config['screenSaverON']);
-                // @ts-ignore
-                if (!brightnessD && brightnessD.length !== 0 || brightnessD !== [] && brightnessD.length !== 0) {
-                    for (const d in deviceEnabled) {
-                        if (deviceEnabled[d] && !logMessage[d]) {
-                            if (enabledBrightness[d]) {
-                                this.log.debug(`automatic brightness control for ${tabletName[d]} is switched on the manual control is now switched off`);
-                                await this.setStateAsync(`device.${tabletName[d]}.brightness_control_mode`, false, true);
+        if (deviceInfo.length !== 0) {
+            if (automatic_briTimeout) clearTimeout(automatic_briTimeout);
+            if (day_Time === 1) {
+                try {
+                    const brightnessD = this.config.brightness;
+                    const screenSaverON = JSON.parse(this.config['screenSaverON']);
+                    // @ts-ignore
+                    if (!brightnessD && brightnessD.length !== 0 || brightnessD !== [] && brightnessD.length !== 0) {
+                        for (const d in deviceEnabled) {
+                            if (deviceEnabled[d] && !logMessage[d]) {
+                                if (enabledBrightness[d]) {
+                                    this.log.debug(`automatic brightness control for ${tabletName[d]} is switched on the manual control is now switched off`);
+                                    await this.setStateAsync(`device.${tabletName[d]}.brightness_control_mode`, false, true);
 
-                                if (brightnessD[d]) {
-                                    let newBrightnessD = 0;
-                                    if (chargeDeviceValue[d]) {
-                                        newBrightnessD = Math.round(await this.convert_percent(brightnessD[d]['dayBrightness'] - brightnessD[d]['loadingLowering']));
-                                        if (newBrightnessD <= 0) {
-                                            newBrightnessD = 0;
-                                            this.log.debug(`brightness from ${tabletName[d]} is less than 0 brightness is set to`);
+                                    if (brightnessD[d]) {
+                                        let newBrightnessD = 0;
+                                        if (chargeDeviceValue[d]) {
+                                            newBrightnessD = Math.round(await this.convert_percent(brightnessD[d]['dayBrightness'] - brightnessD[d]['loadingLowering']));
+                                            if (newBrightnessD <= 0) {
+                                                newBrightnessD = 0;
+                                                this.log.debug(`brightness from ${tabletName[d]} is less than 0 brightness is set to`);
+                                            }
+                                        }
+                                        else {
+                                            newBrightnessD = Math.round(await this.convert_percent(brightnessD[d]['dayBrightness']));
+                                            this.log.debug(`${tabletName[d]} brightness set on: ${newBrightnessD}[${brightnessD[d]['dayBrightness']}%]`);
+                                        }
+
+                                        const BrightnessURL = `http://${ip[d]}:${port[d]}/?cmd=setStringSetting&key=screenBrightness&value=${newBrightnessD}&password=${password[d]}`;
+                                        const ScreensaverOnBri = `http://${ip[d]}:${port[d]}/?cmd=setStringSetting&key=screensaverBrightness&value=${newBrightnessD}&password=${password[d]}`;
+
+                                        this.log.debug(`Check whether the screen saver and the brightness synchronization is switched on`);
+                                        if (enableScreenSaverBrightness[d] && screenSaverON) {
+
+                                            this.log.debug(`Check whether the current brightness is the same as the one you want to adjust`);
+                                            if (newBrightnessD !== brightness[d]) {
+
+                                                this.log.debug(`send the screen saver brightness to the device =>${tabletName[d]}`);
+                                                await axios.get(ScreensaverOnBri)
+                                                    .then(async result => {
+                                                        this.log.debug(`${tabletName[d]} send status for ScreensaverOnBri = status Code: ${result.status} => status Message: ${result.statusText}`);
+                                                        console.log(`${tabletName[d]} send status for ScreensaverOnBri = status Code: ${result.status} => status Message: ${result.statusText}`);
+                                                    })
+                                                    .catch(async error => {
+                                                        this.log.error(`${tabletName[d]} send status for ScreensaverOnBri name could not be sent => ${error.message}, stack: ${error.stack}`);
+                                                        console.log(`${tabletName[d]} send status for ScreensaverOnBri name could not be sent => ${error.message}, stack: ${error.stack}`);
+                                                    });
+
+                                                this.log.debug(`send the screen brightness to the device =>${tabletName[d]}`);
+                                                await axios.get(BrightnessURL)
+                                                    .then(async result => {
+                                                        this.log.debug(`${tabletName[d]} send status for BrightnessURL = status Code: ${result.status} => status Message: ${result.statusText}`);
+                                                        console.log(`${tabletName[d]} send status for BrightnessURL = status Code: ${result.status} => status Message: ${result.statusText}`);
+                                                    })
+                                                    .catch(async error => {
+                                                        this.log.error(`${tabletName[d]} send status for BrightnessURL could not be sent => ${error.message}, stack: ${error.stack}`);
+                                                        console.log(`${tabletName[d]} send status for BrightnessURL could not be sent => ${error.message}, stack: ${error.stack}`);
+                                                    });
+
+                                                this.log.debug(`Start the stateRequest in 300 ms to get the current values of the ${tabletName[d]} device`);
+                                                if (BriRequestTimeout) clearTimeout(BriRequestTimeout);
+                                                BriRequestTimeout = setTimeout(async () => {
+                                                    await this.stateRequest();
+                                                }, 300);
+                                            }
+                                        }
+                                        else if (!isInScreensaver[d]) {
+                                            this.log.debug(`Check whether the current brightness is the same as the one you want to adjust`);
+                                            if (newBrightnessD !== brightness[d]) {
+                                                this.log.debug(`send the screen brightness to the device =>${tabletName[d]}`);
+                                                await axios.get(BrightnessURL)
+                                                    .then(async result => {
+                                                        this.log.debug(`${tabletName[d]} send status for BrightnessURL = status Code: ${result.status} => status Message: ${result.statusText}`);
+                                                        console.log(`${tabletName[d]} send status for BrightnessURL = status Code: ${result.status} => status Message: ${result.statusText}`);
+                                                    })
+                                                    .catch(async error => {
+                                                        this.log.error(`${tabletName[d]} send status for BrightnessURL could not be sent => ${error.message}, stack: ${error.stack}`);
+                                                        console.log(`${tabletName[d]} send status for BrightnessURL could not be sent => ${error.message}, stack: ${error.stack}`);
+                                                    });
+
+                                                this.log.debug(`Start the stateRequest in 300 ms to get the current values of the ${tabletName[d]} device`);
+                                                if (BriRequestTimeout) clearTimeout(BriRequestTimeout);
+                                                BriRequestTimeout = setTimeout(async () => {
+                                                    this.log.debug(`start devices to query for new values`);
+                                                    await this.stateRequest();
+                                                }, 300);
+                                            }
                                         }
                                     }
                                     else {
-                                        newBrightnessD = Math.round(await this.convert_percent(brightnessD[d]['dayBrightness']));
-                                        this.log.debug(`${tabletName[d]} brightness set on: ${newBrightnessD}[${brightnessD[d]['dayBrightness']}%]`);
-                                    }
-
-                                    const BrightnessURL = `http://${ip[d]}:${port[d]}/?cmd=setStringSetting&key=screenBrightness&value=${newBrightnessD}&password=${password[d]}`;
-                                    const ScreensaverOnBri = `http://${ip[d]}:${port[d]}/?cmd=setStringSetting&key=screensaverBrightness&value=${newBrightnessD}&password=${password[d]}`;
-
-                                    this.log.debug(`Check whether the screen saver and the brightness synchronization is switched on`);
-                                    if (enableScreenSaverBrightness[d] && screenSaverON) {
-
-                                        this.log.debug(`Check whether the current brightness is the same as the one you want to adjust`);
-                                        if (newBrightnessD !== brightness[d]) {
-
-                                            this.log.debug(`send the screen saver brightness to the device =>${tabletName[d]}`);
-                                            await axios.get(ScreensaverOnBri)
-                                                .then(async result => {
-                                                    this.log.debug(`${tabletName[d]} send status for ScreensaverOnBri = status Code: ${result.status} => status Message: ${result.statusText}`);
-                                                    console.log(`${tabletName[d]} send status for ScreensaverOnBri = status Code: ${result.status} => status Message: ${result.statusText}`);
-                                                })
-                                                .catch(async error => {
-                                                    this.log.error(`${tabletName[d]} send status for ScreensaverOnBri name could not be sent => ${error.message}, stack: ${error.stack}`);
-                                                    console.log(`${tabletName[d]} send status for ScreensaverOnBri name could not be sent => ${error.message}, stack: ${error.stack}`);
-                                                });
-
-                                            this.log.debug(`send the screen brightness to the device =>${tabletName[d]}`);
-                                            await axios.get(BrightnessURL)
-                                                .then(async result => {
-                                                    this.log.debug(`${tabletName[d]} send status for BrightnessURL = status Code: ${result.status} => status Message: ${result.statusText}`);
-                                                    console.log(`${tabletName[d]} send status for BrightnessURL = status Code: ${result.status} => status Message: ${result.statusText}`);
-                                                })
-                                                .catch(async error => {
-                                                    this.log.error(`${tabletName[d]} send status for BrightnessURL could not be sent => ${error.message}, stack: ${error.stack}`);
-                                                    console.log(`${tabletName[d]} send status for BrightnessURL could not be sent => ${error.message}, stack: ${error.stack}`);
-                                                });
-
-                                            this.log.debug(`Start the stateRequest in 300 ms to get the current values of the ${tabletName[d]} device`);
-                                            if (BriRequestTimeout) clearTimeout(BriRequestTimeout);
-                                            BriRequestTimeout = setTimeout(async () => {
-                                                await this.stateRequest();
-                                            }, 300);
-                                        }
-                                    }
-                                    else if (!isInScreensaver[d]) {
-                                        this.log.debug(`Check whether the current brightness is the same as the one you want to adjust`);
-                                        if (newBrightnessD !== brightness[d]) {
-                                            this.log.debug(`send the screen brightness to the device =>${tabletName[d]}`);
-                                            await axios.get(BrightnessURL)
-                                                .then(async result => {
-                                                    this.log.debug(`${tabletName[d]} send status for BrightnessURL = status Code: ${result.status} => status Message: ${result.statusText}`);
-                                                    console.log(`${tabletName[d]} send status for BrightnessURL = status Code: ${result.status} => status Message: ${result.statusText}`);
-                                                })
-                                                .catch(async error => {
-                                                    this.log.error(`${tabletName[d]} send status for BrightnessURL could not be sent => ${error.message}, stack: ${error.stack}`);
-                                                    console.log(`${tabletName[d]} send status for BrightnessURL could not be sent => ${error.message}, stack: ${error.stack}`);
-                                                });
-
-                                            this.log.debug(`Start the stateRequest in 300 ms to get the current values of the ${tabletName[d]} device`);
-                                            if (BriRequestTimeout) clearTimeout(BriRequestTimeout);
-                                            BriRequestTimeout = setTimeout(async () => {
-                                                this.log.debug(`start devices to query for new values`);
-                                                await this.stateRequest();
-                                            }, 300);
-                                        }
+                                        this.log.warn(`${tabletName[d]} morningtime brightness not specified`);
                                     }
                                 }
                                 else {
-                                    this.log.warn(`${tabletName[d]} morningtime brightness not specified`);
+                                    this.log.debug(`Automatic brightness has been deactivated for ${tabletName[d]} and is now switched to manual control`);
+                                    await this.setStateAsync(`device.${tabletName[d]}.brightness_control_mode`, true, true);
                                 }
                             }
-                            else {
-                                this.log.debug(`Automatic brightness has been deactivated for ${tabletName[d]} and is now switched to manual control`);
+                        }
+                    }
+                    else {
+                        for (const d in deviceEnabled) {
+                            if (!enabledBrightness[d]) {
+                                this.log.warn(`Automatic brightness for ${tabletName[d]} is activated but no configuration is entered, the manual mode is activated.`);
                                 await this.setStateAsync(`device.${tabletName[d]}.brightness_control_mode`, true, true);
                             }
                         }
                     }
                 }
+                catch (error) {
+                    this.log.error(`[dayBri] : ${error.message}, stack: ${error.stack}`);
+                }
             }
-            catch (error) {
-                this.log.error(`[dayBri] : ${error.message}, stack: ${error.stack}`);
-            }
-        }
-        else if (day_Time === 2) {
-            try {
-                const brightnessD = this.config.brightness;
-                const screenSaverON = JSON.parse(this.config['screenSaverON']);
-                // @ts-ignore
-                if (!brightnessD && brightnessD.length !== 0 || brightnessD !== [] && brightnessD.length !== 0) {
-                    for (const d in deviceEnabled) {
-                        if (deviceEnabled[d] && !logMessage[d]) {
-                            if (enabledBrightness[d]) {
-                                this.log.debug(`automatic brightness control for ${tabletName[d]} is switched on the manual control is now switched off`);
-                                await this.setStateAsync(`device.${tabletName[d]}.brightness_control_mode`, false, true);
+            else if (day_Time === 2) {
+                try {
+                    const brightnessD = this.config.brightness;
+                    const screenSaverON = JSON.parse(this.config['screenSaverON']);
+                    // @ts-ignore
+                    if (!brightnessD && brightnessD.length !== 0 || brightnessD !== [] && brightnessD.length !== 0) {
+                        for (const d in deviceEnabled) {
+                            if (deviceEnabled[d] && !logMessage[d]) {
+                                if (enabledBrightness[d]) {
+                                    this.log.debug(`automatic brightness control for ${tabletName[d]} is switched on the manual control is now switched off`);
+                                    await this.setStateAsync(`device.${tabletName[d]}.brightness_control_mode`, false, true);
 
-                                if (brightnessD[d]) {
-                                    let newBrightnessM = 0;
-                                    if (chargeDeviceValue[d]) {
-                                        newBrightnessM = Math.round(await this.convert_percent(brightnessD[d]['midTimeBrightness'] - brightnessD[d]['loadingLowering']));
-                                        if (newBrightnessM <= 0) {
-                                            newBrightnessM = 0;
-                                            this.log.debug(`brightness from ${tabletName[d]} is less than 0 brightness is set to`);
+                                    if (brightnessD[d]) {
+                                        let newBrightnessM = 0;
+                                        if (chargeDeviceValue[d]) {
+                                            newBrightnessM = Math.round(await this.convert_percent(brightnessD[d]['midTimeBrightness'] - brightnessD[d]['loadingLowering']));
+                                            if (newBrightnessM <= 0) {
+                                                newBrightnessM = 0;
+                                                this.log.debug(`brightness from ${tabletName[d]} is less than 0 brightness is set to`);
+                                            }
+                                        }
+                                        else {
+                                            newBrightnessM = Math.round(await this.convert_percent(brightnessD[d]['midTimeBrightness']));
+                                            this.log.debug(`${tabletName[d]} brightness set on: ${newBrightnessM}[${brightnessD[d]['midTimeBrightness']}%]`);
+                                        }
+
+                                        const BrightnessURL = `http://${ip[d]}:${port[d]}/?cmd=setStringSetting&key=screenBrightness&value=${newBrightnessM}&password=${password[d]}`;
+                                        const ScreensaverOnBri = `http://${ip[d]}:${port[d]}/?cmd=setStringSetting&key=screensaverBrightness&value=${newBrightnessM}&password=${password[d]}`;
+
+                                        this.log.debug(`Check whether the screen saver and the brightness synchronization is switched on`);
+                                        if (enableScreenSaverBrightness[d] && screenSaverON) {
+
+                                            this.log.debug(`Check whether the current brightness is the same as the one you want to adjust`);
+                                            if (newBrightnessM !== brightness[d]) {
+
+                                                this.log.debug(`send the screen saver brightness to the device =>${tabletName[d]}`);
+                                                await axios.get(ScreensaverOnBri)
+                                                    .then(async result => {
+                                                        this.log.debug(`${tabletName[d]} send status for ScreensaverOnBri = status Code: ${result.status} => status Message: ${result.statusText}`);
+                                                        console.log(`${tabletName[d]} send status for ScreensaverOnBri = status Code: ${result.status} => status Message: ${result.statusText}`);
+                                                    })
+                                                    .catch(async error => {
+                                                        this.log.error(`${tabletName[d]} send status for ScreensaverOnBri name could not be sent => ${error.message}, stack: ${error.stack}`);
+                                                        console.log(`${tabletName[d]} send status for ScreensaverOnBri name could not be sent => ${error.message}, stack: ${error.stack}`);
+                                                    });
+
+                                                this.log.debug(`send the screen brightness to the device =>${tabletName[d]}`);
+                                                await axios.get(BrightnessURL)
+                                                    .then(async result => {
+                                                        this.log.debug(`${tabletName[d]} send status for BrightnessURL = status Code: ${result.status} => status Message: ${result.statusText}`);
+                                                        console.log(`${tabletName[d]} send status for BrightnessURL = status Code: ${result.status} => status Message: ${result.statusText}`);
+                                                    })
+                                                    .catch(async error => {
+                                                        this.log.error(`${tabletName[d]} send status for BrightnessURL could not be sent => ${error.message}, stack: ${error.stack}`);
+                                                        console.log(`${tabletName[d]} send status for BrightnessURL could not be sent => ${error.message}, stack: ${error.stack}`);
+                                                    });
+
+                                                this.log.debug(`Start the stateRequest in 300 ms to get the current values of the ${tabletName[d]} device`);
+                                                if (BriRequestTimeout) clearTimeout(BriRequestTimeout);
+                                                BriRequestTimeout = setTimeout(async () => {
+                                                    this.log.debug(`start devices to query for new values`);
+                                                    await this.stateRequest();
+                                                }, 300);
+                                            }
+                                        }
+                                        else if (!isInScreensaver[d]) {
+                                            this.log.debug(`Check whether the current brightness is the same as the one you want to adjust`);
+                                            if (newBrightnessM !== brightness[d]) {
+
+                                                this.log.debug(`send the screen brightness to the device =>${tabletName[d]}`);
+                                                await axios.get(BrightnessURL)
+                                                    .then(async result => {
+                                                        this.log.debug(`${tabletName[d]} send status for BrightnessURL = status Code: ${result.status} => status Message: ${result.statusText}`);
+                                                        console.log(`${tabletName[d]} send status for BrightnessURL = status Code: ${result.status} => status Message: ${result.statusText}`);
+                                                    })
+                                                    .catch(async error => {
+                                                        this.log.error(`${tabletName[d]} send status for BrightnessURL could not be sent => ${error.message}, stack: ${error.stack}`);
+                                                        console.log(`${tabletName[d]} send status for BrightnessURL could not be sent => ${error.message}, stack: ${error.stack}`);
+                                                    });
+
+                                                this.log.debug(`Start the stateRequest in 300 ms to get the current values of the ${tabletName[d]} device`);
+                                                if (BriRequestTimeout) clearTimeout(BriRequestTimeout);
+                                                BriRequestTimeout = setTimeout(async () => {
+                                                    this.log.debug(`start devices to query for new values`);
+                                                    await this.stateRequest();
+                                                }, 300);
+                                            }
                                         }
                                     }
                                     else {
-                                        newBrightnessM = Math.round(await this.convert_percent(brightnessD[d]['midTimeBrightness']));
-                                        this.log.debug(`${tabletName[d]} brightness set on: ${newBrightnessM}[${brightnessD[d]['midTimeBrightness']}%]`);
-                                    }
-
-                                    const BrightnessURL = `http://${ip[d]}:${port[d]}/?cmd=setStringSetting&key=screenBrightness&value=${newBrightnessM}&password=${password[d]}`;
-                                    const ScreensaverOnBri = `http://${ip[d]}:${port[d]}/?cmd=setStringSetting&key=screensaverBrightness&value=${newBrightnessM}&password=${password[d]}`;
-
-                                    this.log.debug(`Check whether the screen saver and the brightness synchronization is switched on`);
-                                    if (enableScreenSaverBrightness[d] && screenSaverON) {
-
-                                        this.log.debug(`Check whether the current brightness is the same as the one you want to adjust`);
-                                        if (newBrightnessM !== brightness[d]) {
-
-                                            this.log.debug(`send the screen saver brightness to the device =>${tabletName[d]}`);
-                                            await axios.get(ScreensaverOnBri)
-                                                .then(async result => {
-                                                    this.log.debug(`${tabletName[d]} send status for ScreensaverOnBri = status Code: ${result.status} => status Message: ${result.statusText}`);
-                                                    console.log(`${tabletName[d]} send status for ScreensaverOnBri = status Code: ${result.status} => status Message: ${result.statusText}`);
-                                                })
-                                                .catch(async error => {
-                                                    this.log.error(`${tabletName[d]} send status for ScreensaverOnBri name could not be sent => ${error.message}, stack: ${error.stack}`);
-                                                    console.log(`${tabletName[d]} send status for ScreensaverOnBri name could not be sent => ${error.message}, stack: ${error.stack}`);
-                                                });
-
-                                            this.log.debug(`send the screen brightness to the device =>${tabletName[d]}`);
-                                            await axios.get(BrightnessURL)
-                                                .then(async result => {
-                                                    this.log.debug(`${tabletName[d]} send status for BrightnessURL = status Code: ${result.status} => status Message: ${result.statusText}`);
-                                                    console.log(`${tabletName[d]} send status for BrightnessURL = status Code: ${result.status} => status Message: ${result.statusText}`);
-                                                })
-                                                .catch(async error => {
-                                                    this.log.error(`${tabletName[d]} send status for BrightnessURL could not be sent => ${error.message}, stack: ${error.stack}`);
-                                                    console.log(`${tabletName[d]} send status for BrightnessURL could not be sent => ${error.message}, stack: ${error.stack}`);
-                                                });
-
-                                            this.log.debug(`Start the stateRequest in 300 ms to get the current values of the ${tabletName[d]} device`);
-                                            if (BriRequestTimeout) clearTimeout(BriRequestTimeout);
-                                            BriRequestTimeout = setTimeout(async () => {
-                                                this.log.debug(`start devices to query for new values`);
-                                                await this.stateRequest();
-                                            }, 300);
-                                        }
-                                    }
-                                    else if (!isInScreensaver[d]) {
-                                        this.log.debug(`Check whether the current brightness is the same as the one you want to adjust`);
-                                        if (newBrightnessM !== brightness[d]) {
-
-                                            this.log.debug(`send the screen brightness to the device =>${tabletName[d]}`);
-                                            await axios.get(BrightnessURL)
-                                                .then(async result => {
-                                                    this.log.debug(`${tabletName[d]} send status for BrightnessURL = status Code: ${result.status} => status Message: ${result.statusText}`);
-                                                    console.log(`${tabletName[d]} send status for BrightnessURL = status Code: ${result.status} => status Message: ${result.statusText}`);
-                                                })
-                                                .catch(async error => {
-                                                    this.log.error(`${tabletName[d]} send status for BrightnessURL could not be sent => ${error.message}, stack: ${error.stack}`);
-                                                    console.log(`${tabletName[d]} send status for BrightnessURL could not be sent => ${error.message}, stack: ${error.stack}`);
-                                                });
-
-                                            this.log.debug(`Start the stateRequest in 300 ms to get the current values of the ${tabletName[d]} device`);
-                                            if (BriRequestTimeout) clearTimeout(BriRequestTimeout);
-                                            BriRequestTimeout = setTimeout(async () => {
-                                                this.log.debug(`start devices to query for new values`);
-                                                await this.stateRequest();
-                                            }, 300);
-                                        }
+                                        this.log.warn(`${tabletName[d]} midTime brightness not specified`);
                                     }
                                 }
                                 else {
-                                    this.log.warn(`${tabletName[d]} midTime brightness not specified`);
+                                    this.log.debug(`Automatic brightness has been deactivated for ${tabletName[d]} and is now switched to manual control`);
+                                    await this.setStateAsync(`device.${tabletName[d]}.brightness_control_mode`, true, true);
                                 }
                             }
-                            else {
-                                this.log.debug(`Automatic brightness has been deactivated for ${tabletName[d]} and is now switched to manual control`);
+                        }
+                    }
+                    else {
+                        for (const d in deviceEnabled) {
+                            if (!enabledBrightness[d]) {
+                                this.log.warn(`Automatic brightness for ${tabletName[d]} is activated but no configuration is entered, the manual mode is activated.`);
                                 await this.setStateAsync(`device.${tabletName[d]}.brightness_control_mode`, true, true);
                             }
                         }
                     }
                 }
+                catch (error) {
+                    this.log.error(`[dayBri] : ${error.message}, stack: ${error.stack}`);
+                }
             }
-            catch (error) {
-                this.log.error(`[dayBri] : ${error.message}, stack: ${error.stack}`);
-            }
-        }
-        else {
-            try {
-                const brightnessN = this.config.brightness;
-                const screenSaverON = JSON.parse(this.config['screenSaverON']);
-                // @ts-ignore
-                if (!brightnessN && brightnessN.length !== 0 || brightnessN !== [] && brightnessN.length !== 0) {
-                    for (const d in deviceEnabled) {
-                        if (deviceEnabled[d] && !logMessage[d]) {
-                            if (enabledBrightness[d]) {
-                                this.log.debug(`automatic brightness control for ${tabletName[d]} is switched on the manual control is now switched off`);
-                                await this.setStateAsync(`device.${tabletName[d]}.brightness_control_mode`, false, true);
+            else {
+                try {
+                    const brightnessN = this.config.brightness;
+                    const screenSaverON = JSON.parse(this.config['screenSaverON']);
+                    // @ts-ignore
+                    if (!brightnessN && brightnessN.length !== 0 || brightnessN !== [] && brightnessN.length !== 0) {
+                        for (const d in deviceEnabled) {
+                            if (deviceEnabled[d] && !logMessage[d]) {
+                                if (enabledBrightness[d]) {
+                                    this.log.debug(`automatic brightness control for ${tabletName[d]} is switched on the manual control is now switched off`);
+                                    await this.setStateAsync(`device.${tabletName[d]}.brightness_control_mode`, false, true);
 
-                                if (brightnessN[d]) {
-                                    let newBrightnessN = 0;
-                                    if (chargeDeviceValue[d]) {
-                                        newBrightnessN = Math.round(await this.convert_percent(brightnessN[d]['nightBrightness'] - brightnessN[d]['loadingLowering']));
-                                        if (newBrightnessN <= 0) {
-                                            newBrightnessN = 0;
-                                            this.log.debug(`brightness from ${tabletName[d]} is less than 0 brightness is set to`);
+                                    if (brightnessN[d]) {
+                                        let newBrightnessN = 0;
+                                        if (chargeDeviceValue[d]) {
+                                            newBrightnessN = Math.round(await this.convert_percent(brightnessN[d]['nightBrightness'] - brightnessN[d]['loadingLowering']));
+                                            if (newBrightnessN <= 0) {
+                                                newBrightnessN = 0;
+                                                this.log.debug(`brightness from ${tabletName[d]} is less than 0 brightness is set to`);
+                                            }
+                                        }
+                                        else {
+                                            newBrightnessN = Math.round(await this.convert_percent(brightnessN[d]['nightBrightness']));
+                                            this.log.debug(`${tabletName[d]} brightness set on: ${newBrightnessN}[${brightnessN[d]['nightBrightness']}%]`);
+                                        }
+
+                                        const BrightnessURL = `http://${ip[d]}:${port[d]}/?cmd=setStringSetting&key=screenBrightness&value=${newBrightnessN}&password=${password[d]}`;
+                                        const ScreensaverOnBri = `http://${ip[d]}:${port[d]}/?cmd=setStringSetting&key=screensaverBrightness&value=${newBrightnessN}&password=${password[d]}`;
+
+                                        this.log.debug(`Check whether the screen saver and the brightness synchronization is switched on`);
+                                        if (enableScreenSaverBrightness[d] && screenSaverON) {
+
+                                            this.log.debug(`Check whether the current brightness is the same as the one you want to adjust`);
+                                            if (newBrightnessN !== brightness[d]) {
+
+                                                this.log.debug(`send the screen saver brightness to the device =>${tabletName[d]}`);
+                                                await axios.get(ScreensaverOnBri)
+                                                    .then(async result => {
+                                                        this.log.debug(`${tabletName[d]} send status for ScreensaverOnBri = status Code: ${result.status} => status Message: ${result.statusText}`);
+                                                        console.log(`${tabletName[d]} send status for ScreensaverOnBri = status Code: ${result.status} => status Message: ${result.statusText}`);
+                                                    })
+                                                    .catch(async error => {
+                                                        this.log.error(`${tabletName[d]} send status for ScreensaverOnBri name could not be sent => ${error.message}, stack: ${error.stack}`);
+                                                        console.log(`${tabletName[d]} send status for ScreensaverOnBri name could not be sent => ${error.message}, stack: ${error.stack}`);
+                                                    });
+
+                                                this.log.debug(`send the screen brightness to the device =>${tabletName[d]}`);
+                                                await axios.get(BrightnessURL)
+                                                    .then(async result => {
+                                                        this.log.debug(`${tabletName[d]} send status for BrightnessURL = status Code: ${result.status} => status Message: ${result.statusText}`);
+                                                        console.log(`${tabletName[d]} send status for BrightnessURL = status Code: ${result.status} => status Message: ${result.statusText}`);
+                                                    })
+                                                    .catch(async error => {
+                                                        this.log.error(`${tabletName[d]} send status for BrightnessURL could not be sent => ${error.message}, stack: ${error.stack}`);
+                                                        console.log(`${tabletName[d]} send status for BrightnessURL could not be sent => ${error.message}, stack: ${error.stack}`);
+                                                    });
+
+                                                this.log.debug(`Start the stateRequest in 300 ms to get the current values of the ${tabletName[d]} device`);
+                                                if (BriRequestTimeout) clearTimeout(BriRequestTimeout);
+                                                BriRequestTimeout = setTimeout(async () => {
+                                                    this.log.debug(`start devices to query for new values`);
+                                                    await this.stateRequest();
+                                                }, 300);
+                                            }
+                                        }
+                                        else if (!isInScreensaver[d]) {
+                                            this.log.debug(`Check whether the current brightness is the same as the one you want to adjust`);
+                                            if (newBrightnessN !== brightness[d]) {
+                                                this.log.debug(`send the screen brightness to the device =>${tabletName[d]}`);
+                                                await axios.get(BrightnessURL)
+                                                    .then(async result => {
+                                                        this.log.debug(`${tabletName[d]} send status for BrightnessURL = status Code: ${result.status} => status Message: ${result.statusText}`);
+                                                        console.log(`${tabletName[d]} send status for BrightnessURL = status Code: ${result.status} => status Message: ${result.statusText}`);
+                                                    })
+                                                    .catch(async error => {
+                                                        this.log.error(`${tabletName[d]} send status for BrightnessURL could not be sent => ${error.message}, stack: ${error.stack}`);
+                                                        console.log(`${tabletName[d]} send status for BrightnessURL could not be sent => ${error.message}, stack: ${error.stack}`);
+                                                    });
+
+                                                this.log.debug(`Start the stateRequest in 300 ms to get the current values of the ${tabletName[d]} device`);
+                                                if (BriRequestTimeout) clearTimeout(BriRequestTimeout);
+                                                BriRequestTimeout = setTimeout(async () => {
+                                                    this.log.debug(`start devices to query for new values`);
+                                                    await this.stateRequest();
+                                                }, 300);
+                                            }
                                         }
                                     }
                                     else {
-                                        newBrightnessN = Math.round(await this.convert_percent(brightnessN[d]['nightBrightness']));
-                                        this.log.debug(`${tabletName[d]} brightness set on: ${newBrightnessN}[${brightnessN[d]['nightBrightness']}%]`);
-                                    }
-
-                                    const BrightnessURL = `http://${ip[d]}:${port[d]}/?cmd=setStringSetting&key=screenBrightness&value=${newBrightnessN}&password=${password[d]}`;
-                                    const ScreensaverOnBri = `http://${ip[d]}:${port[d]}/?cmd=setStringSetting&key=screensaverBrightness&value=${newBrightnessN}&password=${password[d]}`;
-
-                                    this.log.debug(`Check whether the screen saver and the brightness synchronization is switched on`);
-                                    if (enableScreenSaverBrightness[d] && screenSaverON) {
-
-                                        this.log.debug(`Check whether the current brightness is the same as the one you want to adjust`);
-                                        if (newBrightnessN !== brightness[d]) {
-
-                                            this.log.debug(`send the screen saver brightness to the device =>${tabletName[d]}`);
-                                            await axios.get(ScreensaverOnBri)
-                                                .then(async result => {
-                                                    this.log.debug(`${tabletName[d]} send status for ScreensaverOnBri = status Code: ${result.status} => status Message: ${result.statusText}`);
-                                                    console.log(`${tabletName[d]} send status for ScreensaverOnBri = status Code: ${result.status} => status Message: ${result.statusText}`);
-                                                })
-                                                .catch(async error => {
-                                                    this.log.error(`${tabletName[d]} send status for ScreensaverOnBri name could not be sent => ${error.message}, stack: ${error.stack}`);
-                                                    console.log(`${tabletName[d]} send status for ScreensaverOnBri name could not be sent => ${error.message}, stack: ${error.stack}`);
-                                                });
-
-                                            this.log.debug(`send the screen brightness to the device =>${tabletName[d]}`);
-                                            await axios.get(BrightnessURL)
-                                                .then(async result => {
-                                                    this.log.debug(`${tabletName[d]} send status for BrightnessURL = status Code: ${result.status} => status Message: ${result.statusText}`);
-                                                    console.log(`${tabletName[d]} send status for BrightnessURL = status Code: ${result.status} => status Message: ${result.statusText}`);
-                                                })
-                                                .catch(async error => {
-                                                    this.log.error(`${tabletName[d]} send status for BrightnessURL could not be sent => ${error.message}, stack: ${error.stack}`);
-                                                    console.log(`${tabletName[d]} send status for BrightnessURL could not be sent => ${error.message}, stack: ${error.stack}`);
-                                                });
-
-                                            this.log.debug(`Start the stateRequest in 300 ms to get the current values of the ${tabletName[d]} device`);
-                                            if (BriRequestTimeout) clearTimeout(BriRequestTimeout);
-                                            BriRequestTimeout = setTimeout(async () => {
-                                                this.log.debug(`start devices to query for new values`);
-                                                await this.stateRequest();
-                                            }, 300);
-                                        }
-                                    }
-                                    else if (!isInScreensaver[d]) {
-                                        this.log.debug(`Check whether the current brightness is the same as the one you want to adjust`);
-                                        if (newBrightnessN !== brightness[d]) {
-                                            this.log.debug(`send the screen brightness to the device =>${tabletName[d]}`);
-                                            await axios.get(BrightnessURL)
-                                                .then(async result => {
-                                                    this.log.debug(`${tabletName[d]} send status for BrightnessURL = status Code: ${result.status} => status Message: ${result.statusText}`);
-                                                    console.log(`${tabletName[d]} send status for BrightnessURL = status Code: ${result.status} => status Message: ${result.statusText}`);
-                                                })
-                                                .catch(async error => {
-                                                    this.log.error(`${tabletName[d]} send status for BrightnessURL could not be sent => ${error.message}, stack: ${error.stack}`);
-                                                    console.log(`${tabletName[d]} send status for BrightnessURL could not be sent => ${error.message}, stack: ${error.stack}`);
-                                                });
-
-                                            this.log.debug(`Start the stateRequest in 300 ms to get the current values of the ${tabletName[d]} device`);
-                                            if (BriRequestTimeout) clearTimeout(BriRequestTimeout);
-                                            BriRequestTimeout = setTimeout(async () => {
-                                                this.log.debug(`start devices to query for new values`);
-                                                await this.stateRequest();
-                                            }, 300);
-                                        }
+                                        this.log.warn(`${tabletName[d]} Night brightness not specified`);
                                     }
                                 }
                                 else {
-                                    this.log.warn(`${tabletName[d]} Night brightness not specified`);
+                                    this.log.debug(`Automatic brightness has been deactivated for ${tabletName[d]} and is now switched to manual control`);
+                                    await this.setStateAsync(`device.${tabletName[d]}.brightness_control_mode`, true, true);
                                 }
                             }
-                            else {
-                                this.log.debug(`Automatic brightness has been deactivated for ${tabletName[d]} and is now switched to manual control`);
+                        }
+                    }
+                    else {
+                        for (const d in deviceEnabled) {
+                            if (!enabledBrightness[d]) {
+                                this.log.warn(`Automatic brightness for ${tabletName[d]} is activated but no configuration is entered, the manual mode is activated.`);
                                 await this.setStateAsync(`device.${tabletName[d]}.brightness_control_mode`, true, true);
                             }
                         }
                     }
                 }
+                catch (error) {
+                    this.log.error(`[nightBri] : ${error.message}, stack: ${error.stack}`);
+                }
             }
-            catch (error) {
-                this.log.error(`[nightBri] : ${error.message}, stack: ${error.stack}`);
-            }
+            automatic_briTimeout = setTimeout(async () => {
+                this.log.debug(`automatic_bri function is restarted`);
+                await this.automatic_bri();
+            }, checkInterval);
         }
-        automatic_briTimeout = setTimeout(async () => {
-            this.log.debug(`automatic_bri function is restarted`);
-            await this.automatic_bri();
-        }, checkInterval);
     }
 
     /**
