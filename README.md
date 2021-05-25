@@ -79,7 +79,7 @@ _______________________________
  ### __WORK IN PROGRESS__ ( - falls nicht benötigt löschen sonst klammern entfernen und nach dem - dein text schreiben )
 -->
 
-### __WORK IN PROGRESS__
+### 0.3.5-0 (2021-05-25)
 * (xXBJXx) Brightness changeMode optimized
 * (xXBJXx) Adapter tier set to 3
 * (xXBJXx) dependencies updates
@@ -107,9 +107,6 @@ _______________________________
 
 ### 0.3.1-beta.2 (2021-01-08)
 * (xXBJXx) fixed TypeError: Cannot read property 'val' of null [(issue #113)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/113)
-
-### 0.3.1-beta.1 (2021-01-01)
-* (xXBJXx) fixed Telegram error message when accessing the config page [(issue #109)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/109)
 
 ## License
 

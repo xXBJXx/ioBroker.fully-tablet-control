@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "fully-tablet-control",
-        "version": "0.3.4-0",
+        "version": "0.3.5-0",
         "news": {
+            "0.3.5-0": {
+                "en": "Brightness changeMode optimized\nAdapter tier set to 3\ndependencies updates\nCheck if adapter config is valid modified\ncheck and testing for Node.js 16 and closed [(issue #170)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/170)",
+                "de": "HelligkeitsänderungModus optimiert\nAdapterstufe auf 3 gesetzt\nAbhängigkeitsaktualisierungen\nÜberprüfen Sie, ob die Adapterkonfiguration gültig geändert wurde\nÜberprüfen und testen Sie Node.js 16 und schließen Sie [(Problem Nr. 170)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/170).",
+                "ru": "Изменение яркости Оптимизированный режим\nУровень адаптера установлен на 3\nобновления зависимостей\nУбедитесь, что конфигурация адаптера действительна, изменена\nпроверка и тестирование для Node.js 16 и закрыто [(issue # 170)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/170)",
+                "pt": "Brightness changeMode otimizado\nCamada do adaptador definida como 3\natualizações de dependências\nVerifique se a configuração do adaptador é válida modificada\nverificar e testar o Node.js 16 e encerrado [(problema # 170)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/170)",
+                "nl": "Helderheid wijzigen Modus geoptimaliseerd\nAdapterlaag ingesteld op 3\nafhankelijkheden updates\nControleer of de adapterconfiguratie geldig is gewijzigd\ncontroleer en test op Node.js 16 en gesloten [(issue # 170)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/170)",
+                "fr": "Changement de luminosité Mode optimisé\nNiveau d'adaptateur défini sur 3\nmises à jour des dépendances\nVérifiez si la configuration de l'adaptateur est valide modifiée\nvérifier et tester Node.js 16 et fermé [(issue # 170)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/170)",
+                "it": "Modifica della luminosità Modalità ottimizzata\nLivello adattatore impostato su 3\naggiornamenti delle dipendenze\nVerificare se la configurazione dell'adattatore è stata modificata valida\ncontrollo e test per Node.js 16 e chiusura [(problema # 170)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/170)",
+                "es": "Cambio de brillo Modo optimizado\nNivel de adaptador establecido en 3\nactualizaciones de dependencias\nCompruebe si la configuración del adaptador es válida modificada\nverificar y probar Node.js 16 y cerrado [(problema # 170)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/170)",
+                "pl": "Zoptymalizowany tryb zmiany jasności\nPoziom adaptera ustawiony na 3\naktualizacje zależności\nSprawdź, czy konfiguracja adaptera jest poprawna zmodyfikowana\nsprawdzić i przetestować Node.js 16 i zamknięte [(numer 170)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/170)",
+                "zh-cn": "亮度变化模式优化\n适配器层设置为3\n依赖关系更新\n检查适配器配置是否有效修改\n检查并测试Node.js 16并关闭[（issue＃170）]（https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/170）"
+            },
             "0.3.4-0": {
                 "en": "* dependencies updates\n* fixed wrong type of displayWidthPixels and displayHeightPixels [(issue #164)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/164)\n+ (xXBJXx) add encodeUrl and change log message",
                 "de": "* Abhängigkeitsaktualisierungen\n* Falscher Typ von displayWidthPixels und displayHeightPixels [(Problem Nr. 164)] behoben (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/164)\n+ (xXBJXx) füge encodeUrl hinzu und ändere die Protokollnachricht",
