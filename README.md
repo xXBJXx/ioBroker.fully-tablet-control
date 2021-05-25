@@ -22,11 +22,11 @@ A detailed description can be found **[Adapter Documentation](https://xxbjxx.git
 ## Control your tablet with Fully Kiosk Browser (**Plus License required and Remote Administration must be active and set up**).
 
 ### !!! ATTENTION !!! BEFORE CONFIGURING THE ADAPTER MUST BE STARTED OTHERWISE NO CONFIGURATION IS POSSIBLE.
-![login](admin/media/Adapter_Offline.png)
+![login](admin/img/Adapter_Offline.png)
 
 ## Browser Admin Login
 
-![login](admin/media/browser-admin-login.png)
+![login](admin/img/browser-admin-login.png)
 
 ### Here the tablets are entered, and the query interval is defined
 
@@ -48,9 +48,9 @@ A detailed description can be found **[Adapter Documentation](https://xxbjxx.git
 8. with this button you can start a check if the tablet is reachable, for this you have to enter Ip / Port and Password.
    If a tablet is not immediately accessible, or the answer takes longer a load symbol is indicated then please simply wait, 
    until the result is indicated \
-   ![login](admin/media/Loading.png) \
+   ![login](admin/img/Loading.png) \
    As soon as the result is available a window will pop up, where you can see which tablet is online or offline.\
-   ![login](admin/media/Device_test.png)
+   ![login](admin/img/Device_test.png)
 ## For each tablet, which was created on the first page, an entry must be created in the table on the next pages!
 
 
@@ -79,10 +79,17 @@ _______________________________
  ### __WORK IN PROGRESS__ ( - falls nicht benötigt löschen sonst klammern entfernen und nach dem - dein text schreiben )
 -->
 
+### __WORK IN PROGRESS__
+* (xXBJXx) Brightness changeMode optimized
+* (xXBJXx) Adapter tier set to 3
+* (xXBJXx) dependencies updates
+* (xXBJXx) Check if adapter config is valid modified
+* (xXBJXx) check and testing for Node.js 16 and closed [(issue #170)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/170)
+
 ### 0.3.4-0 (2021-04-30)
 * (xXBJXx) dependencies updates
 * (xXBJXx) fixed wrong type of displayWidthPixels and displayHeightPixels [(issue #164)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/164)
-+ (xXBJXx) add encodeUrl and change log message
+* (xXBJXx) add encodeUrl and change log message
 
 ### 0.3.3-beta.0 (2021-02-14)
 * (xXBJXx) README edited
