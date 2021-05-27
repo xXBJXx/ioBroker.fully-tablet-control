@@ -79,6 +79,9 @@ _______________________________
  ### __WORK IN PROGRESS__ ( - falls nicht benötigt löschen sonst klammern entfernen und nach dem - dein text schreiben )
 -->
 
+### __WORK IN PROGRESS__
+* (xXBJXx) State "s" has no existing object message fixed [(issue #184)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/184)
+
 ### 0.3.5-0 (2021-05-25)
 * (xXBJXx) Brightness changeMode optimized
 * (xXBJXx) Adapter tier set to 3
