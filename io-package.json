@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "fully-tablet-control",
-        "version": "0.3.5-0",
+        "version": "0.3.6-0",
         "news": {
+            "0.3.6-0": {
+                "en": "State \"s\" has no existing object message fixed [(issue #184)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/184)",
+                "de": "In Status \"s\" wurde keine vorhandene Objektnachricht behoben [(Problem Nr. 184)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/184)",
+                "ru": "Состояние \"s\" не имеет исправленного сообщения об объекте [(проблема № 184)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/184)",
+                "pt": "O estado \"s\" não tem mensagem de objeto existente corrigida [(problema # 184)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/184)",
+                "nl": "Staat 's' heeft geen bestaand objectbericht gerepareerd [(issue # 184)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/184)",
+                "fr": "L'état «s» n'a pas de message d'objet existant corrigé [(problème # 184)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/184)",
+                "it": "Lo stato \"s\" non ha alcun messaggio oggetto esistente risolto [(problema # 184)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/184)",
+                "es": "El estado \"s\" no tiene ningún mensaje de objeto existente corregido [(problema # 184)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/184)",
+                "pl": "Stan „s” nie ma naprawionego istniejącego komunikatu obiektu [(problem nr 184)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/184)",
+                "zh-cn": "状态“ s”没有固定的现有对象消息[（issue＃184）]（https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/184）"
+            },
             "0.3.5-0": {
                 "en": "Brightness changeMode optimized\nAdapter tier set to 3\ndependencies updates\nCheck if adapter config is valid modified\ncheck and testing for Node.js 16 and closed [(issue #170)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/170)",
                 "de": "HelligkeitsänderungModus optimiert\nAdapterstufe auf 3 gesetzt\nAbhängigkeitsaktualisierungen\nÜberprüfen Sie, ob die Adapterkonfiguration gültig geändert wurde\nÜberprüfen und testen Sie Node.js 16 und schließen Sie [(Problem Nr. 170)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/170).",

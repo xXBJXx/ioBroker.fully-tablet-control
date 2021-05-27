@@ -1,4 +1,7 @@
 # Older changes
+## 0.3.1-beta.2 (2021-01-08)
+* (xXBJXx) fixed TypeError: Cannot read property 'val' of null [(issue #113)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/113)
+
 ## 0.3.1-beta.1 (2021-01-01)
 * (xXBJXx) fixed Telegram error message when accessing the config page [(issue #109)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/109)
 

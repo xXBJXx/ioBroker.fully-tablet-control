@@ -79,7 +79,7 @@ _______________________________
  ### __WORK IN PROGRESS__ ( - falls nicht benötigt löschen sonst klammern entfernen und nach dem - dein text schreiben )
 -->
 
-### __WORK IN PROGRESS__
+### 0.3.6-0 (2021-05-27)
 * (xXBJXx) State "s" has no existing object message fixed [(issue #184)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/184)
 
 ### 0.3.5-0 (2021-05-25)
@@ -107,9 +107,6 @@ _______________________________
 * (xXBJXx) fixed [(issue #120)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/120) check if the screensaver is defined added
 * (xXBJXx) fixed brightness control bug 
 * (xXBJXx) Added deletion of screenSaver from config [(issue #124)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/124)
-
-### 0.3.1-beta.2 (2021-01-08)
-* (xXBJXx) fixed TypeError: Cannot read property 'val' of null [(issue #113)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/113)
 
 ## License
 
