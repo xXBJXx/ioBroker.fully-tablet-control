@@ -1119,8 +1119,6 @@ class FullyTabletControl extends utils.Adapter {
                     case 'ssid':
 
                         const ssid = objects['ssid'].replace(/"/gi, '');
-
-                        // const ssid = objects['SSID'].replace(/"/gi, '')
                         this.log.debug(`ssid ROW state for ${deviceID} : ${ssid}`);
 
                         if (ssid === '<unknown ssid>') {
@@ -1141,7 +1139,6 @@ class FullyTabletControl extends utils.Adapter {
                     case 'SSID':
                         // new from App version 1.40.3
                         const SSID = objects['SSID'].replace(/"/gi, '');
-
                         this.log.debug(`SSID ROW state for ${deviceID} : ${SSID}`);
 
                         if (SSID === '<unknown ssid>') {
@@ -3085,7 +3082,7 @@ class FullyTabletControl extends utils.Adapter {
                                                     user: User
                                                 });
                                                 this.log.warn(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + `  ${tabletName[index]} Tablet charging function has detected a malfunction, the tablet is not charging, please check it !!!`);
-                                                await this.setForeignStateAsync(chargerid[index], 1, false);
+                                                await this.setForeignStateAsync(chargerid, 1, false);
                                                 this.setState(`device.${tabletName[index]}.charging_warning`, {val: true, ack: true});
 
                                                 break;
@@ -3099,7 +3096,7 @@ class FullyTabletControl extends utils.Adapter {
                                                     user: User
                                                 });
                                                 this.log.warn(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + `  ${tabletName[index]} Tablet charging function has detected a malfunction, the tablet is not charging, please check it !!!`);
-                                                await this.setForeignStateAsync(chargerid[index], true, false);
+                                                await this.setForeignStateAsync(chargerid, true, false);
                                                 this.setState(`device.${tabletName[index]}.charging_warning`, {val: true, ack: true});
                                                 break;
                                         }
@@ -3126,7 +3123,7 @@ class FullyTabletControl extends utils.Adapter {
                                                 AlertMessageSend[index] = true;
                                                 messageSend[index] = false;
                                                 this.log.warn(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${tabletName[index]} Tablet charging function has detected a malfunction, the tablet is not charging, please check it !!!`);
-                                                await this.setForeignStateAsync(chargerid[index], 1, false);
+                                                await this.setForeignStateAsync(chargerid, 1, false);
                                                 this.setState(`device.${tabletName[index]}.charging_warning`, {val: true, ack: true});
                                                 break;
 
@@ -3135,7 +3132,7 @@ class FullyTabletControl extends utils.Adapter {
                                                 AlertMessageSend[index] = true;
                                                 messageSend[index] = false;
                                                 this.log.warn(this.formatDate(new Date(), 'TT.MM.JJ SS:mm') + ` ${tabletName[index]} Tablet charging function has detected a malfunction, the tablet is not charging, please check it !!!`);
-                                                await this.setForeignStateAsync(chargerid[index], true, false);
+                                                await this.setForeignStateAsync(chargerid, true, false);
                                                 this.setState(`device.${tabletName[index]}.charging_warning`, {val: true, ack: true});
                                                 break;
                                         }
