@@ -79,7 +79,7 @@ _______________________________
  ### __WORK IN PROGRESS__ ( - falls nicht benötigt löschen sonst klammern entfernen und nach dem - dein text schreiben )
 -->
 
-### __WORK IN PROGRESS__
+### 0.3.6-1 (2021-06-10)
 +(xXBJXx) change Adapter Documentation link [(issue #193)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/193)
 
 ### 0.3.6-0 (2021-05-27)
@@ -104,12 +104,6 @@ _______________________________
   and it is now possible to take and save multiple images.\
   New tab added in config page 
 * (xXBJXx) fixed brightness checkInterval bug (is now checked as intended every x minutes whether the brightness changed)
-
-### 0.3.2-beta.0 (2021-01-24)
-* (xXBJXx) fixed problem with ( has no existing object ) for the new JS controller [(issue #114)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/114)
-* (xXBJXx) fixed [(issue #120)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/120) check if the screensaver is defined added
-* (xXBJXx) fixed brightness control bug 
-* (xXBJXx) Added deletion of screenSaver from config [(issue #124)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/124)
 
 ## License
 

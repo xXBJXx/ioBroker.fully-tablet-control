@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "fully-tablet-control",
-        "version": "0.3.6-0",
+        "version": "0.3.6-1",
         "news": {
+            "0.3.6-1": {
+                "en": "+(xXBJXx) change Adapter Documentation link [(issue #193)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/193)",
+                "de": "+(xXBJXx) Link zur Adapterdokumentation ändern [(issue #193)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/193)",
+                "ru": "+ (xXBJXx) изменить ссылку на документацию адаптера [(issue # 193)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/193)",
+                "pt": "+ (xXBJXx) alterar link de documentação do adaptador [(problema # 193)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/193)",
+                "nl": "+(xXBJXx) koppeling adapterdocumentatie wijzigen [(issue #193)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/193)",
+                "fr": "+(xXBJXx) modifier le lien vers la documentation de l'adaptateur [(issue #193)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/193)",
+                "it": "+(xXBJXx) cambia il collegamento alla documentazione dell'adattatore [(edizione #193)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/193)",
+                "es": "+ (xXBJXx) cambiar el enlace de documentación del adaptador [(número 193)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/193)",
+                "pl": "+(xXBJXx) zmień link do dokumentacji adaptera [(wydanie #193)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/193)",
+                "zh-cn": "+(xXBJXx) 更改适配器文档链接 [(issue #193)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/193)"
+            },
             "0.3.6-0": {
                 "en": "State \"s\" has no existing object message fixed [(issue #184)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/184)",
                 "de": "In Status \"s\" wurde keine vorhandene Objektnachricht behoben [(Problem Nr. 184)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/184)",
