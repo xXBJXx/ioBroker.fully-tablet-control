@@ -16,3 +16,5 @@ admin/i18n/*/flat.txt
 /dev-server_script.bat
 /.dev-server/
 /.run/
+
+.DS_Store

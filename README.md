@@ -17,7 +17,7 @@
 More details see below! [Sentry](#sentry)**
 
 ### Adapter Documentation
-A detailed description can be found **[Adapter Documentation](https://xxbjxx.github.io/language/en/Fully-Tablet-Control/description.html)**
+A detailed description can be found **[Adapter Documentation](https://xxbjxx.github.io/language/en/Fully-Tablet-Control/01.description.html)**
 
 ## Control your tablet with Fully Kiosk Browser (**Plus License required and Remote Administration must be active and set up**).
 
