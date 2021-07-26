@@ -18,7 +18,7 @@
     "url": "https://github.com/xXBJXx/ioBroker.fully-tablet-control"
   },
   "dependencies": {
-    "@iobroker/adapter-core": "^2.5.0",
+    "@iobroker/adapter-core": "^2.5.1",
     "axios": "^0.21.1",
     "cron": "^1.8.2",
     "suncalc2": "^1.8.1",
