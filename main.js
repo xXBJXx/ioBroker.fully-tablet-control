@@ -3292,7 +3292,7 @@ class FullyTabletControl extends utils.Adapter {
                                 this.log.debug(`Check whether visView time is not 0`);
                                 if (visView[i].time !== 0) {
 
-                                    this.setState(`vis_View.Timer_View_Switch`, time[i]);
+                                    this.setState(`vis_View.Timer_View_Switch`, time[i], true);
                                     this.log.debug(`set the Timer_View_Switch state to ${time[i]}`);
 
                                     this.log.debug(`start switchToHomeView function`);
@@ -3334,7 +3334,7 @@ class FullyTabletControl extends utils.Adapter {
                                 this.log.debug(`Check whether visView time is not 0`);
                                 if (visView[i].time !== 0) {
 
-                                    this.setState(`vis_View.Timer_View_Switch`, time[i]);
+                                    this.setState(`vis_View.Timer_View_Switch`, time[i], true);
                                     this.log.debug(`set the Timer_View_Switch state to ${time[i]}`);
 
                                     this.log.debug(`start switchToHomeView function`);
