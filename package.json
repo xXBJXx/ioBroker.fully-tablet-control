@@ -3,28 +3,29 @@
   "version": "0.3.6-1",
   "description": "fully-tablet-control",
   "author": {
-    "name": "xXBJXx",
-    "email": "issi.dev.iobroker@gmail.com"
+	"name": "xXBJXx",
+	"email": "issi.dev.iobroker@gmail.com"
   },
   "homepage": "https://github.com/xXBJXx/ioBroker.fully-tablet-control",
   "license": "MIT",
   "keywords": [
-    "ioBroker",
-    "Tablet",
-    "Fully Kiosk Browser"
+	"ioBroker",
+	"Tablet",
+	"Fully Kiosk Browser"
   ],
   "repository": {
-    "type": "git",
-    "url": "https://github.com/xXBJXx/ioBroker.fully-tablet-control"
+	"type": "git",
+	"url": "https://github.com/xXBJXx/ioBroker.fully-tablet-control"
   },
   "dependencies": {
-    "@iobroker/adapter-core": "^2.5.1",
-    "axios": "^0.24.0",
-    "cron": "^1.8.2",
-    "suncalc2": "^1.8.1",
-    "gulp-cli": "^2.2.0"
+	"@iobroker/adapter-core": "^2.5.1",
+	"axios": "^0.24.0",
+	"cron": "^1.8.2",
+	"suncalc2": "^1.8.1",
+	"gulp-cli": "^2.2.0"
   },
   "devDependencies": {
+	"prettier": "^2.5.1",
     "@alcalzone/release-script": "^3.4.2",
     "@iobroker/testing": "^2.5.2",
     "@iobroker/dev-server": "^0.4.0",
@@ -48,16 +49,16 @@
   },
   "main": "main.js",
   "scripts": {
-    "test:js": "mocha \"{!(node_modules|test)/**/*.test.js,*.test.js,test/**/test!(PackageFiles|Startup).js}\"",
-    "test:package": "mocha test/package --exit",
-    "test:unit": "mocha test/unit --exit",
-    "test:integration": "mocha test/integration --exit",
-    "test": "npm run test:js && npm run test:package",
-    "release": "release-script",
-    "lint": "eslint"
+	"test:js": "mocha \"{!(node_modules|test)/**/*.test.js,*.test.js,test/**/test!(PackageFiles|Startup).js}\"",
+	"test:package": "mocha test/package --exit",
+	"test:unit": "mocha test/unit --exit",
+	"test:integration": "mocha test/integration --exit",
+	"test": "npm run test:js && npm run test:package",
+	"release": "release-script",
+	"lint": "eslint"
   },
   "bugs": {
-    "url": "https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues"
+	"url": "https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues"
   },
   "readmeFilename": "README.md"
 }
