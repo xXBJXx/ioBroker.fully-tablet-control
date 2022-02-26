@@ -86,6 +86,7 @@ _______________________________
 * (xXBJXx) test-and-release.yml update
 * (xXBJXx) dependencies updates
 * (xXBJXx) License year adjusted to 2022
+* (xXBJXx) Automatic translations migrated from gulp to => [iobroker/adapter-dev](https://github.com/ioBroker/adapter-dev)
 
 ### 0.3.6-1 (2021-06-10)
 
