@@ -1,9 +1,9 @@
 {
     "common": {
         "name": "fully-tablet-control",
-        "version": "0.3.7",
+        "version": "0.3.7-0.0",
         "news": {
-            "0.3.7": {
+            "0.3.7-0.0": {
                 "en": "* (xXBJXx) test-and-release.yml update\n* (xXBJXx) dependencies updates\n* (xXBJXx) License year adjusted to 2022\n* (xXBJXx) Automatic translations migrated from gulp to => [iobroker/adapter-dev](https://github.com/ioBroker/adapter-dev)\n* (xXBJXx) fixed [(issue #321)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/321)\n",
                 "de": "* (xXBJXx) test-and-release.yml-Aktualisierung\n* (xXBJXx) Abhängigkeitsaktualisierungen\n* (xXBJXx) Lizenzjahr auf 2022 angepasst\n* (xXBJXx) Automatische Übersetzungen von gulp nach => [iobroker/adapter-dev](https://github.com/ioBroker/adapter-dev) migriert\n* (xXBJXx) behoben [(issue #321)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/321)\n",
                 "ru": "* (xXBJXx) обновление test-and-release.yml\n* (xXBJXx) обновления зависимостей\n* (xXBJXx) Год лицензии скорректирован до 2022 г.\n* (xXBJXx) Автоматические переводы перенесены из gulp в => [iobroker/adapter-dev](https://github.com/ioBroker/adapter-dev)\n* (xXBJXx) исправлено [(issue #321)](https://github.com/xXBJXx/ioBroker.full-tablet-control/issues/321)\n",
