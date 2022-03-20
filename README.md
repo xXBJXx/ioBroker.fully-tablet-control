@@ -79,8 +79,7 @@ _______________________________
  Placeholder for the next version (at the beginning of the line):
  ### __WORK IN PROGRESS__ ( - falls nicht benötigt löschen sonst klammern entfernen und nach dem - dein text schreiben )
 -->
-
-### __WORK IN PROGRESS__
+### 0.3.7-0.0 (2022-03-20)
 * (xXBJXx) test-and-release.yml update
 * (xXBJXx) dependencies updates
 * (xXBJXx) License year adjusted to 2022
@@ -109,15 +108,6 @@ _______________________________
 * (xXBJXx) fixed wrong type of displayWidthPixels and
   displayHeightPixels [(issue #164)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/164)
 * (xXBJXx) add encodeUrl and change log message
-
-### 0.3.3-beta.0 (2021-02-14)
-
-* (xXBJXx) README edited
-* (xXBJXx) removed check for batteryLevel = -1%
-* (xXBJXx) camshot function expanded to include continuous shooting [(issue #129)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/129)
-  , and it is now possible to take and save multiple images.\
-  New tab added in config page
-* (xXBJXx) fixed brightness checkInterval bug (is now checked as intended every x minutes whether the brightness changed)
 
 ## License
 

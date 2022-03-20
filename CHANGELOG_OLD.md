@@ -1,4 +1,13 @@
 # Older changes
+## 0.3.3-beta.0 (2021-02-14)
+
+* (xXBJXx) README edited
+* (xXBJXx) removed check for batteryLevel = -1%
+* (xXBJXx) camshot function expanded to include continuous shooting [(issue #129)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/129)
+  , and it is now possible to take and save multiple images.\
+  New tab added in config page
+* (xXBJXx) fixed brightness checkInterval bug (is now checked as intended every x minutes whether the brightness changed)
+
 ## 0.3.2-beta.0 (2021-01-24)
 * (xXBJXx) fixed problem with ( has no existing object ) for the new JS controller [(issue #114)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/114)
 * (xXBJXx) fixed [(issue #120)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/120) check if the screensaver is defined added
@@ -22,13 +31,13 @@
 
 ## 0.3.0-beta.4 (2020-10-08)
 * (xXBJXx) Motion detector is not defined warning message fixed
- 
+
 ## 0.3.0-beta.3 (2020-10-08)
 * (xXBJXx) fix camshotUrl folder
 
 ## 0.3.0-beta.2 (2020-10-06)
 * (xXBJXx) Check for invalid batteryLevel added
- 
+
 ## 0.3.0-beta.0 (2020-10-05)
 * (xXBJXx) manual brightness revised
 * (xXBJXx) Automatic brightness revised
@@ -168,4 +177,3 @@
 ## 0.0.1
 
 * (xXBJXx) initial release
-

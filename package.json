@@ -1,21 +1,21 @@
 {
   "name": "iobroker.fully-tablet-control",
-  "version": "0.3.6-1",
+  "version": "0.3.7-0.0",
   "description": "fully-tablet-control",
   "author": {
-	"name": "xXBJXx",
-	"email": "issi.dev.iobroker@gmail.com"
+    "name": "xXBJXx",
+    "email": "issi.dev.iobroker@gmail.com"
   },
   "homepage": "https://github.com/xXBJXx/ioBroker.fully-tablet-control",
   "license": "MIT",
   "keywords": [
-	"ioBroker",
-	"Tablet",
-	"Fully Kiosk Browser"
+    "ioBroker",
+    "Tablet",
+    "Fully Kiosk Browser"
   ],
   "repository": {
-	"type": "git",
-	"url": "https://github.com/xXBJXx/ioBroker.fully-tablet-control"
+    "type": "git",
+    "url": "https://github.com/xXBJXx/ioBroker.fully-tablet-control"
   },
   "dependencies": {
     "@iobroker/adapter-core": "^2.6.0",
@@ -24,11 +24,11 @@
     "suncalc2": "^1.8.1"
   },
   "devDependencies": {
-	"prettier": "^2.5.1",
+    "prettier": "^2.5.1",
     "@alcalzone/release-script": "^3.5.6",
     "@iobroker/testing": "^2.5.6",
     "@iobroker/dev-server": "^0.4.0",
-	"@iobroker/adapter-dev": "^1.0.0",
+    "@iobroker/adapter-dev": "^1.0.0",
     "@types/chai": "^4.3.0",
     "@types/chai-as-promised": "^7.1.5",
     "@types/mocha": "^9.1.0",
@@ -46,17 +46,17 @@
   },
   "main": "main.js",
   "scripts": {
-	"test:js": "mocha \"{!(node_modules|test)/**/*.test.js,*.test.js,test/**/test!(PackageFiles|Startup).js}\"",
-	"test:package": "mocha test/package --exit",
-	"test:unit": "mocha test/unit --exit",
-	"test:integration": "mocha test/integration --exit",
-	"test": "npm run test:js && npm run test:package",
-	"release": "release-script",
-	"translate": "translate-adapter",
-	"lint": "eslint"
+    "test:js": "mocha \"{!(node_modules|test)/**/*.test.js,*.test.js,test/**/test!(PackageFiles|Startup).js}\"",
+    "test:package": "mocha test/package --exit",
+    "test:unit": "mocha test/unit --exit",
+    "test:integration": "mocha test/integration --exit",
+    "test": "npm run test:js && npm run test:package",
+    "release": "release-script",
+    "translate": "translate-adapter",
+    "lint": "eslint"
   },
   "bugs": {
-	"url": "https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues"
+    "url": "https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues"
   },
   "readmeFilename": "README.md"
 }
