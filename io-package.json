@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "fully-tablet-control",
-        "version": "0.3.6-1",
+        "version": "0.3.7",
         "news": {
+            "0.3.7": {
+                "en": "* (xXBJXx) test-and-release.yml update\n* (xXBJXx) dependencies updates\n* (xXBJXx) License year adjusted to 2022\n* (xXBJXx) Automatic translations migrated from gulp to => [iobroker/adapter-dev](https://github.com/ioBroker/adapter-dev)\n* (xXBJXx) fixed [(issue #321)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/321)\n",
+                "de": "* (xXBJXx) test-and-release.yml-Aktualisierung\n* (xXBJXx) Abhängigkeitsaktualisierungen\n* (xXBJXx) Lizenzjahr auf 2022 angepasst\n* (xXBJXx) Automatische Übersetzungen von gulp nach => [iobroker/adapter-dev](https://github.com/ioBroker/adapter-dev) migriert\n* (xXBJXx) behoben [(issue #321)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/321)\n",
+                "ru": "* (xXBJXx) обновление test-and-release.yml\n* (xXBJXx) обновления зависимостей\n* (xXBJXx) Год лицензии скорректирован до 2022 г.\n* (xXBJXx) Автоматические переводы перенесены из gulp в => [iobroker/adapter-dev](https://github.com/ioBroker/adapter-dev)\n* (xXBJXx) исправлено [(issue #321)](https://github.com/xXBJXx/ioBroker.full-tablet-control/issues/321)\n",
+                "pt": "* (xXBJXx) atualização test-and-release.yml\n* (xXBJXx) atualizações de dependências\n* (xXBJXx) Ano de licença ajustado para 2022\n* (xXBJXx) Traduções automáticas migradas de gulp para => [iobroker/adapter-dev](https://github.com/ioBroker/adapter-dev)\n* (xXBJXx) corrigido [(questão nº 321)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/321)\n",
+                "nl": "* (xXBJXx) test-en-release.yml-update\n* (xXBJXx) afhankelijkheden updates\n* (xXBJXx) Licentiejaar aangepast naar 2022\n* (xXBJXx) Automatische vertalingen gemigreerd van gulp naar => [iobroker/adapter-dev](https://github.com/ioBroker/adapter-dev)\n* (xXBJXx) opgelost [(issue #321)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/321)\n",
+                "fr": "* (xXBJXx) mise à jour test-and-release.yml\n* (xXBJXx) mises à jour des dépendances\n* (xXBJXx) Année de licence ajustée à 2022\n* (xXBJXx) Traductions automatiques migrées de gulp vers => [iobroker/adapter-dev](https://github.com/ioBroker/adapter-dev)\n* (xXBJXx) corrigé [(issue #321)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/321)\n",
+                "it": "* (xXBJXx) aggiornamento test-and-release.yml\n* Aggiornamenti delle dipendenze (xXBJXx).\n* (xXBJXx) Anno di licenza adeguato al 2022\n* (xXBJXx) Traduzioni automatiche migrate da gulp a => [iobroker/adapter-dev](https://github.com/ioBroker/adapter-dev)\n* (xXBJXx) risolto [(problema n. 321)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/321)\n",
+                "es": "* (xXBJXx) actualización de test-and-release.yml\n* (xXBJXx) actualizaciones de dependencias\n* (xXBJXx) Año de licencia ajustado a 2022\n* (xXBJXx) Las traducciones automáticas migraron de gulp a => [iobroker/adapter-dev](https://github.com/ioBroker/adapter-dev)\n* (xXBJXx) solucionado [(problema #321)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/321)\n",
+                "pl": "* (xXBJXx) aktualizacja test-and-release.yml\n* (xXBJXx) aktualizacje zależności\n* (xXBJXx) Rok licencji dostosowany do 2022\n* (xXBJXx) Automatyczne tłumaczenia przeniesione z gulp do => [iobroker/adapter-dev](https://github.com/ioBroker/adapter-dev)\n* (xXBJXx) naprawiono [(problem #321)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/321)\n",
+                "zh-cn": "* (xXBJXx) test-and-release.yml 更新\n* (xXBJXx) 依赖更新\n* (xXBJXx) 许可年份调整为 2022\n* (xXBJXx) 自动翻译从 gulp 迁移到 => [iobroker/adapter-dev](https://github.com/ioBroker/adapter-dev)\n* (xXBJXx) 已修复 [(issue #321)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/321)\n"
+            },
             "0.3.6-1": {
                 "en": "+(xXBJXx) change Adapter Documentation link [(issue #193)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/193)",
                 "de": "+(xXBJXx) Link zur Adapterdokumentation ändern [(issue #193)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/193)",
