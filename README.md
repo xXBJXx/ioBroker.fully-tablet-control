@@ -81,12 +81,11 @@ _______________________________
 -->
 
 ### __WORK IN PROGRESS__
-
-* (xXBJXx) fixed [(issue #222)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/222)
 * (xXBJXx) test-and-release.yml update
 * (xXBJXx) dependencies updates
 * (xXBJXx) License year adjusted to 2022
 * (xXBJXx) Automatic translations migrated from gulp to => [iobroker/adapter-dev](https://github.com/ioBroker/adapter-dev)
+* (xXBJXx) fixed [(issue #321)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/321)
 
 ### 0.3.6-1 (2021-06-10)
 

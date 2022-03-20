@@ -2167,7 +2167,7 @@ class FullyTabletControl extends utils.Adapter {
                             await this.automatic_bri();
                         }
                     }
-                    await this.setStateAsync(id, value.val, true);
+					await this.setStateAsync(id, value, true);
                     this.log.debug(`Manuel mode now active`);
                     break;
                 }
