@@ -24,7 +24,7 @@
     "suncalc2": "^1.8.1"
   },
   "devDependencies": {
-    "prettier": "^2.6.2",
+    "prettier": "^2.7.1",
     "@alcalzone/release-script": "^3.5.9",
     "@iobroker/testing": "^3.0.2",
     "@iobroker/dev-server": "^0.5.0",
