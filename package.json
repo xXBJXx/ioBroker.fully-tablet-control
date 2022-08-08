@@ -29,7 +29,7 @@
     "@iobroker/testing": "^3.0.2",
     "@iobroker/dev-server": "^0.5.0",
     "@iobroker/adapter-dev": "^1.0.0",
-    "@types/chai": "^4.3.1",
+    "@types/chai": "^4.3.2",
     "@types/chai-as-promised": "^7.1.5",
     "@types/mocha": "^9.1.1",
     "@types/node": "^17.0.42",
