@@ -1,285 +1,201 @@
 {
-    "common": {
-        "name": "fully-tablet-control",
-        "version": "0.3.7-0.0",
-        "news": {
-            "0.3.7-0.0": {
-                "en": "* (xXBJXx) test-and-release.yml update\n* (xXBJXx) dependencies updates\n* (xXBJXx) License year adjusted to 2022\n* (xXBJXx) Automatic translations migrated from gulp to => [iobroker/adapter-dev](https://github.com/ioBroker/adapter-dev)\n* (xXBJXx) fixed [(issue #321)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/321)\n",
-                "de": "* (xXBJXx) test-and-release.yml-Aktualisierung\n* (xXBJXx) Abhängigkeitsaktualisierungen\n* (xXBJXx) Lizenzjahr auf 2022 angepasst\n* (xXBJXx) Automatische Übersetzungen von gulp nach => [iobroker/adapter-dev](https://github.com/ioBroker/adapter-dev) migriert\n* (xXBJXx) behoben [(issue #321)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/321)\n",
-                "ru": "* (xXBJXx) обновление test-and-release.yml\n* (xXBJXx) обновления зависимостей\n* (xXBJXx) Год лицензии скорректирован до 2022 г.\n* (xXBJXx) Автоматические переводы перенесены из gulp в => [iobroker/adapter-dev](https://github.com/ioBroker/adapter-dev)\n* (xXBJXx) исправлено [(issue #321)](https://github.com/xXBJXx/ioBroker.full-tablet-control/issues/321)\n",
-                "pt": "* (xXBJXx) atualização test-and-release.yml\n* (xXBJXx) atualizações de dependências\n* (xXBJXx) Ano de licença ajustado para 2022\n* (xXBJXx) Traduções automáticas migradas de gulp para => [iobroker/adapter-dev](https://github.com/ioBroker/adapter-dev)\n* (xXBJXx) corrigido [(questão nº 321)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/321)\n",
-                "nl": "* (xXBJXx) test-en-release.yml-update\n* (xXBJXx) afhankelijkheden updates\n* (xXBJXx) Licentiejaar aangepast naar 2022\n* (xXBJXx) Automatische vertalingen gemigreerd van gulp naar => [iobroker/adapter-dev](https://github.com/ioBroker/adapter-dev)\n* (xXBJXx) opgelost [(issue #321)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/321)\n",
-                "fr": "* (xXBJXx) mise à jour test-and-release.yml\n* (xXBJXx) mises à jour des dépendances\n* (xXBJXx) Année de licence ajustée à 2022\n* (xXBJXx) Traductions automatiques migrées de gulp vers => [iobroker/adapter-dev](https://github.com/ioBroker/adapter-dev)\n* (xXBJXx) corrigé [(issue #321)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/321)\n",
-                "it": "* (xXBJXx) aggiornamento test-and-release.yml\n* Aggiornamenti delle dipendenze (xXBJXx).\n* (xXBJXx) Anno di licenza adeguato al 2022\n* (xXBJXx) Traduzioni automatiche migrate da gulp a => [iobroker/adapter-dev](https://github.com/ioBroker/adapter-dev)\n* (xXBJXx) risolto [(problema n. 321)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/321)\n",
-                "es": "* (xXBJXx) actualización de test-and-release.yml\n* (xXBJXx) actualizaciones de dependencias\n* (xXBJXx) Año de licencia ajustado a 2022\n* (xXBJXx) Las traducciones automáticas migraron de gulp a => [iobroker/adapter-dev](https://github.com/ioBroker/adapter-dev)\n* (xXBJXx) solucionado [(problema #321)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/321)\n",
-                "pl": "* (xXBJXx) aktualizacja test-and-release.yml\n* (xXBJXx) aktualizacje zależności\n* (xXBJXx) Rok licencji dostosowany do 2022\n* (xXBJXx) Automatyczne tłumaczenia przeniesione z gulp do => [iobroker/adapter-dev](https://github.com/ioBroker/adapter-dev)\n* (xXBJXx) naprawiono [(problem #321)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/321)\n",
-                "zh-cn": "* (xXBJXx) test-and-release.yml 更新\n* (xXBJXx) 依赖更新\n* (xXBJXx) 许可年份调整为 2022\n* (xXBJXx) 自动翻译从 gulp 迁移到 => [iobroker/adapter-dev](https://github.com/ioBroker/adapter-dev)\n* (xXBJXx) 已修复 [(issue #321)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/321)\n"
-            },
-            "0.3.6-1": {
-                "en": "+(xXBJXx) change Adapter Documentation link [(issue #193)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/193)",
-                "de": "+(xXBJXx) Link zur Adapterdokumentation ändern [(issue #193)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/193)",
-                "ru": "+ (xXBJXx) изменить ссылку на документацию адаптера [(issue # 193)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/193)",
-                "pt": "+ (xXBJXx) alterar link de documentação do adaptador [(problema # 193)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/193)",
-                "nl": "+(xXBJXx) koppeling adapterdocumentatie wijzigen [(issue #193)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/193)",
-                "fr": "+(xXBJXx) modifier le lien vers la documentation de l'adaptateur [(issue #193)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/193)",
-                "it": "+(xXBJXx) cambia il collegamento alla documentazione dell'adattatore [(edizione #193)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/193)",
-                "es": "+ (xXBJXx) cambiar el enlace de documentación del adaptador [(número 193)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/193)",
-                "pl": "+(xXBJXx) zmień link do dokumentacji adaptera [(wydanie #193)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/193)",
-                "zh-cn": "+(xXBJXx) 更改适配器文档链接 [(issue #193)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/193)"
-            },
-            "0.3.6-0": {
-                "en": "State \"s\" has no existing object message fixed [(issue #184)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/184)",
-                "de": "In Status \"s\" wurde keine vorhandene Objektnachricht behoben [(Problem Nr. 184)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/184)",
-                "ru": "Состояние \"s\" не имеет исправленного сообщения об объекте [(проблема № 184)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/184)",
-                "pt": "O estado \"s\" não tem mensagem de objeto existente corrigida [(problema # 184)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/184)",
-                "nl": "Staat 's' heeft geen bestaand objectbericht gerepareerd [(issue # 184)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/184)",
-                "fr": "L'état «s» n'a pas de message d'objet existant corrigé [(problème # 184)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/184)",
-                "it": "Lo stato \"s\" non ha alcun messaggio oggetto esistente risolto [(problema # 184)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/184)",
-                "es": "El estado \"s\" no tiene ningún mensaje de objeto existente corregido [(problema # 184)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/184)",
-                "pl": "Stan „s” nie ma naprawionego istniejącego komunikatu obiektu [(problem nr 184)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/184)",
-                "zh-cn": "状态“ s”没有固定的现有对象消息[（issue＃184）]（https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/184）"
-            },
-            "0.3.5-0": {
-                "en": "Brightness changeMode optimized\nAdapter tier set to 3\ndependencies updates\nCheck if adapter config is valid modified\ncheck and testing for Node.js 16 and closed [(issue #170)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/170)",
-                "de": "HelligkeitsänderungModus optimiert\nAdapterstufe auf 3 gesetzt\nAbhängigkeitsaktualisierungen\nÜberprüfen Sie, ob die Adapterkonfiguration gültig geändert wurde\nÜberprüfen und testen Sie Node.js 16 und schließen Sie [(Problem Nr. 170)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/170).",
-                "ru": "Изменение яркости Оптимизированный режим\nУровень адаптера установлен на 3\nобновления зависимостей\nУбедитесь, что конфигурация адаптера действительна, изменена\nпроверка и тестирование для Node.js 16 и закрыто [(issue # 170)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/170)",
-                "pt": "Brightness changeMode otimizado\nCamada do adaptador definida como 3\natualizações de dependências\nVerifique se a configuração do adaptador é válida modificada\nverificar e testar o Node.js 16 e encerrado [(problema # 170)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/170)",
-                "nl": "Helderheid wijzigen Modus geoptimaliseerd\nAdapterlaag ingesteld op 3\nafhankelijkheden updates\nControleer of de adapterconfiguratie geldig is gewijzigd\ncontroleer en test op Node.js 16 en gesloten [(issue # 170)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/170)",
-                "fr": "Changement de luminosité Mode optimisé\nNiveau d'adaptateur défini sur 3\nmises à jour des dépendances\nVérifiez si la configuration de l'adaptateur est valide modifiée\nvérifier et tester Node.js 16 et fermé [(issue # 170)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/170)",
-                "it": "Modifica della luminosità Modalità ottimizzata\nLivello adattatore impostato su 3\naggiornamenti delle dipendenze\nVerificare se la configurazione dell'adattatore è stata modificata valida\ncontrollo e test per Node.js 16 e chiusura [(problema # 170)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/170)",
-                "es": "Cambio de brillo Modo optimizado\nNivel de adaptador establecido en 3\nactualizaciones de dependencias\nCompruebe si la configuración del adaptador es válida modificada\nverificar y probar Node.js 16 y cerrado [(problema # 170)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/170)",
-                "pl": "Zoptymalizowany tryb zmiany jasności\nPoziom adaptera ustawiony na 3\naktualizacje zależności\nSprawdź, czy konfiguracja adaptera jest poprawna zmodyfikowana\nsprawdzić i przetestować Node.js 16 i zamknięte [(numer 170)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/170)",
-                "zh-cn": "亮度变化模式优化\n适配器层设置为3\n依赖关系更新\n检查适配器配置是否有效修改\n检查并测试Node.js 16并关闭[（issue＃170）]（https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/170）"
-            },
-            "0.3.4-0": {
-                "en": "* dependencies updates\n* fixed wrong type of displayWidthPixels and displayHeightPixels [(issue #164)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/164)\n+ (xXBJXx) add encodeUrl and change log message",
-                "de": "* Abhängigkeitsaktualisierungen\n* Falscher Typ von displayWidthPixels und displayHeightPixels [(Problem Nr. 164)] behoben (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/164)\n+ (xXBJXx) füge encodeUrl hinzu und ändere die Protokollnachricht",
-                "ru": "* обновления зависимостей\n* исправлен неправильный тип displayWidthPixels и displayHeightPixels [(issue # 164)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/164)\n+ (xXBJXx) добавить encodeUrl и изменить сообщение журнала",
-                "pt": "* atualizações de dependências\n* corrigiu o tipo errado de displayWidthPixels e displayHeightPixels [(problema # 164)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/164)\n+ (xXBJXx) adicionar encodeUrl e alterar a mensagem de log",
-                "nl": "* afhankelijkheden updates\n* verkeerd type displayWidthPixels en displayHeightPixels opgelost [(issue # 164)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/164)\n+ (xXBJXx) voeg encodeUrl toe en wijzig het logbericht",
-                "fr": "* mises à jour des dépendances\n* Correction du mauvais type de displayWidthPixels et displayHeightPixels [(issue # 164)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/164)\n+ (xXBJXx) ajouter encodeUrl et modifier le message du journal",
-                "it": "* aggiornamenti delle dipendenze\n* corretto tipo errato di displayWidthPixels e displayHeightPixels [(problema # 164)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/164)\n+ (xXBJXx) aggiunge encodeUrl e modifica il messaggio di registro",
-                "es": "* actualizaciones de dependencias\n* Se corrigió el tipo incorrecto de displayWidthPixels y displayHeightPixels [(problema # 164)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/164)\n+ (xXBJXx) agregar encodeUrl y cambiar el mensaje de registro",
-                "pl": "* aktualizacje zależności\n* naprawiono zły typ displayWidthPixels i displayHeightPixels [(numer 164)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/164)\n+ (xXBJXx) dodaj encodeUrl i zmień komunikat dziennika",
-                "zh-cn": "*依赖关系更新\n*修复了displayWidthPixels和displayHeightPixels [（issue＃164）]（https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/164）的错误类型\n+（xXBJXx）添加encodeUrl并更改日志消息"
-            },
-            "0.3.3-beta.0": {
-                "en": "* README edited\n* removed check for batteryLevel = -1% \n* camshot function expanded to include continuous shooting [(issue #129)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/129), \n  and it is now possible to take and save multiple images.\\\n  New tab added in config page \n* fixed brightness checkInterval bug (is now checked as intended every x minutes whether the brightness changed)",
-                "de": "* README bearbeitet\n* entfernt Überprüfung auf Batterielevel = -1%\n* Die Camshot-Funktion wurde um Serienaufnahmen erweitert [(Ausgabe Nr. 129)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/129).\n  und es ist jetzt möglich, mehrere Bilder aufzunehmen und zu speichern. \\\n  Neue Registerkarte auf der Konfigurationsseite hinzugefügt\n* Fehler bei der Überprüfung der Helligkeit behobenInterval (wird jetzt alle x Minuten wie beabsichtigt überprüft, ob sich die Helligkeit geändert hat)",
-                "ru": "* README отредактировано\n* убрана проверка на batteryLevel = -1%\n* функция видеосъемки расширена и теперь включает непрерывную съемку [(issue # 129)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/129),\n  и теперь можно делать и сохранять несколько изображений. \\\n  На странице конфигурации добавлена новая вкладка\n* исправлена ошибка интервала проверки яркости (теперь проверяется, как задумано, каждые x минут, изменилась ли яркость)",
-                "pt": "* README editado\n* verificação removida para batteryLevel = -1%\n* função camshot expandida para incluir disparo contínuo [(edição # 129)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/129),\n  e agora é possível tirar e salvar várias imagens. \\\n  Nova guia adicionada na página de configuração\n* corrigido o bug de checkInterval de brilho (agora é verificado conforme pretendido a cada x minutos se o brilho mudou)",
-                "nl": "* README bewerkt\n* verwijderde controle voor batteryLevel = -1%\n* camshot-functie uitgebreid met continu-opnamen [(issue # 129)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/129),\n  en het is nu mogelijk om meerdere afbeeldingen te maken en op te slaan. \\\n  Nieuw tabblad toegevoegd in configuratiepagina\n* vaste helderheid checkInterval bug (wordt nu gecontroleerd zoals bedoeld elke x minuten of de helderheid is veranderd)",
-                "fr": "* README édité\n* suppression de la vérification du niveau de batterie = -1%\n* fonction camshot étendue pour inclure la prise de vue en continu [(issue # 129)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/129),\n  et il est maintenant possible de prendre et d'enregistrer plusieurs images. \\\n  Nouvel onglet ajouté dans la page de configuration\n* Correction de la vérification de la luminosité bogue d'intervalle (est maintenant vérifié comme prévu toutes les x minutes si la luminosité a changé)",
-                "it": "* README modificato\n* controllo rimosso per batteryLevel = -1%\n* funzione camshot espansa per includere lo scatto continuo [(issue # 129)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/129),\n  ed è ora possibile acquisire e salvare più immagini. \\\n  Nuova scheda aggiunta nella pagina di configurazione\n* corretto controllo della luminosità Errore durante l'intervallo (ora viene controllato come previsto ogni x minuti se la luminosità è cambiata)",
-                "es": "* README editado\n* cheque eliminado para batteryLevel = -1%\n* función de captura de cámara ampliada para incluir disparo continuo [(número 129)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/129),\n  y ahora es posible tomar y guardar múltiples imágenes. \\\n  Nueva pestaña agregada en la página de configuración\n* Error de intervalo de verificación de brillo fijo (ahora se verifica según lo previsto cada x minutos si el brillo cambió)",
-                "pl": "* Edytowano README\n* usunięto sprawdzanie poziomu baterii = -1%\n* funkcja camshot rozszerzona o zdjęcia seryjne [(numer 129)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/129),\n  i teraz można zrobić i zapisać wiele zdjęć. \\\n  Nowa karta dodana na stronie konfiguracji\n* naprawiono błąd interwałowego sprawdzania jasności (jest teraz sprawdzany zgodnie z przeznaczeniem co x minut, czy jasność się zmieniła)",
-                "zh-cn": "*自述文件已编辑\n*删除电池电量检查= -1％\n* camshot功能扩展为包括连续拍摄[（issue＃129）]（https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/129），\n  现在可以拍摄和保存多张图像。\\\n  在配置页面中添加了新标签\n*修复了亮度检查间隔错误（现在每隔x分钟检查一次亮度是否改变）"
-            },
-            "0.3.2-beta.0": {
-                "en": "fixed problem with ( has no existing object ) for the new JS controller [(issue #114)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/114)\nfixed [(issue #120)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/120) check if the screensaver is defined added\nfixed brightness control bug \nAdded deletion of screenSaver from config [(issue #124)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/124)",
-                "de": "Problem mit (hat kein vorhandenes Objekt) für den neuen JS-Controller behoben [(Problem Nr. 114)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/114)\nbehoben [(Problem Nr. 120)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/120) Überprüfen Sie, ob der Bildschirmschoner als hinzugefügt definiert ist\nFehler bei der Helligkeitsregelung behoben\nLöschen von screenSaver aus config [(Problem Nr. 124)] hinzugefügt (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/124)",
-                "ru": "исправлена проблема с (нет существующего объекта) для нового контроллера JS [(issue # 114)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/114)\nисправлено [(issue # 120)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/120) проверьте, определена ли заставка добавлена\nисправлена ошибка управления яркостью\nДобавлено удаление screenSaver из конфига [(issue # 124)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/124)",
-                "pt": "corrigido o problema com (não tem objeto existente) para o novo controlador JS [(problema # 114)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/114)\ncorrigido [(problema # 120)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/120) verifique se o protetor de tela está definido adicionado\nbug corrigido de controle de brilho\nAdicionada exclusão do protetor de tela da configuração [(problema # 124)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/124)",
-                "nl": "probleem opgelost met (heeft geen bestaand object) voor de nieuwe JS-controller [(issue # 114)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/114)\nopgelost [(issue # 120)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/120) controleer of de screensaver is gedefinieerd toegevoegd\nbug voor helderheidsregeling opgelost\nVerwijdering van screenSaver uit configuratie [(issue # 124)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/124) toegevoegd",
-                "fr": "Correction d'un problème avec (n'a pas d'objet existant) pour le nouveau contrôleur JS [(issue # 114)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/114)\ncorrigé [(issue # 120)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/120) vérifier si l'économiseur d'écran est défini ajouté\ncorrection d'un bug de contrôle de la luminosité\nAjout de la suppression de screenSaver de la configuration [(issue # 124)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/124)",
-                "it": "risolto problema con (non ha oggetto esistente) per il nuovo controller JS [(problema # 114)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/114)\nrisolto [(problema # 120)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/120) controlla se lo screensaver è definito aggiunto\ncorretto bug di controllo della luminosità\nAggiunta l'eliminazione di screenSaver da config [(issue # 124)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/124)",
-                "es": "Problema solucionado con (no tiene ningún objeto existente) para el nuevo controlador JS [(problema # 114)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/114)\nfijo [(problema # 120)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/120) verifique si el protector de pantalla está definido agregado\nerror de control de brillo fijo\nSe agregó la eliminación de screenSaver de la configuración [(problema # 124)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/124)",
-                "pl": "naprawiony problem z (nie ma istniejącego obiektu) dla nowego kontrolera JS [(problem # 114)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/114)\nnaprawiono [(problem # 120)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/120) sprawdź, czy zdefiniowano wygaszacz ekranu dodany\nnaprawiony błąd kontroli jasności\nDodano usunięcie screenSaver z konfiguracji [(numer 124)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/124)",
-                "zh-cn": "修复了新JS控制器[（issue＃114）]（没有现有对象）的问题（https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/114）\n固定[（issue＃120）]（https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/120）检查是否定义了屏幕保护程序\n修复亮度控制错误\n添加了从配置[（issue＃124）]中删除screenSaver的功能（https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/124）"
-            },
-            "0.3.1-beta.2": {
-                "en": "fixed TypeError: Cannot read property 'val' of null [(issue #113)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/113)",
-                "de": "fester TypeError: Eigenschaft 'val' von null [(Problem # 113)] kann nicht gelesen werden (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/113)",
-                "ru": "исправлена ошибка TypeError: невозможно прочитать свойство val со значением null [(проблема № 113)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/113)",
-                "pt": "TypeError corrigido: não é possível ler a propriedade 'val' de null [(problema # 113)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/113)",
-                "nl": "Fixed TypeError: Kan eigenschap 'val' van null niet lezen [(issue # 113)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/113)",
-                "fr": "Correction de TypeError: impossible de lire la propriété 'val' de null [(issue # 113)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/113)",
-                "it": "corretto TypeError: Impossibile leggere la proprietà 'val' di null [(problema # 113)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/113)",
-                "es": "TypeError fijo: no se puede leer la propiedad 'val' de null [(problema n. ° 113)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/113)",
-                "pl": "naprawiono błąd TypeError: Cannot read property 'val' of null [(issue # 113)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/113)",
-                "zh-cn": "修复TypeError：无法读取null [（issue＃113）]的属性'val'（https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/113）"
-            },
-            "0.3.1-beta.1": {
-                "en": "fix Telegram error message when accessing the config page [(issue #109)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/109)",
-                "de": "Behebung der Telegrammfehlermeldung beim Zugriff auf die Konfigurationsseite [(Problem Nr. 109)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/109)",
-                "ru": "исправить сообщение об ошибке Telegram при доступе к странице конфигурации [(issue # 109)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/109)",
-                "pt": "corrigir mensagem de erro do Telegram ao acessar a página de configuração [(problema # 109)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/109)",
-                "nl": "Telegram-foutmelding repareren bij toegang tot de configuratiepagina [(issue # 109)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/109)",
-                "fr": "correction du message d'erreur Telegram lors de l'accès à la page de configuration [(issue # 109)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/109)",
-                "it": "correggere il messaggio di errore di Telegram quando si accede alla pagina di configurazione [(problema # 109)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/109)",
-                "es": "arregla el mensaje de error de Telegram al acceder a la página de configuración [(problema # 109)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/109)",
-                "pl": "naprawić komunikat o błędzie Telegrama podczas uzyskiwania dostępu do strony konfiguracyjnej [(problem # 109)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/109)",
-                "zh-cn": "修复访问配置页面[（issue＃109）]时的电报错误消息（https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/109）"
-            },
-            "0.3.1-beta.0": {
-                "en": "test-and-release.yml update\nadmin Page Revised\ncheck for 0/1 implemented for sockets (issue #66)",
-                "de": "test-and-release.yml update\nadmin Seite überarbeitet\nÜberprüfen Sie, ob 0/1 für Sockets implementiert ist (Problem Nr. 66).",
-                "ru": "test-and-release.yml обновить\nСтраница администратора изменена\nпроверка на 0/1 реализована для сокетов (проблема # 66)",
-                "pt": "atualização test-and-release.yml\npágina do administrador revisada\nverificar 0/1 implementado para soquetes (problema # 66)",
-                "nl": "test-and-release.yml update\nadmin Pagina herzien\ncontroleer op 0/1 geïmplementeerd voor sockets (probleem # 66)",
-                "fr": "mise à jour test-and-release.yml\nPage d'administration révisée\nvérifier 0/1 implémenté pour les sockets (problème # 66)",
-                "it": "aggiornamento test-and-release.yml\nPagina admin rivista\ncontrolla per 0/1 implementato per i socket (problema # 66)",
-                "es": "actualización test-and-release.yml\nPágina de administración revisada\ncompruebe si hay 0/1 implementado para sockets (problema # 66)",
-                "pl": "Aktualizacja test-and-release.yml\nStrona administratora poprawiona\nsprawdź zaimplementowane 0/1 dla gniazd (problem # 66)",
-                "zh-cn": "test-and-release.yml更新\n管理员页面已修改\n检查为套接字实现的0/1（问题＃66）"
-            },
-            "0.3.0-beta.5": {
-                "en": "reading of the user from telegram adapter instance 0-10 added\nCurrent page added to Device Info",
-                "de": "Lesen des Benutzers von der Telegrammadapterinstanz 0-10 hinzugefügt\nAktuelle Seite zu Geräteinfo hinzugefügt",
-                "ru": "добавлено чтение пользователя из экземпляра адаптера телеграммы 0-10\nТекущая страница добавлена в информацию об устройстве",
-                "pt": "leitura do usuário da instância do adaptador de telegrama 0-10 adicionado\nPágina atual adicionada às informações do dispositivo",
-                "nl": "lezen van de gebruiker vanaf telegramadapterinstantie 0-10 toegevoegd\nHuidige pagina toegevoegd aan Device Info",
-                "fr": "lecture de l'utilisateur à partir de l'instance d'adaptateur de télégramme 0-10 ajoutée\nPage actuelle ajoutée aux informations sur l'appareil",
-                "it": "aggiunta la lettura dell'utente dall'istanza dell'adattatore telegram 0-10\nPagina corrente aggiunta a Informazioni dispositivo",
-                "es": "lectura del usuario de la instancia del adaptador de telegramas 0-10 agregada\nPágina actual agregada a Información del dispositivo",
-                "pl": "dodany odczyt użytkownika z instancji adaptera telegramu 0-10\nBieżąca strona została dodana do informacji o urządzeniu",
-                "zh-cn": "从电报适配器实例0-10中读取用户\n当前页面已添加到设备信息"
-            },
-            "0.3.0-beta.4": {
-                "en": "Motion detector is not defined warning message fixed",
-                "de": "Bewegungsmelder ist nicht definiert Warnmeldung behoben",
-                "ru": "Детектор движения не определен, предупреждающее сообщение исправлено",
-                "pt": "O detector de movimento não está definido, mensagem de aviso corrigida",
-                "nl": "Bewegingsmelder is niet gedefinieerd waarschuwingsbericht vast",
-                "fr": "Le détecteur de mouvement n'est pas défini Message d'avertissement fixe",
-                "it": "Il rilevatore di movimento non è definito messaggio di avviso risolto",
-                "es": "El detector de movimiento no está definido mensaje de advertencia fijo",
-                "pl": "Detektor ruchu nie jest zdefiniowany poprawiono komunikat ostrzegawczy",
-                "zh-cn": "未定义运动探测器警告消息已修复"
-            },
-            "0.3.0-beta.3": {
-                "en": "fix camshotUrl folder",
-                "de": "CamshotUrl-Ordner korrigieren",
-                "ru": "исправить папку camshotUrl",
-                "pt": "corrigir pasta camshotUrl",
-                "nl": "fix camshotUrl map",
-                "fr": "réparer le dossier camshotUrl",
-                "it": "correggere la cartella camshotUrl",
-                "es": "arreglar la carpeta camshotUrl",
-                "pl": "napraw folder camshotUrl",
-                "zh-cn": "修复camshotUrl文件夹"
-            },
-            "0.3.0-beta.2": {
-                "en": "Check for invalid batteryLevel added",
-                "de": "Überprüfen Sie, ob ein ungültiger Batterielevel hinzugefügt wurde",
-                "ru": "Проверьте, не добавлен ли недопустимый уровень заряда батареи",
-                "pt": "Verifique se o nível de bateria inválido foi adicionado",
-                "nl": "Controleer op ongeldig batterijniveau toegevoegd",
-                "fr": "Vérifiez que le niveau de batterie n'est pas valide ajouté",
-                "it": "Verificare la presenza di batteryLevel non validi aggiunti",
-                "es": "Compruebe el nivel de batería no válido agregado",
-                "pl": "Sprawdź, czy dodano nieprawidłowy poziom baterii",
-                "zh-cn": "检查是否添加了无效的BatteryLevel"
-            }
-        },
-        "title": "Fully Tablet Control",
-        "titleLang": {
-            "en": "Fully Tablet Control",
-            "de": "Fully Tablet Control",
-            "ru": "Fully Tablet Control",
-            "pt": "Fully Tablet Control",
-            "nl": "Fully Tablet Control",
-            "fr": "Fully Tablet Control",
-            "it": "Fully Tablet Control",
-            "es": "Fully Tablet Control",
-            "pl": "Fully Tablet Control",
-            "zh-cn": "Fully Tablet Control"
-        },
-        "desc": {
-            "en": "Tablet control with the FullyBrowser (charge control, screen saver, brightness control)",
-            "de": "Fully Tablet Steuerung, mit dem FullyBrowser (Ladekontrolle, Bildschirmschoner, Helligkeit)"
-        },
-        "authors": [
-            "xXBJXx <issi.dev.iobroker@gmail.com>"
-        ],
-        "keywords": [
-            "ioBroker",
-            "Tablet-Control",
-            "Tablet",
-            "Fully Kiosk Browser"
-        ],
-        "license": "MIT",
-        "platform": "Javascript/Node.js",
-        "main": "main.js",
-        "icon": "tablet-control.png",
-        "enabled": true,
-        "extIcon": "https://raw.githubusercontent.com/xXBJXx/ioBroker.fully-tablet-control/master/admin/tablet-control.png",
-        "readme": "https://github.com/xXBJXx/ioBroker.fully-tablet-control/blob/master/README.md",
-        "loglevel": "info",
-        "mode": "daemon",
-        "type": "general",
-        "compact": true,
-        "connectionType": "local",
-        "dataSource": "poll",
-        "materialize": true,
-        "messagebox": true,
-        "plugins": {
-            "sentry": {
-                "dsn": "https://8520b03c99c4437da90e414ab4bd1959@o384969.ingest.sentry.io/5217020"
-            }
-        },
-        "dependencies": [
-            {
-                "js-controller": ">=3.3.22"
-            }
-        ],
-        "tier": 3
+  "common": {
+    "name": "fully-tablet-control",
+    "version": "0.3.7",
+    "news": {
+      "0.3.7": {
+        "en": "update dependencies\nfixed [(issue #398)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/398)",
+        "de": "Abhängigkeiten aktualisieren\nbehoben [(Problem #398)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/398)",
+        "ru": "обновить зависимости\nисправлено [(проблема #398)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/398)",
+        "pt": "actualiza as dependências\nfixo [(edição #398)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/398)",
+        "nl": "afhankelijkheden bijwerken\nopgelost [(issue #398)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/398)",
+        "fr": "mets à jour les dépendances\ncorrigé [(problème #398)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/398)",
+        "it": "aggiornamento delle dipendenze\ncorretto [(problema #398)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/398)",
+        "es": "actualizar las dependencias\narreglado [(problema #398)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/398)",
+        "pl": "zaktualizować zależności\npoprawiono [(issue #398)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/398)",
+        "zh-cn": "更新依赖性\n修复了[（问题#398）](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/398)"
+      },
+      "0.3.7-0.0": {
+        "en": "* (xXBJXx) test-and-release.yml update\n* (xXBJXx) dependencies updates\n* (xXBJXx) License year adjusted to 2022\n* (xXBJXx) Automatic translations migrated from gulp to => [iobroker/adapter-dev](https://github.com/ioBroker/adapter-dev)\n* (xXBJXx) fixed [(issue #321)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/321)\n",
+        "de": "* (xXBJXx) test-and-release.yml-Aktualisierung\n* (xXBJXx) Abhängigkeitsaktualisierungen\n* (xXBJXx) Lizenzjahr auf 2022 angepasst\n* (xXBJXx) Automatische Übersetzungen von gulp nach => [iobroker/adapter-dev](https://github.com/ioBroker/adapter-dev) migriert\n* (xXBJXx) behoben [(issue #321)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/321)\n",
+        "ru": "* (xXBJXx) обновление test-and-release.yml\n* (xXBJXx) обновления зависимостей\n* (xXBJXx) Год лицензии скорректирован до 2022 г.\n* (xXBJXx) Автоматические переводы перенесены из gulp в => [iobroker/adapter-dev](https://github.com/ioBroker/adapter-dev)\n* (xXBJXx) исправлено [(issue #321)](https://github.com/xXBJXx/ioBroker.full-tablet-control/issues/321)\n",
+        "pt": "* (xXBJXx) atualização test-and-release.yml\n* (xXBJXx) atualizações de dependências\n* (xXBJXx) Ano de licença ajustado para 2022\n* (xXBJXx) Traduções automáticas migradas de gulp para => [iobroker/adapter-dev](https://github.com/ioBroker/adapter-dev)\n* (xXBJXx) corrigido [(questão nº 321)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/321)\n",
+        "nl": "* (xXBJXx) test-en-release.yml-update\n* (xXBJXx) afhankelijkheden updates\n* (xXBJXx) Licentiejaar aangepast naar 2022\n* (xXBJXx) Automatische vertalingen gemigreerd van gulp naar => [iobroker/adapter-dev](https://github.com/ioBroker/adapter-dev)\n* (xXBJXx) opgelost [(issue #321)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/321)\n",
+        "fr": "* (xXBJXx) mise à jour test-and-release.yml\n* (xXBJXx) mises à jour des dépendances\n* (xXBJXx) Année de licence ajustée à 2022\n* (xXBJXx) Traductions automatiques migrées de gulp vers => [iobroker/adapter-dev](https://github.com/ioBroker/adapter-dev)\n* (xXBJXx) corrigé [(issue #321)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/321)\n",
+        "it": "* (xXBJXx) aggiornamento test-and-release.yml\n* Aggiornamenti delle dipendenze (xXBJXx).\n* (xXBJXx) Anno di licenza adeguato al 2022\n* (xXBJXx) Traduzioni automatiche migrate da gulp a => [iobroker/adapter-dev](https://github.com/ioBroker/adapter-dev)\n* (xXBJXx) risolto [(problema n. 321)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/321)\n",
+        "es": "* (xXBJXx) actualización de test-and-release.yml\n* (xXBJXx) actualizaciones de dependencias\n* (xXBJXx) Año de licencia ajustado a 2022\n* (xXBJXx) Las traducciones automáticas migraron de gulp a => [iobroker/adapter-dev](https://github.com/ioBroker/adapter-dev)\n* (xXBJXx) solucionado [(problema #321)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/321)\n",
+        "pl": "* (xXBJXx) aktualizacja test-and-release.yml\n* (xXBJXx) aktualizacje zależności\n* (xXBJXx) Rok licencji dostosowany do 2022\n* (xXBJXx) Automatyczne tłumaczenia przeniesione z gulp do => [iobroker/adapter-dev](https://github.com/ioBroker/adapter-dev)\n* (xXBJXx) naprawiono [(problem #321)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/321)\n",
+        "zh-cn": "* (xXBJXx) test-and-release.yml 更新\n* (xXBJXx) 依赖更新\n* (xXBJXx) 许可年份调整为 2022\n* (xXBJXx) 自动翻译从 gulp 迁移到 => [iobroker/adapter-dev](https://github.com/ioBroker/adapter-dev)\n* (xXBJXx) 已修复 [(issue #321)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/321)\n"
+      },
+      "0.3.6-1": {
+        "en": "+(xXBJXx) change Adapter Documentation link [(issue #193)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/193)",
+        "de": "+(xXBJXx) Link zur Adapterdokumentation ändern [(issue #193)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/193)",
+        "ru": "+ (xXBJXx) изменить ссылку на документацию адаптера [(issue # 193)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/193)",
+        "pt": "+ (xXBJXx) alterar link de documentação do adaptador [(problema # 193)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/193)",
+        "nl": "+(xXBJXx) koppeling adapterdocumentatie wijzigen [(issue #193)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/193)",
+        "fr": "+(xXBJXx) modifier le lien vers la documentation de l'adaptateur [(issue #193)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/193)",
+        "it": "+(xXBJXx) cambia il collegamento alla documentazione dell'adattatore [(edizione #193)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/193)",
+        "es": "+ (xXBJXx) cambiar el enlace de documentación del adaptador [(número 193)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/193)",
+        "pl": "+(xXBJXx) zmień link do dokumentacji adaptera [(wydanie #193)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/193)",
+        "zh-cn": "+(xXBJXx) 更改适配器文档链接 [(issue #193)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/193)"
+      },
+      "0.3.6-0": {
+        "en": "State \"s\" has no existing object message fixed [(issue #184)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/184)",
+        "de": "In Status \"s\" wurde keine vorhandene Objektnachricht behoben [(Problem Nr. 184)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/184)",
+        "ru": "Состояние \"s\" не имеет исправленного сообщения об объекте [(проблема № 184)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/184)",
+        "pt": "O estado \"s\" não tem mensagem de objeto existente corrigida [(problema # 184)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/184)",
+        "nl": "Staat 's' heeft geen bestaand objectbericht gerepareerd [(issue # 184)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/184)",
+        "fr": "L'état «s» n'a pas de message d'objet existant corrigé [(problème # 184)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/184)",
+        "it": "Lo stato \"s\" non ha alcun messaggio oggetto esistente risolto [(problema # 184)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/184)",
+        "es": "El estado \"s\" no tiene ningún mensaje de objeto existente corregido [(problema # 184)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/184)",
+        "pl": "Stan „s” nie ma naprawionego istniejącego komunikatu obiektu [(problem nr 184)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/184)",
+        "zh-cn": "状态“ s”没有固定的现有对象消息[（issue＃184）]（https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/184）"
+      },
+      "0.3.5-0": {
+        "en": "Brightness changeMode optimized\nAdapter tier set to 3\ndependencies updates\nCheck if adapter config is valid modified\ncheck and testing for Node.js 16 and closed [(issue #170)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/170)",
+        "de": "HelligkeitsänderungModus optimiert\nAdapterstufe auf 3 gesetzt\nAbhängigkeitsaktualisierungen\nÜberprüfen Sie, ob die Adapterkonfiguration gültig geändert wurde\nÜberprüfen und testen Sie Node.js 16 und schließen Sie [(Problem Nr. 170)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/170).",
+        "ru": "Изменение яркости Оптимизированный режим\nУровень адаптера установлен на 3\nобновления зависимостей\nУбедитесь, что конфигурация адаптера действительна, изменена\nпроверка и тестирование для Node.js 16 и закрыто [(issue # 170)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/170)",
+        "pt": "Brightness changeMode otimizado\nCamada do adaptador definida como 3\natualizações de dependências\nVerifique se a configuração do adaptador é válida modificada\nverificar e testar o Node.js 16 e encerrado [(problema # 170)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/170)",
+        "nl": "Helderheid wijzigen Modus geoptimaliseerd\nAdapterlaag ingesteld op 3\nafhankelijkheden updates\nControleer of de adapterconfiguratie geldig is gewijzigd\ncontroleer en test op Node.js 16 en gesloten [(issue # 170)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/170)",
+        "fr": "Changement de luminosité Mode optimisé\nNiveau d'adaptateur défini sur 3\nmises à jour des dépendances\nVérifiez si la configuration de l'adaptateur est valide modifiée\nvérifier et tester Node.js 16 et fermé [(issue # 170)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/170)",
+        "it": "Modifica della luminosità Modalità ottimizzata\nLivello adattatore impostato su 3\naggiornamenti delle dipendenze\nVerificare se la configurazione dell'adattatore è stata modificata valida\ncontrollo e test per Node.js 16 e chiusura [(problema # 170)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/170)",
+        "es": "Cambio de brillo Modo optimizado\nNivel de adaptador establecido en 3\nactualizaciones de dependencias\nCompruebe si la configuración del adaptador es válida modificada\nverificar y probar Node.js 16 y cerrado [(problema # 170)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/170)",
+        "pl": "Zoptymalizowany tryb zmiany jasności\nPoziom adaptera ustawiony na 3\naktualizacje zależności\nSprawdź, czy konfiguracja adaptera jest poprawna zmodyfikowana\nsprawdzić i przetestować Node.js 16 i zamknięte [(numer 170)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/170)",
+        "zh-cn": "亮度变化模式优化\n适配器层设置为3\n依赖关系更新\n检查适配器配置是否有效修改\n检查并测试Node.js 16并关闭[（issue＃170）]（https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/170）"
+      },
+      "0.3.4-0": {
+        "en": "* dependencies updates\n* fixed wrong type of displayWidthPixels and displayHeightPixels [(issue #164)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/164)\n+ (xXBJXx) add encodeUrl and change log message",
+        "de": "* Abhängigkeitsaktualisierungen\n* Falscher Typ von displayWidthPixels und displayHeightPixels [(Problem Nr. 164)] behoben (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/164)\n+ (xXBJXx) füge encodeUrl hinzu und ändere die Protokollnachricht",
+        "ru": "* обновления зависимостей\n* исправлен неправильный тип displayWidthPixels и displayHeightPixels [(issue # 164)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/164)\n+ (xXBJXx) добавить encodeUrl и изменить сообщение журнала",
+        "pt": "* atualizações de dependências\n* corrigiu o tipo errado de displayWidthPixels e displayHeightPixels [(problema # 164)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/164)\n+ (xXBJXx) adicionar encodeUrl e alterar a mensagem de log",
+        "nl": "* afhankelijkheden updates\n* verkeerd type displayWidthPixels en displayHeightPixels opgelost [(issue # 164)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/164)\n+ (xXBJXx) voeg encodeUrl toe en wijzig het logbericht",
+        "fr": "* mises à jour des dépendances\n* Correction du mauvais type de displayWidthPixels et displayHeightPixels [(issue # 164)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/164)\n+ (xXBJXx) ajouter encodeUrl et modifier le message du journal",
+        "it": "* aggiornamenti delle dipendenze\n* corretto tipo errato di displayWidthPixels e displayHeightPixels [(problema # 164)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/164)\n+ (xXBJXx) aggiunge encodeUrl e modifica il messaggio di registro",
+        "es": "* actualizaciones de dependencias\n* Se corrigió el tipo incorrecto de displayWidthPixels y displayHeightPixels [(problema # 164)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/164)\n+ (xXBJXx) agregar encodeUrl y cambiar el mensaje de registro",
+        "pl": "* aktualizacje zależności\n* naprawiono zły typ displayWidthPixels i displayHeightPixels [(numer 164)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/164)\n+ (xXBJXx) dodaj encodeUrl i zmień komunikat dziennika",
+        "zh-cn": "*依赖关系更新\n*修复了displayWidthPixels和displayHeightPixels [（issue＃164）]（https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/164）的错误类型\n+（xXBJXx）添加encodeUrl并更改日志消息"
+      },
+      "0.3.3-beta.0": {
+        "en": "* README edited\n* removed check for batteryLevel = -1% \n* camshot function expanded to include continuous shooting [(issue #129)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/129), \n  and it is now possible to take and save multiple images.\\\n  New tab added in config page \n* fixed brightness checkInterval bug (is now checked as intended every x minutes whether the brightness changed)",
+        "de": "* README bearbeitet\n* entfernt Überprüfung auf Batterielevel = -1%\n* Die Camshot-Funktion wurde um Serienaufnahmen erweitert [(Ausgabe Nr. 129)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/129).\n  und es ist jetzt möglich, mehrere Bilder aufzunehmen und zu speichern. \\\n  Neue Registerkarte auf der Konfigurationsseite hinzugefügt\n* Fehler bei der Überprüfung der Helligkeit behobenInterval (wird jetzt alle x Minuten wie beabsichtigt überprüft, ob sich die Helligkeit geändert hat)",
+        "ru": "* README отредактировано\n* убрана проверка на batteryLevel = -1%\n* функция видеосъемки расширена и теперь включает непрерывную съемку [(issue # 129)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/129),\n  и теперь можно делать и сохранять несколько изображений. \\\n  На странице конфигурации добавлена новая вкладка\n* исправлена ошибка интервала проверки яркости (теперь проверяется, как задумано, каждые x минут, изменилась ли яркость)",
+        "pt": "* README editado\n* verificação removida para batteryLevel = -1%\n* função camshot expandida para incluir disparo contínuo [(edição # 129)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/129),\n  e agora é possível tirar e salvar várias imagens. \\\n  Nova guia adicionada na página de configuração\n* corrigido o bug de checkInterval de brilho (agora é verificado conforme pretendido a cada x minutos se o brilho mudou)",
+        "nl": "* README bewerkt\n* verwijderde controle voor batteryLevel = -1%\n* camshot-functie uitgebreid met continu-opnamen [(issue # 129)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/129),\n  en het is nu mogelijk om meerdere afbeeldingen te maken en op te slaan. \\\n  Nieuw tabblad toegevoegd in configuratiepagina\n* vaste helderheid checkInterval bug (wordt nu gecontroleerd zoals bedoeld elke x minuten of de helderheid is veranderd)",
+        "fr": "* README édité\n* suppression de la vérification du niveau de batterie = -1%\n* fonction camshot étendue pour inclure la prise de vue en continu [(issue # 129)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/129),\n  et il est maintenant possible de prendre et d'enregistrer plusieurs images. \\\n  Nouvel onglet ajouté dans la page de configuration\n* Correction de la vérification de la luminosité bogue d'intervalle (est maintenant vérifié comme prévu toutes les x minutes si la luminosité a changé)",
+        "it": "* README modificato\n* controllo rimosso per batteryLevel = -1%\n* funzione camshot espansa per includere lo scatto continuo [(issue # 129)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/129),\n  ed è ora possibile acquisire e salvare più immagini. \\\n  Nuova scheda aggiunta nella pagina di configurazione\n* corretto controllo della luminosità Errore durante l'intervallo (ora viene controllato come previsto ogni x minuti se la luminosità è cambiata)",
+        "es": "* README editado\n* cheque eliminado para batteryLevel = -1%\n* función de captura de cámara ampliada para incluir disparo continuo [(número 129)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/129),\n  y ahora es posible tomar y guardar múltiples imágenes. \\\n  Nueva pestaña agregada en la página de configuración\n* Error de intervalo de verificación de brillo fijo (ahora se verifica según lo previsto cada x minutos si el brillo cambió)",
+        "pl": "* Edytowano README\n* usunięto sprawdzanie poziomu baterii = -1%\n* funkcja camshot rozszerzona o zdjęcia seryjne [(numer 129)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/129),\n  i teraz można zrobić i zapisać wiele zdjęć. \\\n  Nowa karta dodana na stronie konfiguracji\n* naprawiono błąd interwałowego sprawdzania jasności (jest teraz sprawdzany zgodnie z przeznaczeniem co x minut, czy jasność się zmieniła)",
+        "zh-cn": "*自述文件已编辑\n*删除电池电量检查= -1％\n* camshot功能扩展为包括连续拍摄[（issue＃129）]（https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/129），\n  现在可以拍摄和保存多张图像。\\\n  在配置页面中添加了新标签\n*修复了亮度检查间隔错误（现在每隔x分钟检查一次亮度是否改变）"
+      }
     },
-    "native": {
-        "interval": 30,
-        "devices": [],
-        "charger": [],
-        "brightness": [],
-        "screenSaverON": "false",
-        "screenSaver": [],
-        "telegram_enabled": "false",
-        "telegram": [],
-        "motion": [],
-        "motionSensor_enabled": "false",
-        "screen_on": "true",
-        "checkInterval": 5,
-        "dayTime": 7,
-        "midTime": 13,
-        "nightTime": 22,
-        "fireTablet": 3,
-        "viewChange_enabled": "false",
-        "viewMode": "false",
-        "visView": [],
-        "chargerON": "false",
-        "brightness_on": "false",
-        "astroSelectNight": "sunset",
-        "astroSelectDay": "sunrise",
-        "timeMode": "true",
-        "screenSaverDeletion": "false",
-        "auto_motionDetection": "false",
-        "record_mode": "false",
-        "single_shot": "1",
-        "series_shot": "2",
-        "imageTimeout": 1,
-        "series_shot_safe": "2"
+    "title": "Fully Tablet Control",
+    "titleLang": {
+      "en": "Fully Tablet Control",
+      "de": "Fully Tablet Control",
+      "ru": "Fully Tablet Control",
+      "pt": "Fully Tablet Control",
+      "nl": "Fully Tablet Control",
+      "fr": "Fully Tablet Control",
+      "it": "Fully Tablet Control",
+      "es": "Fully Tablet Control",
+      "pl": "Fully Tablet Control",
+      "zh-cn": "Fully Tablet Control"
     },
-    "objects": [],
-    "instanceObjects": [
-        {
-            "_id": "info",
-            "type": "channel",
-            "common": {
-                "name": "Information"
-            },
-            "native": {}
-        },
-        {
-            "_id": "info.connection",
-            "type": "state",
-            "common": {
-                "role": "indicator.connected",
-                "name": "Device or service connected",
-                "type": "boolean",
-                "read": true,
-                "write": false,
-                "def": false
-            },
-            "native": {}
-        }
-    ]
+    "desc": {
+      "en": "Tablet control with the FullyBrowser (charge control, screen saver, brightness control)",
+      "de": "Fully Tablet Steuerung, mit dem FullyBrowser (Ladekontrolle, Bildschirmschoner, Helligkeit)"
+    },
+    "authors": [
+      "xXBJXx <issi.dev.iobroker@gmail.com>"
+    ],
+    "keywords": [
+      "ioBroker",
+      "Tablet-Control",
+      "Tablet",
+      "Fully Kiosk Browser"
+    ],
+    "license": "MIT",
+    "platform": "Javascript/Node.js",
+    "main": "main.js",
+    "icon": "tablet-control.png",
+    "enabled": true,
+    "extIcon": "https://raw.githubusercontent.com/xXBJXx/ioBroker.fully-tablet-control/master/admin/tablet-control.png",
+    "readme": "https://github.com/xXBJXx/ioBroker.fully-tablet-control/blob/master/README.md",
+    "loglevel": "info",
+    "mode": "daemon",
+    "type": "general",
+    "compact": true,
+    "connectionType": "local",
+    "dataSource": "poll",
+    "materialize": true,
+    "messagebox": true,
+    "plugins": {
+      "sentry": {
+        "dsn": "https://8520b03c99c4437da90e414ab4bd1959@o384969.ingest.sentry.io/5217020"
+      }
+    },
+    "dependencies": [
+      {
+        "js-controller": ">=3.3.22"
+      }
+    ],
+    "tier": 3
+  },
+  "native": {
+    "interval": 30,
+    "devices": [],
+    "charger": [],
+    "brightness": [],
+    "screenSaverON": "false",
+    "screenSaver": [],
+    "telegram_enabled": "false",
+    "telegram": [],
+    "motion": [],
+    "motionSensor_enabled": "false",
+    "screen_on": "true",
+    "checkInterval": 5,
+    "dayTime": 7,
+    "midTime": 13,
+    "nightTime": 22,
+    "fireTablet": 3,
+    "viewChange_enabled": "false",
+    "viewMode": "false",
+    "visView": [],
+    "chargerON": "false",
+    "brightness_on": "false",
+    "astroSelectNight": "sunset",
+    "astroSelectDay": "sunrise",
+    "timeMode": "true",
+    "screenSaverDeletion": "false",
+    "auto_motionDetection": "false",
+    "record_mode": "false",
+    "single_shot": "1",
+    "series_shot": "2",
+    "imageTimeout": 1,
+    "series_shot_safe": "2"
+  },
+  "objects": [],
+  "instanceObjects": [
+    {
+      "_id": "info",
+      "type": "channel",
+      "common": {
+        "name": "Information"
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.connection",
+      "type": "state",
+      "common": {
+        "role": "indicator.connected",
+        "name": "Device or service connected",
+        "type": "boolean",
+        "read": true,
+        "write": false,
+        "def": false
+      },
+      "native": {}
+    }
+  ]
 }

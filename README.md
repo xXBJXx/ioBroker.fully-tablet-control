@@ -78,8 +78,7 @@ _______________________________
  Placeholder for the next version (at the beginning of the line):
  ### __WORK IN PROGRESS__ (- falls nicht benötigt löschen sonst klammern entfernen und nach dem - dein text schreiben)
 -->
-
-### __WORK IN PROGRESS__
+### 0.3.7 (2022-10-16)
 * (xXBJXx) update dependencies
 * (xXBJXx) fixed [(issue #398)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/398)
 
@@ -105,13 +104,6 @@ _______________________________
 * (xXBJXx) dependencies updates
 * (xXBJXx) Check if adapter config is valid modified
 * (xXBJXx) check and testing for Node.js 16 and closed [(issue #170)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/170)
-
-### 0.3.4-0 (2021-04-30)
-
-* (xXBJXx) dependencies updates
-* (xXBJXx) fixed wrong type of displayWidthPixels and
-  displayHeightPixels [(issue #164)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/164)
-* (xXBJXx) add encodeUrl and change log message
 
 ## License
 
