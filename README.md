@@ -2,10 +2,10 @@
 
 # ioBroker.fully-tablet-control
 
-[![NPM version](http://img.shields.io/npm/v/iobroker.fully-tablet-control.svg?logo=npm)](https://www.npmjs.com/package/iobroker.fully-tablet-control)
+[![NPM version](https://img.shields.io/npm/v/iobroker.fully-tablet-control.svg?logo=npm)](https://www.npmjs.com/package/iobroker.fully-tablet-control)
 [![Downloads](https://img.shields.io/npm/dm/iobroker.fully-tablet-control.svg?logo=npm)](https://www.npmjs.com/package/iobroker.fully-tablet-control)
-![Installations (latest)](http://iobroker.live/badges/fully-tablet-control-installed.svg)
-<!--![(stable)](http://iobroker.live/badges/fully-tablet-control-stable.svg)-->
+![Installations (latest)](https://iobroker.live/badges/fully-tablet-control-installed.svg)
+<!--![(stable)](https://iobroker.live/badges/fully-tablet-control-stable.svg)-->
 [![Dependency Status](https://img.shields.io/david/xXBJXx/iobroker.fully-tablet-control.svg)](https://david-dm.org/xXBJXx/iobroker.fully-tablet-control)
 ![Test and Release](https://github.com/xXBJXx/iobroker.fully-tablet-control/workflows/Test%20and%20Release/badge.svg)
 
