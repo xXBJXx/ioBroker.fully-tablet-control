@@ -3,9 +3,20 @@ updates:
   - package-ecosystem: npm
     directory: "/"
     schedule:
-      interval: weekly
+      interval: monthly
       time: "04:00"
       timezone: Europe/Berlin
-    #    target-branch: "dependencyAutoUpdate"
-    open-pull-requests-limit: 30
+    open-pull-requests-limit: 5
+    assignees:
+      - xXBJXx
     versioning-strategy: increase
+  
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: monthly
+      time: "04:00"
+      timezone: Europe/Berlin
+    open-pull-requests-limit: 5
+    assignees:
+      - xXBJXx
