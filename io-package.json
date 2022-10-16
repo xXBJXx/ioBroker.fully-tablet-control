@@ -174,7 +174,16 @@
         },
         "title": "Fully Tablet Control",
         "titleLang": {
-            "en": "Fully Tablet Control"
+            "en": "Fully Tablet Control",
+            "de": "Fully Tablet Control",
+            "ru": "Fully Tablet Control",
+            "pt": "Fully Tablet Control",
+            "nl": "Fully Tablet Control",
+            "fr": "Fully Tablet Control",
+            "it": "Fully Tablet Control",
+            "es": "Fully Tablet Control",
+            "pl": "Fully Tablet Control",
+            "zh-cn": "Fully Tablet Control"
         },
         "desc": {
             "en": "Tablet control with the FullyBrowser (charge control, screen saver, brightness control)",
@@ -211,7 +220,7 @@
         },
         "dependencies": [
             {
-                "js-controller": ">=2.0.0"
+                "js-controller": ">=3.3.22"
             }
         ],
         "tier": 3
