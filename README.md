@@ -70,15 +70,19 @@ free adapters that basically never crashs.
 For more details and information on how to disable error reporting, please refer to the
 [Sentry plugin documentation](https://github.com/ioBroker/plugin-sentry#plugin-sentry) <br>
 Sentry Reporting is used from js-controller 3.0.
-
 _______________________________
 
 ## Changelog
 
 <!--
  Placeholder for the next version (at the beginning of the line):
- ### __WORK IN PROGRESS__ ( - falls nicht benötigt löschen sonst klammern entfernen und nach dem - dein text schreiben )
+ ### __WORK IN PROGRESS__ (- falls nicht benötigt löschen sonst klammern entfernen und nach dem - dein text schreiben)
 -->
+
+### __WORK IN PROGRESS__
+* (xXBJXx) update dependencies
+* (xXBJXx) fixed [(issue #398)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/398)
+
 ### 0.3.7-0.0 (2022-03-20)
 * (xXBJXx) test-and-release.yml update
 * (xXBJXx) dependencies updates
