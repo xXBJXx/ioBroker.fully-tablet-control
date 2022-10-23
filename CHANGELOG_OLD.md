@@ -1,4 +1,12 @@
 # Older changes
+## 0.3.5-0 (2021-05-25)
+
+* (xXBJXx) Brightness changeMode optimized
+* (xXBJXx) Adapter tier set to 3
+* (xXBJXx) dependencies updates
+* (xXBJXx) Check if adapter config is valid modified
+* (xXBJXx) check and testing for Node.js 16 and closed [(issue #170)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/170)
+
 ## 0.3.4-0 (2021-04-30)
 
 * (xXBJXx) dependencies updates

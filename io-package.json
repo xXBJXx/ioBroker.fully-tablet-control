@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "fully-tablet-control",
-    "version": "0.3.7",
+    "version": "0.3.8",
     "news": {
+      "0.3.8": {
+        "en": "fixed [(issue #403)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/403)\nupdated dependencies",
+        "de": "behoben [(Problem #403)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/403)\nAbhängigkeiten aktualisiert",
+        "ru": "исправлено [(проблема #403)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/403)\nобновлены зависимости",
+        "pt": "fixo [(edição #403)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/403)\ndependências actualizadas",
+        "nl": "opgelost [(issue #403)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/403)\nafhankelijkheden bijgewerkt",
+        "fr": "corrigé [(problème #403)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/403)\nMise à jour des dépendances",
+        "it": "risolto [(problema #403)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/403)\ndipendenze aggiornate",
+        "es": "arreglado [(problema #403)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/403)\ndependencias actualizadas",
+        "pl": "poprawiono [(issue #403)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/403)\nzaktualizowane zależności",
+        "uk": "виправлено [(випуск #403)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/403)\nоновлені залежності",
+        "zh-cn": "修复了[（问题#403）](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/403)\n更新了依赖性"
+      },
       "0.3.7": {
         "en": "update dependencies\nfixed [(issue #398)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/398)",
         "de": "Abhängigkeiten aktualisieren\nbehoben [(Problem #398)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/398)",
@@ -74,18 +87,6 @@
         "es": "* actualizaciones de dependencias\n* Se corrigió el tipo incorrecto de displayWidthPixels y displayHeightPixels [(problema # 164)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/164)\n+ (xXBJXx) agregar encodeUrl y cambiar el mensaje de registro",
         "pl": "* aktualizacje zależności\n* naprawiono zły typ displayWidthPixels i displayHeightPixels [(numer 164)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/164)\n+ (xXBJXx) dodaj encodeUrl i zmień komunikat dziennika",
         "zh-cn": "*依赖关系更新\n*修复了displayWidthPixels和displayHeightPixels [（issue＃164）]（https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/164）的错误类型\n+（xXBJXx）添加encodeUrl并更改日志消息"
-      },
-      "0.3.3-beta.0": {
-        "en": "* README edited\n* removed check for batteryLevel = -1% \n* camshot function expanded to include continuous shooting [(issue #129)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/129), \n  and it is now possible to take and save multiple images.\\\n  New tab added in config page \n* fixed brightness checkInterval bug (is now checked as intended every x minutes whether the brightness changed)",
-        "de": "* README bearbeitet\n* entfernt Überprüfung auf Batterielevel = -1%\n* Die Camshot-Funktion wurde um Serienaufnahmen erweitert [(Ausgabe Nr. 129)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/129).\n  und es ist jetzt möglich, mehrere Bilder aufzunehmen und zu speichern. \\\n  Neue Registerkarte auf der Konfigurationsseite hinzugefügt\n* Fehler bei der Überprüfung der Helligkeit behobenInterval (wird jetzt alle x Minuten wie beabsichtigt überprüft, ob sich die Helligkeit geändert hat)",
-        "ru": "* README отредактировано\n* убрана проверка на batteryLevel = -1%\n* функция видеосъемки расширена и теперь включает непрерывную съемку [(issue # 129)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/129),\n  и теперь можно делать и сохранять несколько изображений. \\\n  На странице конфигурации добавлена новая вкладка\n* исправлена ошибка интервала проверки яркости (теперь проверяется, как задумано, каждые x минут, изменилась ли яркость)",
-        "pt": "* README editado\n* verificação removida para batteryLevel = -1%\n* função camshot expandida para incluir disparo contínuo [(edição # 129)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/129),\n  e agora é possível tirar e salvar várias imagens. \\\n  Nova guia adicionada na página de configuração\n* corrigido o bug de checkInterval de brilho (agora é verificado conforme pretendido a cada x minutos se o brilho mudou)",
-        "nl": "* README bewerkt\n* verwijderde controle voor batteryLevel = -1%\n* camshot-functie uitgebreid met continu-opnamen [(issue # 129)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/129),\n  en het is nu mogelijk om meerdere afbeeldingen te maken en op te slaan. \\\n  Nieuw tabblad toegevoegd in configuratiepagina\n* vaste helderheid checkInterval bug (wordt nu gecontroleerd zoals bedoeld elke x minuten of de helderheid is veranderd)",
-        "fr": "* README édité\n* suppression de la vérification du niveau de batterie = -1%\n* fonction camshot étendue pour inclure la prise de vue en continu [(issue # 129)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/129),\n  et il est maintenant possible de prendre et d'enregistrer plusieurs images. \\\n  Nouvel onglet ajouté dans la page de configuration\n* Correction de la vérification de la luminosité bogue d'intervalle (est maintenant vérifié comme prévu toutes les x minutes si la luminosité a changé)",
-        "it": "* README modificato\n* controllo rimosso per batteryLevel = -1%\n* funzione camshot espansa per includere lo scatto continuo [(issue # 129)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/129),\n  ed è ora possibile acquisire e salvare più immagini. \\\n  Nuova scheda aggiunta nella pagina di configurazione\n* corretto controllo della luminosità Errore durante l'intervallo (ora viene controllato come previsto ogni x minuti se la luminosità è cambiata)",
-        "es": "* README editado\n* cheque eliminado para batteryLevel = -1%\n* función de captura de cámara ampliada para incluir disparo continuo [(número 129)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/129),\n  y ahora es posible tomar y guardar múltiples imágenes. \\\n  Nueva pestaña agregada en la página de configuración\n* Error de intervalo de verificación de brillo fijo (ahora se verifica según lo previsto cada x minutos si el brillo cambió)",
-        "pl": "* Edytowano README\n* usunięto sprawdzanie poziomu baterii = -1%\n* funkcja camshot rozszerzona o zdjęcia seryjne [(numer 129)] (https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/129),\n  i teraz można zrobić i zapisać wiele zdjęć. \\\n  Nowa karta dodana na stronie konfiguracji\n* naprawiono błąd interwałowego sprawdzania jasności (jest teraz sprawdzany zgodnie z przeznaczeniem co x minut, czy jasność się zmieniła)",
-        "zh-cn": "*自述文件已编辑\n*删除电池电量检查= -1％\n* camshot功能扩展为包括连续拍摄[（issue＃129）]（https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/129），\n  现在可以拍摄和保存多张图像。\\\n  在配置页面中添加了新标签\n*修复了亮度检查间隔错误（现在每隔x分钟检查一次亮度是否改变）"
       }
     },
     "title": "Fully Tablet Control",
