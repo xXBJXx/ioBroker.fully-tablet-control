@@ -321,21 +321,32 @@
                       }, 130);
                   });
               });
-    
+              
+              // Ask if the TelegramAdapter is installed if yes enter all users in a table select
               sendTo(namespace, 'TelegramUser', 'TelegramUser', (result) => {
-                  console.log(result)
-        
+                  console.log(`TelegramUser Request ${result}`);
                   telegramAdapter = result.telegramAdapter;
-                  visAdapter = result.visAdapter;
                   $(document).ready(function () {
-            
                       firstName = result.User;
-                      $('#User').attr('data-options', firstName.join(';'));
-                      console.log(firstName.join(';'))
-                      values2table('telegram', telegram, onChange);
+                      // check if firstname not undefined
+                        if (firstName !== undefined) {
+                            $('#User').attr('data-options', firstName.join(';'));
+                            console.log(firstName.join(';'))
+                            values2table('telegram', telegram, onChange);
+                        }
                       showHideSettings();
                   });
               });
+              
+              // query if VisAdapter is installed in the backend
+                sendTo(namespace, 'VisAdapter', 'VisAdapter', (result) => {
+                    console.log(`VisAdapter Request ${result}`);
+                    visAdapter = result.visAdapter;
+                    $(document).ready(function () {
+                        visView = result.visView;
+                        showHideSettings();
+                    });
+                });
     
     
               values2table('brightness', brightness, onChange);

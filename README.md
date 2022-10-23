@@ -77,6 +77,9 @@ _______________________________
  Placeholder for the next version (at the beginning of the line):
  ### __WORK IN PROGRESS__ (- falls nicht benötigt löschen sonst klammern entfernen und nach dem - dein text schreiben)
 -->
+### __WORK IN PROGRESS__
+* (xXBJXx) fixed [(issue #403)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/403)
+
 ### 0.3.7 (2022-10-16)
 * (xXBJXx) update dependencies
 * (xXBJXx) fixed [(issue #398)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/398)

@@ -4399,7 +4399,7 @@ class FullyTabletControl extends utils.Adapter {
     /**
      * added in version 0.3.1-Beta.0
      * on Telegram and Vis adapter if available and Telegram user call from the adapter
-     * @return {Promise}     //return Object {'User':[],'visAdapter':false, 'telegramAdapter':false}
+     * @return {Promise}     //return Object {'User':[],'telegramAdapter':false}
      */
     async readTelegramUser() {
         const viewObj = await this.getObjectViewAsync('system', 'instance', {
@@ -4411,7 +4411,6 @@ class FullyTabletControl extends utils.Adapter {
         const telegramUser = [];
         const telegramObj = {
             User: [],
-            visAdapter: false,
             telegramAdapter: false,
         };
         for (const objKey in viewObj.rows) {
@@ -4423,10 +4422,6 @@ class FullyTabletControl extends utils.Adapter {
                 if (result[r]._id === `system.adapter.telegram.${i}`) {
                     telegramObj.telegramAdapter = true;
                     arrTemp.push(`telegram.${i}.communicate.users`);
-                }
-                // @ts-ignore
-                if (result[r]._id === `system.adapter.vis.0`) {
-                    telegramObj.visAdapter = true;
                 }
             }
         }
@@ -4458,6 +4453,31 @@ class FullyTabletControl extends utils.Adapter {
         }
     }
 
+    /**
+     * added in version 0.3.8
+     * check if Vis adapter available
+     * @return {Promise} //return Object { visAdapter: true/false }
+     */
+    async readVisAdapter() {
+        const viewObj = await this.getObjectViewAsync('system', 'instance', {
+            startkey: 'system.adapter.',
+            endkey: 'system.adapter.\u9999',
+        });
+        const result = [];
+        for (const objKey in viewObj.rows) {
+            result.push(viewObj.rows[objKey].value);
+        }
+        for (const r in result) {
+            for (let i = 0; i < 10; i++) {
+                // @ts-ignore
+                if (result[r]._id === `system.adapter.vis.0`) {
+                    return { visAdapter: true };
+                }
+            }
+        }
+        return { visAdapter: false };
+    }
+
     // If you need to accept messages in your adapter, uncomment the following block and the corresponding line in the constructor.
     /**
      * added in version 0.3.1-Beta.0
@@ -4470,8 +4490,9 @@ class FullyTabletControl extends utils.Adapter {
             const deviceObj = obj.message;
             const deviceOnline = [];
             let TelegramObj = {};
+            let visAdapter = {};
             switch (obj.command) {
-                case 'pingTablet':
+                case 'pingTablet': {
                     // @ts-ignore
                     for (const i in deviceObj) {
                         if (deviceObj[i].enabled) {
@@ -4493,10 +4514,17 @@ class FullyTabletControl extends utils.Adapter {
                     }
                     this.sendTo(obj.from, obj.command, deviceOnline, obj.callback);
                     break;
-                case 'TelegramUser':
+                }
+                case 'TelegramUser': {
                     TelegramObj = await this.readTelegramUser();
                     this.sendTo(obj.from, obj.command, TelegramObj, obj.callback);
                     break;
+                }
+                case 'VisAdapter': {
+                    visAdapter = await this.readVisAdapter();
+                    this.sendTo(obj.from, obj.command, visAdapter, obj.callback);
+                    break;
+                }
             }
         }
     }
