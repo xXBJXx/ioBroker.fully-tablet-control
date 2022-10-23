@@ -79,6 +79,7 @@ _______________________________
 -->
 ### __WORK IN PROGRESS__
 * (xXBJXx) fixed [(issue #403)](https://github.com/xXBJXx/ioBroker.fully-tablet-control/issues/403)
+* (xXBJXx) updated dependencies
 
 ### 0.3.7 (2022-10-16)
 * (xXBJXx) update dependencies
